@@ -1,5 +1,6 @@
 type Query {
-  songs: SongPage!
+  tags: [String!]!
+  songs(tag: String!): SongPage!
   song(id: ID!): Song
 }
 
@@ -8,6 +9,7 @@ type Song {
   author: String!
   title: String!
   textWithChords: String!
+  tags: [String!]!
 }
 
 type SongPage {

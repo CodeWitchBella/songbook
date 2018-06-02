@@ -14,16 +14,20 @@ const songs = fs
       id: fname.replace(/\.song$/, ''),
       author: lines[0],
       title: lines[1],
+      tags: lines[2].split(',').filter(a => !!a),
       textWithChords: content.substring(content.indexOf('\n\n') + 2),
     }
   })
 
 const resolvers = {
   Query: {
-    songs: () => ({
-      total: songs.length,
-      list: songs,
-    }),
+    songs: (_: any, { tag }: { tag: string }) => {
+      const list = songs.filter(s => tag === 'all' || s.tags.includes(tag))
+      return {
+        total: list.length,
+        list,
+      }
+    },
     song: (_: any, { id }: { id: string }) => songs.find(s => s.id === id),
   },
 }

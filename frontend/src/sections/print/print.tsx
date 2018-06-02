@@ -17,8 +17,8 @@ const PageBreak = styled.div`
   }
 `
 
-const Print = () => (
-  <SongsContainer placeholder={PlaceholderSongList}>
+const Print = ({ tag }: { tag: string }) => (
+  <SongsContainer variables={{ tag }} placeholder={PlaceholderSongList}>
     {songs =>
       !songs.data ? null : (
         <div>

@@ -3,9 +3,9 @@ import { query } from 'utils/react-simple-graphql/react-simple-graphql'
 import gql from 'graphql-tag'
 import * as t from './__generated__/songs'
 
-const SongsContainer = query<t.songs>(gql`
-  query songs {
-    songs {
+const SongsContainer = query<t.songs, t.songsVariables>(gql`
+  query songs($tag: String!) {
+    songs(tag: $tag) {
       total
       list {
         id

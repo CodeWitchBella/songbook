@@ -36,9 +36,11 @@ export default () => (
       exact
       render={({ match }) => <Song id={match.params.id} />}
     />
-    <Route path="/print" exact>
-      <Print />
-    </Route>
+    <Route
+      path="/print/:tag"
+      exact
+      render={({ match }) => <Print tag={match.params.tag} />}
+    />
     <Route>
       <NotFound />
     </Route>

@@ -31,17 +31,17 @@ function bodyHtml(cb: (el: Element) => void) {
   }
 }
 
-class PrintRoute extends React.Component {
+class PrintRoute extends React.Component<{ tag: string }> {
   componentDidMount() {
     bodyHtml(el => el.classList.add(body))
   }
-  componentDidUnmount() {
+  componentWillUnmount() {
     bodyHtml(el => el.classList.remove(body))
   }
   render() {
     return (
       <div>
-        <Print />
+        <Print tag={this.props.tag} />
       </div>
     )
   }
