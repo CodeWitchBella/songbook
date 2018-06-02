@@ -1,10 +1,10 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import SongList from 'sections/song-list/song-list'
+import TagList from 'sections/tag-list/tag-list'
 
 const Home = () => (
   <div>
-    <SongList />
+    <TagList />
   </div>
 )
 export default hot(module)(Home)

@@ -3,6 +3,7 @@ import SongContainer, { Song as SongType } from 'containers/song'
 import styled, { css } from 'react-emotion'
 import * as parser from 'sections/song/parse'
 import SongHeader from 'sections/song/song-header'
+import * as page from 'utils/page'
 
 const Placeholder = () => <div>Načítám píseň</div>
 
@@ -46,24 +47,46 @@ const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
   </div>
 )
 
+const songClass = css`
+  position: relative;
+  background: grey;
+  width: ${page.width};
+  height: ${page.height};
+  padding: ${page.margin.top} ${page.margin.outer} ${page.margin.top}
+    ${page.margin.inner};
+  margin: 0 auto;
+`
+
+const marginDisplay = css`
+  background: white;
+  width: 100%;
+  height: 100%;
+`
+
 const SongLook = ({ song }: { song: SongType }) => (
-  <div>
-    <SongHeader {...song} />
-    <div>
-      {parser
-        .parseSong(song.textWithChords)
-        .map((p, i) => <Paragraph key={i}>{p}</Paragraph>)}
+  <div className={songClass}>
+    <div className={marginDisplay}>
+      <SongHeader {...song} />
+      <div>
+        {parser
+          .parseSong(song.textWithChords)
+          .map((p, i) => <Paragraph key={i}>{p}</Paragraph>)}
+      </div>
     </div>
   </div>
 )
 
-const songClass = css``
+const sizer = css`
+  width: 100%;
+  height: 100%;
+  background: papayawhip;
+`
 
 const Song = ({ id }: { id: string }) => (
   <SongContainer variables={{ id }} placeholder={Placeholder}>
     {song =>
       !song.data || !song.data.song ? null : (
-        <div className={songClass}>
+        <div className={sizer}>
           <SongLook song={song.data.song} />
         </div>
       )

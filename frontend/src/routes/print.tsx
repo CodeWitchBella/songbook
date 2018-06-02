@@ -3,20 +3,28 @@ import { hot } from 'react-hot-loader'
 import Print from 'sections/print/print'
 import { injectGlobal, css } from 'react-emotion'
 import { document } from 'utils/globals'
+import * as page from 'utils/page'
+
+const { margin } = page
 
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
   @page {
-    size: 105mm 148mm;
-    margin: 2cm;
+    size: ${page.width} ${page.height};
+    :left {
+      margin: ${margin.top} ${margin.inner} ${margin.top} ${margin.outer};
+    }
+    :right {
+      margin: ${margin.top} ${margin.outer} ${margin.top} ${margin.inner};
+    }
   }
 `
 
 const body = css`
   @media print {
     & {
-      width: 105mm;
-      height: 148mm;
+      width: ${page.width};
+      height: ${page.height};
     }
   }
 `

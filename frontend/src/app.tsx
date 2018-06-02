@@ -6,7 +6,7 @@ import Routes from 'routes/routes'
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
   html, body {
-    font-size: 18px;
+    font-size: 4mm;
     margin: 0;
     padding: 0;
   }

@@ -11,11 +11,12 @@ const Song = ({ song }: { song: SongType }) => (
   </div>
 )
 
-const SongList = () => (
-  <SongsContainer placeholder={Placeholder}>
+const SongList = ({ tag }: { tag: string }) => (
+  <SongsContainer placeholder={Placeholder} variables={{ tag }}>
     {songs =>
       !songs.data ? null : (
         <div>
+          <a href={`/print/${tag}`}>Print all</a>
           {songs.data.songs.list.map(s => <Song key={s.id} song={s} />)}
         </div>
       )

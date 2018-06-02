@@ -26,6 +26,13 @@ const Print = Loadable({
   webpack: () => [require.resolveWeak('./print')],
 })
 
+const Tag = Loadable({
+  loader: () => import(/* webpackChunkName: "r-tag" */ './tag'),
+  loading,
+  modules: ['./tag'],
+  webpack: () => [require.resolveWeak('./tag')],
+})
+
 export default () => (
   <Switch>
     <Route path="/" exact>
@@ -40,6 +47,11 @@ export default () => (
       path="/print/:tag"
       exact
       render={({ match }) => <Print tag={match.params.tag} />}
+    />
+    <Route
+      path="/tag/:tag"
+      exact
+      render={({ match }) => <Tag tag={match.params.tag} />}
     />
     <Route>
       <NotFound />

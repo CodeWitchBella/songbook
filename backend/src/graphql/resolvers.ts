@@ -19,6 +19,24 @@ const songs = fs
     }
   })
 
+const unique = () => {
+  const found: string[] = []
+  return (el: string) => {
+    if (!found.includes(el)) {
+      found.push(el)
+      return true
+    }
+    return false
+  }
+}
+
+const tags = songs
+  .map(s => s.tags)
+  .reduce((p, c) => p.concat(c), [])
+  .filter(unique())
+  .concat('all')
+  .sort()
+
 const resolvers = {
   Query: {
     songs: (_: any, { tag }: { tag: string }) => {
@@ -28,6 +46,7 @@ const resolvers = {
         list,
       }
     },
+    tags: () => tags,
     song: (_: any, { id }: { id: string }) => songs.find(s => s.id === id),
   },
 }
