@@ -15,8 +15,10 @@ const line = (hasChords: boolean) =>
     : css``
 
 const Chord = styled.span`
-  position: absolute;
+  position: ${(props: { sp?: boolean }) =>
+    props.sp ? 'relative' : 'absolute'};
   transform: translateY(-1em);
+  top: ${({ sp }) => (sp ? '-1em' : undefined)};
   font-weight: bold;
 `
 
@@ -28,7 +30,11 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
       {parsed.tag && <b>{parsed.tag} </b>}
       {parsed.content.map((l, i) => (
         <span key={i}>
-          {l.ch && <Chord>{l.ch}</Chord>}
+          {l.ch && l.ch.startsWith('_') ? (
+            <Chord sp>{l.ch.substring(1)}</Chord>
+          ) : (
+            <Chord>{l.ch}</Chord>
+          )}
           {l.text}
         </span>
       ))}
@@ -55,6 +61,9 @@ const songClass = css`
   padding: ${page.margin.top} ${page.margin.outer} ${page.margin.top}
     ${page.margin.inner};
   margin: 0 auto;
+  @media print {
+    padding: 0;
+  }
 `
 
 const marginDisplay = css`

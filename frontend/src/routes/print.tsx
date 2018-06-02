@@ -11,12 +11,14 @@ const { margin } = page
 injectGlobal`
   @page {
     size: ${page.width} ${page.height};
-    :left {
-      margin: ${margin.top} ${margin.inner} ${margin.top} ${margin.outer};
-    }
-    :right {
-      margin: ${margin.top} ${margin.outer} ${margin.top} ${margin.inner};
-    }
+    margin: ${margin.top} ${margin.inner} ${margin.top} ${margin.outer};
+  }
+
+  @page:left {
+    margin: ${margin.top} ${margin.inner} ${margin.top} ${margin.outer};
+  }
+  @page:right {
+    margin: ${margin.top} ${margin.outer} ${margin.top} ${margin.inner};
   }
 `
 
