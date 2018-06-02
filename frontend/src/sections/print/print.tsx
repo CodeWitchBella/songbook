@@ -10,7 +10,9 @@ const Print = ({ tag }: { tag: string }) => (
     {songs =>
       !songs.data ? null : (
         <div>
-          {songs.data.songs.list.map(s => <Song id={s.id} key={s.id} />)}
+          {songs.data.songs.list.map((s, i) => (
+            <Song id={s.id} number={i + 1} key={s.id} />
+          ))}
         </div>
       )
     }

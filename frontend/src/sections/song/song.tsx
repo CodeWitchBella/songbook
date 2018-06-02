@@ -45,7 +45,7 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
 }
 
 const paragraph = css`
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
 `
 
 const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
@@ -54,9 +54,14 @@ const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
   </div>
 )
 
-const SongLook = ({ song }: { song: SongType }) => (
+const SongLook = ({ song, number }: { song: SongType; number?: number }) => (
   <Page>
-    <SongHeader {...song} />
+    <SongHeader
+      author={song.author}
+      title={
+        typeof number === 'number' ? `${number}. ${song.title}` : song.title
+      }
+    />
     <div>
       {parser
         .parseSong(song.textWithChords)
@@ -65,10 +70,12 @@ const SongLook = ({ song }: { song: SongType }) => (
   </Page>
 )
 
-const Song = ({ id }: { id: string }) => (
+const Song = ({ id, number }: { id: string; number?: number }) => (
   <SongContainer variables={{ id }} placeholder={Placeholder}>
     {song =>
-      !song.data || !song.data.song ? null : <SongLook song={song.data.song} />
+      !song.data || !song.data.song ? null : (
+        <SongLook number={number} song={song.data.song} />
+      )
     }
   </SongContainer>
 )

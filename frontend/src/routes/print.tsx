@@ -2,7 +2,7 @@ import React from 'react'
 import { hot } from 'react-hot-loader'
 import Print from 'sections/print/print'
 import { injectGlobal, css } from 'react-emotion'
-import { document } from 'utils/globals'
+import { document, window } from 'utils/globals'
 import * as page from 'utils/page'
 
 const { margin } = page
@@ -31,6 +31,13 @@ const body = css`
   }
 `
 
+const bodyOnly = css`
+  scroll-snap-type: mandatory;
+
+  scroll-snap-destination: 0% 100%;
+  scroll-snap-points-y: repeat(100%);
+`
+
 function bodyHtml(cb: (el: Element) => void) {
   if (document) {
     const list = document.querySelectorAll('body, html')
@@ -44,9 +51,15 @@ function bodyHtml(cb: (el: Element) => void) {
 class PrintRoute extends React.Component<{ tag: string }> {
   componentDidMount() {
     bodyHtml(el => el.classList.add(body))
+    if (document) {
+      document.body.classList.add(bodyOnly)
+    }
   }
   componentWillUnmount() {
     bodyHtml(el => el.classList.remove(body))
+    if (document) {
+      document.body.classList.remove(bodyOnly)
+    }
   }
   render() {
     return (

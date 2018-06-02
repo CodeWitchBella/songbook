@@ -9,6 +9,7 @@ import {
   Provider,
   createClient,
 } from 'utils/react-simple-graphql/react-simple-graphql'
+import 'scrollsnap-polyfill/dist/scrollsnap-polyfill.bundled'
 import App from './app'
 import handleOutline from './utils/outline-handler'
 
