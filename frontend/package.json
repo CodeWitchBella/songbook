@@ -32,6 +32,7 @@
     "@types/storybook__addon-knobs": "^3.3.1",
     "@types/storybook__addon-links": "^3.3.0",
     "@types/storybook__react": "^3.0.7",
+    "apollo-codegen": "^0.19.1",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-schema": "^1.1.0",
@@ -83,12 +84,11 @@
     "babel-runtime": "^6.26.0"
   },
   "scripts": {
-    "docker": "cd .. && npm run docker --",
     "build": "webpack",
-    "build-storybook": "build-storybook",
+    "codegen": "apollo-codegen introspect-schema http://localhost:3000/graphql && apollo-codegen generate --target typescript-modern --schema schema.json 'src/**/*.tsx'",
+    "docker": "cd .. && npm run docker --",
     "start": "webpack-dev-server --env modern",
     "start-ssr": "webpack-dev-server --env ssr",
-    "storybook": "start-storybook -p 6006",
     "lint": "eslint --ext .ts --ext .tsx --cache src",
     "check": "tsc --noEmit"
   }

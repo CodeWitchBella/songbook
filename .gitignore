@@ -20,3 +20,5 @@ database.sqlite
 /frontend/sharedRepo
 npm-token
 frontend/bundle
+/frontend/schema.json
+__generated__
