@@ -44,7 +44,7 @@
     "build": "babel -d build -x .ts -x .tsx src",
     "docker": "cd .. && npm run docker --",
     "lint": "eslint --ext ts --cache src",
-    "watch": "nodemon build/index.js"
+    "watch": "nodemon -w build -w src -e .js -e .graphql -e .song build/index.js"
   },
   "author": "",
   "license": "UNLICENSED"

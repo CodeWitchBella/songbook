@@ -19,6 +19,13 @@ const Song = Loadable({
   webpack: () => [require.resolveWeak('./song')],
 })
 
+const Print = Loadable({
+  loader: () => import(/* webpackChunkName: "r-print" */ './print'),
+  loading,
+  modules: ['./print'],
+  webpack: () => [require.resolveWeak('./print')],
+})
+
 export default () => (
   <Switch>
     <Route path="/" exact>
@@ -29,6 +36,9 @@ export default () => (
       exact
       render={({ match }) => <Song id={match.params.id} />}
     />
+    <Route path="/print" exact>
+      <Print />
+    </Route>
     <Route>
       <NotFound />
     </Route>
