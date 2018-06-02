@@ -1,0 +1,16 @@
+type Query {
+  songs: SongPage!
+  song(id: ID!): Song
+}
+
+type Song {
+  id: ID!
+  author: String!
+  title: String!
+  textWithChords: String!
+}
+
+type SongPage {
+  total: Int!
+  list: [Song!]!
+}

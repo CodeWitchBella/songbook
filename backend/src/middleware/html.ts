@@ -3,6 +3,7 @@ import express from 'express'
 import vm from 'vm'
 import settings from '../settings'
 import getFrontendFile from './get-frontend-file'
+import { getContext, getSchema } from '../graphql/graphql'
 
 const mksource = (src: string) => `
 ;(() => {
@@ -92,8 +93,10 @@ const htmlMiddleware = () => (
     loadScript(),
     loadJSON('/dist/files.json'),
     loadJSON('/dist/react-loadable.json'),
+    getContext(req),
+    getSchema(),
   ])
-    .then(([script, files, loadableJson]) => {
+    .then(([script, files, loadableJson, context, schema]) => {
       if (!script) throw new Error('Failed to load script')
       if (!files) throw new Error('Failed to load files.json')
       if (!loadableJson) throw new Error('Failed to load loadableJson')
@@ -103,8 +106,8 @@ const htmlMiddleware = () => (
         res,
         files,
         loadableJson,
-        schema: undefined,
-        context: {},
+        schema,
+        context,
       })
     })
     .catch(e => next(e))
