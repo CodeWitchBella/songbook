@@ -7,6 +7,8 @@ import Routes from 'routes/routes'
 injectGlobal`
   html, body {
     font-size: 18px;
+    margin: 0;
+    padding: 0;
   }
 `
 
