@@ -12,11 +12,23 @@ const Home = Loadable({
   webpack: () => [require.resolveWeak('./home')],
 })
 
+const Song = Loadable({
+  loader: () => import(/* webpackChunkName: "r-song" */ './song'),
+  loading,
+  modules: ['./song'],
+  webpack: () => [require.resolveWeak('./song')],
+})
+
 export default () => (
   <Switch>
     <Route path="/" exact>
       <Home />
     </Route>
+    <Route
+      path="/song/:id"
+      exact
+      render={({ match }) => <Song id={match.params.id} />}
+    />
     <Route>
       <NotFound />
     </Route>
