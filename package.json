@@ -1,0 +1,80 @@
+{
+  "name": "songbook",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "docker": "npm i && node node_modules/docker-start/lib/docker-run",
+    "tmux": "npm i && node node_modules/docker-start/lib/in-tmux"
+  },
+  "configurations": {
+    "install": {
+      "cmd": [
+        "bash",
+        "-c",
+        "cd backend && npm i && cd ../frontend && npm i"
+      ]
+    },
+    "backend-build": {
+      "dir": "backend",
+      "cmd": "npm run build --"
+    },
+    "backend-build-watch": {
+      "dir": "backend",
+      "cmd": "npm run build -- --watch"
+    },
+    "backend-watch": {
+      "dir": "backend",
+      "cmd": "npm run watch --",
+      "port": 3000
+    },
+    "frontend": {
+      "dir": "frontend",
+      "cmd": "npm run start --",
+      "port": 4000
+    },
+    "frontend-ssr": {
+      "dir": "frontend",
+      "cmd": "npm run start-ssr --",
+      "port": 4001
+    },
+    "tmux": {
+      "dir": ".",
+      "cmd": "npm run tmux --"
+    },
+    "shell": {
+      "dir": ".",
+      "cmd": "/bin/bash"
+    }
+  },
+  "tmux": {
+    "hooks-before-all": [
+      "npm run docker -- install",
+      "npm run docker -- backend-build"
+    ],
+    "devel": [
+      {
+        "name": "BE run",
+        "dir": "backend",
+        "cmd": "npm run docker -- backend-watch"
+      },
+      {
+        "name": "BE build",
+        "dir": "backend",
+        "cmd": "npm run docker -- backend-build-watch --skip-initial-build"
+      },
+      {
+        "name": "FE",
+        "dir": "frotend",
+        "cmd": "npm run docker -- frontend"
+      },
+      {
+        "name": "FE SSR",
+        "dir": "frontend",
+        "cmd": "npm run docker -- frontend-ssr"
+      }
+    ]
+  },
+  "dependencies": {
+    "docker-start": "0.0.7"
+  }
+}
