@@ -2,8 +2,7 @@ import express from 'express'
 
 import vm from 'vm'
 import settings from '../settings'
-import getFrontendFile from './get-frontend-file';
-
+import getFrontendFile from './get-frontend-file'
 
 const mksource = (src: string) => `
 ;(() => {
@@ -32,6 +31,9 @@ const mkscript = (src: string) => {
   return script.runInNewContext({
     require,
     console,
+    Buffer,
+    process,
+    global,
   })
 }
 
@@ -43,15 +45,19 @@ const loadScript = (() => {
     let map: any = false
 
     try {
-      file = await getFrontendFile('/index.ssr.js', true, 'utf-8')
-      map = await getFrontendFile('/index.ssr.js.map', true, 'utf-8')
+      file = await getFrontendFile('/dist/index.ssr.js', true, 'utf-8')
+      map = await getFrontendFile('/dist/index.ssr.js.map', true, 'utf-8')
     } catch (e) {
       console.log(e)
     }
     const ret = file ? mkscript(file) : null
 
-    if(file) {
-      ret.init((file: string) => console.log(file) || ((map && file === 'ssr/main.js') ? { url: file, map } : null))
+    if (file) {
+      ret.init(
+        (url: string) =>
+          console.log(url) ||
+          (map && url === 'ssr/main.js' ? { url, map } : null),
+      )
     }
 
     if (settings.serveStatic) cache = ret
@@ -62,7 +68,7 @@ const loadScript = (() => {
 const loadJSON = (() => {
   const cache: { [key: string]: any } = {}
   return async (file: string) => {
-    if(cache[file]) return cache[file]
+    if (cache[file]) return cache[file]
     let ret: any = null
 
     try {
@@ -77,12 +83,30 @@ const loadJSON = (() => {
   }
 })()
 
-const htmlMiddleware = () => (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  Promise.all([ loadScript(), loadJSON('/files.json') ]).then(([script, files]) => {
-    if(!script) throw new Error('Failed to load script')
-    if(!files) throw new Error('Failed to load files.json')
-    
-    return script.handleRequest({ req, res, files })
-  }).catch(e => next(e))
+const htmlMiddleware = () => (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) => {
+  Promise.all([
+    loadScript(),
+    loadJSON('/dist/files.json'),
+    loadJSON('/dist/react-loadable.json'),
+  ])
+    .then(([script, files, loadableJson]) => {
+      if (!script) throw new Error('Failed to load script')
+      if (!files) throw new Error('Failed to load files.json')
+      if (!loadableJson) throw new Error('Failed to load loadableJson')
+
+      return script.handleRequest({
+        req,
+        res,
+        files,
+        loadableJson,
+        schema: undefined,
+        context: {},
+      })
+    })
+    .catch(e => next(e))
 }
 export default htmlMiddleware

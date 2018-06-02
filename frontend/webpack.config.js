@@ -13,24 +13,17 @@ const rules = require('./webpack.rules')
 
 const configuration = mode => ({
   mode: PRODUCTION ? 'production' : 'development',
-  entry:
-    mode === 'ssr'
-      ? {
-          template: [`./src/template.tsx`],
-        }
-      : {
-          main: [`./src/index.tsx`],
-        },
+  entry: mode === 'ssr' ? `./src/index.ssr.tsx` : `./src/index.tsx`,
   context: __dirname,
   devtool: PRODUCTION || mode === 'ssr' ? 'source-map' : 'eval',
   target: mode === 'ssr' ? 'node' : 'web',
   bail: true,
   output: {
-    publicPath: '/',
+    publicPath: '/dist/',
     path: path.join(__dirname, 'dist'),
     filename:
       mode === 'ssr'
-        ? 'template.js'
+        ? 'index.ssr.js'
         : PRODUCTION
           ? '[name].[chunkhash].js'
           : '[name].js',

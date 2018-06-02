@@ -1,4 +1,4 @@
 const settings = {
-  serveStatic: false
+  serveStatic: false,
 }
 export default settings

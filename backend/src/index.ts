@@ -1,6 +1,6 @@
 import express, { ErrorRequestHandler } from 'express'
-import htmlMiddleware from './middleware/html';
-import distMiddleware from './middleware/dist';
+import htmlMiddleware from './middleware/html'
+import distMiddleware from './middleware/dist'
 
 const app = express()
 

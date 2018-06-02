@@ -14,14 +14,42 @@ import {
   createClient,
   isQueryComponent,
 } from 'utils/react-simple-graphql/react-simple-graphql'
-import Base from './base-template'
 import App from './app'
 
 const delimiter = '---app-delimiter---'
 
+const Scripts: React.SFC<{ list: string[] }> = ({ list }) => (
+  <>{list.map((src, id) => <script key={id + 2} src={src} defer />)}</>
+)
+
+const NotDev: React.SFC<{ dev: boolean }> = ({ dev, children }) =>
+  dev ? null : <>{children}</>
+
 /* this react component is server-side rendered on every request */
 const Template = ({ scripts }: { scripts: string[] }) => (
-  <Base title="Songbook" scripts={scripts} delimiter={delimiter} />
+  <html lang="en">
+    <head>
+      <meta charSet="utf-8" />
+      <title>Songbook</title>
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+      />
+
+      <link rel="shortcut icon" href="/favicon.ico" />
+
+      {delimiter}
+    </head>
+    <body>
+      {/* we can start loading vendor chunk before we SSR */}
+      <script src={scripts[0]} defer />
+
+      <div id="app" dangerouslySetInnerHTML={{ __html: delimiter }} />
+
+      {delimiter}
+      <Scripts list={scripts.slice(1)} />
+    </body>
+  </html>
 )
 
 function exportGlobalObject(name: string, value: any): string {
@@ -43,28 +71,22 @@ export default async ({
   schema,
   res,
   req,
-  DEVELOPMENT,
   loadableJson,
-  SITE,
   context,
 }: {
   files: { js: string[]; polyfillHash: string }
   schema: any
   res: Response
   req: Request
-  DEVELOPMENT: boolean
   loadableJson: any
-  SITE?: string
   context: any
 }) => {
   const link = new SchemaLink({ schema, context })
 
   const simpleClient = createClient({ link })
 
-  const hostname = (SITE || req.hostname).replace(/^test\./, '')
-  const url = `${req.protocol}://${SITE || req.hostname}${
-    req.url.split('?')[0]
-  }`
+  const hostname = req.hostname.replace(/^test\./, '')
+  const url = `${req.protocol}://${req.hostname}${req.url.split('?')[0]}`
 
   const markup = ReactDOMServer.renderToStaticMarkup(
     React.createElement(Template, {
@@ -79,8 +101,7 @@ export default async ({
   const loadableModules: string[] = []
   let simpleClientTag: string = '<!-- SSR is disabled -->'
   let errorTag = '<!-- ok -->'
-  const ssr =
-    (!DEVELOPMENT || !!/\?ssr/.exec(req.url)) && !/\?nossr/.exec(req.url)
+  const ssr = !/\?nossr/.exec(req.url)
   if (ssr) {
     // component which will be rendered
     const app = (
@@ -158,4 +179,5 @@ export default async ({
       parts[3],
     ].join('\n'),
   )
+  res.end()
 }
