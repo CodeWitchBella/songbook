@@ -7,7 +7,7 @@ import Routes from 'routes/routes'
 injectGlobal`
   html, body {
     font-family: Cantarell;
-    font-size: 3.7mm;
+    font-size: 2.545mm;
     margin: 0;
     padding: 0;
   }

@@ -11,9 +11,14 @@ const Placeholder = () => <div>Načítám píseň</div>
 const line = (hasChords: boolean) =>
   hasChords
     ? css`
-        margin-top: 1em;
+        height: 2.3em;
+        vertical-align: baseline;
+        padding-top: 1em;
       `
-    : css``
+    : css`
+        height: 1.3em;
+        vertical-align: baseline;
+      `
 
 const Chord = styled.span`
   position: ${(props: { sp?: boolean }) =>
@@ -45,7 +50,7 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
 }
 
 const paragraph = css`
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
 `
 
 const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
@@ -55,7 +60,7 @@ const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
 )
 
 const SongLook = ({ song, number }: { song: SongType; number?: number }) => (
-  <Page>
+  <Page left={typeof number === 'number' && number % 2 === 0}>
     <SongHeader
       author={song.author}
       title={

@@ -5,7 +5,8 @@ const header = css`
   display: flex;
   font-weight: bold;
   justify-content: space-between;
-  padding-bottom: 1em;
+  font-size: 3mm;
+  padding-bottom: 6mm;
 `
 
 const SongHeader = ({ title, author }: { title: string; author: string }) => (

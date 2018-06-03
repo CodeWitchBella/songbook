@@ -3,54 +3,51 @@ import styled, { css } from 'react-emotion'
 import * as page from 'utils/page'
 
 const sizer = css`
-  display: flex;
-  width: 100%;
-  height: 100%;
+  @media not print {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+  }
   background: papayawhip;
-  justify-content: center;
-  align-items: center;
 `
 
-const songClass = (scale: number) => css`
+const songClass = (left: boolean) => css`
   position: relative;
-  background: grey;
-  width: ${page.width};
-  height: ${page.height};
-  padding: ${page.margin.top} ${page.margin.outer} ${page.margin.top}
-    ${page.margin.inner};
+  background: white;
+
+  width: calc(${page.width} - ${page.margin.inner} - ${page.margin.outer});
+  height: calc(${page.height} - ${page.margin.top} - ${page.margin.bottom});
+
+  margin: ${left
+    ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
+    ${page.margin.outer}`
+    : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
+    ${page.margin.inner}`};
   @media print {
-    padding: 0;
+    margin: 0;
   }
-  @media not print {
-    transform: scale(${scale});
-  }
+`
+
+const breakAfter = css`
+  page-break-after: always;
 `
 
 const marginDisplay = css`
-  background: white;
-  width: 100%;
-  height: 100%;
+  background: grey;
 `
 
-const PageBreak = styled.div`
-  page-break-after: always;
-  @media not print {
-    display: block;
-    height: 0mm;
-  }
-  @media print {
-    color: transparent;
-  }
-`
-
-const Page: React.SFC<{}> = ({ children }) => (
+const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
   <>
     <div className={sizer}>
-      <div className={songClass(1)}>
-        <div className={marginDisplay}>{children}</div>
+      <div className={marginDisplay}>
+        <div className={songClass(!!left)}>
+          {children}
+          <div className={breakAfter} />
+        </div>
       </div>
     </div>
-    <PageBreak>--- page break ---</PageBreak>
   </>
 )
 export default Page
