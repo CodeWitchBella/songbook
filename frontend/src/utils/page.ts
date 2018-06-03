@@ -7,3 +7,4 @@ export const margin = {
   outer: '12.4mm',
   inner: '18.8mm',
 }
+export const innerRatio = (105 - 12.4 - 18.8) / (148 - 6 - 7.8)

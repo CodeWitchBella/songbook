@@ -15,14 +15,19 @@ const sizer = (print: boolean) => css`
   background: papayawhip;
 `
 
+const width = `calc(${page.width} - ${page.margin.inner} - ${
+  page.margin.outer
+})`
+const height = `calc(
+    ${page.height} - ${page.margin.top} - ${page.margin.bottom} - 1px
+  )`
+
 const songClass = (left: boolean, print: boolean) => css`
   position: relative;
   background: white;
 
-  width: calc(${page.width} - ${page.margin.inner} - ${page.margin.outer});
-  height: calc(
-    ${page.height} - ${page.margin.top} - ${page.margin.bottom} - 1px
-  );
+  width: ${width};
+  height: ${height};
   overflow-x: hidden;
   page-break-after: always;
 
@@ -39,6 +44,11 @@ const songClass = (left: boolean, print: boolean) => css`
           padding: 1em;
           width: calc(100% - 2em);
           height: calc(100% - 2em);
+          @media (min-width: ${page.innerRatio * 100}vh) {
+            font-size: 1.9vh;
+            width: ${page.innerRatio * 100}vh;
+            margin: 0 auto;
+          }
           font-size: 3vw;
         `};
   }
@@ -59,32 +69,10 @@ const marginDisplay = (print: boolean) =>
         }
       `
 
-const previewToggle = css`
-  @media not print {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    z-index: 2;
-  }
-  @media print {
-    display: none;
-  }
-`
-const PreviewToggle = () => (
-  <PrintPreviewToggle>
-    {toggle => (
-      <button className={previewToggle} onClick={toggle}>
-        Togle print preview
-      </button>
-    )}
-  </PrintPreviewToggle>
-)
-
 const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
   <PrintPreview>
     {print => (
       <div className={sizer(print)}>
-        <PreviewToggle />
         <div className={marginDisplay(print)}>
           <div className={songClass(!!left, print)}>{children}</div>
         </div>

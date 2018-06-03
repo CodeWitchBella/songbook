@@ -4,6 +4,7 @@ import Print from 'sections/print/print'
 import { injectGlobal, css } from 'react-emotion'
 import { document, window } from 'utils/globals'
 import * as page from 'utils/page'
+import PreviewToggle from 'components/preview-toggle'
 
 const { margin } = page
 
@@ -63,8 +64,13 @@ class PrintRoute extends React.Component<{ tag: string }> {
   }
   render() {
     return (
-      <div>
+      <div
+        css={`
+          position: relative;
+        `}
+      >
         <Print tag={this.props.tag} />
+        <PreviewToggle />
       </div>
     )
   }
