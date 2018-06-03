@@ -1,5 +1,5 @@
 {
-  "name": "mice-backend",
+  "name": "songbook-backend",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
