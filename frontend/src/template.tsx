@@ -94,6 +94,7 @@ export default async ({
     }),
   )
   const parts = markup.split(delimiter)
+  res.write('<!DOCTYPE html>\n')
   res.write(parts[0])
 
   await Loadable.preloadAll()
