@@ -11,11 +11,15 @@ injectGlobal`
     font-size: 2.542mm;
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    @media not print {
+      width: 100%;
+      height: 100%;
+    }
   }
   #app {
-    overflow: auto;
+    @media not print {
+      overflow: auto;
+    }
   }
 `
 

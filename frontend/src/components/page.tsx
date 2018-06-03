@@ -61,10 +61,12 @@ const marginDisplay = (print: boolean) =>
       `
 
 const previewToggle = css`
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  z-index: 2;
+  @media not print {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 2;
+  }
   @media print {
     display: none;
   }
