@@ -6,11 +6,16 @@ import { PrintPreviewProvider } from 'containers/print-preview'
 
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
-  html, body {
+  html, body, #app {
     font-family: Cantarell;
     font-size: 2.542mm;
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #app {
+    overflow: auto;
   }
 `
 

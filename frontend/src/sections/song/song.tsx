@@ -46,7 +46,7 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
           ) : (
             <Chord>{l.ch}</Chord>
           )}
-          {l.text.replace(/ $/, '\u00a0')}
+          {l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')}
         </span>
       ))}
       <br />

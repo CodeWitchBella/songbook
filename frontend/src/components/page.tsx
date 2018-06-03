@@ -5,6 +5,7 @@ import { PrintPreview, PrintPreviewToggle } from 'containers/print-preview'
 
 const sizer = (print: boolean) => css`
   @media not print {
+    position: relative;
     display: flex;
     width: 100%;
     height: 100%;
@@ -22,21 +23,22 @@ const songClass = (left: boolean, print: boolean) => css`
   height: calc(${page.height} - ${page.margin.top} - ${page.margin.bottom});
   overflow-x: hidden;
 
-  ${print
-    ? css`
-        margin: ${left
-          ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
+  @media not print {
+    ${print
+      ? css`
+          margin: ${left
+            ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
     ${page.margin.outer}`
-          : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
+            : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
     ${page.margin.inner}`};
-      `
-    : css`
-        @media not print {
-          width: 100%;
-          height: 100%;
+        `
+      : css`
+          padding: 1em;
+          width: calc(100% - 2em);
+          height: calc(100% - 2em);
           font-size: 3vw;
-        }
-      `};
+        `};
+  }
   @media print {
     margin: 0;
   }
@@ -52,14 +54,17 @@ const marginDisplay = (print: boolean) =>
         background: grey;
       `
     : css`
-        width: 100%;
-        height: 100%;
+        @media not print {
+          width: 100%;
+          height: 100%;
+        }
       `
 
 const previewToggle = css`
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
   @media print {
     display: none;
   }

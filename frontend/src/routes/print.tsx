@@ -31,7 +31,7 @@ const body = css`
   }
 `
 
-const bodyOnly = css`
+const appScroll = css`
   scroll-snap-type: mandatory;
 
   scroll-snap-destination: 0% 100%;
@@ -52,13 +52,13 @@ class PrintRoute extends React.Component<{ tag: string }> {
   componentDidMount() {
     bodyHtml(el => el.classList.add(body))
     if (document) {
-      document.body.classList.add(bodyOnly)
+      document.getElementById('app')!.classList.add(appScroll)
     }
   }
   componentWillUnmount() {
     bodyHtml(el => el.classList.remove(body))
     if (document) {
-      document.body.classList.remove(bodyOnly)
+      document.getElementById('app')!.classList.remove(appScroll)
     }
   }
   render() {

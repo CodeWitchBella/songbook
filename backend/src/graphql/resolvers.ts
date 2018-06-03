@@ -2,22 +2,33 @@ import fs from 'fs'
 import path from 'path'
 
 const songDir = path.join(__dirname, '../../src/songs/')
-const songs = fs
-  .readdirSync(songDir)
-  .map(fname => ({
-    fname,
-    content: fs.readFileSync(path.join(songDir, fname), 'utf-8'),
-  }))
-  .map(({ fname, content }) => {
-    const lines = content.split('\n')
-    return {
-      id: fname.replace(/\.song$/, ''),
-      author: lines[0],
-      title: lines[1],
-      tags: lines[2].split(',').filter(a => !!a),
-      textWithChords: content.substring(content.indexOf('\n\n') + 2),
-    }
-  })
+
+const PRODUCTION = process.env.NODE_ENV === 'PRODUCTION'
+
+const cacheInProd = <T extends Object>(load: () => T): (() => T) => {
+  if (!PRODUCTION) return load
+  const val = load()
+  return () => val
+}
+
+const songs = cacheInProd(() =>
+  fs
+    .readdirSync(songDir)
+    .map(fname => ({
+      fname,
+      content: fs.readFileSync(path.join(songDir, fname), 'utf-8'),
+    }))
+    .map(({ fname, content }) => {
+      const lines = content.split('\n')
+      return {
+        id: fname.replace(/\.song$/, ''),
+        author: lines[0],
+        title: lines[1],
+        tags: lines[2].split(',').filter(a => !!a),
+        textWithChords: content.substring(content.indexOf('\n\n') + 2),
+      }
+    }),
+)
 
 const unique = () => {
   const found: string[] = []
@@ -30,24 +41,26 @@ const unique = () => {
   }
 }
 
-const tags = songs
-  .map(s => s.tags)
-  .reduce((p, c) => p.concat(c), [])
-  .filter(unique())
-  .concat('all')
-  .sort()
+const tags = cacheInProd(() =>
+  songs()
+    .map(s => s.tags)
+    .reduce((p, c) => p.concat(c), [])
+    .filter(unique())
+    .concat('all')
+    .sort(),
+)
 
 const resolvers = {
   Query: {
     songs: (_: any, { tag }: { tag: string }) => {
-      const list = songs.filter(s => tag === 'all' || s.tags.includes(tag))
+      const list = songs().filter(s => tag === 'all' || s.tags.includes(tag))
       return {
         total: list.length,
         list,
       }
     },
-    tags: () => tags,
-    song: (_: any, { id }: { id: string }) => songs.find(s => s.id === id),
+    tags,
+    song: (_: any, { id }: { id: string }) => songs().find(s => s.id === id),
   },
 }
 export default resolvers
