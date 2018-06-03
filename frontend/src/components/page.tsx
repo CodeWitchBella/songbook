@@ -20,8 +20,11 @@ const songClass = (left: boolean, print: boolean) => css`
   background: white;
 
   width: calc(${page.width} - ${page.margin.inner} - ${page.margin.outer});
-  height: calc(${page.height} - ${page.margin.top} - ${page.margin.bottom});
+  height: calc(
+    ${page.height} - ${page.margin.top} - ${page.margin.bottom} - 1px
+  );
   overflow-x: hidden;
+  page-break-after: always;
 
   @media not print {
     ${print
@@ -42,10 +45,6 @@ const songClass = (left: boolean, print: boolean) => css`
   @media print {
     margin: 0;
   }
-`
-
-const breakAfter = css`
-  page-break-after: always;
 `
 
 const marginDisplay = (print: boolean) =>
@@ -87,10 +86,7 @@ const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
       <div className={sizer(print)}>
         <PreviewToggle />
         <div className={marginDisplay(print)}>
-          <div className={songClass(!!left, print)}>
-            {children}
-            <div className={breakAfter} />
-          </div>
+          <div className={songClass(!!left, print)}>{children}</div>
         </div>
       </div>
     )}
