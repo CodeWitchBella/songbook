@@ -1,8 +1,9 @@
 import React from 'react'
 import styled, { css } from 'react-emotion'
 import * as page from 'utils/page'
+import { PrintPreview, PrintPreviewToggle } from 'containers/print-preview'
 
-const sizer = css`
+const sizer = (print: boolean) => css`
   @media not print {
     display: flex;
     width: 100%;
@@ -13,7 +14,7 @@ const sizer = css`
   background: papayawhip;
 `
 
-const songClass = (left: boolean) => css`
+const songClass = (left: boolean, print: boolean) => css`
   position: relative;
   background: white;
 
@@ -21,11 +22,21 @@ const songClass = (left: boolean) => css`
   height: calc(${page.height} - ${page.margin.top} - ${page.margin.bottom});
   overflow-x: hidden;
 
-  margin: ${left
-    ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
+  ${print
+    ? css`
+        margin: ${left
+          ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
     ${page.margin.outer}`
-    : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
+          : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
     ${page.margin.inner}`};
+      `
+    : css`
+        @media not print {
+          width: 100%;
+          height: 100%;
+          font-size: 3vw;
+        }
+      `};
   @media print {
     margin: 0;
   }
@@ -35,20 +46,47 @@ const breakAfter = css`
   page-break-after: always;
 `
 
-const marginDisplay = css`
-  background: grey;
+const marginDisplay = (print: boolean) =>
+  print
+    ? css`
+        background: grey;
+      `
+    : css`
+        width: 100%;
+        height: 100%;
+      `
+
+const previewToggle = css`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  @media print {
+    display: none;
+  }
 `
+const PreviewToggle = () => (
+  <PrintPreviewToggle>
+    {toggle => (
+      <button className={previewToggle} onClick={toggle}>
+        Togle print preview
+      </button>
+    )}
+  </PrintPreviewToggle>
+)
 
 const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
-  <>
-    <div className={sizer}>
-      <div className={marginDisplay}>
-        <div className={songClass(!!left)}>
-          {children}
-          <div className={breakAfter} />
+  <PrintPreview>
+    {print => (
+      <div className={sizer(print)}>
+        <PreviewToggle />
+        <div className={marginDisplay(print)}>
+          <div className={songClass(!!left, print)}>
+            {children}
+            <div className={breakAfter} />
+          </div>
         </div>
       </div>
-    </div>
-  </>
+    )}
+  </PrintPreview>
 )
 export default Page
