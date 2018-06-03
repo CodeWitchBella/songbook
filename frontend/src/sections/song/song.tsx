@@ -11,12 +11,16 @@ const Placeholder = () => <div>Načítám píseň</div>
 const line = (hasChords: boolean) =>
   hasChords
     ? css`
-        height: 2.3em;
+        line-height: 2.3em;
         vertical-align: baseline;
-        padding-top: 1em;
+        > * {
+          display: inline-block;
+          position: relative;
+          transform: translateY(0.5em);
+        }
       `
     : css`
-        height: 1.3em;
+        line-height: 1.3em;
         vertical-align: baseline;
       `
 
@@ -26,6 +30,7 @@ const Chord = styled.span`
   transform: translateY(-1em);
   top: ${({ sp }) => (sp ? '-1em' : undefined)};
   font-weight: bold;
+  width: 100vw;
 `
 
 const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
@@ -33,7 +38,7 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
   const hasChords = parsed.content.some(p => !!p.ch)
   return (
     <div className={line(hasChords)}>
-      {parsed.tag && <b>{parsed.tag} </b>}
+      {parsed.tag && <b>{parsed.tag}&nbsp;</b>}
       {parsed.content.map((l, i) => (
         <span key={i}>
           {l.ch && l.ch.startsWith('_') ? (
@@ -41,7 +46,7 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
           ) : (
             <Chord>{l.ch}</Chord>
           )}
-          {l.text}
+          {l.text.replace(/ $/, '\u00a0')}
         </span>
       ))}
       <br />

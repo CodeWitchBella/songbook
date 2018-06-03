@@ -32,12 +32,10 @@ const body = css`
 `
 
 const bodyOnly = css`
-  /*
   scroll-snap-type: mandatory;
 
   scroll-snap-destination: 0% 100%;
   scroll-snap-points-y: repeat(100%);
-  */
 `
 
 function bodyHtml(cb: (el: Element) => void) {

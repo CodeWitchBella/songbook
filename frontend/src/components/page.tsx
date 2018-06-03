@@ -19,6 +19,7 @@ const songClass = (left: boolean) => css`
 
   width: calc(${page.width} - ${page.margin.inner} - ${page.margin.outer});
   height: calc(${page.height} - ${page.margin.top} - ${page.margin.bottom});
+  overflow-x: hidden;
 
   margin: ${left
     ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
