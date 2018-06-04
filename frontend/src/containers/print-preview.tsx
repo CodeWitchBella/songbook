@@ -29,9 +29,9 @@ export const PrintPreview: React.SFC<{
 )
 
 export const PrintPreviewToggle: React.SFC<{
-  children: (toggle: () => void) => React.ReactNode
+  children: (toggle: () => void, value: boolean) => React.ReactNode
 }> = ({ children }) => (
   <context.Consumer>
-    {({ value, set }) => children(() => set(!value))}
+    {({ value, set }) => children(() => set(!value), value)}
   </context.Consumer>
 )
