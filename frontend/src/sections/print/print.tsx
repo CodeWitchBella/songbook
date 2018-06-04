@@ -25,13 +25,19 @@ const Print = ({ tag }: { tag: string }) => (
               .reduce(
                 (prev, cur) =>
                   prev.concat(
-                    cur.parsed.map(page => ({
+                    cur.parsed.map((page, i) => ({
                       data: cur.data,
                       page,
                       number: cur.number,
+                      key: `${cur.data.id}-${i}`,
                     })),
                   ),
-                [] as { data: SongType; page: Paragraph[]; number: number }[],
+                [] as {
+                  data: SongType
+                  page: Paragraph[]
+                  number: number
+                  key: string
+                }[],
               )
               .map((s, i) => (
                 <SongPage
@@ -39,7 +45,7 @@ const Print = ({ tag }: { tag: string }) => (
                   song={s.data}
                   number={s.number + 1}
                   pageNumber={i + 1}
-                  key={s.data.id}
+                  key={s.key}
                 />
               ))
             return (
