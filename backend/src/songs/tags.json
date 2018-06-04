@@ -1,0 +1,14 @@
+{
+  "ch": {
+    "name": "Children songbook"
+  },
+  "e": {
+    "name": "Elder songbook"
+  },
+  "o": {
+    "name": "Others"
+  },
+  "all": {
+    "name": "All songs"
+  }
+}

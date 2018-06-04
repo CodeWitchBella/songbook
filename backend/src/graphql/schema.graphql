@@ -1,7 +1,12 @@
 type Query {
-  tags: [String!]!
-  songs(tag: String!): SongPage!
+  tags: [Tag!]!
+  songs(tag: ID!): SongPage!
   song(id: ID!): Song
+}
+
+type Tag {
+  id: ID!
+  name: String!
 }
 
 type Song {
@@ -9,7 +14,7 @@ type Song {
   author: String!
   title: String!
   textWithChords: String!
-  tags: [String!]!
+  tags: [Tag!]!
 }
 
 type SongPage {

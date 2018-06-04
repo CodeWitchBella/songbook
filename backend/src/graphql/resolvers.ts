@@ -41,14 +41,23 @@ const unique = () => {
   }
 }
 
-const tags = cacheInProd(() =>
-  songs()
+const tags = cacheInProd(() => {
+  const tagMap = JSON.parse(
+    fs.readFileSync(path.join(songDir, 'tags.json'), 'utf-8'),
+  )
+  return songs()
     .map(s => s.tags)
     .reduce((p, c) => p.concat(c), [])
     .filter(unique())
     .concat('all')
-    .sort(),
-)
+    .sort()
+    .map(tag => {
+      const t = tagMap[tag]
+      if (!t) return t
+      return { id: tag, ...t }
+    })
+    .filter(a => !!a)
+})
 
 const resolvers = {
   Query: {

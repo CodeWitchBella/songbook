@@ -4,7 +4,7 @@ import gql from 'graphql-tag'
 import * as t from './__generated__/songs'
 
 const SongsContainer = query<t.songs, t.songsVariables>(gql`
-  query songs($tag: String!) {
+  query songs($tag: ID!) {
     songs(tag: $tag) {
       total
       list {
