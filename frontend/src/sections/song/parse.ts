@@ -12,6 +12,8 @@ function parseLine(
 
   let first = true
 
+  const rreg = /^R([0-9]?):/
+  const rmatch = rreg.exec(line)
   if (line.startsWith('S:')) {
     tag = 'S:'
     line = line.substring(2).trim()
@@ -20,9 +22,9 @@ function parseLine(
       line = line.substring(match[0].length).trim()
       tag += match[0]
     }
-  } else if (line.startsWith('R:')) {
-    tag = 'R:'
-    line = line.substring(2).trim()
+  } else if (rmatch) {
+    tag = `R${rmatch[1]}.`
+    line = line.replace(rreg, '').trim()
   }
 
   if (!line.includes('[')) {
