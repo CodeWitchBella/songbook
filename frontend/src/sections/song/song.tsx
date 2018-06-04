@@ -1,23 +1,20 @@
 import React from 'react'
-import SongContainer, { Song as SongType } from 'containers/song'
 import styled, { css } from 'react-emotion'
 import * as page from 'utils/page'
 import Page from 'components/page'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
+import { Song } from 'containers/store/store'
 
 const Placeholder = () => <div>Načítám píseň</div>
 
-const Song = ({ id }: { id: string }) => (
-  <SongContainer variables={{ id }} placeholder={Placeholder}>
+const SongSection = ({ id }: { id: string }) => (
+  <Song id={id}>
     {song =>
-      !song.data || !song.data.song ? null : (
-        <SongLook
-          song={song.data.song}
-          parsed={parser.parseSong(song.data.song.textWithChords)}
-        />
+      !song ? null : (
+        <SongLook song={song} parsed={parser.parseSong(song.textWithChords)} />
       )
     }
-  </SongContainer>
+  </Song>
 )
-export default Song
+export default SongSection

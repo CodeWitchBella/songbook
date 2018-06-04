@@ -33,28 +33,32 @@ const Tag = Loadable({
   webpack: () => [require.resolveWeak('./tag')],
 })
 
-export default () => (
-  <Switch>
-    <Route path="/" exact>
-      <Home />
-    </Route>
-    <Route
-      path="/song/:id"
-      exact
-      render={({ match }) => <Song id={match.params.id} />}
-    />
-    <Route
-      path="/print/:tag"
-      exact
-      render={({ match }) => <Print tag={match.params.tag} />}
-    />
-    <Route
-      path="/tag/:tag"
-      exact
-      render={({ match }) => <Tag tag={match.params.tag} />}
-    />
-    <Route>
-      <NotFound />
-    </Route>
-  </Switch>
-)
+export default class Routes extends React.PureComponent {
+  render() {
+    return (
+      <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
+        <Route
+          path="/song/:id"
+          exact
+          render={({ match }) => <Song id={match.params.id} />}
+        />
+        <Route
+          path="/print/:tag"
+          exact
+          render={({ match }) => <Print tag={match.params.tag} />}
+        />
+        <Route
+          path="/tag/:tag"
+          exact
+          render={({ match }) => <Tag tag={match.params.tag} />}
+        />
+        <Route>
+          <NotFound />
+        </Route>
+      </Switch>
+    )
+  }
+}

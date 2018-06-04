@@ -1,5 +1,5 @@
 import React from 'react'
-import TagsContainer from 'containers/tags'
+import { TagList } from 'containers/store/store'
 import { css } from 'react-emotion'
 import { primary } from 'utils/colors'
 
@@ -37,15 +37,13 @@ const Tag = ({ tag }: { tag: { name: string; id: string } }) => (
   </a>
 )
 
-const TagList = () => (
-  <TagsContainer placeholder={Placeholder}>
-    {songs =>
-      !songs.data ? null : (
-        <nav className={tagContainer}>
-          {songs.data.tags.map((tag, i) => <Tag key={i} tag={tag} />)}
-        </nav>
-      )
-    }
-  </TagsContainer>
+const TagListSection = () => (
+  <TagList>
+    {tags => (
+      <nav className={tagContainer}>
+        {tags.map((tag, i) => <Tag key={i} tag={tag} />)}
+      </nav>
+    )}
+  </TagList>
 )
-export default TagList
+export default TagListSection

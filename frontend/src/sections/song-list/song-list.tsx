@@ -1,6 +1,6 @@
 import React from 'react'
-import SongsContainer, { Song as SongType } from 'containers/songs'
 import { css } from 'react-emotion'
+import { SongType, SongsInTag } from 'containers/store/store'
 
 const Placeholder = () => <div>Načítám seznam písní</div>
 
@@ -45,7 +45,11 @@ const page = css`
   height: 100%;
 `
 
-const Song = ({ song }: { song: SongType }) => (
+const Song = ({
+  song,
+}: {
+  song: { id: string; title: string; author: string }
+}) => (
   <div className={songClass}>
     <a href={`/song/${song.id}`}>
       {song.title} - {song.author}
@@ -54,19 +58,19 @@ const Song = ({ song }: { song: SongType }) => (
 )
 
 const SongList = ({ tag }: { tag: string }) => (
-  <SongsContainer placeholder={Placeholder} variables={{ tag }}>
+  <SongsInTag tag={tag}>
     {songs =>
-      !songs.data ? null : (
+      !songs ? null : (
         <nav className={page}>
           <a className={print} href={`/print/${tag}`}>
             Print all
           </a>
           <div className={listContainer}>
-            {songs.data.songs.list.map(s => <Song key={s.id} song={s} />)}
+            {songs.map(s => <Song key={s.id} song={s} />)}
           </div>
         </nav>
       )
     }
-  </SongsContainer>
+  </SongsInTag>
 )
 export default SongList

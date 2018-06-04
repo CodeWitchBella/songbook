@@ -1,12 +1,13 @@
 type Query {
   tags: [Tag!]!
-  songs(tag: ID!): SongPage!
-  song(id: ID!): Song
+  songs(list: [ID!]!): [Song]!
+  tag(id: ID!): Tag 
 }
 
 type Tag {
   id: ID!
   name: String!
+  songs: [Song!]!
 }
 
 type SongMetadata {
@@ -20,9 +21,4 @@ type Song {
   textWithChords: String!
   tags: [Tag!]!
   metadata: SongMetadata!
-}
-
-type SongPage {
-  total: Int!
-  list: [Song!]!
 }

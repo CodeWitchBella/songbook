@@ -1,5 +1,5 @@
 import React from 'react'
-import { Song } from 'containers/songs'
+import { SongType as Song } from 'containers/store/store'
 import Page from 'components/page'
 import styled from 'react-emotion'
 

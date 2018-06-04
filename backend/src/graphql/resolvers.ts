@@ -65,15 +65,18 @@ const tags = cacheInProd(() => {
 
 const resolvers = {
   Query: {
-    songs: (_: any, { tag }: { tag: string }) => {
-      const list = songs().filter(s => tag === 'all' || s.tags.includes(tag))
-      return {
-        total: list.length,
-        list,
-      }
-    },
     tags,
-    song: (_: any, { id }: { id: string }) => songs().find(s => s.id === id),
+    tag: (_: any, { id }: { id: string }) => tags().find(t => t.id === id),
+    songs: (_: any, { list }: { list: string[] }) => {
+      const all = songs()
+      return list.map(id => all.find(s => s.id === id))
+    },
+  },
+  Tag: {
+    songs: ({ id }: { id: string }) => {
+      if (id === 'all') return songs()
+      return songs().filter(s => s.tags.includes(id))
+    },
   },
 }
 export default resolvers
