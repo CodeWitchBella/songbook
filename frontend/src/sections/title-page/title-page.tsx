@@ -34,7 +34,7 @@ const TitleLine2 = styled.div`
 `
 
 const TitlePage = () => (
-  <Page>
+  <Page left>
     <Container>
       <ImageContainer>
         <Image src={image} />
