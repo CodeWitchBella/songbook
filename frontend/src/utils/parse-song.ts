@@ -91,14 +91,32 @@ function parseParagraph(
   }
 }
 
-export function parseSong(song: string): Paragraph[] {
-  let counter = 0
+function parsePage(
+  song: string,
+  pCounterInit: number,
+): { page: Paragraph[]; pCounter: number } {
+  let pCounter = pCounterInit
+  return {
+    page: song
+      .trim()
+      .split(/\n\n+/)
+      .map(l => {
+        const ret = parseParagraph(l, pCounter)
+        pCounter = ret.pCounter
+        return ret.p
+      }),
+    pCounter,
+  }
+}
+
+export function parseSong(song: string): Paragraph[][] {
+  let pCounter = 0
   return song
     .trim()
-    .split(/\n\n+/)
-    .map(l => {
-      const ret = parseParagraph(l, counter)
-      counter = ret.pCounter
-      return ret.p
+    .split('--- page break ---')
+    .map(page => {
+      const ret = parsePage(page, pCounter)
+      pCounter = ret.pCounter
+      return ret.page
     })
 }
