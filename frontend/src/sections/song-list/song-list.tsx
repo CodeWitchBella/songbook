@@ -57,14 +57,14 @@ const SongList = ({ tag }: { tag: string }) => (
   <SongsContainer placeholder={Placeholder} variables={{ tag }}>
     {songs =>
       !songs.data ? null : (
-        <div className={page}>
+        <nav className={page}>
           <a className={print} href={`/print/${tag}`}>
             Print all
           </a>
           <div className={listContainer}>
             {songs.data.songs.list.map(s => <Song key={s.id} song={s} />)}
           </div>
-        </div>
+        </nav>
       )
     }
   </SongsContainer>

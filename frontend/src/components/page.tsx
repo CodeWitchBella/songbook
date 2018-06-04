@@ -76,11 +76,11 @@ const marginDisplay = (print: boolean) =>
 const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
   <PrintPreview>
     {print => (
-      <div className={sizer(print)}>
+      <section className={sizer(print)}>
         <div className={marginDisplay(print)}>
           <div className={songClass(!!left, print)}>{children}</div>
         </div>
-      </div>
+      </section>
     )}
   </PrintPreview>
 )

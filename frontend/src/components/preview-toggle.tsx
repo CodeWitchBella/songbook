@@ -62,11 +62,11 @@ const PreviewToggle = () => (
   <PrintPreviewToggle>
     {(toggle, value) => (
       <label className={toggleContainer}>
-        <div>Print preview:</div>
-        <div className={previewToggle}>
+        <span>Print preview:</span>
+        <span className={previewToggle}>
           <input type="checkbox" checked={value} onChange={toggle} />
           <div />
-        </div>
+        </span>
       </label>
     )}
   </PrintPreviewToggle>

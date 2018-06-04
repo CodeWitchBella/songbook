@@ -37,7 +37,7 @@ const TitlePage = () => (
   <Page left>
     <Container>
       <ImageContainer>
-        <Image src={image} />
+        <Image src={image} alt="title image" />
       </ImageContainer>
       <Title>
         <TitleLine1>Transcontinental</TitleLine1>

@@ -10,9 +10,9 @@ const header = css`
 `
 
 const SongHeader = ({ title, author }: { title: string; author: string }) => (
-  <div className={header}>
+  <h2 className={header}>
     <div>{title}</div>
     <div>{author}</div>
-  </div>
+  </h2>
 )
 export default SongHeader

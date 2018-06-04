@@ -27,7 +27,7 @@ const NotDev: React.SFC<{ dev: boolean }> = ({ dev, children }) =>
 
 /* this react component is server-side rendered on every request */
 const Template = ({ scripts }: { scripts: string[] }) => (
-  <html lang="en">
+  <html>
     <head>
       <meta charSet="utf-8" />
       <title>Songbook</title>

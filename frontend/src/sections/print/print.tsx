@@ -45,7 +45,7 @@ const Print = ({ tag }: { tag: string }) => (
             return (
               <div>
                 <TitlePage />
-                {pages}
+                <main>{pages}</main>
                 <Contents
                   list={songs.data.songs.list}
                   left={pages.length % 2 !== 0}

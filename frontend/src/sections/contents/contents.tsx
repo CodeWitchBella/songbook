@@ -3,7 +3,7 @@ import { Song } from 'containers/songs'
 import Page from 'components/page'
 import styled from 'react-emotion'
 
-const Container = styled.div`
+const Container = styled.nav`
   display: flex;
   height: 100%;
   flex-wrap: wrap;
@@ -39,7 +39,7 @@ const Contents = ({ list, left }: { list: Song[]; left?: boolean }) => (
   <Page left={left}>
     <Container>
       <Col>
-        <Spacer space="8em" />
+        <Spacer space="6.7em" />
         {list.slice(0, 40).map(mapSong())}
       </Col>
       <Col>

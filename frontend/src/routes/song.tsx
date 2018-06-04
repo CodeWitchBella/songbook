@@ -3,8 +3,8 @@ import { hot } from 'react-hot-loader'
 import Song from 'sections/song/song'
 
 const SongRoute = ({ id }: { id: string }) => (
-  <div>
+  <main>
     <Song id={id} />
-  </div>
+  </main>
 )
 export default hot(module)(SongRoute)

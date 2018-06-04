@@ -41,9 +41,9 @@ const TagList = () => (
   <TagsContainer placeholder={Placeholder}>
     {songs =>
       !songs.data ? null : (
-        <div className={tagContainer}>
+        <nav className={tagContainer}>
           {songs.data.tags.map((tag, i) => <Tag key={i} tag={tag} />)}
-        </div>
+        </nav>
       )
     }
   </TagsContainer>

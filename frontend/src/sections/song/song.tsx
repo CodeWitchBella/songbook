@@ -8,12 +8,11 @@ import * as parser from 'utils/parse-song'
 
 const Placeholder = () => <div>Načítám píseň</div>
 
-const Song = ({ id, number }: { id: string; number?: number }) => (
+const Song = ({ id }: { id: string }) => (
   <SongContainer variables={{ id }} placeholder={Placeholder}>
     {song =>
       !song.data || !song.data.song ? null : (
         <SongLook
-          number={number}
           song={song.data.song}
           parsed={parser.parseSong(song.data.song.textWithChords)}
         />
