@@ -1,6 +1,7 @@
 import React from 'react'
 import { css } from 'react-emotion'
 import { SongType, SongsInTag } from 'containers/store/store'
+import { Link } from 'react-router-dom'
 
 const Placeholder = () => <div>Načítám seznam písní</div>
 
@@ -51,9 +52,9 @@ const Song = ({
   song: { id: string; title: string; author: string }
 }) => (
   <div className={songClass}>
-    <a href={`/song/${song.id}`}>
+    <Link to={`/song/${song.id}`}>
       {song.title} - {song.author}
-    </a>
+    </Link>
   </div>
 )
 
@@ -62,9 +63,9 @@ const SongList = ({ tag }: { tag: string }) => (
     {songs =>
       !songs ? null : (
         <nav className={page}>
-          <a className={print} href={`/print/${tag}`}>
+          <Link className={print} to={`/print/${tag}`}>
             Print all
-          </a>
+          </Link>
           <div className={listContainer}>
             {songs.map(s => <Song key={s.id} song={s} />)}
           </div>

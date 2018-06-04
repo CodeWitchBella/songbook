@@ -1,4 +1,5 @@
 import DataLoader from 'dataloader'
+import localForage from 'localforage'
 import {
   fullSongs,
   fullSongsVariables,
@@ -16,9 +17,17 @@ type Querier<R, V> = V extends undefined
 const query = <R, V = undefined>({
   q,
   opName,
+  fallback,
+  after,
 }: {
   q: string
   opName: string
+  after: V extends undefined
+    ? (value: R) => Promise<R> | R
+    : (value: R, variables: V) => Promise<R> | R
+  fallback: V extends undefined
+    ? () => Promise<R> | R
+    : (variables: V) => Promise<R> | R
 }): Querier<R, V> =>
   ((variables?: V): Promise<R> =>
     fetch('/graphql', {
@@ -36,7 +45,12 @@ const query = <R, V = undefined>({
       mode: 'cors',
     })
       .then(r => r.json())
-      .then(r => r.data)) as any
+      .then(r => r.data)
+      .then(value => (after as any)(value, variables))
+      .catch(e => {
+        console.info(e)
+        return (fallback as any)(variables)
+      })) as any
 
 export const fetchTagList = query<tagList>({
   q: gql`
@@ -48,6 +62,12 @@ export const fetchTagList = query<tagList>({
     }
   `,
   opName: 'tagList',
+  fallback() {
+    return localForage.getItem('tagList') as Promise<tagList>
+  },
+  after(value) {
+    return localForage.setItem('tagList', value).then(() => value)
+  },
 })
 
 export const fetchTag = query<tag, tagVariables>({
@@ -63,6 +83,12 @@ export const fetchTag = query<tag, tagVariables>({
     }
   `,
   opName: 'tag',
+  fallback(variables) {
+    return localForage.getItem(`tag-${variables.id}`) as Promise<tag>
+  },
+  after(value, variables) {
+    return localForage.setItem(`tag-${variables.id}`, value).then(() => value)
+  },
 })
 
 export const fetchFullSongs = query<fullSongs, fullSongsVariables>({
@@ -80,6 +106,21 @@ export const fetchFullSongs = query<fullSongs, fullSongsVariables>({
     }
   `,
   opName: 'songs',
+  fallback(variables) {
+    return Promise.all(
+      variables.list.map(
+        song => localForage.getItem(`song-${song}`) as Promise<fullSongs_songs>,
+      ),
+    ).then(songs => ({ songs }))
+  },
+  after(value) {
+    return Promise.all<any>(
+      value.songs.map(song => {
+        if (song) return localForage.setItem(`song-${song.id}`, song)
+        return null
+      }),
+    ).then(() => value)
+  },
 })
 
 export const fetchFullSong = new DataLoader<string, fullSongs_songs | null>(

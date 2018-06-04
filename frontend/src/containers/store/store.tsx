@@ -82,7 +82,6 @@ export class StoreProvider extends React.Component<{}, Context> {
       const songs = ids.filter(
         id => (this.fetchSongTime[id] || 0) + refetchAfter < Date.now(),
       )
-      console.log('fetchSongs', ids, songs)
       if (songs.length <= 0) return
 
       songs.forEach(s => {

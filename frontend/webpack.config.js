@@ -56,7 +56,7 @@ const configuration = mode => ({
   },
   devServer: {
     hot: false, // mode !== 'ssr',
-    inline: false, //mode !== 'ssr',
+    inline: mode !== 'ssr',
     overlay: {
       warnings: mode !== 'ssr',
       errors: mode !== 'ssr',

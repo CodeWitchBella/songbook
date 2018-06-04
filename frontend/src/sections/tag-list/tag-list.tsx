@@ -2,6 +2,7 @@ import React from 'react'
 import { TagList } from 'containers/store/store'
 import { css } from 'react-emotion'
 import { primary } from 'utils/colors'
+import { Link } from 'react-router-dom'
 
 const Placeholder = () => <div>Načítám seznam písní</div>
 
@@ -32,9 +33,9 @@ const tagClass = css`
 `
 
 const Tag = ({ tag }: { tag: { name: string; id: string } }) => (
-  <a className={tagClass} href={`/tag/${tag.id}`}>
+  <Link className={tagClass} to={`/tag/${tag.id}`}>
     {tag.name}
-  </a>
+  </Link>
 )
 
 const TagListSection = () => (

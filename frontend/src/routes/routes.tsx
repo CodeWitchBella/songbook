@@ -33,7 +33,7 @@ const Tag = Loadable({
   webpack: () => [require.resolveWeak('./tag')],
 })
 
-export default class Routes extends React.PureComponent {
+export default class Routes extends React.Component {
   render() {
     return (
       <Switch>
