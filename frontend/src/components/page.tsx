@@ -62,7 +62,7 @@ const songClass = (left: boolean, print: boolean) => css`
 const marginDisplay = (print: boolean) =>
   print
     ? css`
-        background: grey;
+        background: lightgrey;
       `
     : css`
         @media not print {

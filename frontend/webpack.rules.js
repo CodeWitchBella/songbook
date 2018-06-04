@@ -28,18 +28,6 @@ module.exports = ({ PRODUCTION, isModern = false, isSSR = false } = {}) => [
     ],
   },
   {
-    test: /\.(jpe?g|png|svg|gif)$/,
-    resourceQuery: /[?&](sizes|placeholder)(=|&|\[|$)/,
-    use: [
-      {
-        loader: 'srcset-loader',
-        options: {
-          lightweight: true,
-        },
-      },
-    ],
-  },
-  {
     test: /\.svg(\?v=[0-9].[0-9].[0-9])?$/,
     use: [
       {
@@ -51,6 +39,17 @@ module.exports = ({ PRODUCTION, isModern = false, isSSR = false } = {}) => [
         options: {
           plugins: [{ removeTitle: true }],
         },
+      },
+    ],
+  },
+  {
+    test: /\.png$/,
+    use: [
+      {
+        loader: 'url-loader',
+        options: urlLoaderOptions(PRODUCTION, {
+          mimetype: 'image/png',
+        }),
       },
     ],
   },
@@ -95,23 +94,6 @@ module.exports = ({ PRODUCTION, isModern = false, isSSR = false } = {}) => [
         loader: 'url-loader',
         options: urlLoaderOptions(PRODUCTION, {
           mimetype: 'font/woff2',
-        }),
-      },
-    ],
-  },
-  {
-    test: /\.png$/,
-    use: [
-      {
-        loader: 'srcset-loader',
-        options: {
-          //lightweight: true,
-        },
-      },
-      {
-        loader: 'url-loader',
-        options: urlLoaderOptions(PRODUCTION, {
-          mimetype: 'image/png',
         }),
       },
     ],
