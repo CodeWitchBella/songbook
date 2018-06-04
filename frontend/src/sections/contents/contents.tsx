@@ -5,14 +5,17 @@ import styled from 'react-emotion'
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
   height: 100%;
   flex-wrap: wrap;
   font-size: 0.8em;
-  > div {
-    max-width: 50%;
-    display: flex;
-  }
+`
+
+const SongComp = styled.div`
+  display: flex;
+`
+
+const Col = styled.div`
+  max-width: 50%;
 `
 
 const Counter = styled.div`
@@ -20,21 +23,29 @@ const Counter = styled.div`
 `
 
 const Spacer = styled.div`
-  height: 10em;
+  height: ${({ space }: { space: string }) => space};
 `
+
+const mapSong = (offset: number = 0) => (song: Song, i: number) => (
+  <SongComp key={song.id}>
+    <Counter>{i + 1 + offset}.</Counter>
+    <div>
+      {song.title} ({song.author.replace(/ /g, '\u00a0')})
+    </div>
+  </SongComp>
+)
 
 const Contents = ({ list }: { list: Song[] }) => (
   <Page>
     <Container>
-      <Spacer />
-      {list.map((song, i) => (
-        <div key={song.id}>
-          <Counter>{i + 1}.</Counter>
-          <div>
-            {song.title} ({song.author.replace(/ /g, '\u00a0')})
-          </div>
-        </div>
-      ))}
+      <Col>
+        <Spacer space="8em" />
+        {list.slice(0, 40).map(mapSong())}
+      </Col>
+      <Col>
+        <Spacer space="2.65em" />
+        {list.slice(40).map(mapSong(40))}
+      </Col>
     </Container>
   </Page>
 )
