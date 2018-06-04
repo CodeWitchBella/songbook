@@ -14,6 +14,7 @@ const cacheInProd = <T extends Object>(load: () => T): (() => T) => {
 const songs = cacheInProd(() =>
   fs
     .readdirSync(songDir)
+    .filter(fname => /\.song$/.exec(fname))
     .map(fname => ({
       fname,
       content: fs.readFileSync(path.join(songDir, fname), 'utf-8'),
