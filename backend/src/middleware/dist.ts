@@ -13,6 +13,7 @@ const distMiddleware = () => (
   next: express.NextFunction,
 ) => {
   if (settings.serveStatic) {
+    req.url = req.url.replace('/dist/', '/')
     staticMiddleware(req, res, next)
   } else {
     getFrontendFile(req.path, false, null)
