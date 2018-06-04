@@ -14,10 +14,12 @@ export default async function getFrontendFile<T extends string | null>(
 ): Promise<(T extends string ? string : Buffer) | false> {
   try {
     if (settings.serveStatic) {
-      const data = await promisify(fs.readFile)(
-        path.join(frontendPath, ssr ? 'dist-ssr' : 'dist', fname),
-        encoding,
+      const file = path.join(
+        frontendPath,
+        ssr ? 'dist-ssr' : 'dist',
+        fname.replace('/dist/', '/'),
       )
+      const data = await promisify(fs.readFile)(file, encoding)
       return data as any
     }
 

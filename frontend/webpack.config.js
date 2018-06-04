@@ -20,7 +20,7 @@ const configuration = mode => ({
   bail: true,
   output: {
     publicPath: '/dist/',
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, mode === 'ssr' ? 'dist-ssr' : 'dist'),
     filename:
       mode === 'ssr'
         ? 'index.ssr.js'

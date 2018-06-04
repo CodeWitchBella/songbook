@@ -84,7 +84,7 @@
     "babel-runtime": "^6.26.0"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "codegen": "apollo-codegen introspect-schema http://localhost:3000/graphql && apollo-codegen generate --target typescript-modern --schema schema.json 'src/**/*.tsx'",
     "docker": "cd .. && npm run docker --",
     "start": "webpack-dev-server --env modern",
