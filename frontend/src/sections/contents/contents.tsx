@@ -35,8 +35,8 @@ const mapSong = (offset: number = 0) => (song: Song, i: number) => (
   </SongComp>
 )
 
-const Contents = ({ list }: { list: Song[] }) => (
-  <Page>
+const Contents = ({ list, left }: { list: Song[]; left?: boolean }) => (
+  <Page left={left}>
     <Container>
       <Col>
         <Spacer space="8em" />

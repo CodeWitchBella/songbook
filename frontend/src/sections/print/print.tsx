@@ -13,38 +13,46 @@ const PlaceholderSongList = () => <div>Načítám seznam písní</div>
 const Print = ({ tag }: { tag: string }) => (
   <SongsWithTextContainer variables={{ tag }} placeholder={PlaceholderSongList}>
     {songs =>
-      !songs.data ? null : (
-        <div>
-          <TitlePage />
-          {songs.data.songs.list
-            .map((song, number) => ({
-              data: song,
-              parsed: parseSong(song.textWithChords),
-              number,
-            }))
-            .reduce(
-              (prev, cur) =>
-                prev.concat(
-                  cur.parsed.map(page => ({
-                    data: cur.data,
-                    page,
-                    number: cur.number,
-                  })),
-                ),
-              [] as { data: SongType; page: Paragraph[]; number: number }[],
+      !songs.data
+        ? null
+        : (() => {
+            const pages = songs.data.songs.list
+              .map((song, number) => ({
+                data: song,
+                parsed: parseSong(song.textWithChords),
+                number,
+              }))
+              .reduce(
+                (prev, cur) =>
+                  prev.concat(
+                    cur.parsed.map(page => ({
+                      data: cur.data,
+                      page,
+                      number: cur.number,
+                    })),
+                  ),
+                [] as { data: SongType; page: Paragraph[]; number: number }[],
+              )
+              .map((s, i) => (
+                <SongPage
+                  pageData={s.page}
+                  song={s.data}
+                  number={s.number + 1}
+                  pageNumber={i + 1}
+                  key={s.data.id}
+                />
+              ))
+            return (
+              <div>
+                <TitlePage />
+                {pages}
+                <Contents
+                  list={songs.data.songs.list}
+                  left={pages.length % 2 !== 0}
+                />
+              </div>
             )
-            .map((s, i) => (
-              <SongPage
-                pageData={s.page}
-                song={s.data}
-                number={s.number + 1}
-                pageNumber={i}
-                key={s.data.id}
-              />
-            ))}
-          <Contents list={songs.data.songs.list} />
-        </div>
-      )
+          })()
     }
   </SongsWithTextContainer>
 )

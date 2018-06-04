@@ -35,10 +35,10 @@ const songClass = (left: boolean, print: boolean) => css`
     ${print
       ? css`
           margin: ${left
-            ? `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
-    ${page.margin.outer}`
-            : `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
-    ${page.margin.inner}`};
+            ? `${page.margin.top} ${page.margin.outer} ${page.margin.bottom}
+    ${page.margin.inner}`
+            : `${page.margin.top} ${page.margin.inner} ${page.margin.bottom}
+    ${page.margin.outer}`};
         `
       : css`
           padding: 1em;
