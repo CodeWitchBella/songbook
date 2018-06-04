@@ -8,7 +8,7 @@ const sizer = (print: boolean) => css`
     position: relative;
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     justify-content: center;
     align-items: center;
   }
@@ -44,9 +44,11 @@ const songClass = (left: boolean, print: boolean) => css`
           padding: 1em;
           width: calc(100% - 2em);
           height: calc(100% - 2em);
+          overflow-y: auto;
           @media (min-width: ${page.innerRatio * 100}vh) {
             font-size: 1.9vh;
             width: ${page.innerRatio * 100}vh;
+            height: calc(100vh - 2em);
             margin: 0 auto;
           }
           font-size: 3vw;
