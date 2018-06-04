@@ -3,6 +3,7 @@ import sms from 'source-map-support'
 import bodyParser from 'body-parser'
 import htmlMiddleware from './middleware/html'
 import distMiddleware from './middleware/dist'
+import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
 
 sms.install()
@@ -17,6 +18,7 @@ app.use(((err, _req, res, _next) => {
 }) as ErrorRequestHandler)
 
 app.get('/dist/*', distMiddleware())
+app.get('/static/*', staticMiddleware())
 app.post('/graphql', graphqlMiddleware.graphql)
 app.get('/graphql', graphqlMiddleware.graphiql)
 app.get('*', htmlMiddleware())

@@ -15,6 +15,9 @@ const SongsWithTextContainer = query<
         author
         title
         textWithChords
+        metadata {
+          audio
+        }
       }
     }
   }

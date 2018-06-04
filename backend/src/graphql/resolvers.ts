@@ -20,13 +20,16 @@ const songs = cacheInProd(() =>
       content: fs.readFileSync(path.join(songDir, fname), 'utf-8'),
     }))
     .map(({ fname, content }) => {
-      const lines = content.split('\n')
+      const del = content.indexOf('\n\n')
+      const head = content.substring(0, del).split('\n')
+      const text = content.substring(del + 2)
       return {
         id: fname.replace(/\.song$/, ''),
-        author: lines[0],
-        title: lines[1],
-        tags: lines[2].split(',').filter(a => !!a),
-        textWithChords: content.substring(content.indexOf('\n\n') + 2),
+        author: head[0],
+        title: head[1],
+        tags: (head[2] || '').split(',').filter(a => !!a),
+        metadata: JSON.parse(head[3] || '{}'),
+        textWithChords: text,
       }
     }),
 )

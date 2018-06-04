@@ -4,6 +4,7 @@ import styled, { css } from 'react-emotion'
 import { Song as SongType } from 'containers/song'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
+import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -73,6 +74,7 @@ export const SongPage = ({
   pageNumber?: number
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
+    <AudioControls />
     <SongHeader
       author={song.author}
       title={
@@ -89,10 +91,15 @@ export const SongLook = ({
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
-}) => (
-  <>
-    {parsed.map((pageData, i) => (
-      <SongPage key={i} pageData={pageData} song={song} />
-    ))}
-  </>
-)
+}) => {
+  const content = (
+    <>
+      {parsed.map((pageData, i) => (
+        <SongPage key={i} pageData={pageData} song={song} />
+      ))}
+    </>
+  )
+  if (song.metadata.audio)
+    return <AudioProvider src={song.metadata.audio}>{content}</AudioProvider>
+  return content
+}

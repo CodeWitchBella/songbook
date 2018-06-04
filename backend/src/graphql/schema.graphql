@@ -9,12 +9,17 @@ type Tag {
   name: String!
 }
 
+type SongMetadata {
+  audio: String
+}
+
 type Song {
   id: ID!
   author: String!
   title: String!
   textWithChords: String!
   tags: [Tag!]!
+  metadata: SongMetadata!
 }
 
 type SongPage {

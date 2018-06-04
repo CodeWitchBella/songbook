@@ -10,6 +10,9 @@ const SongContainer = query<t.song, t.songVariables>(gql`
       author
       title
       textWithChords
+      metadata {
+        audio
+      }
     }
   }
 `)
