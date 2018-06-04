@@ -15,6 +15,11 @@ function parseLine(
   if (line.startsWith('S:')) {
     tag = 'S:'
     line = line.substring(2).trim()
+    const match = /^[0-9]+/.exec(line)
+    if (match) {
+      line = line.substring(match[0].length).trim()
+      tag += match[0]
+    }
   } else if (line.startsWith('R:')) {
     tag = 'R:'
     line = line.substring(2).trim()
@@ -49,7 +54,17 @@ function parseLine(
       content.push({ text, ch })
     }
   }
-  return { content, tag, pCounter: pCounter + (tag === 'S:' ? 1 : 0) }
+  return { content, tag, pCounter: pCounter + (isVerse(tag) ? 1 : 0) }
+}
+
+function isVerse(tag?: string | null): tag is string {
+  if (!tag) return false
+  return tag.startsWith('S:')
+}
+
+function verseToText(tag: string, pCounter: number) {
+  if (tag.length === 2) return `${pCounter}.`
+  return `${pCounter}. = ${tag.substring(2)}.`
 }
 
 export type Paragraph = Line[]
@@ -65,7 +80,10 @@ function parseParagraph(
       .map(l => {
         const { content, tag, pCounter: n } = parseLine(l, pCounter)
         pCounter = n
-        return { content, tag: tag === 'S:' ? `${pCounter}.` : tag }
+        return {
+          content,
+          tag: isVerse(tag) ? verseToText(tag, pCounter) : tag,
+        }
       }),
     pCounter,
   }
