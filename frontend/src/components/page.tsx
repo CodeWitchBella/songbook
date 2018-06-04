@@ -55,7 +55,9 @@ const songClass = (left: boolean, print: boolean) => css`
         `};
   }
   @media print {
-    margin: 0;
+    margin: ${left
+      ? `0 0 0 calc(${page.margin.inner} - ${page.margin.outer})`
+      : `0 calc(${page.margin.inner} - ${page.margin.outer}) 0 0`};
   }
 `
 

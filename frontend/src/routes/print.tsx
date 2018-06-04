@@ -12,14 +12,7 @@ const { margin } = page
 injectGlobal`
   @page {
     size: ${page.width} ${page.height};
-    margin: ${margin.top} ${margin.inner} ${margin.bottom} ${margin.outer};
-  }
-
-  @page:left {
-    margin: ${margin.top} ${margin.inner} ${margin.bottom} ${margin.outer};
-  }
-  @page:right {
-    margin: ${margin.top} ${margin.outer} ${margin.bottom} ${margin.inner};
+    margin: ${margin.top} ${margin.outer} ${margin.bottom} ${margin.outer};
   }
 `
 
