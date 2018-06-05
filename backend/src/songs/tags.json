@@ -10,5 +10,8 @@
   },
   "all": {
     "name": "All songs"
+  },
+  "new": {
+    "name": "Novinky"
   }
 }
