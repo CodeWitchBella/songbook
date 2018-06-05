@@ -33,7 +33,7 @@ self.addEventListener('fetch', event => {
         .open(cacheName)
         .then(cache => cache.match(event.request, { ignoreSearch: true }))
         .then(cacheResponse => {
-          fetch(event.request.clone()).then(netResponse => {
+          const net = fetch(event.request.clone()).then(netResponse => {
             // Check if we received a valid response
             if (
               !netResponse ||
@@ -43,14 +43,17 @@ self.addEventListener('fetch', event => {
               return netResponse
             }
 
+            const clone = netResponse.clone()
             caches.open(cacheName).then(cache => {
-              cache.put(event.request, netResponse)
+              cache.put(event.request, clone)
             })
+            return netResponse
           })
 
           if (cacheResponse) {
             return cacheResponse
           }
+          return net
         }),
     )
     return
