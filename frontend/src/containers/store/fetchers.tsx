@@ -105,6 +105,9 @@ export const fetchFullSongs = query<fullSongs, fullSongsVariables>({
         textWithChords
         metadata {
           audio
+          fontSize
+          paragraphSpace
+          titleSpace
         }
       }
     }

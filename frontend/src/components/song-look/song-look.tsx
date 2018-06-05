@@ -1,7 +1,7 @@
 import React from 'react'
 import * as parser from 'utils/parse-song'
 import styled, { css } from 'react-emotion'
-import { Song as SongType } from 'containers/song'
+import { fullSongs_songs as SongType } from 'containers/store/__generated__/fullSongs'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
@@ -52,15 +52,23 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
   )
 }
 
-const paragraph = css`
-  margin-bottom: 1em;
+const paragraph = (paragraphSpace: number) => css`
+  margin-bottom: ${paragraphSpace}em;
 `
 
-const Paragraph: React.SFC<{ children: parser.Paragraph }> = ({ children }) => (
-  <div className={paragraph}>
+const Paragraph: React.SFC<{ children: parser.Paragraph; song: SongType }> = ({
+  children,
+  song,
+}) => (
+  <div className={paragraph(song.metadata.paragraphSpace || 1)}>
     {children.map((c, i) => <Line key={i}>{c}</Line>)}
   </div>
 )
+
+const fontSize = (size: number) =>
+  css`
+    font-size: ${size}em;
+  `
 
 export const SongPage = ({
   song,
@@ -76,12 +84,19 @@ export const SongPage = ({
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
     <AudioControls />
     <SongHeader
+      titleSpace={song.metadata.titleSpace}
       author={song.author}
       title={
         typeof number === 'number' ? `${number}. ${song.title}` : song.title
       }
     />
-    <div>{pageData.map((p, i) => <Paragraph key={i}>{p}</Paragraph>)}</div>
+    <div className={fontSize(song.metadata.fontSize || 1)}>
+      {pageData.map((p, i) => (
+        <Paragraph song={song} key={i}>
+          {p}
+        </Paragraph>
+      ))}
+    </div>
   </Page>
 )
 

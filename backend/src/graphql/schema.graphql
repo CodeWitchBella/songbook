@@ -12,6 +12,9 @@ type Tag {
 
 type SongMetadata {
   audio: String
+  fontSize: Float
+  paragraphSpace: Float
+  titleSpace: Float
 }
 
 type Song {
