@@ -135,20 +135,34 @@ export class StoreProvider extends React.Component<{}, Context> {
     this.state
       .fetchTagList()
       .then(() =>
-        Promise.all(
-          this.state.tagList
-            .filter(t => t.id !== 'all')
-            .map(t => this.state.fetchTag(t.id)),
+        ric(() =>
+          Promise.all(
+            this.state.tagList
+              .filter(t => t.id !== 'all')
+              .map(t => this.state.fetchTag(t.id)),
+          ).catch(e => {
+            console.info(e)
+          }),
         ),
       )
-      .catch(() => {})
+      .catch(e => {
+        console.info(e)
+      })
 
     this.state
       .fetchTag('all')
       .then(() =>
-        Promise.all(this.state.tags.all.map(s => this.state.fetchSong(s.id))),
+        ric(() =>
+          Promise.all(
+            this.state.tags.all.map(s => this.state.fetchSong(s.id)),
+          ).catch(e => {
+            console.info(e)
+          }),
+        ),
       )
-      .catch(() => {})
+      .catch(e => {
+        console.info(e)
+      })
   }
 
   render() {
