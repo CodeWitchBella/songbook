@@ -29,28 +29,32 @@ const query = <R, V = undefined>({
     ? () => Promise<R> | R
     : (variables: V) => Promise<R> | R
 }): Querier<R, V> =>
-  ((variables?: V): Promise<R> =>
-    fetch('/graphql', {
-      credentials: 'include',
-      referrerPolicy: 'no-referrer-when-downgrade',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: q,
-        variables: variables || null,
-        opName,
-      }),
-      method: 'POST',
-      mode: 'cors',
-    })
-      .then(r => r.json())
-      .then(r => r.data)
-      .then(value => (after as any)(value, variables))
-      .catch(e => {
-        console.info(e)
-        return (fallback as any)(variables)
-      })) as any
+  ((variables?: V): Promise<R> => {
+    if (navigator.onLine) {
+      return fetch('/graphql', {
+        credentials: 'include',
+        referrerPolicy: 'no-referrer-when-downgrade',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: q,
+          variables: variables || null,
+          opName,
+        }),
+        method: 'POST',
+        mode: 'cors',
+      })
+        .then(r => r.json())
+        .then(r => r.data)
+        .then(value => (after as any)(value, variables))
+        .catch(e => {
+          console.info(e)
+          return (fallback as any)(variables)
+        })
+    }
+    return (fallback as any)(variables)
+  }) as any
 
 export const fetchTagList = query<tagList>({
   q: gql`

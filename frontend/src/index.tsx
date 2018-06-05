@@ -3,6 +3,7 @@ import React from 'react'
 import ErrorBoundary from 'containers/error-boundary'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Loadable from 'react-loadable'
+import runtime from 'serviceworker-webpack-plugin/lib/runtime'
 import App from './app'
 import handleOutline from './utils/outline-handler'
 
@@ -20,3 +21,7 @@ Loadable.preloadReady().then(() => {
     app,
   )
 })
+
+if ('serviceWorker' in navigator) {
+  const registration = runtime.register({ scope: '/' })
+}

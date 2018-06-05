@@ -12,6 +12,10 @@ const distMiddleware = () => (
   res: express.Response,
   next: express.NextFunction,
 ) => {
+  if (req.url === '/dist/sw.js') {
+    res.append('Service-Worker-Allowed', '/')
+  }
+
   if (settings.serveStatic) {
     req.url = req.url.replace('/dist/', '/')
     staticMiddleware(req, res, next)

@@ -23,6 +23,7 @@ const Template = ({ scripts }: { scripts: string[] }) => (
   <html>
     <head>
       <meta charSet="utf-8" />
+      <link rel="manifest" href="/static/manifest.json" />
       <title>Songbook</title>
       <meta
         name="viewport"

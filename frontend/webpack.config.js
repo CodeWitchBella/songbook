@@ -6,10 +6,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 const fs = require('fs')
 const { ReactLoadablePlugin } = require('@7rulnik/react-loadable/webpack')
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin')
 
 const PRODUCTION = process.env.NODE_ENV === 'production' // NODE_ENV
 
 const rules = require('./webpack.rules')
+
+webpack.optimize = new Proxy(webpack.optimize, {
+  get(target, prop, receiver) {
+    if (prop === 'UglifyJsPlugin') {
+      return function FixSWPlugin() {}
+    }
+    // eslint-disable-next-line
+    return Reflect.get(...arguments)
+  },
+})
 
 const configuration = mode => ({
   mode: PRODUCTION ? 'production' : 'development',
@@ -56,7 +67,7 @@ const configuration = mode => ({
   },
   devServer: {
     hot: false, // mode !== 'ssr',
-    inline: mode !== 'ssr',
+    inline: false, //mode !== 'ssr',
     overlay: {
       warnings: mode !== 'ssr',
       errors: mode !== 'ssr',
@@ -85,6 +96,10 @@ const configuration = mode => ({
             }),
           ]
         : [
+            new ServiceWorkerWebpackPlugin({
+              entry: path.join(__dirname, 'src/sw.js'),
+              publicPath: '/dist/',
+            }),
             new ReactLoadablePlugin({
               filename: 'dist/react-loadable.json',
             }),
