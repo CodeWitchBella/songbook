@@ -10,10 +10,10 @@ export type Tag = Tag
 
 type Context = {
   tagList: Tag[]
-  fetchTagList: () => void
-  fetchTag: (tag: string) => void
-  fetchSong: (id: string) => void
-  fetchSongs: (id: string[]) => void
+  fetchTagList: () => Promise<void>
+  fetchTag: (tag: string) => Promise<void>
+  fetchSong: (id: string) => Promise<void>
+  fetchSongs: (id: string[]) => Promise<void>
 
   tags: {
     [tag: string]: MiniSongType[]
@@ -28,6 +28,11 @@ const context = createContext(null as null | Context)
 
 const refetchAfter = 1000 * 60 * 60
 
+const ric = (cb: () => void) => {
+  if ('requestIdleCallback' in window) (window as any).requestIdleCallback(cb)
+  else setTimeout(cb, 5000)
+}
+
 export class StoreProvider extends React.Component<{}, Context> {
   fetchTagTime: { [key: string]: number } = {}
   fetchTagListTime: number = 0
@@ -35,10 +40,12 @@ export class StoreProvider extends React.Component<{}, Context> {
 
   state: Context = {
     fetchTag: (tag: string) => {
-      if (typeof document === 'undefined') return
-      if ((this.fetchTagTime[tag] || 0) + refetchAfter >= Date.now()) return
+      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if ((this.fetchTagTime[tag] || 0) + refetchAfter >= Date.now())
+        return Promise.resolve(undefined)
       this.fetchTagTime[tag] = Date.now()
-      f.fetchTag({ id: tag })
+      return f
+        .fetchTag({ id: tag })
         .then(v => {
           const value = v.tag
           if (value) {
@@ -50,25 +57,30 @@ export class StoreProvider extends React.Component<{}, Context> {
         .catch(e => {
           console.info(e)
         })
+        .then(() => {})
     },
     fetchTagList: () => {
-      if (typeof document === 'undefined') return
-      if (this.fetchTagListTime + refetchAfter >= Date.now()) return
+      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if (this.fetchTagListTime + refetchAfter >= Date.now())
+        return Promise.resolve(undefined)
       this.fetchTagListTime = Date.now()
-      f.fetchTagList()
+      return f
+        .fetchTagList()
         .then(v => {
           this.setState({ tagList: v.tags })
         })
         .catch(e => {
           console.info(e)
         })
+        .then(() => {})
     },
     fetchSong: (id: string) => {
-      if (typeof document === 'undefined') return
-      if ((this.fetchSongTime[id] || 0) + refetchAfter >= Date.now()) return
+      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if ((this.fetchSongTime[id] || 0) + refetchAfter >= Date.now())
+        return Promise.resolve(undefined)
       this.fetchSongTime[id] = Date.now()
 
-      f.fetchFullSong
+      return f.fetchFullSong
         .load(id)
         .then(v => {
           if (v) {
@@ -80,19 +92,20 @@ export class StoreProvider extends React.Component<{}, Context> {
         .catch(e => {
           console.info(e)
         })
+        .then(() => {})
     },
     fetchSongs: (ids: string[]) => {
-      if (typeof document === 'undefined') return
+      if (typeof document === 'undefined') return Promise.resolve(undefined)
       const songs = ids.filter(
         id => (this.fetchSongTime[id] || 0) + refetchAfter < Date.now(),
       )
-      if (songs.length <= 0) return
+      if (songs.length <= 0) return Promise.resolve(undefined)
 
       songs.forEach(s => {
         this.fetchSongTime[s] = Date.now()
       })
 
-      f.fetchFullSong
+      return f.fetchFullSong
         .loadMany(songs)
         .then(vs => {
           const val: { [id: string]: SongType } = {}
@@ -110,11 +123,32 @@ export class StoreProvider extends React.Component<{}, Context> {
         .catch(e => {
           console.info(e)
         })
+        .then(() => {})
     },
 
     tagList: [],
     tags: {},
     songs: {},
+  }
+
+  componentDidMount() {
+    this.state
+      .fetchTagList()
+      .then(() =>
+        Promise.all(
+          this.state.tagList
+            .filter(t => t.id !== 'all')
+            .map(t => this.state.fetchTag(t.id)),
+        ),
+      )
+      .catch(() => {})
+
+    this.state
+      .fetchTag('all')
+      .then(() =>
+        Promise.all(this.state.tags.all.map(s => this.state.fetchSong(s.id))),
+      )
+      .catch(() => {})
   }
 
   render() {

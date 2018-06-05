@@ -26,7 +26,7 @@ const previewToggle = css`
     display: none;
   }
 
-  div {
+  span {
     width: 96px;
     height: 28px;
     width: 60px;
@@ -35,11 +35,10 @@ const previewToggle = css`
     display: block;
     border: solid 2px black;
     box-sizing: border-box;
-    background: s;
     margin-left: 10px;
     background: white;
   }
-  div::after {
+  span::after {
     position: absolute;
     transform: translate(4px, 4px);
     content: '';
@@ -52,7 +51,7 @@ const previewToggle = css`
     transition: background 200ms linear, transform 200ms ease-in-out;
   }
 
-  input:checked + div::after {
+  input:checked + span::after {
     transform: translate(32px, 4px);
     background: hsla(121, 57%, 43%, 1);
   }
@@ -65,7 +64,7 @@ const PreviewToggle = () => (
         <span>Print preview:</span>
         <span className={previewToggle}>
           <input type="checkbox" checked={value} onChange={toggle} />
-          <div />
+          <span />
         </span>
       </label>
     )}
