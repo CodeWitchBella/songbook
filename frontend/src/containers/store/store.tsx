@@ -35,6 +35,7 @@ export class StoreProvider extends React.Component<{}, Context> {
 
   state: Context = {
     fetchTag: (tag: string) => {
+      if (typeof document === 'undefined') return
       if ((this.fetchTagTime[tag] || 0) + refetchAfter >= Date.now()) return
       this.fetchTagTime[tag] = Date.now()
       f.fetchTag({ id: tag })
@@ -51,6 +52,7 @@ export class StoreProvider extends React.Component<{}, Context> {
         })
     },
     fetchTagList: () => {
+      if (typeof document === 'undefined') return
       if (this.fetchTagListTime + refetchAfter >= Date.now()) return
       this.fetchTagListTime = Date.now()
       f.fetchTagList()
@@ -62,6 +64,7 @@ export class StoreProvider extends React.Component<{}, Context> {
         })
     },
     fetchSong: (id: string) => {
+      if (typeof document === 'undefined') return
       if ((this.fetchSongTime[id] || 0) + refetchAfter >= Date.now()) return
       this.fetchSongTime[id] = Date.now()
 
@@ -79,6 +82,7 @@ export class StoreProvider extends React.Component<{}, Context> {
         })
     },
     fetchSongs: (ids: string[]) => {
+      if (typeof document === 'undefined') return
       const songs = ids.filter(
         id => (this.fetchSongTime[id] || 0) + refetchAfter < Date.now(),
       )

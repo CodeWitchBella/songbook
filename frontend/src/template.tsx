@@ -5,6 +5,7 @@ import Loadable from 'react-loadable'
 // this is only used for typings and real dependecy is injected in server side rending
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request, Response } from 'express'
+import { StaticRouter } from 'react-router-dom'
 
 import App from './app'
 
@@ -93,7 +94,9 @@ export default async ({
           loadableModules.push(moduleName)
         }}
       >
-        <App />
+        <StaticRouter location={req.url} context={{}}>
+          <App />
+        </StaticRouter>
       </Loadable.Capture>
     )
 
