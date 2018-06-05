@@ -10,10 +10,10 @@ export type Tag = Tag
 
 type Context = {
   tagList: Tag[]
-  fetchTagList: () => Promise<void>
-  fetchTag: (tag: string) => Promise<void>
-  fetchSong: (id: string) => Promise<void>
-  fetchSongs: (id: string[]) => Promise<void>
+  fetchTagList: () => Promise<Tag[] | null>
+  fetchTag: (tag: string) => Promise<MiniSongType[] | null>
+  fetchSong: (id: string) => Promise<SongType | null>
+  fetchSongs: (id: string[]) => Promise<(SongType | null)[] | null>
 
   tags: {
     [tag: string]: MiniSongType[]
@@ -40,9 +40,9 @@ export class StoreProvider extends React.Component<{}, Context> {
 
   state: Context = {
     fetchTag: (tag: string) => {
-      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if (typeof document === 'undefined') return Promise.resolve(null)
       if ((this.fetchTagTime[tag] || 0) + refetchAfter >= Date.now())
-        return Promise.resolve(undefined)
+        return Promise.resolve(null)
       this.fetchTagTime[tag] = Date.now()
       return f
         .fetchTag({ id: tag })
@@ -53,31 +53,33 @@ export class StoreProvider extends React.Component<{}, Context> {
               tags: { ...st.tags, [tag]: value.songs },
             }))
           }
+          return value.songs
         })
         .catch(e => {
           console.info(e)
+          return null
         })
-        .then(() => {})
     },
     fetchTagList: () => {
-      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if (typeof document === 'undefined') return Promise.resolve(null)
       if (this.fetchTagListTime + refetchAfter >= Date.now())
-        return Promise.resolve(undefined)
+        return Promise.resolve(null)
       this.fetchTagListTime = Date.now()
       return f
         .fetchTagList()
         .then(v => {
           this.setState({ tagList: v.tags })
+          return v.tags
         })
         .catch(e => {
           console.info(e)
+          return null
         })
-        .then(() => {})
     },
     fetchSong: (id: string) => {
-      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if (typeof document === 'undefined') return Promise.resolve(null)
       if ((this.fetchSongTime[id] || 0) + refetchAfter >= Date.now())
-        return Promise.resolve(undefined)
+        return Promise.resolve(null)
       this.fetchSongTime[id] = Date.now()
 
       return f.fetchFullSong
@@ -88,18 +90,19 @@ export class StoreProvider extends React.Component<{}, Context> {
               songs: { ...st.songs, [id]: v },
             }))
           }
+          return v
         })
         .catch(e => {
           console.info(e)
+          return null
         })
-        .then(() => {})
     },
     fetchSongs: (ids: string[]) => {
-      if (typeof document === 'undefined') return Promise.resolve(undefined)
+      if (typeof document === 'undefined') return Promise.resolve(null)
       const songs = ids.filter(
         id => (this.fetchSongTime[id] || 0) + refetchAfter < Date.now(),
       )
-      if (songs.length <= 0) return Promise.resolve(undefined)
+      if (songs.length <= 0) return Promise.resolve(null)
 
       songs.forEach(s => {
         this.fetchSongTime[s] = Date.now()
@@ -119,11 +122,12 @@ export class StoreProvider extends React.Component<{}, Context> {
           if (doSet) {
             this.setState(st => ({ songs: { ...st.songs, ...val } }))
           }
+          return vs
         })
         .catch(e => {
           console.info(e)
+          return null
         })
-        .then(() => {})
     },
 
     tagList: [],
@@ -134,16 +138,15 @@ export class StoreProvider extends React.Component<{}, Context> {
   componentDidMount() {
     this.state
       .fetchTagList()
-      .then(() =>
-        ric(() =>
-          Promise.all(
-            this.state.tagList
-              .filter(t => t.id !== 'all')
-              .map(t => this.state.fetchTag(t.id)),
-          ).catch(e => {
-            console.info(e)
-          }),
-        ),
+      .then(
+        tags =>
+          !tags
+            ? Promise.resolve(null)
+            : Promise.all(
+                tags
+                  .filter(t => t.id !== 'all')
+                  .map(t => this.state.fetchTag(t.id)),
+              ),
       )
       .catch(e => {
         console.info(e)
@@ -151,14 +154,11 @@ export class StoreProvider extends React.Component<{}, Context> {
 
     this.state
       .fetchTag('all')
-      .then(() =>
-        ric(() =>
-          Promise.all(
-            this.state.tags.all.map(s => this.state.fetchSong(s.id)),
-          ).catch(e => {
-            console.info(e)
-          }),
-        ),
+      .then(
+        songs =>
+          !songs
+            ? Promise.resolve(null)
+            : Promise.all(songs.map(s => this.state.fetchSong(s.id))),
       )
       .catch(e => {
         console.info(e)
