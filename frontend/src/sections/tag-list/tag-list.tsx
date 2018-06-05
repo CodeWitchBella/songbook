@@ -21,7 +21,7 @@ const tagClass = css`
   border-radius: 30px;
   display: flex;
   align-items: center;
-  margin: 0 10px;
+  margin: 10px;
 
   background: ${primary};
   width: auto;
