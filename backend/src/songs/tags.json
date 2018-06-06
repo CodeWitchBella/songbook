@@ -13,5 +13,8 @@
   },
   "new": {
     "name": "Novinky"
+  },
+  "todo": {
+    "name": "To Do"
   }
 }
