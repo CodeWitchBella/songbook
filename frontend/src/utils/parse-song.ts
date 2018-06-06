@@ -16,12 +16,13 @@ function parseLine(
   const rmatch = rreg.exec(line)
   if (line.startsWith('S:')) {
     tag = 'S:'
-    line = line.substring(2).trim()
+    line = line.substring(2)
     const match = /^[0-9]+/.exec(line)
     if (match) {
-      line = line.substring(match[0].length).trim()
+      line = line.substring(match[0].length)
       tag += match[0]
     }
+    line = line.trim()
   } else if (rmatch) {
     tag = `R${rmatch[1]}.`
     line = line.replace(rreg, '').trim()
