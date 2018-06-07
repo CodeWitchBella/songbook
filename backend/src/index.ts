@@ -23,7 +23,7 @@ app.post('/graphql', graphqlMiddleware.graphql)
 app.get('/graphql', graphqlMiddleware.graphiql)
 app.get('*', htmlMiddleware())
 
-const PORT = 3000
-app.listen(3000, () => {
+const PORT = 3001
+app.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`)
 })
