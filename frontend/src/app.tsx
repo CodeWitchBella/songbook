@@ -25,7 +25,7 @@ injectGlobal`
   }
 `
 
-printSongbook([])
+//printSongbook([])
 
 export default hot(module)(() => (
   <StoreProvider>
