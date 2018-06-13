@@ -1,7 +1,7 @@
 import Jspdf from 'jspdf'
 
 export type Size = { height: number; width: number }
-export type Dimension = Size & { x: number; y: number }
+export type Dimension = Size & { x: number; y: number; first?: boolean }
 
 class RElement<Props> {
   props: Readonly<Props>
@@ -10,10 +10,38 @@ class RElement<Props> {
   }
 }
 
-export type PrimitiveChildren = ({ type: Primitive<any> } | string)[]
+export type PrimitiveChildren = (Primitive<any> | string)[]
+
+export type RenderChild = (
+  child: Primitive<any> | string,
+  dim: Dimension,
+) => Size
+
+export type PrimitiveArgs = {
+  dim: Dimension
+  doc: Jspdf
+  children: PrimitiveChildren
+  renderChild: RenderChild
+}
+
+function getRenderChild(doc: Jspdf): RenderChild {
+  const renderChild: RenderChild = (child, dim) => {
+    if (typeof child === 'string')
+      throw new Error('Cannot directly draw string')
+    return child.draw({
+      dim,
+      doc,
+      children: (child.props.children || []).map(
+        (ch: any) => (typeof ch === 'string' ? ch : ch.type),
+      ),
+      renderChild,
+    })
+  }
+  return renderChild
+}
 
 export class Primitive<Props> extends RElement<Props> {
-  draw(container: Dimension, doc: Jspdf, children: PrimitiveChildren): Size {
+  draw(args: PrimitiveArgs): Size {
     throw new Error('You cannot draw Primitive directly')
   }
 }
@@ -99,20 +127,26 @@ export function renderToPdf(el: JSX.Element) {
       unit: 'mm',
       format: 'a6',
     })
-    const primitive: {
-      type: Primitive<any>
-    } = treeToPrimitives(el)
+    const p:
+      | {
+          type: Primitive<any>
+        }
+      | {
+          type: Primitive<any>
+        }[] = treeToPrimitives(el)
 
-    console.log(primitive)
+    const primitives = Array.isArray(p) ? p : [p]
 
-    if (!(primitive.type instanceof Primitive))
-      throw new Error('Wrong argument to renderToPdf')
+    const renderChild = getRenderChild(doc)
+    let first = true
+    for (const primitive of primitives) {
+      if (!(primitive.type instanceof Primitive))
+        throw new Error('Wrong argument to renderToPdf')
 
-    primitive.type.draw(
-      { x: 0, y: 0, width: 210, height: 297 },
-      doc,
-      primitive.type.props.children || [],
-    )
+      renderChild(primitive.type, { x: 0, y: 0, width: -1, height: -1, first })
+      first = false
+    }
+
     return doc
   })
 }
