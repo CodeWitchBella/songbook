@@ -18,6 +18,7 @@ module.exports = ({ isSSR, PRODUCTION, isModern, modules = false }) => ({
     '@babel/preset-react',
   ],
   plugins: [
+    './babel-plugin-remove-jsx-namespace.js',
     '@babel/plugin-proposal-object-rest-spread',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-syntax-dynamic-import',

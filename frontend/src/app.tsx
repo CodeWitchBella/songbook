@@ -4,6 +4,7 @@ import { injectGlobal } from 'react-emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
 import { StoreProvider } from 'containers/store/store'
+import printSongbook from 'pdf/songbook'
 
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
@@ -23,6 +24,8 @@ injectGlobal`
     }
   }
 `
+
+printSongbook([])
 
 export default hot(module)(() => (
   <StoreProvider>
