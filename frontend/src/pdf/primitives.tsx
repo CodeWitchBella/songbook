@@ -7,7 +7,6 @@ export class Text extends R.Primitive<{
 }> {
   name = 'Text'
   draw({ dim, children, doc }: R.PrimitiveArgs) {
-    console.log('Text', children, dim)
     let text = ''
     if (typeof children === 'string') {
       text = children
@@ -26,7 +25,6 @@ export class Column extends R.Primitive<{
 }> {
   name = 'Column'
   draw({ dim, children, doc, renderChild }: R.PrimitiveArgs) {
-    console.log('Column', children, dim)
     let { y } = dim
     for (const ch of children) {
       if (typeof ch === 'string')
@@ -49,9 +47,6 @@ export class Page extends R.Primitive<{ children: R.JSX.Node }> {
     if (children.length !== 1) {
       throw new Error('Page must have one child')
     }
-    if (typeof children[0] === 'string') {
-      throw new Error('Page cannot have string as child')
-    }
     if (dim.width >= 0 || dim.height >= 0) {
       throw new Error('Page must be root element')
     }
@@ -59,10 +54,25 @@ export class Page extends R.Primitive<{ children: R.JSX.Node }> {
       doc.addPage()
     }
     const size = { width: 210, height: 297 }
-    for (const ch of children) {
-      renderChild(ch, { x: 0, y: 0, ...size })
-    }
+    renderChild(children[0], { x: 0, y: 0, ...size })
 
     return size
+  }
+}
+
+export class Fragment extends R.Primitive<{ children: R.JSX.Node }> {
+  name = 'Fragment'
+  draw({ dim, children, doc, renderChild }: R.PrimitiveArgs) {
+    let width = 0
+    let height = 0
+    const dimension = { ...dim }
+    for (const ch of children) {
+      const size = renderChild(ch, dimension)
+      if (size.width > width) width = size.width
+      if (size.height > height) height = size.height
+      dimension.first = false
+    }
+
+    return { width, height }
   }
 }

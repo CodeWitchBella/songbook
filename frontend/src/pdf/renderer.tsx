@@ -28,6 +28,7 @@ function getRenderChild(doc: Jspdf): RenderChild {
   const renderChild: RenderChild = (child, dim) => {
     if (typeof child === 'string')
       throw new Error('Cannot directly draw string')
+    //console.log('rendering', 'name' in child ? (child as any).name : child)
     return child.draw({
       dim,
       doc,
@@ -113,7 +114,7 @@ function treeToPrimitives(el_: JSX.Element[] | JSX.Element | string): any {
 
   const { children } = el.props
   if (children) {
-    el.props.children = treeToPrimitives(children)
+    el.props.children = [].concat(...treeToPrimitives(children))
   }
 
   return el
