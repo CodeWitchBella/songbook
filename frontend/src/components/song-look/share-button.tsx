@@ -8,16 +8,19 @@ const ShareIcon = () => (
 )
 
 const Button = styled.button`
-  width: calc(2.24em / 1.5);
-  height: calc(2.56em / 1.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(2.56em);
+  height: calc(2.56em);
   font-size: 1em;
   background: transparent;
   border: 0;
   margin: 0;
   padding: 0;
   svg {
-    width: 100%;
-    height: 100%;
+    width: calc(2.24em / 1.5);
+    height: calc(2.56em / 1.5);
   }
 `
 
