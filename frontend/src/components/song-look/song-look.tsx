@@ -1,10 +1,13 @@
 import React from 'react'
 import * as parser from 'utils/parse-song'
 import styled, { css } from 'react-emotion'
-import { fullSongs_songs as SongType } from 'containers/store/__generated__/fullSongs'
+import { everything_songs } from 'containers/store/__generated__/everything'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
+import { Link } from 'react-router-dom'
+
+type SongType = Pick<everything_songs, 'author' | 'id' | 'metadata' | 'title'>
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -70,19 +73,41 @@ const fontSize = (size: number) =>
     font-size: ${size}em;
   `
 
+const EditButtonContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  @media print {
+    display: none;
+  }
+`
+const EditButton = styled(Link)`
+  position: absolute;
+  right: 0;
+  display: block;
+  transform: translate(-50%, -50%);
+  color: darkblue;
+`
+
 export const SongPage = ({
   song,
   number,
   pageNumber,
   pageData,
+  noEdit,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
   number?: number
   pageNumber?: number
+  noEdit: boolean
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
     <AudioControls />
+    {noEdit ? null : (
+      <EditButtonContainer>
+        <EditButton to={`/edit/${song.id}`}>Upravit</EditButton>
+      </EditButtonContainer>
+    )}
     <SongHeader
       titleSpace={song.metadata.titleSpace}
       author={song.author}
@@ -103,14 +128,16 @@ export const SongPage = ({
 export const SongLook = ({
   song,
   parsed,
+  noEdit = false,
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
+  noEdit?: boolean
 }) => {
   const content = (
     <>
       {parsed.map((pageData, i) => (
-        <SongPage key={i} pageData={pageData} song={song} />
+        <SongPage key={i} pageData={pageData} song={song} noEdit={noEdit} />
       ))}
     </>
   )

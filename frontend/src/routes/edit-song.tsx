@@ -5,6 +5,8 @@ import { editSong } from 'containers/store/fetchers'
 import { Song, Refetch, SongType } from 'containers/store/store'
 import { editSongVariables } from 'containers/store/__generated__/editSong'
 import Input from 'components/input'
+import { SongLook } from 'components/song-look/song-look'
+import * as parser from 'utils/parse-song'
 
 type SongPatch = editSongVariables['song']
 
@@ -15,6 +17,7 @@ const Form = styled.form`
 `
 
 const textAreaClass = css`
+  box-sizing: border-box;
   width: 100%;
   max-width: 100%;
   min-width: 100%;
@@ -43,6 +46,13 @@ const Textarea = ({
   </label>
 )
 
+const Columns = styled.div`
+  display: flex;
+  > * {
+    width: 50%;
+  }
+`
+
 type State = {
   author: string
   tags: string
@@ -63,22 +73,28 @@ class EditSong extends React.Component<{
 
     disabled: false,
   }
+
+  result = () => {
+    const { author, tags, title, textWithChords, disabled } = this.state
+    return {
+      ...this.props.song,
+      author,
+      title,
+      tags: tags.split(',').map(t => t.trim()),
+      textWithChords,
+    }
+  }
+
   submit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
-    const { author, tags, title, textWithChords, disabled } = this.state
+    const { author, title, disabled } = this.state
     console.log('submit before check', this.state)
     if (!author || !title || disabled) return
     console.log('submit', this.state)
     this.setState({ disabled })
 
     editSong({
-      song: {
-        id: this.props.song.id,
-        author,
-        title,
-        tags: tags.split(',').map(t => t.trim()),
-        textWithChords,
-      },
+      song: this.result(),
     })
       .then(ret => {
         console.log('result', ret)
@@ -98,29 +114,38 @@ class EditSong extends React.Component<{
 
   render() {
     return (
-      <Form onSubmit={this.submit}>
-        <Input
-          label="Autor"
-          value={this.state.author}
-          onChange={this.authorChange}
-        />
-        <Input
-          label="Jméno songu"
-          value={this.state.title}
-          onChange={this.titleChange}
-        />
-        <Input
-          label="Tagy"
-          value={this.state.tags}
-          onChange={this.tagsChange}
-        />
-        <Textarea
-          label="Text"
-          value={this.state.textWithChords}
-          onChange={this.textWithChordsChange}
-        />
-        <button disabled={this.state.disabled}>Uložit</button>
-      </Form>
+      <Columns>
+        <Form onSubmit={this.submit}>
+          <Input
+            label="Autor"
+            value={this.state.author}
+            onChange={this.authorChange}
+          />
+          <Input
+            label="Jméno songu"
+            value={this.state.title}
+            onChange={this.titleChange}
+          />
+          <Input
+            label="Tagy"
+            value={this.state.tags}
+            onChange={this.tagsChange}
+          />
+          <Textarea
+            label="Text"
+            value={this.state.textWithChords}
+            onChange={this.textWithChordsChange}
+          />
+          <button disabled={this.state.disabled}>Uložit</button>
+        </Form>
+        <div>
+          <SongLook
+            song={this.result()}
+            parsed={parser.parseSong(this.state.textWithChords)}
+            noEdit
+          />
+        </div>
+      </Columns>
     )
   }
 }

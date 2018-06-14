@@ -113,6 +113,9 @@ const player = css`
   position: absolute;
   margin-top: -0.5em;
   cursor: pointer;
+  @media print {
+    display: none;
+  }
 `
 
 export const AudioControls = () => (

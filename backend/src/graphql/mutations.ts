@@ -45,13 +45,16 @@ function addOther(tagList: string[]) {
 }
 
 function serializeSong(song: Song): string {
-  const metadata = JSON.stringify(song.metadata)
+  const meta = { ...song.metadata }
+  for (const [key, value] of Object.entries(meta)) {
+    if (!value) delete meta[key]
+  }
+  const metadata = JSON.stringify(meta)
   return `${song.author}
 ${song.title}
 ${addOther(song.tags).join(',')}
-${metadata === '{}' ? '' : metadata}
-
-${song.textWithChords}
+${metadata === '{}' ? '' : `${metadata}\n`}
+${song.textWithChords.trim()}
 `
 }
 
