@@ -48,8 +48,8 @@ export default class ShareButton extends React.Component<
   }
 
   componentDidMount() {
-    this.setState({ visible: true })
     if (typeof navigator !== 'undefined' && 'share' in navigator) {
+      this.setState({ visible: true })
     }
   }
 }
