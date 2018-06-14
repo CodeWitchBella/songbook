@@ -53,7 +53,7 @@ const unique = () => {
   }
 }
 
-const tags = cacheInProd(() => {
+export const tags = cacheInProd(() => {
   const tagMap = JSON.parse(
     fs.readFileSync(path.join(songDir, 'tags.json'), 'utf-8'),
   )

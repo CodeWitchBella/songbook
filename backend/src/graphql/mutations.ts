@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { promisify } from 'util'
 import latinize from 'latinize'
-import { songs, songDir } from './resolvers'
+import { songs, songDir, tags } from './resolvers'
 
 type NewSongInput = {
   author: string
@@ -38,9 +38,10 @@ type ArrayItem<T extends any[]> = T extends (infer R)[] ? R : null
 
 type Song = ArrayItem<InferReturnType<typeof songs.get>>
 
-function addOther(tags: string[]) {
-  if (tags.filter(t => t !== 'new' && t !== 'todo' && t).length > 0) return tags
-  return [...tags, 'o']
+function addOther(tagList: string[]) {
+  if (tagList.filter(t => t !== 'new' && t !== 'todo' && t).length > 0)
+    return tagList
+  return [...tagList, 'o']
 }
 
 function serializeSong(song: Song): string {
@@ -67,6 +68,8 @@ function saveSong(song: Song): Promise<void> {
     serializeSong(song),
     'utf-8',
   )
+    .then(() => songs.reset())
+    .then(() => tags.reset())
 }
 
 const Mutation = {
