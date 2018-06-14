@@ -14,7 +14,7 @@ export type Tag = Tag
 
 type Context = {
   tagList: Tag[]
-  refetch: () => Promise<Everything | null>
+  refetch: (force?: boolean) => Promise<Everything | null>
 
   tags: {
     [tag: string]: SongType[]
@@ -36,18 +36,22 @@ const ric = (cb: () => void) => {
 
 export class StoreProvider extends React.Component<{}, Context> {
   fetchTime: number = 0
+  fetching: boolean = false
 
   state: Context = {
-    refetch: () => {
+    refetch: (force: boolean = false) => {
       if (typeof document === 'undefined') return Promise.resolve(null)
-      if ((this.fetchTime || 0) + refetchAfter >= Date.now())
+      if ((this.fetchTime || 0) + refetchAfter >= Date.now() && !force)
         return Promise.resolve(null)
+      if (this.fetching) return Promise.resolve(null)
       const lastFetchTime = this.fetchTime
       this.fetchTime = Date.now()
+      this.fetching = true
 
       f.fetchEverything()
         .then(
           (v): any => {
+            this.fetching = false
             if (v) {
               this.setStateFromEverything(v)
               return localForage.setItem('everything', v)
@@ -57,6 +61,7 @@ export class StoreProvider extends React.Component<{}, Context> {
           },
         )
         .catch(e => {
+          this.fetching = false
           this.fetchTime = lastFetchTime
           console.error(e)
         })
@@ -142,6 +147,14 @@ export const Song = makeConsumer<{ id: string }, SongType | null>(
     return children(ctx.songs[id] || null)
   },
 )
+
+export const Refetch = makeConsumer<
+  {},
+  ((force?: boolean) => Promise<Everything | null>)
+>((ctx, { children }) => {
+  ctx.refetch()
+  return children(ctx.refetch)
+})
 
 export const Songs = makeConsumer<{ ids: string[] }, SongType[]>(
   (ctx, { children, ids }) => {

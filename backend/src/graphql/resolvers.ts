@@ -89,5 +89,11 @@ const resolvers = {
       return songs.get().filter(s => s.tags.includes(id))
     },
   },
+  Song: {
+    tags: (src: any) => {
+      const ts = tags.get()
+      return src.tags.map((id: string) => ts.find(t2 => t2.id === id))
+    },
+  },
 }
 export default resolvers

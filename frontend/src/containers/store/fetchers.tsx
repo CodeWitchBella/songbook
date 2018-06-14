@@ -58,6 +58,9 @@ export const fetchEverything = query<everything>({
           paragraphSpace
           titleSpace
         }
+        tags {
+          id
+        }
       }
     }
   `,

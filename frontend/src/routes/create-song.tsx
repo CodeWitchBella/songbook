@@ -2,27 +2,7 @@ import React from 'react'
 import { hot } from 'react-hot-loader'
 import styled from 'react-emotion'
 import { newSong } from 'containers/store/fetchers'
-
-const Input = ({
-  label,
-  value,
-  onChange,
-}: {
-  label: string
-  value: string
-  onChange: (v: string) => any
-}) => (
-  <label>
-    {label}:{' '}
-    <input
-      value={value}
-      onChange={evt => {
-        evt.preventDefault()
-        onChange(evt.target.value)
-      }}
-    />
-  </label>
-)
+import Input from 'components/input'
 
 const Form = styled.form`
   display: flex;
