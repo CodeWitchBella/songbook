@@ -71,6 +71,7 @@ const resolvers = {
       const all = songs()
       return list.map(id => all.find(s => s.id === id))
     },
+    allSongs: () => songs(),
   },
   Tag: {
     songs: ({ id }: { id: string }) => {

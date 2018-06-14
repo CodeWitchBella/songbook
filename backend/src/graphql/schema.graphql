@@ -1,6 +1,7 @@
 type Query {
   tags: [Tag!]!
   songs(list: [ID!]!): [Song]!
+  allSongs: [Song!]!
   tag(id: ID!): Tag 
 }
 

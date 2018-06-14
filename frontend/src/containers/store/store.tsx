@@ -1,19 +1,20 @@
 import React from 'react'
 import createContext from 'utils/create-react-context'
-import { fullSongs_songs as SongType } from './__generated__/fullSongs'
+import localForage from 'localforage'
 import * as f from './fetchers'
-import { tagList_tags as Tag } from './__generated__/tagList'
-import { tag_tag_songs as MiniSongType } from './__generated__/tag'
+import {
+  everything_songs as SongType,
+  everything_tags as Tag,
+  everything_tags_songs as MiniSongType,
+  everything as Everything,
+} from './__generated__/everything'
 
 export type SongType = SongType
 export type Tag = Tag
 
 type Context = {
   tagList: Tag[]
-  fetchTagList: () => Promise<Tag[] | null>
-  fetchTag: (tag: string) => Promise<MiniSongType[] | null>
-  fetchSong: (id: string) => Promise<SongType | null>
-  fetchSongs: (id: string[]) => Promise<(SongType | null)[] | null>
+  refetch: () => Promise<Everything | null>
 
   tags: {
     [tag: string]: MiniSongType[]
@@ -34,135 +35,67 @@ const ric = (cb: () => void) => {
 }
 
 export class StoreProvider extends React.Component<{}, Context> {
-  fetchTagTime: { [key: string]: number } = {}
-  fetchTagListTime: number = 0
-  fetchSongTime: { [key: string]: number } = {}
+  fetchTime: number = 0
 
   state: Context = {
-    fetchTag: (tag: string) => {
+    refetch: () => {
       if (typeof document === 'undefined') return Promise.resolve(null)
-      if ((this.fetchTagTime[tag] || 0) + refetchAfter >= Date.now())
+      if ((this.fetchTime || 0) + refetchAfter >= Date.now())
         return Promise.resolve(null)
-      this.fetchTagTime[tag] = Date.now()
-      return f
-        .fetchTag({ id: tag })
-        .then(v => {
-          const value = v.tag
-          if (value) {
-            this.setState(st => ({
-              tags: { ...st.tags, [tag]: value.songs },
-            }))
-          }
-          return value.songs
-        })
-        .catch(e => {
-          console.info(e)
-          return null
-        })
-    },
-    fetchTagList: () => {
-      if (typeof document === 'undefined') return Promise.resolve(null)
-      if (this.fetchTagListTime + refetchAfter >= Date.now())
-        return Promise.resolve(null)
-      this.fetchTagListTime = Date.now()
-      return f
-        .fetchTagList()
-        .then(v => {
-          this.setState({ tagList: v.tags })
-          return v.tags
-        })
-        .catch(e => {
-          console.info(e)
-          return null
-        })
-    },
-    fetchSong: (id: string) => {
-      if (typeof document === 'undefined') return Promise.resolve(null)
-      if ((this.fetchSongTime[id] || 0) + refetchAfter >= Date.now())
-        return Promise.resolve(null)
-      this.fetchSongTime[id] = Date.now()
+      const lastFetchTime = this.fetchTime
+      this.fetchTime = Date.now()
 
-      return f.fetchFullSong
-        .load(id)
-        .then(v => {
-          if (v) {
-            this.setState(st => ({
-              songs: { ...st.songs, [id]: v },
-            }))
-          }
-          return v
-        })
-        .catch(e => {
-          console.info(e)
-          return null
-        })
-    },
-    fetchSongs: (ids: string[]) => {
-      if (typeof document === 'undefined') return Promise.resolve(null)
-      const songs = ids.filter(
-        id => (this.fetchSongTime[id] || 0) + refetchAfter < Date.now(),
-      )
-      if (songs.length <= 0) return Promise.resolve(null)
-
-      songs.forEach(s => {
-        this.fetchSongTime[s] = Date.now()
-      })
-
-      return f.fetchFullSong
-        .loadMany(songs)
-        .then(vs => {
-          const val: { [id: string]: SongType } = {}
-          let doSet: boolean = false
-          vs.forEach((v, i) => {
+      f.fetchEverything()
+        .then(
+          (v): any => {
             if (v) {
-              doSet = true
-              val[songs[i]] = v
+              this.setStateFromEverything(v)
+              return localForage.setItem('everything', v)
             }
-          })
-          if (doSet) {
-            this.setState(st => ({ songs: { ...st.songs, ...val } }))
-          }
-          return vs
-        })
+            this.fetchTime = lastFetchTime
+            return null
+          },
+        )
         .catch(e => {
-          console.info(e)
-          return null
+          this.fetchTime = lastFetchTime
+          console.error(e)
         })
-    },
 
+      return Promise.resolve(null)
+    },
     tagList: [],
     tags: {},
     songs: {},
   }
 
-  componentDidMount() {
-    this.state
-      .fetchTagList()
-      .then(
-        tags =>
-          !tags
-            ? Promise.resolve(null)
-            : Promise.all(
-                tags
-                  .filter(t => t.id !== 'all')
-                  .map(t => this.state.fetchTag(t.id)),
-              ),
-      )
-      .catch(e => {
-        console.info(e)
-      })
+  setStateFromEverything(everything: Everything) {
+    const songs: {
+      [id: string]: SongType
+    } = {}
+    everything.songs.forEach(song => {
+      songs[song.id] = song
+    })
+    const tags: {
+      [tag: string]: MiniSongType[]
+    } = {}
+    everything.tags.forEach(tag => {
+      tags[tag.id] = tag.songs
+    })
+    this.setState({
+      tagList: everything.tags,
+      songs,
+      tags,
+    })
+  }
 
-    this.state
-      .fetchTag('all')
-      .then(
-        songs =>
-          !songs
-            ? Promise.resolve(null)
-            : Promise.all(songs.map(s => this.state.fetchSong(s.id))),
-      )
-      .catch(e => {
-        console.info(e)
+  componentDidMount() {
+    this.state.refetch()
+    localForage
+      .getItem('everything')
+      .then(val => {
+        if (val) this.setStateFromEverything(val as Everything)
       })
+      .catch(e => console.error(e))
   }
 
   render() {
@@ -191,27 +124,27 @@ const makeConsumer = <P, T>(
 )
 
 export const TagList = makeConsumer<{}, Tag[]>((ctx, { children }) => {
-  ctx.fetchTagList()
+  ctx.refetch()
   return children(ctx.tagList)
 })
 
 export const SongsInTag = makeConsumer<{ tag: string }, MiniSongType[]>(
   (ctx, { children, tag }) => {
-    ctx.fetchTag(tag)
+    ctx.refetch()
     return children(ctx.tags[tag] || [])
   },
 )
 
 export const Song = makeConsumer<{ id: string }, SongType | null>(
   (ctx, { children, id }) => {
-    ctx.fetchSong(id)
+    ctx.refetch()
     return children(ctx.songs[id] || null)
   },
 )
 
 export const Songs = makeConsumer<{ ids: string[] }, SongType[]>(
   (ctx, { children, ids }) => {
-    ctx.fetchSongs(ids)
+    ctx.refetch()
     return children(ids.map(id => ctx.songs[id] || null).filter(a => a))
   },
 )
