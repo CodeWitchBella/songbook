@@ -1,4 +1,6 @@
 import { everything } from './__generated__/everything'
+import * as n from './__generated__/newSong'
+import * as e from './__generated__/editSong'
 
 const gql = ([a]: TemplateStringsArray) => a
 
@@ -60,4 +62,22 @@ export const fetchEverything = query<everything>({
     }
   `,
   opName: 'everything',
+})
+
+export const newSong = query<n.newSong, n.newSongVariables>({
+  q: gql`
+    mutation newSong($song: NewSongInput!) {
+      newSong(song: $song)
+    }
+  `,
+  opName: 'newSong',
+})
+
+export const editSong = query<e.editSong, e.editSongVariables>({
+  q: gql`
+    mutation editSong($song: EditSongInput!) {
+      editSong(song: $song)
+    }
+  `,
+  opName: 'editSong',
 })

@@ -74,7 +74,7 @@ const tags = cacheInProd(() => {
 
 const resolvers = {
   Query: {
-    tags,
+    tags: () => tags.get(),
     tag: (_: any, { id }: { id: string }) => tags.get().find(t => t.id === id),
     songs: (_: any, { list }: { list: string[] }) => {
       const all = songs.get()

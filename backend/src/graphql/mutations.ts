@@ -39,7 +39,7 @@ type ArrayItem<T extends any[]> = T extends (infer R)[] ? R : null
 type Song = ArrayItem<InferReturnType<typeof songs.get>>
 
 function addOther(tags: string[]) {
-  if (tags.filter(t => t !== 'new').length > 0) return tags
+  if (tags.filter(t => t !== 'new' && t !== 'todo' && t).length > 0) return tags
   return [...tags, 'o']
 }
 

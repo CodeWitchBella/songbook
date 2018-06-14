@@ -33,6 +33,20 @@ const Tag = Loadable({
   webpack: () => [require.resolveWeak('./tag')],
 })
 
+const CreateSong = Loadable({
+  loader: () => import(/* webpackChunkName: "r-create-song" */ './create-song'),
+  loading,
+  modules: ['./create-song'],
+  webpack: () => [require.resolveWeak('./create-song')],
+})
+
+const EditSong = Loadable({
+  loader: () => import(/* webpackChunkName: "r-edit-song" */ './edit-song'),
+  loading,
+  modules: ['./edit-song'],
+  webpack: () => [require.resolveWeak('./edit-song')],
+})
+
 export default class Routes extends React.Component {
   render() {
     return (
@@ -45,6 +59,7 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Song id={match.params.id} />}
         />
+        <Route path="/new" exact render={({ match }) => <CreateSong />} />
         <Route
           path="/print/:tag"
           exact
