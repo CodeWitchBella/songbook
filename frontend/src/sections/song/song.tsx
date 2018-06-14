@@ -8,11 +8,21 @@ import { Song } from 'containers/store/store'
 
 const Placeholder = () => <div>Načítám píseň</div>
 
-const SongSection = ({ id }: { id: string }) => (
+const SongSection = ({
+  id,
+  share = false,
+}: {
+  id: string
+  share?: boolean
+}) => (
   <Song id={id}>
     {song =>
       !song ? null : (
-        <SongLook song={song} parsed={parser.parseSong(song.textWithChords)} />
+        <SongLook
+          share={share}
+          song={song}
+          parsed={parser.parseSong(song.textWithChords)}
+        />
       )
     }
   </Song>

@@ -4,7 +4,7 @@ import Song from 'sections/song/song'
 
 const SongRoute = ({ id }: { id: string }) => (
   <main>
-    <Song id={id} />
+    <Song id={id} share={true} />
   </main>
 )
 export default hot(module)(SongRoute)

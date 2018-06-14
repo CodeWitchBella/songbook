@@ -6,6 +6,7 @@ import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
 import { Link } from 'react-router-dom'
+import ShareButton from 'components/song-look/share-button'
 
 type SongType = Pick<everything_songs, 'author' | 'id' | 'metadata' | 'title'>
 
@@ -88,21 +89,39 @@ const EditButton = styled(Link)`
   color: darkblue;
 `
 
+const shareButton = css`
+  width: 100%;
+  height: 0;
+  display: flex;
+  justify-content: center;
+  @media print {
+    display: none;
+  }
+`
+
 export const SongPage = ({
   song,
   number,
   pageNumber,
   pageData,
   noEdit,
+  share,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
   number?: number
   pageNumber?: number
   noEdit: boolean
+  share: boolean
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
     <AudioControls />
+    {share && (
+      <ShareButton
+        title={`${song.title} - ${song.author}`}
+        className={shareButton}
+      />
+    )}
     {noEdit ? null : (
       <EditButtonContainer>
         <EditButton to={`/edit/${song.id}`}>Upravit</EditButton>
@@ -129,15 +148,23 @@ export const SongLook = ({
   song,
   parsed,
   noEdit = false,
+  share = false,
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
   noEdit?: boolean
+  share?: boolean
 }) => {
   const content = (
     <>
       {parsed.map((pageData, i) => (
-        <SongPage key={i} pageData={pageData} song={song} noEdit={noEdit} />
+        <SongPage
+          key={i}
+          pageData={pageData}
+          song={song}
+          noEdit={noEdit}
+          share={share}
+        />
       ))}
     </>
   )
