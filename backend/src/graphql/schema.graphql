@@ -5,6 +5,11 @@ type Query {
   tag(id: ID!): Tag 
 }
 
+type Mutation {
+  editSong(song: EditSongInput!): Boolean!
+  newSong(song: NewSongInput!): ID
+}
+
 type Tag {
   id: ID!
   name: String!
@@ -25,4 +30,28 @@ type Song {
   textWithChords: String!
   tags: [Tag!]!
   metadata: SongMetadata!
+}
+
+input NewSongInput {
+  author: String!
+  title: String!
+  textWithChords: String!
+  tags: [ID!]!
+  metadata: SongMetadataInput!
+}
+
+input EditSongInput {
+  id: ID!
+  author: String
+  title: String
+  textWithChords: String
+  tags: [ID!]
+  metadata: SongMetadataInput
+}
+
+input SongMetadataInput {
+  audio: String
+  fontSize: Float
+  paragraphSpace: Float
+  titleSpace: Float
 }

@@ -1,17 +1,25 @@
 import fs from 'fs'
 import path from 'path'
+import Mutation from './mutations'
 
-const songDir = path.join(__dirname, '../../src/songs/')
+export const songDir = path.join(__dirname, '../../src/songs/')
 
 const PRODUCTION = process.env.NODE_ENV === 'PRODUCTION'
 
-const cacheInProd = <T extends Object>(load: () => T): (() => T) => {
-  if (!PRODUCTION) return load
-  const val = load()
-  return () => val
+const cacheInProd = <T extends Object>(
+  load: () => T,
+): { get: () => T; reset: () => void } => {
+  if (!PRODUCTION) return { get: load, reset: () => {} }
+  let val = load()
+  return {
+    get: () => val,
+    reset: () => {
+      val = load()
+    },
+  }
 }
 
-const songs = cacheInProd(() =>
+export const songs = cacheInProd(() =>
   fs
     .readdirSync(songDir)
     .filter(fname => /\.song$/.exec(fname))
@@ -49,7 +57,8 @@ const tags = cacheInProd(() => {
   const tagMap = JSON.parse(
     fs.readFileSync(path.join(songDir, 'tags.json'), 'utf-8'),
   )
-  return songs()
+  return songs
+    .get()
     .map(s => s.tags)
     .reduce((p, c) => p.concat(c), [])
     .filter(unique())
@@ -66,17 +75,18 @@ const tags = cacheInProd(() => {
 const resolvers = {
   Query: {
     tags,
-    tag: (_: any, { id }: { id: string }) => tags().find(t => t.id === id),
+    tag: (_: any, { id }: { id: string }) => tags.get().find(t => t.id === id),
     songs: (_: any, { list }: { list: string[] }) => {
-      const all = songs()
+      const all = songs.get()
       return list.map(id => all.find(s => s.id === id))
     },
-    allSongs: () => songs(),
+    allSongs: () => songs.get(),
   },
+  Mutation,
   Tag: {
     songs: ({ id }: { id: string }) => {
-      if (id === 'all') return songs()
-      return songs().filter(s => s.tags.includes(id))
+      if (id === 'all') return songs.get()
+      return songs.get().filter(s => s.tags.includes(id))
     },
   },
 }
