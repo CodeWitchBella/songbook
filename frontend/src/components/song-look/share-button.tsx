@@ -14,7 +14,7 @@ const Button = styled.button`
   width: calc(2.56em);
   height: calc(2.56em);
   font-size: 1em;
-  background: transparent;
+  background: white;
   border: 0;
   margin: 0;
   padding: 0;
