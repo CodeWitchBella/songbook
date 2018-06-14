@@ -5,7 +5,18 @@ import { Link } from 'react-router-dom'
 
 const Home = () => (
   <div>
-    <Link to="/new">Create song</Link>
+    <Link
+      css={`
+        font-size: 18px;
+        display: block;
+        text-align: center;
+        padding-top: 20px;
+        color: darkblue;
+      `}
+      to="/new"
+    >
+      Create song
+    </Link>
     <TagList />
   </div>
 )
