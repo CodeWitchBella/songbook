@@ -17,7 +17,7 @@ type Context = {
   refetch: () => Promise<Everything | null>
 
   tags: {
-    [tag: string]: MiniSongType[]
+    [tag: string]: SongType[]
   }
 
   songs: {
@@ -76,11 +76,12 @@ export class StoreProvider extends React.Component<{}, Context> {
       songs[song.id] = song
     })
     const tags: {
-      [tag: string]: MiniSongType[]
+      [tag: string]: SongType[]
     } = {}
     everything.tags.forEach(tag => {
-      tags[tag.id] = tag.songs
+      tags[tag.id] = tag.songs.map(({ id }) => songs[id])
     })
+
     this.setState({
       tagList: everything.tags,
       songs,
