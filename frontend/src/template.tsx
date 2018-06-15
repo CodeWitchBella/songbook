@@ -24,13 +24,15 @@ const Template = ({ scripts }: { scripts: string[] }) => (
     <head>
       <meta charSet="utf-8" />
       <link rel="manifest" href="/static/manifest.json" />
+      <meta name="theme-color" content="#14CCB1" />
       <title>Songbook</title>
       <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
       />
 
-      <link rel="shortcut icon" href="/favicon.ico" />
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+      <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
       {delimiter}
     </head>
