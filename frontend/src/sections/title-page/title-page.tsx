@@ -1,17 +1,21 @@
 import React from 'react'
 import Page from 'components/page'
 import styled from 'react-emotion'
-import defaultImage from './locomotive.png'
+import defaultImage from './image.png'
 
 const ImageContainer = styled.div`
-  padding-top: 3em;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
 `
 
 const Image = styled.img`
   display: block;
   width: 90%;
   margin: 0 auto;
-  filter: grayscale(100%);
+  @media print {
+    filter: grayscale(100%);
+  }
 `
 
 const Container = styled.div`
@@ -22,8 +26,12 @@ const Container = styled.div`
 `
 
 const Title = styled.div`
-  padding-bottom: 5em;
+  flex-grow: 1;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 3em;
 `
 
 const TitleLine1 = styled.div`

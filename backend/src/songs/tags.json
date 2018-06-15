@@ -1,6 +1,7 @@
 {
   "ch": {
-    "name": "Children songbook"
+    "name": "Children songbook",
+    "cover": "/static/locomotive.png"
   },
   "e": {
     "name": "Elder songbook",
