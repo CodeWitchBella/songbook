@@ -3,15 +3,6 @@ import { css } from 'react-emotion'
 
 export const Quill = LeQuill
 
-const chord = css`
-  display: inline-block;
-  white-space: nowrap;
-  width: 0;
-  -webkit-transform: translateY(-1em);
-  -ms-transform: translateY(-1em);
-  transform: translateY(-1em);
-  font-weight: bold;
-`
 const spaceChord = css`
   display: inline-block;
   white-space: nowrap;
@@ -19,6 +10,11 @@ const spaceChord = css`
   -ms-transform: translateY(-1em);
   transform: translateY(-1em);
   font-weight: bold;
+`
+
+const chord = css`
+  ${spaceChord};
+  width: 0;
 `
 
 const withChord = css`

@@ -1,6 +1,6 @@
 import React from 'react'
 import Quill from 'quill'
-import { parseSongToDelta } from 'utils/parse-song'
+import { parseSongToDelta, stringifySongFromDelta } from 'utils/parse-song'
 import styled from 'react-emotion'
 
 const bindings = {
@@ -47,6 +47,7 @@ const Container = styled.div`
 
 export default class QuillEditor extends React.Component<{
   initialValue: string
+  onChange: (value: string) => void
 }> {
   ref = React.createRef<HTMLDivElement>()
   quill?: Quill
@@ -91,9 +92,11 @@ export default class QuillEditor extends React.Component<{
       }
     })
     */
+    quill.on('text-change', (delta, oldDelta, source) => {
+      this.props.onChange(stringifySongFromDelta(quill.getContents()))
+    })
     const delta = parseSongToDelta(this.props.initialValue)
     quill.setContents(delta)
-    console.log(quill.getContents())
   }
 
   componentDidMount() {
@@ -102,7 +105,6 @@ export default class QuillEditor extends React.Component<{
       import('./quill')
         .then(q => {
           q.init()
-          console.log('initing')
           this.quill = new q.Quill(ref, {
             formats: ['chord', 'tag', 'spaceChord', 'withChord'],
             modules: {

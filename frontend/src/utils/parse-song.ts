@@ -164,6 +164,24 @@ export function parseSongToDelta(song: string): Delta {
     }
     delta.push({ insert: '\n', attributes: { pageSplit: true } })
   }
-  console.log(delta)
   return new Delta(delta)
+}
+
+export function stringifySongFromDelta(song: Delta): string {
+  if (!song.ops) return ''
+  let ret = ''
+  for (const op of song.ops) {
+    if (!op.insert) throw new Error('Unknown delta value')
+    const attr = op.attributes || {}
+    if (attr.tag) {
+      ret += `${op.insert} `
+    } else if (attr.chord) {
+      ret += `[${op.insert}]`
+    } else if (attr.spaceChord) {
+      ret += `[_${op.insert}]`
+    } else {
+      ret += op.insert
+    }
+  }
+  return ret
 }

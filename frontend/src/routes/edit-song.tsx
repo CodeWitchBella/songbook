@@ -135,7 +135,7 @@ class EditSong extends React.Component<{
           <QuillEditor
             //label="Text"
             initialValue={this.state.textWithChords}
-            //onChange={this.textWithChordsChange}
+            onChange={this.textWithChordsChange}
           />
           <button disabled={this.state.disabled}>Uložit</button>
         </Form>
