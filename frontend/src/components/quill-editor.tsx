@@ -3,31 +3,56 @@ import Quill from 'quill'
 import { parseSongToDelta, stringifySongFromDelta } from 'utils/parse-song'
 import styled from 'react-emotion'
 
+function updateWithChord(quill: any, range: any) {
+  const offset =
+    quill
+      .getText()
+      .substring(range.index)
+      .indexOf('\n') + range.index
+
+  const startOffset = quill
+    .getText()
+    .substring(0, range.index)
+    .lastIndexOf('\n')
+
+  console.log()
+  const withChord =
+    quill
+      .getContents()
+      .slice(startOffset, offset)
+      .ops.filter(
+        (op: any) =>
+          op.attributes && (op.attributes.chord || op.attributes.spaceChord),
+      ).length > 0
+
+  quill.formatText(offset, 1, 'withChord', withChord, 'silent')
+}
+
 const bindings = {
-  tab: {
-    key: 9,
+  spacing: {
+    key: ' ',
+    shortKey: true,
     handler(range: any, context: any) {
       const quill = (this as any).quill
 
-      quill.format('chord', !context.format.chord, 'user')
-
-      const offset =
-        quill
-          .getText()
-          .substring(range.index)
-          .indexOf('\n') + range.index
-
-      const count =
-        (quill.getFormat(offset, 1).withChord || 0) +
-        (context.format.chord ? -1 : 1)
-
-      if (count === 0) {
-        quill.formatText(offset, 1, 'withChord', false, 'silent')
-      } else {
-        quill.formatText(offset, 1, 'withChord', count, 'silent')
+      if (context.format.chord) {
+        quill.format('chord', false, 'user')
       }
+      quill.format('spaceChord', !context.format.spaceChord, 'user')
+      updateWithChord(quill, range)
+    },
+  },
+  tab: {
+    key: 9,
+    shiftKey: null,
+    handler(range: any, context: any) {
+      const quill = (this as any).quill
 
-      //quill.formatText(range, 'chord', !quill.getFormat().chord, 'user')
+      if (context.format.spaceChord) {
+        quill.format('spaceChord', false, 'user')
+      }
+      quill.format('chord', !context.format.chord, 'user')
+      updateWithChord(quill, range)
     },
   },
 }
@@ -111,7 +136,7 @@ export default class QuillEditor extends React.Component<{
               keyboard: {
                 bindings,
               },
-              history: { userOnly: true }
+              history: { userOnly: true },
             },
           })
           this.onInit()

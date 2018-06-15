@@ -137,13 +137,13 @@ export function parseSongToDelta(song: string): Delta {
   for (const page of parseSong(song, { convertTags: false })) {
     for (const paragraph of page) {
       for (const line of paragraph) {
-        let withChord = 0
+        let withChord = false
         if (line.tag) {
           delta.push({ insert: line.tag, attributes: { tag: true } })
         }
         for (const part of line.content) {
           if (part.ch) {
-            withChord += 1
+            withChord = true
             if (part.ch[0] === '_') {
               delta.push({
                 insert: part.ch.substring(1),

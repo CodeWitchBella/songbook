@@ -56,16 +56,7 @@ export const init = () => {
   Quill.register(TagBlot)
 
   const Block = Quill.import('blots/block')
-  class WithChord extends Block {
-    static create(value: any) {
-      const node = super.create()
-      node.dataset.value = value
-      return node
-    }
-    static formats(node: any) {
-      return Number.parseInt(node.dataset.value, 10)
-    }
-  }
+  class WithChord extends Block {}
   WithChord.blotName = 'withChord'
   WithChord.tagName = 'div'
   WithChord.className = withChord
