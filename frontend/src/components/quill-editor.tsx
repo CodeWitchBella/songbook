@@ -96,7 +96,7 @@ export default class QuillEditor extends React.Component<{
       this.props.onChange(stringifySongFromDelta(quill.getContents()))
     })
     const delta = parseSongToDelta(this.props.initialValue)
-    quill.setContents(delta)
+    quill.setContents(delta, 'silent')
   }
 
   componentDidMount() {
@@ -111,6 +111,7 @@ export default class QuillEditor extends React.Component<{
               keyboard: {
                 bindings,
               },
+              history: { userOnly: true }
             },
           })
           this.onInit()
