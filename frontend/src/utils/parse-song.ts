@@ -1,3 +1,5 @@
+import { Delta, DeltaOperation } from 'utils/quill-delta'
+
 export type Line = {
   content: { ch: string; text: string }[]
   tag: string | null
@@ -5,6 +7,7 @@ export type Line = {
 function parseLine(
   line_: string,
   pCounter: number,
+  { convertTags }: { convertTags: boolean },
 ): Line & { pCounter: number } {
   let line = line_.trim()
   const content: { ch: string; text: string }[] = []
@@ -24,7 +27,7 @@ function parseLine(
     }
     line = line.trim()
   } else if (rmatch) {
-    tag = `R${rmatch[1]}.`
+    tag = `R${rmatch[1]}${convertTags ? '.' : ':'}`
     line = line.replace(rreg, '').trim()
   }
 
@@ -74,6 +77,7 @@ export type Paragraph = Line[]
 function parseParagraph(
   p: string,
   pCounterInit: number,
+  { convertTags }: { convertTags: boolean },
 ): { p: Paragraph; pCounter: number } {
   let pCounter = pCounterInit
   return {
@@ -81,11 +85,13 @@ function parseParagraph(
       .trim()
       .split('\n')
       .map(l => {
-        const { content, tag, pCounter: n } = parseLine(l, pCounter)
+        const { content, tag, pCounter: n } = parseLine(l, pCounter, {
+          convertTags,
+        })
         pCounter = n
         return {
           content,
-          tag: isVerse(tag) ? verseToText(tag, pCounter) : tag,
+          tag: isVerse(tag) && convertTags ? verseToText(tag, pCounter) : tag,
         }
       }),
     pCounter,
@@ -95,6 +101,7 @@ function parseParagraph(
 function parsePage(
   song: string,
   pCounterInit: number,
+  { convertTags }: { convertTags: boolean },
 ): { page: Paragraph[]; pCounter: number } {
   let pCounter = pCounterInit
   return {
@@ -102,7 +109,7 @@ function parsePage(
       .trim()
       .split(/\n\n+/)
       .map(l => {
-        const ret = parseParagraph(l, pCounter)
+        const ret = parseParagraph(l, pCounter, { convertTags })
         pCounter = ret.pCounter
         return ret.p
       }),
@@ -110,14 +117,50 @@ function parsePage(
   }
 }
 
-export function parseSong(song: string): Paragraph[][] {
+export function parseSong(
+  song: string,
+  { convertTags = true }: { convertTags?: boolean } = {},
+): Paragraph[][] {
   let pCounter = 0
   return song
     .trim()
     .split('--- page break ---')
     .map(page => {
-      const ret = parsePage(page, pCounter)
+      const ret = parsePage(page, pCounter, { convertTags })
       pCounter = ret.pCounter
       return ret.page
     })
+}
+
+export function parseSongToDelta(song: string): Delta {
+  const delta: DeltaOperation[] = []
+  for (const page of parseSong(song, { convertTags: false })) {
+    for (const paragraph of page) {
+      for (const line of paragraph) {
+        let withChord = false
+        if (line.tag) {
+          delta.push({ insert: line.tag, attributes: { tag: true } })
+        }
+        for (const part of line.content) {
+          if (part.ch) {
+            withChord = true
+            if (part.ch[0] === '_') {
+              delta.push({
+                insert: part.ch.substring(1),
+                attributes: { spaceChord: true },
+              })
+            } else {
+              delta.push({ insert: part.ch, attributes: { chord: true } })
+            }
+          }
+          delta.push({ insert: part.text })
+        }
+        delta.push({ insert: '\n', attributes: { withChord } })
+      }
+      delta.push({ insert: '\n' })
+    }
+    delta.push({ insert: '\n', attributes: { pageSplit: true } })
+  }
+  console.log(delta)
+  return new Delta(delta)
 }

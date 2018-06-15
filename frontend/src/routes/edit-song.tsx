@@ -7,6 +7,7 @@ import { editSongVariables } from 'containers/store/__generated__/editSong'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
+import QuillEditor from 'components/quill-editor'
 
 type SongPatch = editSongVariables['song']
 
@@ -131,10 +132,10 @@ class EditSong extends React.Component<{
             value={this.state.tags}
             onChange={this.tagsChange}
           />
-          <Textarea
-            label="Text"
-            value={this.state.textWithChords}
-            onChange={this.textWithChordsChange}
+          <QuillEditor
+            //label="Text"
+            initialValue={this.state.textWithChords}
+            //onChange={this.textWithChordsChange}
           />
           <button disabled={this.state.disabled}>Uložit</button>
         </Form>
