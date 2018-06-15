@@ -11,6 +11,22 @@ const bindings = {
 
       quill.format('chord', !context.format.chord, 'user')
 
+      const offset =
+        quill
+          .getText()
+          .substring(range.index)
+          .indexOf('\n') + range.index
+
+      const count =
+        (quill.getFormat(offset, 1).withChord || 0) +
+        (context.format.chord ? -1 : 1)
+
+      if (count === 0) {
+        quill.formatText(offset, 1, 'withChord', false, 'silent')
+      } else {
+        quill.formatText(offset, 1, 'withChord', count, 'silent')
+      }
+
       //quill.formatText(range, 'chord', !quill.getFormat().chord, 'user')
     },
   },
@@ -77,6 +93,7 @@ export default class QuillEditor extends React.Component<{
     */
     const delta = parseSongToDelta(this.props.initialValue)
     quill.setContents(delta)
+    console.log(quill.getContents())
   }
 
   componentDidMount() {
