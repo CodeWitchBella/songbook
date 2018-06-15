@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/page'
 import styled from 'react-emotion'
-import image from './locomotive.png'
+import defaultImage from './locomotive.png'
 
 const ImageContainer = styled.div`
   padding-top: 3em;
@@ -33,7 +33,7 @@ const TitleLine2 = styled.div`
   font-size: 2em;
 `
 
-const TitlePage = () => (
+const TitlePage = ({ image = defaultImage }: { image?: string }) => (
   <Page left>
     <Container>
       <ImageContainer>

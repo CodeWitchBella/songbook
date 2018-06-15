@@ -43,6 +43,7 @@ export const fetchEverything = query<everything>({
       tags {
         id
         name
+        cover
         songs {
           id
         }

@@ -14,6 +14,7 @@ type Tag {
   id: ID!
   name: String!
   songs: [Song!]!
+  cover: String
 }
 
 type SongMetadata {

@@ -4,20 +4,26 @@ import localForage from 'localforage'
 import * as f from './fetchers'
 import {
   everything_songs as SongType,
-  everything_tags as Tag,
+  everything_tags as SimpleTagType,
   everything_tags_songs as MiniSongType,
   everything as Everything,
 } from './__generated__/everything'
 
 export type SongType = SongType
-export type Tag = Tag
+export type TagType = {
+  id: string
+  name: string
+  cover: string | null
+  songs: SongType[]
+}
+export type SimpleTagType = SimpleTagType
 
 type Context = {
-  tagList: Tag[]
+  tagList: SimpleTagType[]
   refetch: (force?: boolean) => Promise<Everything | null>
 
   tags: {
-    [tag: string]: SongType[]
+    [tag: string]: TagType
   }
 
   songs: {
@@ -81,10 +87,10 @@ export class StoreProvider extends React.Component<{}, Context> {
       songs[song.id] = song
     })
     const tags: {
-      [tag: string]: SongType[]
+      [tag: string]: TagType
     } = {}
     everything.tags.forEach(tag => {
-      tags[tag.id] = tag.songs.map(({ id }) => songs[id])
+      tags[tag.id] = { ...tag, songs: tag.songs.map(({ id }) => songs[id]) }
     })
 
     this.setState({
@@ -128,16 +134,24 @@ const makeConsumer = <P, T>(
     }}
   </context.Consumer>
 )
+export const Tag = makeConsumer<{ id: string }, TagType | null>(
+  (ctx, { children, id }) => {
+    ctx.refetch()
+    return children(ctx.tags[id] || null)
+  },
+)
 
-export const TagList = makeConsumer<{}, Tag[]>((ctx, { children }) => {
-  ctx.refetch()
-  return children(ctx.tagList)
-})
+export const TagList = makeConsumer<{}, SimpleTagType[]>(
+  (ctx, { children }) => {
+    ctx.refetch()
+    return children(ctx.tagList)
+  },
+)
 
-export const SongsInTag = makeConsumer<{ tag: string }, MiniSongType[]>(
+export const SongsInTag = makeConsumer<{ tag: string }, SongType[]>(
   (ctx, { children, tag }) => {
     ctx.refetch()
-    return children(ctx.tags[tag] || [])
+    return children((ctx.tags[tag] && ctx.tags[tag].songs) || [])
   },
 )
 

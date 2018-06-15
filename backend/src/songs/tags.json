@@ -3,7 +3,8 @@
     "name": "Children songbook"
   },
   "e": {
-    "name": "Elder songbook"
+    "name": "Elder songbook",
+    "cover": "/static/train-girl.png"
   },
   "o": {
     "name": "Others"

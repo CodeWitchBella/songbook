@@ -104,15 +104,15 @@ export const SongPage = ({
   number,
   pageNumber,
   pageData,
-  noEdit,
-  share,
+  noEdit = false,
+  share = false,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
   number?: number
   pageNumber?: number
-  noEdit: boolean
-  share: boolean
+  noEdit?: boolean
+  share?: boolean
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
     <AudioControls />

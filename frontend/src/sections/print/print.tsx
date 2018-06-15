@@ -5,7 +5,7 @@ import TitlePage from 'sections/title-page/title-page'
 import { parseSong, Paragraph } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { AudioProvider } from 'components/song-look/audio-player'
-import { SongsInTag, Songs } from 'containers/store/store'
+import { SongsInTag, Songs, Tag } from 'containers/store/store'
 
 const PlaceholderSongList = () => <div>Načítám seznam písní</div>
 
@@ -58,11 +58,20 @@ const Print = ({ tag }: { tag: string }) => (
                   })
 
                 return (
-                  <div>
-                    <TitlePage />
-                    <main>{pages}</main>
-                    <Contents list={songs} left={pages.length % 2 !== 0} />
-                  </div>
+                  <Tag id={tag}>
+                    {t =>
+                      t ? (
+                        <div>
+                          <TitlePage image={t.cover || undefined} />
+                          <main>{pages}</main>
+                          <Contents
+                            list={songs}
+                            left={pages.length % 2 !== 0}
+                          />
+                        </div>
+                      ) : null
+                    }
+                  </Tag>
                 )
               })()
         }
