@@ -4,10 +4,12 @@ const Input = ({
   label,
   value,
   onChange,
+  type = 'text',
 }: {
   label: string
   value: string
   onChange: (v: string) => any
+  type?: string
 }) => (
   <label>
     {label}:{' '}

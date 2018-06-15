@@ -8,6 +8,7 @@ import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import QuillEditor from 'components/quill-editor'
+import { everything_songs_metadata } from 'containers/store/__generated__/everything'
 
 type SongPatch = editSongVariables['song']
 
@@ -62,17 +63,31 @@ type State = {
   title: string
   textWithChords: string
   disabled: boolean
+  fontSize: string
+  paragraphSpace: string
+  titleSpace: string
 }
 
-class EditSong extends React.Component<{
-  song: SongType
-  refetch: (force?: boolean) => Promise<any>
-}> {
+function numberToString(input: any) {
+  if (typeof input === 'number') return `${input}`
+  return input
+}
+
+class EditSong extends React.Component<
+  {
+    song: SongType
+    refetch: (force?: boolean) => Promise<any>
+  },
+  State
+> {
   state: State = {
     author: this.props.song.author,
     tags: this.props.song.tags.map(t => t.id).join(', '),
     title: this.props.song.title,
     textWithChords: this.props.song.textWithChords,
+    fontSize: numberToString(this.props.song.metadata.fontSize),
+    paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
+    titleSpace: numberToString(this.props.song.metadata.titleSpace),
 
     disabled: false,
   }
@@ -85,6 +100,12 @@ class EditSong extends React.Component<{
       title,
       tags: tags.split(',').map(t => t.trim()),
       textWithChords,
+      metadata: {
+        ...this.props.song.metadata,
+        fontSize: Number.parseFloat(this.state.fontSize),
+        paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
+        titleSpace: Number.parseFloat(this.state.titleSpace),
+      },
     }
   }
 
@@ -115,6 +136,10 @@ class EditSong extends React.Component<{
   titleChange = (val: string) => this.setState({ title: val })
   textWithChordsChange = (val: string) => this.setState({ textWithChords: val })
 
+  fontSizeChange = (val: string) => this.setState({ fontSize: val })
+  paragraphSpaceChange = (val: string) => this.setState({ paragraphSpace: val })
+  titleSpaceChange = (val: string) => this.setState({ titleSpace: val })
+
   render() {
     return (
       <Columns>
@@ -135,6 +160,25 @@ class EditSong extends React.Component<{
               value={this.state.tags}
               onChange={this.tagsChange}
             />
+            <Input
+              label="Velikost písma"
+              type="number"
+              value={this.state.fontSize || '1.00'}
+              onChange={this.fontSizeChange}
+            />
+            <Input
+              label="Místo mezi odstavci"
+              type="number"
+              value={this.state.paragraphSpace || '1.00'}
+              onChange={this.paragraphSpaceChange}
+            />
+            <Input
+              label="Místo pod nadpisem"
+              type="number"
+              value={this.state.titleSpace || '1.00'}
+              onChange={this.titleSpaceChange}
+            />
+
             <QuillEditor
               //label="Text"
               initialValue={this.state.textWithChords}
