@@ -15,6 +15,8 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   font-size: 18px;
+  max-width: 600px;
+  margin: 40px auto 0 auto;
 `
 
 const textAreaClass = css`
@@ -116,29 +118,31 @@ class EditSong extends React.Component<{
   render() {
     return (
       <Columns>
-        <Form onSubmit={this.submit}>
-          <Input
-            label="Autor"
-            value={this.state.author}
-            onChange={this.authorChange}
-          />
-          <Input
-            label="Jméno songu"
-            value={this.state.title}
-            onChange={this.titleChange}
-          />
-          <Input
-            label="Tagy"
-            value={this.state.tags}
-            onChange={this.tagsChange}
-          />
-          <QuillEditor
-            //label="Text"
-            initialValue={this.state.textWithChords}
-            onChange={this.textWithChordsChange}
-          />
-          <button disabled={this.state.disabled}>Uložit</button>
-        </Form>
+        <div>
+          <Form onSubmit={this.submit}>
+            <Input
+              label="Autor"
+              value={this.state.author}
+              onChange={this.authorChange}
+            />
+            <Input
+              label="Jméno songu"
+              value={this.state.title}
+              onChange={this.titleChange}
+            />
+            <Input
+              label="Tagy"
+              value={this.state.tags}
+              onChange={this.tagsChange}
+            />
+            <QuillEditor
+              //label="Text"
+              initialValue={this.state.textWithChords}
+              onChange={this.textWithChordsChange}
+            />
+            <button disabled={this.state.disabled}>Uložit</button>
+          </Form>
+        </div>
         <div>
           <SongLook
             song={this.result()}
