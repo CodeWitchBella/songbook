@@ -22,6 +22,8 @@ Loadable.preloadReady().then(() => {
   )
 })
 
-if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
+if (
+  'serviceWorker' in navigator /*&& process.env.NODE_ENV !== 'development'*/
+) {
   const registration = runtime.register({ scope: '/' })
 }
