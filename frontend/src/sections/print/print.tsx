@@ -83,7 +83,7 @@ const Print = ({ tag }: { tag: string }) => (
                         <div>
                           <TitlePage image={t.cover || undefined} />
                           <main>{pages}</main>
-                          <Contents list={songs} />
+                          <Contents list={songs} left />
                         </div>
                       ) : null
                     }

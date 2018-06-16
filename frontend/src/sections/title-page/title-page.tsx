@@ -42,7 +42,7 @@ const TitleLine2 = styled.div`
 `
 
 const TitlePage = ({ image = defaultImage }: { image?: string }) => (
-  <Page left>
+  <Page>
     <Container>
       <ImageContainer>
         <Image src={image} alt="title image" />
