@@ -134,7 +134,10 @@ export function parseSong(
 
 export function parseSongToDelta(song: string): Delta {
   const delta: DeltaOperation[] = []
-  for (const page of parseSong(song, { convertTags: false })) {
+  const pages = parseSong(song, { convertTags: false })
+  let pageId = 0
+  for (const page of pages) {
+    pageId += 1
     for (const paragraph of page) {
       for (const line of paragraph) {
         let withChord = false
@@ -162,7 +165,11 @@ export function parseSongToDelta(song: string): Delta {
       }
       delta.push({ insert: '\n' })
     }
-    delta.push({ insert: '\n', attributes: { pageSplit: true } })
+    if (pageId != pages.length) {
+      delta.push({
+        insert: '--- page break ---\n\n',
+      })
+    }
   }
   return new Delta(delta)
 }
