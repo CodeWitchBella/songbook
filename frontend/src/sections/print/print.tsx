@@ -5,7 +5,7 @@ import TitlePage from 'sections/title-page/title-page'
 import { parseSong, Paragraph } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { AudioProvider } from 'components/song-look/audio-player'
-import { SongsInTag, Songs, Tag } from 'containers/store/store'
+import { SongsInTag, Songs, Tag, SongType } from 'containers/store/store'
 
 const PlaceholderSongList = () => <div>Načítám seznam písní</div>
 
@@ -23,6 +23,25 @@ const Print = ({ tag }: { tag: string }) => (
                     parsed: parseSong(song.textWithChords),
                     number,
                   }))
+                  .reduce(
+                    (arr, el) =>
+                      arr.concat([
+                        {
+                          ...el,
+                          pageNumber:
+                            arr.length === 0
+                              ? 1
+                              : arr[arr.length - 1].pageNumber +
+                                arr[arr.length - 1].parsed.length,
+                        },
+                      ]),
+                    [] as {
+                      data: SongType
+                      parsed: Paragraph[][]
+                      number: number
+                      pageNumber: number
+                    }[],
+                  )
                   .map(cur => {
                     const content = cur.parsed
                       .map((page, i) => ({
@@ -36,7 +55,7 @@ const Print = ({ tag }: { tag: string }) => (
                           pageData={s.page}
                           song={s.data}
                           number={s.number + 1}
-                          pageNumber={i + 1}
+                          pageNumber={cur.pageNumber + i + 1}
                           key={s.key}
                         />
                       ))
@@ -64,10 +83,7 @@ const Print = ({ tag }: { tag: string }) => (
                         <div>
                           <TitlePage image={t.cover || undefined} />
                           <main>{pages}</main>
-                          <Contents
-                            list={songs}
-                            left={pages.length % 2 !== 0}
-                          />
+                          <Contents list={songs} />
                         </div>
                       ) : null
                     }
