@@ -29,7 +29,7 @@ const songClass = (left: boolean, print: boolean) => css`
   width: ${width};
   height: ${height};
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: hidden;
   page-break-after: always;
 
   @media not print {
