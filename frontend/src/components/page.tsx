@@ -29,7 +29,7 @@ const songClass = (left: boolean, print: boolean) => css`
   width: ${width};
   height: ${height};
   overflow-x: hidden;
-  overflow-y: unset;
+  overflow-y: visible;
   page-break-after: always;
 
   @media not print {
@@ -45,7 +45,6 @@ const songClass = (left: boolean, print: boolean) => css`
           padding: 1em;
           width: calc(100% - 2em);
           height: calc(100% - 2em);
-          overflow-y: auto;
           @media (min-width: ${page.innerRatio * 100}vh) {
             font-size: 1.9vh;
             width: ${page.innerRatio * 100}vh;
