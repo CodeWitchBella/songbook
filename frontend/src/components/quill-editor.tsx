@@ -59,6 +59,9 @@ const bindings = {
 
 const Container = styled.div`
   padding-top: 1em;
+  > * {
+    white-space: pre-wrap;
+  }
   div:focus {
     outline: none !important;
   }

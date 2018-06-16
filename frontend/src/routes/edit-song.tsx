@@ -56,6 +56,11 @@ const Columns = styled.div`
     width: 50%;
   }
 `
+const Help = styled.div`
+  font-size: 18px;
+  max-width: 600px;
+  margin: 40px auto 0 auto;
+`
 
 type State = {
   author: string
@@ -186,6 +191,46 @@ class EditSong extends React.Component<
             />
             <button disabled={this.state.disabled}>Uložit</button>
           </Form>
+          <Help>
+            <h3>Jak se tahle věc ovládá?</h3>
+            <p>
+              Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
+              vyplnění údajů o songu. Možná snad jenom tagy: to je seznam
+              zkratek oddělený čárkou. Dostupné zkratky:{' '}
+              <b>ch, e, o, new, todo</b>
+            </p>
+            <p>
+              Číselnými políčky pod tím se asi nemusíte moc zabývat - ta jsou
+              určena k tomu, že se dá zmenšit písmo a jiné vlastnosti, aby se
+              song vešel na stránku
+            </p>
+            <p>
+              Pod tím je pole na vyplnění songu. Do něj se jednoduše píše a
+              pokud chcete začít psát akord tak stačí zmáčknout tabulátor a
+              začínáte psát akord. Když jste akord dopsali tak znova zmáčknete
+              tabulátor a jste zpět v normálním módu.
+            </p>
+            <p>
+              Když chcete svoje změny uložit tak stiskněte tlačítko uložit. Po
+              jeho stisknutí se nic vizuálně nestane (nebyl čas), ale song by
+              měl být uložen
+            </p>
+            <p>
+              Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
+              sloka stejná jako jiná sloka tak stačí napsat <b>S:2</b>. Pro
+              označení refrénu se používá <b>R:</b> nebo alternativně, pokud je
+              refrénů víc <b>R1:</b>, <b>R2:</b> atd
+            </p>
+            <p>
+              To že se sloka nevytuční je v pořádku - hlavně že se to zobrazí
+              správně v náhledu (vpravo)
+            </p>
+            <p>
+              Pokud potřebujete udělat oddělovač stran tak napište{' '}
+              <b>---&nbsp;page&nbsp;break&nbsp;---</b>
+            </p>
+            <p>Hodně štěstí a díky za pomoc</p>
+          </Help>
         </div>
         <div>
           <SongLook
