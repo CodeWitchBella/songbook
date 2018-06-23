@@ -40,11 +40,11 @@ const Contents = ({ list, left }: { list: Song[]; left?: boolean }) => (
     <Container>
       <Col>
         <Spacer space="6.7em" />
-        {list.slice(0, 40).map(mapSong())}
+        {list.slice(0, 38).map(mapSong())}
       </Col>
       <Col>
         <Spacer space="2.65em" />
-        {list.slice(40).map(mapSong(40))}
+        {list.slice(38).map(mapSong(38))}
       </Col>
     </Container>
   </Page>

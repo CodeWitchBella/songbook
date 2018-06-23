@@ -76,6 +76,6 @@
     ]
   },
   "dependencies": {
-    "docker-start": "0.0.8"
+    "docker-start": "0.0.9"
   }
 }
