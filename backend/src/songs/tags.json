@@ -1,10 +1,18 @@
 {
-  "ch": {
-    "name": "Children songbook",
+  "ch2019": {
+    "name": "Children songbook 2019",
     "cover": "/static/locomotive.png"
   },
-  "e": {
-    "name": "Elder songbook",
+  "e2019": {
+    "name": "Elder songbook 2019",
+    "cover": "/static/train-girl.png"
+  },
+  "ch2018": {
+    "name": "Children songbook 2018",
+    "cover": "/static/locomotive.png"
+  },
+  "e2018": {
+    "name": "Elder songbook 2018",
     "cover": "/static/train-girl.png"
   },
   "o": {
