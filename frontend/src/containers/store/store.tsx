@@ -40,6 +40,14 @@ const ric = (cb: () => void) => {
   else setTimeout(cb, 5000)
 }
 
+let listeners: (() => void)[] = []
+
+if (typeof window !== 'undefined') {
+  window.onstorage = () => {
+    listeners.forEach(l => l())
+  }
+}
+
 export class StoreProvider extends React.Component<{}, Context> {
   fetchTime: number = 0
   fetching: boolean = false
@@ -66,6 +74,11 @@ export class StoreProvider extends React.Component<{}, Context> {
             return null
           },
         )
+        .then(() => {
+          try {
+            localStorage.setItem('notify', new Date().toISOString())
+          } catch (e) {}
+        })
         .catch(e => {
           this.fetching = false
           this.fetchTime = lastFetchTime
@@ -100,6 +113,12 @@ export class StoreProvider extends React.Component<{}, Context> {
     })
   }
 
+  onStorage = () => {
+    localForage
+      .getItem('everything')
+      .then((e: any) => this.setStateFromEverything(e))
+  }
+
   componentDidMount() {
     this.state.refetch()
     localForage
@@ -108,6 +127,11 @@ export class StoreProvider extends React.Component<{}, Context> {
         if (val) this.setStateFromEverything(val as Everything)
       })
       .catch(e => console.error(e))
+    listeners.push(this.onStorage)
+  }
+
+  componentWillUnmount() {
+    listeners = listeners.filter(l => l !== this.onStorage)
   }
 
   render() {
