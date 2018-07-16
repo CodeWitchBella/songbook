@@ -3,7 +3,7 @@ import Quill from 'quill'
 import { parseSongToDelta, stringifySongFromDelta } from 'utils/parse-song'
 import styled from 'react-emotion'
 
-function updateWithChord(quill: any, range: any) {
+function updateWithChord(quill: any, range: any, force: boolean) {
   const offset =
     quill
       .getText()
@@ -25,7 +25,7 @@ function updateWithChord(quill: any, range: any) {
           op.attributes && (op.attributes.chord || op.attributes.spaceChord),
       ).length > 0
 
-  quill.formatText(offset, 1, 'withChord', withChord, 'silent')
+  quill.formatText(offset, 1, 'withChord', withChord || force, 'silent')
 }
 
 const bindings = {
@@ -39,7 +39,11 @@ const bindings = {
         quill.format('chord', false, 'user')
       }
       quill.format('spaceChord', !context.format.spaceChord, 'user')
-      updateWithChord(quill, range)
+      updateWithChord(
+        quill,
+        range,
+        !context.format.chord && !context.format.spaceChord,
+      )
     },
   },
   tab: {
@@ -52,7 +56,11 @@ const bindings = {
         quill.format('spaceChord', false, 'user')
       }
       quill.format('chord', !context.format.chord, 'user')
-      updateWithChord(quill, range)
+      updateWithChord(
+        quill,
+        range,
+        !context.format.chord && !context.format.spaceChord,
+      )
     },
   },
 }
