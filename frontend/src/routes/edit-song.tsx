@@ -68,6 +68,7 @@ type State = {
   paragraphSpace: string
   titleSpace: string
   fancyEditor: boolean
+  submitState: string
 }
 
 function numberToString(input: any) {
@@ -91,6 +92,7 @@ class EditSong extends React.Component<
     paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
     titleSpace: numberToString(this.props.song.metadata.titleSpace),
     fancyEditor: true,
+    submitState: '',
 
     disabled: false,
   }
@@ -118,7 +120,7 @@ class EditSong extends React.Component<
     console.log('submit before check', this.state)
     if (!author || !title || disabled) return
     console.log('submit', this.state)
-    this.setState({ disabled })
+    this.setState({ disabled, submitState: 'Ukládám...' })
 
     editSong({
       song: this.result(),
@@ -128,9 +130,17 @@ class EditSong extends React.Component<
         if (!ret || !ret.editSong) throw new Error('editSong failed')
       })
       .then(() => this.props.refetch(true))
+      .then(() =>
+        setTimeout(() => {
+          this.setState({ submitState: 'Uloženo.' })
+        }, 500),
+      )
       .catch(e => {
         console.error(e)
         this.setState({ disabled: false })
+        setTimeout(() => {
+          this.setState({ submitState: 'Při ukládání nastala chyba.' })
+        }, 500)
       })
   }
 
@@ -198,6 +208,7 @@ class EditSong extends React.Component<
               />
             )}
             <button disabled={this.state.disabled}>Uložit</button>
+            {this.state.submitState}
           </Form>
           <Help>
             <h3>Jak se tahle věc ovládá?</h3>
