@@ -9,6 +9,7 @@ import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import QuillEditor from 'components/quill-editor'
 import { everything_songs_metadata } from 'containers/store/__generated__/everything'
+import Checkbox from 'components/checkbox'
 
 type SongPatch = editSongVariables['song']
 
@@ -29,25 +30,20 @@ const textAreaClass = css`
 `
 
 const Textarea = ({
-  label,
   value,
   onChange,
 }: {
-  label: string
   value: string
   onChange: (v: string) => any
 }) => (
-  <label>
-    {label}:{' '}
-    <textarea
-      className={textAreaClass}
-      value={value}
-      onChange={evt => {
-        evt.preventDefault()
-        onChange(evt.target.value)
-      }}
-    />
-  </label>
+  <textarea
+    className={textAreaClass}
+    value={value}
+    onChange={evt => {
+      evt.preventDefault()
+      onChange(evt.target.value)
+    }}
+  />
 )
 
 const Columns = styled.div`
@@ -71,6 +67,7 @@ type State = {
   fontSize: string
   paragraphSpace: string
   titleSpace: string
+  fancyEditor: boolean
 }
 
 function numberToString(input: any) {
@@ -93,6 +90,7 @@ class EditSong extends React.Component<
     fontSize: numberToString(this.props.song.metadata.fontSize),
     paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
     titleSpace: numberToString(this.props.song.metadata.titleSpace),
+    fancyEditor: true,
 
     disabled: false,
   }
@@ -144,6 +142,8 @@ class EditSong extends React.Component<
   fontSizeChange = (val: string) => this.setState({ fontSize: val })
   paragraphSpaceChange = (val: string) => this.setState({ paragraphSpace: val })
   titleSpaceChange = (val: string) => this.setState({ titleSpace: val })
+  fancyEditorChange = (value: boolean) =>
+    console.log(value) || this.setState({ fancyEditor: value })
 
   render() {
     return (
@@ -167,28 +167,36 @@ class EditSong extends React.Component<
             />
             <Input
               label="Velikost písma"
-              type="number"
               value={this.state.fontSize || '1.00'}
               onChange={this.fontSizeChange}
             />
             <Input
               label="Místo mezi odstavci"
-              type="number"
               value={this.state.paragraphSpace || '1.00'}
               onChange={this.paragraphSpaceChange}
             />
             <Input
               label="Místo pod nadpisem"
-              type="number"
               value={this.state.titleSpace || '1.00'}
               onChange={this.titleSpaceChange}
             />
-
-            <QuillEditor
-              //label="Text"
-              initialValue={this.state.textWithChords}
-              onChange={this.textWithChordsChange}
+            <Checkbox
+              label="Vizuální editor"
+              checked={this.state.fancyEditor}
+              onChange={this.fancyEditorChange}
             />
+            {this.state.fancyEditor ? (
+              <QuillEditor
+                //label="Text"
+                initialValue={this.state.textWithChords}
+                onChange={this.textWithChordsChange}
+              />
+            ) : (
+              <Textarea
+                value={this.state.textWithChords}
+                onChange={this.textWithChordsChange}
+              />
+            )}
             <button disabled={this.state.disabled}>Uložit</button>
           </Form>
           <Help>

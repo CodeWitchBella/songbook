@@ -14,6 +14,7 @@ const Input = ({
   <label>
     {label}:{' '}
     <input
+      type={type}
       value={value}
       onChange={evt => {
         evt.preventDefault()

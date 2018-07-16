@@ -165,7 +165,7 @@ export function parseSongToDelta(song: string): Delta {
       }
       delta.push({ insert: '\n' })
     }
-    if (pageId != pages.length) {
+    if (pageId !== pages.length) {
       delta.push({
         insert: '--- page break ---\n\n',
       })
