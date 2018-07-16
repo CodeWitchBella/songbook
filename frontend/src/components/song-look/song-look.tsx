@@ -46,7 +46,9 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
           {l.ch && l.ch.startsWith('_') ? (
             <Chord sp>{l.ch.substring(1)}</Chord>
           ) : (
-            <Chord sp={i === list.length - 1}>{l.ch}</Chord>
+            <Chord sp={i === list.length - 1 && l.text.trim() === ''}>
+              {l.ch}
+            </Chord>
           )}
           {l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')}
         </span>
