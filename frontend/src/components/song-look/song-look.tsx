@@ -163,7 +163,13 @@ export const SongLook = ({
         <SongPage
           key={i}
           pageData={pageData}
-          song={song}
+          song={{
+            ...song,
+            title:
+              parsed.length > 1
+                ? `${song.title} (${i + 1}/${parsed.length})`
+                : song.title,
+          }}
           noEdit={noEdit}
           share={share}
         />

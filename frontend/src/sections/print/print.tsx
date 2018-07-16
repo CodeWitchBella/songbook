@@ -53,7 +53,17 @@ const Print = ({ tag }: { tag: string }) => (
                       .map((s, i) => (
                         <SongPage
                           pageData={s.page}
-                          song={s.data}
+                          song={{
+                            title:
+                              cur.parsed.length > 1
+                                ? `${s.data.title} (${i + 1}/${
+                                    cur.parsed.length
+                                  })`
+                                : s.data.title,
+                            metadata: s.data.metadata,
+                            id: s.data.id,
+                            author: s.data.author,
+                          }}
                           number={s.number + 1}
                           pageNumber={cur.pageNumber + i + 1}
                           key={s.key}
