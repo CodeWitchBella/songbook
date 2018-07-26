@@ -49,13 +49,19 @@ const Textarea = ({
 const Columns = styled.div`
   display: flex;
   > * {
-    width: 50%;
+    width: ${(props: { number: number }) => 100 / props.number}%;
   }
 `
 const Help = styled.div`
   font-size: 18px;
   max-width: 600px;
   margin: 40px auto 0 auto;
+`
+
+const InputLine = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 `
 
 type State = {
@@ -69,6 +75,7 @@ type State = {
   titleSpace: string
   fancyEditor: boolean
   advanced: boolean
+  preview: boolean
   submitState: string
 }
 
@@ -93,6 +100,8 @@ class EditSong extends React.Component<
     paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
     titleSpace: numberToString(this.props.song.metadata.titleSpace),
     fancyEditor: true,
+    advanced: false,
+    preview: false,
     submitState: '',
 
     disabled: false,
@@ -165,26 +174,34 @@ class EditSong extends React.Component<
   titleSpaceChange = (val: string) => this.change({ titleSpace: val })
   fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
   advancedChange = (value: boolean) => this.setState({ advanced: value })
+  previewChange = (value: boolean) => this.setState({ preview: value })
 
   render() {
     return (
-      <Columns>
+      <Columns number={this.state.preview ? 2 : 1}>
         <div>
           <Form onSubmit={this.submit}>
-            <Input
-              label="Autor"
-              value={this.state.author}
-              onChange={this.authorChange}
-            />
-            <Input
-              label="Jméno songu"
-              value={this.state.title}
-              onChange={this.titleChange}
-            />
+            <InputLine>
+              <Input
+                label="Autor"
+                value={this.state.author}
+                onChange={this.authorChange}
+              />
+              <Input
+                label="Jméno songu"
+                value={this.state.title}
+                onChange={this.titleChange}
+              />
+            </InputLine>
             <Input
               label="Tagy"
               value={this.state.tags}
               onChange={this.tagsChange}
+            />
+            <Checkbox
+              label="Náhled"
+              checked={this.state.preview}
+              onChange={this.previewChange}
             />
             <Checkbox
               label="Pokročilá nastavení"
@@ -238,9 +255,9 @@ class EditSong extends React.Component<
               zkratek oddělený čárkou.
             </p>
             <p>
-              Pod tím je pole na vyplnění songu. Do něj se jednoduše píše a
+              Pod tím je pole na vyplnění songu. Do něj píšete text písně a
               pokud chcete začít psát akord tak stačí zmáčknout tabulátor a
-              začínáte psát akord. Když jste akord dopsali tak znova zmáčknete
+              píšete akord. Když jste akord dopsali tak znova zmáčknete
               tabulátor a jste zpět v normálním módu.
             </p>
             <p>
@@ -269,13 +286,15 @@ class EditSong extends React.Component<
             <p>Hodně štěstí a díky za pomoc</p>
           </Help>
         </div>
-        <div>
-          <SongLook
-            song={this.result()}
-            parsed={parser.parseSong(this.state.textWithChords)}
-            noEdit
-          />
-        </div>
+        {this.state.preview && (
+          <div>
+            <SongLook
+              song={this.result()}
+              parsed={parser.parseSong(this.state.textWithChords)}
+              noEdit
+            />
+          </div>
+        )}
       </Columns>
     )
   }
