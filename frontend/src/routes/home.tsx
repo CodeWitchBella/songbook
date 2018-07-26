@@ -19,20 +19,28 @@ const InstallContainer = styled.div`
   width: 100%;
 `
 
+const TopLinks = styled.div`
+  font-size: 18px;
+  display: block;
+  text-align: center;
+  padding-top: 20px;
+  a {
+    padding: 0 10px;
+    color: darkblue;
+  }
+`
+
+const googleDoc =
+  'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
+
 const Home = () => (
   <div>
-    <Link
-      css={`
-        font-size: 18px;
-        display: block;
-        text-align: center;
-        padding-top: 20px;
-        color: darkblue;
-      `}
-      to="/new"
-    >
-      Create song
-    </Link>
+    <TopLinks>
+      <Link to="/new">Create song</Link>
+      <a href={googleDoc} target="_blank" rel="noopener noreferrer">
+        Suggestions
+      </a>
+    </TopLinks>
     <TagList />
     <Spacer />
     <InstallContainer>
