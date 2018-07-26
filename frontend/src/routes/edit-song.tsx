@@ -68,6 +68,7 @@ type State = {
   paragraphSpace: string
   titleSpace: string
   fancyEditor: boolean
+  advanced: boolean
   submitState: string
 }
 
@@ -163,6 +164,7 @@ class EditSong extends React.Component<
   paragraphSpaceChange = (val: string) => this.change({ paragraphSpace: val })
   titleSpaceChange = (val: string) => this.change({ titleSpace: val })
   fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
+  advancedChange = (value: boolean) => this.setState({ advanced: value })
 
   render() {
     return (
@@ -184,21 +186,30 @@ class EditSong extends React.Component<
               value={this.state.tags}
               onChange={this.tagsChange}
             />
-            <Input
-              label="Velikost písma"
-              value={this.state.fontSize || '1.00'}
-              onChange={this.fontSizeChange}
+            <Checkbox
+              label="Pokročilá nastavení"
+              checked={this.state.advanced}
+              onChange={this.advancedChange}
             />
-            <Input
-              label="Místo mezi odstavci"
-              value={this.state.paragraphSpace || '1.00'}
-              onChange={this.paragraphSpaceChange}
-            />
-            <Input
-              label="Místo pod nadpisem"
-              value={this.state.titleSpace || '1.00'}
-              onChange={this.titleSpaceChange}
-            />
+            {this.state.advanced && (
+              <>
+                <Input
+                  label="Velikost písma"
+                  value={this.state.fontSize || '1.00'}
+                  onChange={this.fontSizeChange}
+                />
+                <Input
+                  label="Místo mezi odstavci"
+                  value={this.state.paragraphSpace || '1.00'}
+                  onChange={this.paragraphSpaceChange}
+                />
+                <Input
+                  label="Místo pod nadpisem"
+                  value={this.state.titleSpace || '1.00'}
+                  onChange={this.titleSpaceChange}
+                />
+              </>
+            )}
             <Checkbox
               label="Vizuální editor"
               checked={this.state.fancyEditor}
@@ -224,13 +235,7 @@ class EditSong extends React.Component<
             <p>
               Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
               vyplnění údajů o songu. Možná snad jenom tagy: to je seznam
-              zkratek oddělený čárkou. Dostupné zkratky:{' '}
-              <b>ch, e, o, new, todo</b>
-            </p>
-            <p>
-              Číselnými políčky pod tím se asi nemusíte moc zabývat - ta jsou
-              určena k tomu, že se dá zmenšit písmo a jiné vlastnosti, aby se
-              song vešel na stránku
+              zkratek oddělený čárkou.
             </p>
             <p>
               Pod tím je pole na vyplnění songu. Do něj se jednoduše píše a
@@ -239,9 +244,13 @@ class EditSong extends React.Component<
               tabulátor a jste zpět v normálním módu.
             </p>
             <p>
-              Když chcete svoje změny uložit tak stiskněte tlačítko uložit. Po
-              jeho stisknutí se nic vizuálně nestane (nebyl čas), ale song by
-              měl být uložen
+              Nebo můžete odškrtnout checkbox vizuální editor a editovat přímo
+              zdrojový text.
+            </p>
+            <p>
+              Změny se automaticky ukládají, nebo je můžete uložit ručně
+              kliknutím na tlačítko uložit. Současný stav je:{' '}
+              <i>{this.state.submitState || 'nebyly provedeny žádné změny.'}</i>
             </p>
             <p>
               Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
