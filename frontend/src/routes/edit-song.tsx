@@ -114,13 +114,14 @@ class EditSong extends React.Component<
     }
   }
 
-  submit = (evt: React.FormEvent<HTMLFormElement>) => {
-    evt.preventDefault()
+  submit = (evt?: React.FormEvent<HTMLFormElement>) => {
+    if (evt) evt.preventDefault()
     const { author, title, disabled } = this.state
     console.log('submit before check', this.state)
     if (!author || !title || disabled) return
     console.log('submit', this.state)
-    this.setState({ disabled, submitState: 'Ukládám...' })
+    this.setState({ disabled: true, submitState: 'Ukládám...' })
+    this.saveTimeout = null
 
     editSong({
       song: this.result(),
@@ -130,30 +131,38 @@ class EditSong extends React.Component<
         if (!ret || !ret.editSong) throw new Error('editSong failed')
       })
       .then(() => this.props.refetch(true))
-      .then(() =>
-        setTimeout(() => {
-          this.setState({ submitState: 'Uloženo.' })
-        }, 500),
-      )
+      .then(() => this.setState({ submitState: 'Uloženo.', disabled: false }))
       .catch(e => {
         console.error(e)
-        this.setState({ disabled: false })
-        setTimeout(() => {
-          this.setState({ submitState: 'Při ukládání nastala chyba.' })
-        }, 500)
+        this.setState({
+          disabled: false,
+          submitState: 'Při ukládání nastala chyba.',
+        })
       })
   }
 
-  authorChange = (val: string) => this.setState({ author: val })
-  tagsChange = (val: string) => this.setState({ tags: val })
-  titleChange = (val: string) => this.setState({ title: val })
-  textWithChordsChange = (val: string) => this.setState({ textWithChords: val })
+  saveTimeout: any = null
 
-  fontSizeChange = (val: string) => this.setState({ fontSize: val })
-  paragraphSpaceChange = (val: string) => this.setState({ paragraphSpace: val })
-  titleSpaceChange = (val: string) => this.setState({ titleSpace: val })
-  fancyEditorChange = (value: boolean) =>
-    console.log(value) || this.setState({ fancyEditor: value })
+  change = (val: Partial<State>) => {
+    if (this.saveTimeout) clearTimeout(this.saveTimeout)
+    this.saveTimeout = setTimeout(this.submit, 500)
+    this.setState(
+      Object.assign(
+        { submitState: 'Formulář obsahuje neuložené změny.' },
+        val as any,
+      ),
+    )
+  }
+
+  authorChange = (val: string) => this.change({ author: val })
+  tagsChange = (val: string) => this.change({ tags: val })
+  titleChange = (val: string) => this.change({ title: val })
+  textWithChordsChange = (val: string) => this.change({ textWithChords: val })
+
+  fontSizeChange = (val: string) => this.change({ fontSize: val })
+  paragraphSpaceChange = (val: string) => this.change({ paragraphSpace: val })
+  titleSpaceChange = (val: string) => this.change({ titleSpace: val })
+  fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
 
   render() {
     return (
