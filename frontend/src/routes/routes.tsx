@@ -47,6 +47,13 @@ const EditSong = Loadable({
   webpack: () => [require.resolveWeak('./edit-song')],
 })
 
+const Changelog = Loadable({
+  loader: () => import(/* webpackChunkName: "r-changelog" */ './changelog'),
+  loading,
+  modules: ['./changelog'],
+  webpack: () => [require.resolveWeak('./changelog')],
+})
+
 export default class Routes extends React.Component {
   render() {
     return (
@@ -75,6 +82,7 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Tag tag={match.params.tag} />}
         />
+        <Route path="/changelog" exact render={() => <Changelog />} />
         <Route>
           <NotFound />
         </Route>
