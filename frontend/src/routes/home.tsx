@@ -40,6 +40,7 @@ const Home = () => (
       <a href={googleDoc} target="_blank" rel="noopener noreferrer">
         Suggestions
       </a>
+      <Link to="/changelog">Changelog</Link>
     </TopLinks>
     <TagList />
     <Spacer />
