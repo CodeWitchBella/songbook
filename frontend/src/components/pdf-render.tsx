@@ -33,7 +33,7 @@ const LineC = ({ l, em }: { l: Line; em: number }) => (
             flexDirection: 'column',
           }}
         >
-          <View style={{ width: 100, marginTop: -0.5 * em }}>
+          <View style={{ width: 100 * em, marginTop: -0.5 * em }}>
             <Text>{c.ch}</Text>
           </View>
         </View>
@@ -66,7 +66,8 @@ class PDFRender extends React.Component<Props, {}> {
     const { song } = this.props
     const pages = parseSong(song.textWithChords)
 
-    const em = 7.20566929133848 /* 2.542 mm */
+    const size = 6
+    const em = 7.20566929133848 * Math.sqrt(2) ** (6 - size) /* 2.542 mm */
 
     return (
       <Document>
@@ -78,7 +79,7 @@ class PDFRender extends React.Component<Props, {}> {
               fontSize: em,
               fontWeight: 'normal',
             }}
-            size="A6"
+            size={`A${size}`}
           >
             {page.map((paragraph, i2) => (
               <ParagraphC em={em} p={paragraph} key={i2} />
