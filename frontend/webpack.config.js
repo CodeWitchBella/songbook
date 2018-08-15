@@ -55,6 +55,7 @@ const configuration = mode => ({
         externals: {
           graphql: 'graphql',
           express: 'express',
+          '@react-pdf/renderer': 'nonexistant',
         },
       }
     : {}),

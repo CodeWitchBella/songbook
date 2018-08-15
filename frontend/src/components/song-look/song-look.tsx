@@ -78,17 +78,19 @@ const fontSize = (size: number) =>
 
 const EditButtonContainer = styled.div`
   position: absolute;
-  width: 100%;
+  right: 0;
+  display: flex;
+  justify-content: right;
+  margin-top: -0.5em;
+  margin-right: 1em;
   @media print {
     display: none;
   }
 `
 const EditButton = styled(Link)`
-  position: absolute;
-  right: 0;
   display: block;
-  transform: translate(-50%, -50%);
   color: darkblue;
+  margin-left: 10px;
 `
 
 const shareButton = css`
@@ -127,6 +129,7 @@ export const SongPage = ({
     {noEdit ? null : (
       <EditButtonContainer>
         <EditButton to={`/edit/${song.id}`}>Upravit</EditButton>
+        <EditButton to={`/pdf/${song.id}`}>PDF</EditButton>
       </EditButtonContainer>
     )}
     <SongHeader

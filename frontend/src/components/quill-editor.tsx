@@ -138,7 +138,7 @@ export default class QuillEditor extends React.Component<{
   componentDidMount() {
     const ref = this.ref.current
     if (typeof document !== 'undefined' && ref) {
-      import('./quill')
+      import(/* webpackChunkName: "components_quill" */ './quill')
         .then(q => {
           q.init()
           this.quill = new q.Quill(ref, {

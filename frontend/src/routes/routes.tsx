@@ -54,6 +54,13 @@ const Changelog = Loadable({
   webpack: () => [require.resolveWeak('./changelog')],
 })
 
+const PDF = Loadable({
+  loader: () => import(/* webpackChunkName: "r-pdf" */ './pdf'),
+  loading,
+  modules: ['./pdf'],
+  webpack: () => [require.resolveWeak('./pdf')],
+})
+
 export default class Routes extends React.Component {
   render() {
     return (
@@ -71,6 +78,11 @@ export default class Routes extends React.Component {
           path="/edit/:id"
           exact
           render={({ match }) => <EditSong id={match.params.id} />}
+        />
+        <Route
+          path="/pdf/:id"
+          exact
+          render={({ match }) => <PDF id={match.params.id} />}
         />
         <Route
           path="/print/:tag"

@@ -75,7 +75,17 @@ module.exports = ({ PRODUCTION, isModern = false, isSSR = false } = {}) => [
       },
     ],
   },
-
+  {
+    test: /\.ttf$/,
+    use: [
+      {
+        loader: 'url-loader',
+        options: urlLoaderOptions(PRODUCTION, {
+          mimetype: 'font/ttf',
+        }),
+      },
+    ],
+  },
   {
     test: /\.woff$/,
     use: [

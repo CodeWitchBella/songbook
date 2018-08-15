@@ -33,6 +33,7 @@ const Entry: React.SFC<{ date: string }> = ({ date, children }) => (
 
 const Changelog = () => (
   <div>
+    <Entry date="2018-08-15">Započata práce na PDF exportu</Entry>
     <Entry date="2018-08-10">Přidán changelog</Entry>
   </div>
 )

@@ -10,8 +10,7 @@ import * as parser from 'utils/parse-song'
 import QuillEditor from 'components/quill-editor'
 import { everything_songs_metadata } from 'containers/store/__generated__/everything'
 import Checkbox from 'components/checkbox'
-
-type SongPatch = editSongVariables['song']
+import PDF from 'components/pdf'
 
 const Form = styled.form`
   display: flex;
@@ -60,8 +59,13 @@ const Help = styled.div`
 
 const InputLine = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
+  > * {
+    margin-left: 10px;
+  }
+  > *:first-child {
+    margin-left: 0;
+  }
 `
 
 type State = {
@@ -76,6 +80,7 @@ type State = {
   fancyEditor: boolean
   advanced: boolean
   preview: boolean
+  pdfPreview: boolean
   submitState: string
 }
 
@@ -102,6 +107,7 @@ class EditSong extends React.Component<
     fancyEditor: true,
     advanced: false,
     preview: false,
+    pdfPreview: false,
     submitState: '',
 
     disabled: false,
@@ -175,6 +181,7 @@ class EditSong extends React.Component<
   fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
   advancedChange = (value: boolean) => this.setState({ advanced: value })
   previewChange = (value: boolean) => this.setState({ preview: value })
+  pdfPreviewChange = (value: boolean) => this.setState({ pdfPreview: value })
 
   render() {
     return (
@@ -198,11 +205,20 @@ class EditSong extends React.Component<
               value={this.state.tags}
               onChange={this.tagsChange}
             />
-            <Checkbox
-              label="Náhled"
-              checked={this.state.preview}
-              onChange={this.previewChange}
-            />
+            <InputLine>
+              <Checkbox
+                label="Náhled"
+                checked={this.state.preview}
+                onChange={this.previewChange}
+              />
+              {this.state.preview && (
+                <Checkbox
+                  label="PDF"
+                  checked={this.state.pdfPreview}
+                  onChange={this.pdfPreviewChange}
+                />
+              )}
+            </InputLine>
             <Checkbox
               label="Pokročilá nastavení"
               checked={this.state.advanced}
@@ -287,12 +303,23 @@ class EditSong extends React.Component<
           </Help>
         </div>
         {this.state.preview && (
-          <div>
-            <SongLook
-              song={this.result()}
-              parsed={parser.parseSong(this.state.textWithChords)}
-              noEdit
-            />
+          <div
+            css={`
+              > iframe {
+                width: 100%;
+                height: 100%;
+              }
+            `}
+          >
+            {this.state.pdfPreview ? (
+              <PDF song={this.result()} />
+            ) : (
+              <SongLook
+                song={this.result()}
+                parsed={parser.parseSong(this.state.textWithChords)}
+                noEdit
+              />
+            )}
           </div>
         )}
       </Columns>
