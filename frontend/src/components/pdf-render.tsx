@@ -1,6 +1,6 @@
 import React from 'react'
 import { Paragraph, Line, parseSong } from 'utils/parse-song'
-import { Document, Page, Text, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, Font, View } from '@react-pdf/renderer'
 import { hot } from 'react-hot-loader'
 import Cantarell from './Cantarell-Regular.ttf'
 import CantarellBold from './Cantarell-Bold.ttf'
@@ -14,28 +14,49 @@ Font.register(
   `${window.location.protocol}//${window.location.host}${CantarellBold}`,
   { family: 'Cantarell Bold' },
 )
+const nbsp = (text: string) =>
+  '\u00A0'.repeat(text.length - text.trimLeft().length) +
+  text.trim() +
+  '\u00A0'.repeat(text.length - text.trimRight().length)
 
-const chordStyle = {
-  fontFamily: 'Cantarell Bold',
-}
+const hasChord = (l: Line) => l.content.some(el => !!el.ch)
 
-const LineC = ({ l }: { l: Line }) => (
-  <Text>
+const LineC = ({ l, em }: { l: Line; em: number }) => (
+  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
     {l.content.map((c, i) => (
       <>
-        <Text debug style={chordStyle}>
-          {c.ch}
-        </Text>
-        {c.text}
+        <View
+          style={{
+            fontFamily: 'Cantarell Bold',
+            width: 0,
+            height: (hasChord(l) ? 2.2 : 1.3) * em,
+            flexDirection: 'column',
+          }}
+        >
+          <View style={{ width: 100, marginTop: -0.5 * em }}>
+            <Text>{c.ch}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            //paddingTop: (hasChord(l) ? 1.2 : 0.3) * em,
+            verticalAlign: 'baseline',
+            height: (hasChord(l) ? 2.2 : 1.3) * em,
+            alignItems: 'flex-end',
+            flexDirection: 'row',
+          }}
+        >
+          <Text>{nbsp(c.text)}</Text>
+        </View>
       </>
     ))}
-  </Text>
+  </View>
 )
 
-const ParagraphC = ({ p }: { p: Paragraph }) => (
+const ParagraphC = ({ p, em }: { p: Paragraph; em: number }) => (
   <>
     {p.map((line, i) => (
-      <LineC l={line} key={i} />
+      <LineC em={em} l={line} key={i} />
     ))}
   </>
 )
@@ -45,6 +66,8 @@ class PDFRender extends React.Component<Props, {}> {
     const { song } = this.props
     const pages = parseSong(song.textWithChords)
 
+    const em = 7.20566929133848 /* 2.542 mm */
+
     return (
       <Document>
         {pages.map((page, i) => (
@@ -52,13 +75,13 @@ class PDFRender extends React.Component<Props, {}> {
             key={i}
             style={{
               fontFamily: 'Cantarell',
-              fontSize: 7.20566929133848 /* 2.542 mm */,
+              fontSize: em,
               fontWeight: 'normal',
             }}
             size="A6"
           >
             {page.map((paragraph, i2) => (
-              <ParagraphC p={paragraph} key={i2} />
+              <ParagraphC em={em} p={paragraph} key={i2} />
             ))}
           </Page>
         ))}
