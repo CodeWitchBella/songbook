@@ -40,7 +40,12 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
   const hasChords = parsed.content.some(p => !!p.ch)
   return (
     <div className={line(hasChords)}>
-      {parsed.tag && <b>{parsed.tag}&nbsp;</b>}
+      {parsed.tag && (
+        <b>
+          {parsed.tag}
+          &nbsp;
+        </b>
+      )}
       {parsed.content.map((l, i, list) => (
         <span key={i}>
           {l.ch && l.ch.startsWith('_') ? (
@@ -67,7 +72,9 @@ const Paragraph: React.SFC<{ children: parser.Paragraph; song: SongType }> = ({
   song,
 }) => (
   <div className={paragraph(song.metadata.paragraphSpace || 1)}>
-    {children.map((c, i) => <Line key={i}>{c}</Line>)}
+    {children.map((c, i) => (
+      <Line key={i}>{c}</Line>
+    ))}
   </div>
 )
 

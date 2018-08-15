@@ -103,9 +103,8 @@ const Number = ({ children }: { children: number }) => (
 
 const TimeDisplay = ({ children }: { children: number }) => (
   <span>
-    {<Number>{children / 60}</Number>}:{
-      <Number>{Math.round(children) % 60}</Number>
-    }
+    {<Number>{children / 60}</Number>}:
+    {<Number>{Math.round(children) % 60}</Number>}
   </span>
 )
 
@@ -128,9 +127,8 @@ export const AudioControls = () => (
           title="Click to play/pause"
           onClick={props.toggle}
         >
-          Audio: <TimeDisplay>{props.currentTime}</TimeDisplay>/<TimeDisplay>
-            {props.duration}
-          </TimeDisplay>
+          Audio: <TimeDisplay>{props.currentTime}</TimeDisplay>/
+          <TimeDisplay>{props.duration}</TimeDisplay>
         </div>
       )
     }}
