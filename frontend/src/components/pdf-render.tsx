@@ -3,15 +3,20 @@ import { Paragraph, Line, parseSong } from 'utils/parse-song'
 import { Document, Page, Text, Font } from '@react-pdf/renderer'
 import { hot } from 'react-hot-loader'
 import Cantarell from './Cantarell-Regular.ttf'
+import CantarellBold from './Cantarell-Bold.ttf'
 import { Props } from './pdf'
 
 Font.register(
   `${window.location.protocol}//${window.location.host}${Cantarell}`,
   { family: 'Cantarell' },
 )
+Font.register(
+  `${window.location.protocol}//${window.location.host}${CantarellBold}`,
+  { family: 'Cantarell Bold' },
+)
 
 const chordStyle = {
-  fontWeight: 'bold',
+  fontFamily: 'Cantarell Bold',
 }
 
 const LineC = ({ l }: { l: Line }) => (
@@ -28,7 +33,11 @@ const LineC = ({ l }: { l: Line }) => (
 )
 
 const ParagraphC = ({ p }: { p: Paragraph }) => (
-  <>{p.map((line, i) => <LineC l={line} key={i} />)}</>
+  <>
+    {p.map((line, i) => (
+      <LineC l={line} key={i} />
+    ))}
+  </>
 )
 
 class PDFRender extends React.Component<Props, {}> {
@@ -44,10 +53,13 @@ class PDFRender extends React.Component<Props, {}> {
             style={{
               fontFamily: 'Cantarell',
               fontSize: 7.20566929133848 /* 2.542 mm */,
+              fontWeight: 'normal',
             }}
             size="A6"
           >
-            {page.map((paragraph, i2) => <ParagraphC p={paragraph} key={i2} />)}
+            {page.map((paragraph, i2) => (
+              <ParagraphC p={paragraph} key={i2} />
+            ))}
           </Page>
         ))}
       </Document>
