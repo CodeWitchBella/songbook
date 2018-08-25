@@ -11,6 +11,7 @@ import QuillEditor from 'components/quill-editor'
 import { everything_songs_metadata } from 'containers/store/__generated__/everything'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
+import Togglable from 'components/togglable'
 
 const Form = styled.form`
   display: flex;
@@ -51,22 +52,6 @@ const Columns = styled.div`
     width: ${(props: { number: number }) => 100 / props.number}%;
   }
 `
-
-class Togglable extends React.Component<
-  {
-    defaultState: boolean
-    children: (arg: { toggled: boolean; toggle: () => void }) => React.ReactNode
-  },
-  { toggled: boolean; toggle: () => void }
-> {
-  state = {
-    toggled: this.props.defaultState,
-    toggle: () => this.setState(s => ({ toggled: !s.toggled })),
-  }
-  render() {
-    return this.props.children(this.state)
-  }
-}
 
 const Help: React.SFC<{}> = ({ children }) => (
   <Togglable defaultState={false}>
@@ -164,7 +149,9 @@ class EditSong extends React.Component<
       author,
       title,
       tags: tags.split(',').map(t => t.trim()),
-      textWithChords,
+      textWithChords: parser.stringifySongFromDelta(
+        parser.parseSongToDelta(textWithChords),
+      ),
       metadata: {
         ...this.props.song.metadata,
         fontSize: Number.parseFloat(this.state.fontSize),
