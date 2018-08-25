@@ -51,11 +51,47 @@ const Columns = styled.div`
     width: ${(props: { number: number }) => 100 / props.number}%;
   }
 `
-const Help = styled.div`
-  font-size: 18px;
-  max-width: 600px;
-  margin: 40px auto 0 auto;
-`
+
+class Togglable extends React.Component<
+  {
+    defaultState: boolean
+    children: (arg: { toggled: boolean; toggle: () => void }) => React.ReactNode
+  },
+  { toggled: boolean; toggle: () => void }
+> {
+  state = {
+    toggled: this.props.defaultState,
+    toggle: () => this.setState(s => ({ toggled: !s.toggled })),
+  }
+  render() {
+    return this.props.children(this.state)
+  }
+}
+
+const Help: React.SFC<{}> = ({ children }) => (
+  <Togglable defaultState={false}>
+    {({ toggled, toggle }) => (
+      <div
+        css={`
+          font-size: 18px;
+          max-width: 600px;
+          margin: 40px auto 0 auto;
+        `}
+      >
+        <button
+          onClick={toggle}
+          css={`
+            margin: 0 auto;
+            display: block;
+          `}
+        >
+          {toggled ? 'Skrýt' : 'Zobrazit'} nápovědu
+        </button>
+        {toggled && children}
+      </div>
+    )}
+  </Togglable>
+)
 
 const InputLine = styled.div`
   display: flex;
@@ -68,12 +104,12 @@ const InputLine = styled.div`
   }
 `
 
+type SaveStatus = 'NO_CHANGES' | 'SAVING' | 'UNSAVED' | 'FAILED' | 'SAVED'
 type State = {
   author: string
   tags: string
   title: string
   textWithChords: string
-  disabled: boolean
   fontSize: string
   paragraphSpace: string
   titleSpace: string
@@ -81,12 +117,22 @@ type State = {
   advanced: boolean
   preview: boolean
   pdfPreview: boolean
-  submitState: string
+  saveStatus: SaveStatus
 }
 
 function numberToString(input: any) {
   if (typeof input === 'number') return `${input}`
   return input
+}
+
+function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
+  return {
+    NO_CHANGES: outputOnNoChange ? 'Nebyly provedeny žádné změny' : '',
+    SAVING: 'Ukládám…',
+    UNSAVED: 'Formulář obsahuje neuložené změny',
+    FAILED: 'Ukládání selhalo',
+    SAVED: 'Uloženo',
+  }[saveStatus]
 }
 
 class EditSong extends React.Component<
@@ -108,13 +154,11 @@ class EditSong extends React.Component<
     advanced: false,
     preview: false,
     pdfPreview: false,
-    submitState: '',
-
-    disabled: false,
+    saveStatus: 'NO_CHANGES',
   }
 
   result = () => {
-    const { author, tags, title, textWithChords, disabled } = this.state
+    const { author, tags, title, textWithChords } = this.state
     return {
       ...this.props.song,
       author,
@@ -132,11 +176,11 @@ class EditSong extends React.Component<
 
   submit = (evt?: React.FormEvent<HTMLFormElement>) => {
     if (evt) evt.preventDefault()
-    const { author, title, disabled } = this.state
+    const { author, title, saveStatus } = this.state
     console.log('submit before check', this.state)
-    if (!author || !title || disabled) return
+    if (!author || !title || saveStatus === 'SAVING') return
     console.log('submit', this.state)
-    this.setState({ disabled: true, submitState: 'Ukládám...' })
+    this.setState({ saveStatus: 'SAVING' })
     this.saveTimeout = null
 
     editSong({
@@ -147,13 +191,10 @@ class EditSong extends React.Component<
         if (!ret || !ret.editSong) throw new Error('editSong failed')
       })
       .then(() => this.props.refetch(true))
-      .then(() => this.setState({ submitState: 'Uloženo.', disabled: false }))
+      .then(() => this.setState({ saveStatus: 'SAVED' }))
       .catch(e => {
         console.error(e)
-        this.setState({
-          disabled: false,
-          submitState: 'Při ukládání nastala chyba.',
-        })
+        this.setState({ saveStatus: 'SAVED' })
       })
   }
 
@@ -162,12 +203,7 @@ class EditSong extends React.Component<
   change = (val: Partial<State>) => {
     if (this.saveTimeout) clearTimeout(this.saveTimeout)
     this.saveTimeout = setTimeout(this.submit, 500)
-    this.setState(
-      Object.assign(
-        { submitState: 'Formulář obsahuje neuložené změny.' },
-        val as any,
-      ),
-    )
+    this.setState(Object.assign({ saveStatus: 'UNSAVED' }, val as any))
   }
 
   authorChange = (val: string) => this.change({ author: val })
@@ -260,8 +296,8 @@ class EditSong extends React.Component<
                 onChange={this.textWithChordsChange}
               />
             )}
-            <button disabled={this.state.disabled}>Uložit</button>
-            {this.state.submitState}
+            {this.state.saveStatus === 'FAILED' && <button>Uložit</button>}
+            <i>{translateStatus(this.state.saveStatus)}</i>
           </Form>
           <Help>
             <h3>Jak se tahle věc ovládá?</h3>
@@ -283,7 +319,7 @@ class EditSong extends React.Component<
             <p>
               Změny se automaticky ukládají, nebo je můžete uložit ručně
               kliknutím na tlačítko uložit. Současný stav je:{' '}
-              <i>{this.state.submitState || 'nebyly provedeny žádné změny.'}</i>
+              <i>{translateStatus(this.state.saveStatus, true)}</i>
             </p>
             <p>
               Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
