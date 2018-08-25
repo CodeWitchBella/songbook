@@ -56,11 +56,10 @@ const search = css`
     overflow: hidden;
   }
   input {
-    width: calc(100% - 10px);
+    width: calc(100% - 12px);
     height: 40px;
     padding-left: 10px;
     border: 1px solid #222;
-    margin-left: -1px;
   }
 `
 
