@@ -178,7 +178,10 @@ export function stringifySongFromDelta(song: Delta): string {
   if (!song.ops) return ''
   let ret = ''
   for (const op of song.ops) {
-    if (!op.insert) throw new Error('Unknown delta value')
+    if (!('insert' in op)) {
+      console.log({ op })
+      throw new Error('Unknown delta value')
+    }
     const attr = op.attributes || {}
     if (attr.tag) {
       ret += `${op.insert} `
