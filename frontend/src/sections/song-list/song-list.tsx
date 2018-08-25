@@ -53,11 +53,14 @@ const search = css`
   form {
     flex-grow: 1;
     max-width: 420px;
+    overflow: hidden;
   }
   input {
-    width: 100%;
+    width: calc(100% - 10px);
     height: 40px;
     padding-left: 10px;
+    border: 1px solid #222;
+    margin-left: -1px;
   }
 `
 
