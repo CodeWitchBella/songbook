@@ -20,6 +20,9 @@ const ChangelogEntry: React.SFC<{ date: string }> = ({ date, children }) => (
     css={`
       font-size: 20px;
       padding: 0 10px;
+      ul {
+        margin-top: 0;
+      }
     `}
   >
     <h2
@@ -35,9 +38,10 @@ const ChangelogEntry: React.SFC<{ date: string }> = ({ date, children }) => (
     <div
       css={`
         padding-left: 10px;
+        padding-top: 10px;
       `}
     >
-      {children}
+      <ul>{children}</ul>
     </div>
   </div>
 )

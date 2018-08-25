@@ -12,7 +12,11 @@ import App from './app'
 const delimiter = '---app-delimiter---'
 
 const Scripts: React.SFC<{ list: string[] }> = ({ list }) => (
-  <>{list.map((src, id) => <script key={id + 2} src={src} defer />)}</>
+  <>
+    {list.map((src, id) => (
+      <script key={id + 2} src={src} defer />
+    ))}
+  </>
 )
 
 const NotDev: React.SFC<{ dev: boolean }> = ({ dev, children }) =>

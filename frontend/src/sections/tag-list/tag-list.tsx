@@ -42,7 +42,9 @@ const TagListSection = () => (
   <TagList>
     {tags => (
       <nav className={tagContainer}>
-        {tags.map((tag, i) => <Tag key={i} tag={tag} />)}
+        {tags.map((tag, i) => (
+          <Tag key={i} tag={tag} />
+        ))}
       </nav>
     )}
   </TagList>
