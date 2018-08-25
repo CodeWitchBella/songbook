@@ -142,6 +142,8 @@ class EditSong extends React.Component<
     saveStatus: 'NO_CHANGES',
   }
 
+  changeCounter: number = 0
+
   result = () => {
     const { author, tags, title, textWithChords } = this.state
     return {
@@ -170,6 +172,8 @@ class EditSong extends React.Component<
     this.setState({ saveStatus: 'SAVING' })
     this.saveTimeout = null
 
+    const version = this.changeCounter
+
     editSong({
       song: this.result(),
     })
@@ -178,16 +182,23 @@ class EditSong extends React.Component<
         if (!ret || !ret.editSong) throw new Error('editSong failed')
       })
       .then(() => this.props.refetch(true))
-      .then(() => this.setState({ saveStatus: 'SAVED' }))
+      .then(() => {
+        if (version === this.changeCounter) {
+          this.setState({ saveStatus: 'SAVED' })
+        } else {
+          this.change({})
+        }
+      })
       .catch(e => {
         console.error(e)
-        this.setState({ saveStatus: 'SAVED' })
+        this.setState({ saveStatus: 'FAILED' })
       })
   }
 
   saveTimeout: any = null
 
   change = (val: Partial<State>) => {
+    this.changeCounter += 1
     if (this.saveTimeout) clearTimeout(this.saveTimeout)
     this.saveTimeout = setTimeout(this.submit, 500)
     this.setState(Object.assign({ saveStatus: 'UNSAVED' }, val as any))
