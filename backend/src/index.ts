@@ -7,23 +7,26 @@ import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
 
 sms.install()
+;(async () => {
+  const app = express()
 
-const app = express()
+  app.use(bodyParser.json())
 
-app.use(bodyParser.json())
+  app.use(((err, _req, res, _next) => {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+  }) as ErrorRequestHandler)
 
-app.use(((err, _req, res, _next) => {
-  console.error(err.stack)
-  res.status(500).send('Something broke!')
-}) as ErrorRequestHandler)
+  app.get('/dist/*', distMiddleware())
+  app.get('/static/*', staticMiddleware())
+  await graphqlMiddleware.register(app)
+  app.get('*', htmlMiddleware())
 
-app.get('/dist/*', distMiddleware())
-app.get('/static/*', staticMiddleware())
-app.post('/graphql', graphqlMiddleware.graphql)
-app.get('/graphql', graphqlMiddleware.graphiql)
-app.get('*', htmlMiddleware())
-
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Listening on http://localhost:${PORT}`)
+  const PORT = 3001
+  app.listen(PORT, () => {
+    console.log(`Listening on http://localhost:${PORT}`)
+  })
+})().catch(e => {
+  console.error(e)
+  process.exit(1)
 })
