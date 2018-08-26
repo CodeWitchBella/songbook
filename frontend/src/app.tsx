@@ -4,7 +4,7 @@ import { injectGlobal } from 'react-emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
 import { StoreProvider } from 'containers/store/store'
-import printSongbook from 'pdf/songbook'
+//import printSongbook from 'pdf/songbook'
 import { InstallProvider } from 'components/install'
 
 // eslint-disable-next-line no-unused-expressions

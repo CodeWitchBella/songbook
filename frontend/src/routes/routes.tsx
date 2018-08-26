@@ -61,6 +61,14 @@ const PDF = Loadable({
   webpack: () => [require.resolveWeak('./pdf')],
 })
 
+const ShareDBTest = Loadable({
+  loader: () =>
+    import(/* webpackChunkName: "r-sharedb-test" */ './sharedb-test'),
+  loading,
+  modules: ['./sharedb-test'],
+  webpack: () => [require.resolveWeak('./sharedb-test')],
+})
+
 export default class Routes extends React.Component {
   render() {
     return (
@@ -95,6 +103,7 @@ export default class Routes extends React.Component {
           render={({ match }) => <Tag tag={match.params.tag} />}
         />
         <Route path="/changelog" exact render={() => <Changelog />} />
+        <Route path="/sharedb-test" exact render={() => <ShareDBTest />} />
         <Route>
           <NotFound />
         </Route>

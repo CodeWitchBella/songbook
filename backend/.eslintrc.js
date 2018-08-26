@@ -42,6 +42,7 @@ module.exports = {
     'no-underscore-dangle': 0,
     'import/export': 0, // incompatible with overload
     'no-redeclare': 0, // does not work with some typescript constructs
+    'no-useless-constructor': 0, // broken in .d.ts files
   },
   parserOptions: {
     sourceType: 'module',

@@ -1,10 +1,13 @@
 import express, { ErrorRequestHandler } from 'express'
 import sms from 'source-map-support'
 import bodyParser from 'body-parser'
+import http from 'http'
+import WebSocket from 'ws'
 import htmlMiddleware from './middleware/html'
 import distMiddleware from './middleware/dist'
 import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
+import * as sharedb from './sharedb'
 
 sms.install()
 ;(async () => {
@@ -22,8 +25,12 @@ sms.install()
   await graphqlMiddleware.register(app)
   app.get('*', htmlMiddleware())
 
+  const server = http.createServer(app)
+  const wss = new WebSocket.Server({ server })
+  await sharedb.register(wss)
+
   const PORT = 3001
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Listening on http://localhost:${PORT}`)
   })
 })().catch(e => {

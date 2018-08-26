@@ -43,6 +43,7 @@ module.exports = {
     'import/export': 0, // incompatible with overload
     'no-redeclare': 0, // does not work with some typescript constructs
     'lines-between-class-members': 0, // prevents some concise code
+    'no-useless-constructor': 0, // does not work with .d.ts files
   },
   settings: {
     'import/core-modules': ['components', 'utils', 'shared'],
