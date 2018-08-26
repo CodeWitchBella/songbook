@@ -24,13 +24,15 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
     if (window.matchMedia('(display-mode: standalone)').matches) {
       displayInstructions = true
       document.getElementById('app')!.innerHTML = `
+      <div style="font-size: 20px; padding: 10px;">
       Vypadá to, že že máte tento web nainstalovaný jako appku. Díky 😊<br/>
-      Jelikož jsem web přesunula na novou adresu <a href="https://${currentHost}>${currentHost}</a>
+      Jelikož jsem web přesunula na novou adresu <a href="https://${currentHost}">${currentHost}</a>
       tak bude potřeba, abyste si appku odinstalovali a nainstalovali znova z
       této nové adresy. Omlouvám se za nepříjemnosti, ale lepší způsob (kromě
       zachování původní adresy) jsem bohužel nenašla. Díky za pochopení 😃
       <br/><br/>
       Isabella S.
+      </div>
       `
     } else {
       unregister().then(() => {
