@@ -1,6 +1,6 @@
 {
-  "name": "Songbook",
-  "short_name": "Songbook",
+  "name": "Zpěvník",
+  "short_name": "Zpěvník",
   "icons": [
     {
       "src": "/static/android-launchericon-48-48.png",

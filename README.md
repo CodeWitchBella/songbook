@@ -1,6 +1,6 @@
 # Songbook
 
-https://songbook.skorepa.info/
+https://zpevnik.skorepova.info/
 
 ## Cíl projektu
 
