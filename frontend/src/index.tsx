@@ -22,6 +22,24 @@ Loadable.preloadReady().then(() => {
   )
 })
 
+const oldHosts = ['songbook.skorepa.info']
+const currentHost = 'zpevnik.skorepova.info'
+
 if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
-  const registration = runtime.register({ scope: '/' })
+  if (oldHosts.includes(window.location.host)) {
+    navigator.serviceWorker
+      .getRegistrations()
+      .then(registrations => {
+        for (const registration of registrations) {
+          registration.unregister()
+        }
+      })
+      .then(() => {
+        window.location.assign(
+          `https://${currentHost}${window.location.pathname}`,
+        )
+      })
+  } else {
+    runtime.register({ scope: '/' })
+  }
 }
