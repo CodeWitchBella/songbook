@@ -1,4 +1,4 @@
-const cacheName = 'songbook-cache-v4'
+const cacheName = 'songbook-cache-v5'
 
 self.addEventListener('install', e => {
   const timeStamp = Date.now()
