@@ -4,14 +4,14 @@ import React from 'react'
 let socket: WebSocket
 let connection: sharedb.Connection
 
-type State = { data: any; doc: Doc | null }
-export default class ShareDBDoc extends React.Component<
+type State<T> = { data: T | null; doc: Doc | null }
+export default class ShareDBDoc<T> extends React.Component<
   {
-    children: (state: State) => React.ReactNode
+    children: (state: State<T>) => React.ReactNode
     collection: string
     id: string
   },
-  State
+  State<T>
 > {
   state = { data: null, doc: null }
   doc?: Doc
