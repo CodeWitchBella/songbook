@@ -37,7 +37,7 @@ self.addEventListener('fetch', event => {
             // Check if we received a valid response
             if (
               !netResponse ||
-              netResponse.status !== 200 ||
+              ![200, 302].includes(netResponse.status) ||
               netResponse.type !== 'basic'
             ) {
               return netResponse
