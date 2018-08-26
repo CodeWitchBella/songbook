@@ -9,33 +9,52 @@ import handleOutline from './utils/outline-handler'
 
 handleOutline()
 
-Loadable.preloadReady().then(() => {
-  const app = document.getElementById('app')
-  const render = app!.innerHTML !== '' ? ReactDOM.hydrate : ReactDOM.render
-  render(
-    <ErrorBoundary>
-      <Router>
-        <App />
-      </Router>
-    </ErrorBoundary>,
-    app,
-  )
-})
-
 const oldHosts = ['songbook.skorepa.info']
 const currentHost = 'zpevnik.skorepova.info'
 
+function unregister() {
+  return navigator.serviceWorker
+    .getRegistrations()
+    .then(registrations => Promise.all(registrations.map(r => r.unregister)))
+}
+
+let displayInstructions = false
 if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
   if (oldHosts.includes(window.location.host)) {
-    navigator.serviceWorker
-      .getRegistrations()
-      .then(registrations => Promise.all(registrations.map(r => r.unregister)))
-      .then(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      displayInstructions = true
+      document.getElementById('app')!.innerHTML = `
+      Vypadá to, že že máte tento web nainstalovaný jako appku. Díky 😊<br/>
+      Jelikož jsem web přesunula na novou adresu <a href="https://${currentHost}>${currentHost}</a>
+      tak bude potřeba, abyste si appku odinstalovali a nainstalovali znova z
+      této nové adresy. Omlouvám se za nepříjemnosti, ale lepší způsob (kromě
+      zachování původní adresy) jsem bohužel nenašla. Díky za pochopení 😃
+      <br/><br/>
+      Isabella S.
+      `
+    } else {
+      unregister().then(() => {
         window.location.assign(
           `https://${currentHost}${window.location.pathname}`,
         )
       })
+    }
   } else {
     runtime.register({ scope: '/' })
   }
+}
+
+if (!displayInstructions) {
+  Loadable.preloadReady().then(() => {
+    const app = document.getElementById('app')
+    const render = app!.innerHTML !== '' ? ReactDOM.hydrate : ReactDOM.render
+    render(
+      <ErrorBoundary>
+        <Router>
+          <App />
+        </Router>
+      </ErrorBoundary>,
+      app,
+    )
+  })
 }
