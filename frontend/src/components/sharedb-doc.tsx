@@ -25,7 +25,12 @@ export default class ShareDBDoc extends React.Component<
   }
 
   componentDidMount() {
-    if (!socket) socket = new WebSocket(`ws://${window.location.host}/sharedb`)
+    if (!socket)
+      socket = new WebSocket(
+        `ws${window.location.protocol === 'https:' ? 's' : ''}://${
+          window.location.host
+        }/sharedb`,
+      )
     if (!connection) connection = new sharedb.Connection(socket)
     this.doc = connection.get(this.props.collection, this.props.id)
     this.doc.subscribe(this.onChange)
