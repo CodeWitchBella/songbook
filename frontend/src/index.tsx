@@ -29,11 +29,7 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
   if (oldHosts.includes(window.location.host)) {
     navigator.serviceWorker
       .getRegistrations()
-      .then(registrations => {
-        for (const registration of registrations) {
-          registration.unregister()
-        }
-      })
+      .then(registrations => Promise.all(registrations.map(r => r.unregister)))
       .then(() => {
         window.location.assign(
           `https://${currentHost}${window.location.pathname}`,

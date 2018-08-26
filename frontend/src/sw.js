@@ -26,7 +26,7 @@ self.addEventListener('fetch', event => {
   const parts = event.request.url.split('/')
   if (!/\..*\./.exec(parts[parts.length - 1])) {
     // eslint-disable-next-line no-param-reassign
-    event.request.url = '/'
+    event.request.url = '/?sw'
     // load from cache but update cache from network
     event.respondWith(
       caches
