@@ -4,6 +4,7 @@ import { SongType, SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
 import { everything_songs } from 'containers/store/__generated__/everything'
 import latinize from 'utils/latinize'
+import TopMenu from 'components/top-menu'
 
 const Placeholder = () => <div>Načítám seznam písní</div>
 
@@ -47,18 +48,22 @@ const print = css`
 const search = css`
   display: flex;
   font-size: 20px;
-  height: 100px;
+  margin-top: 20px;
+  height: 40px;
   align-items: center;
   justify-content: center;
   form {
+    position: fixed;
+    width: 100vw;
     flex-grow: 1;
     max-width: 420px;
     overflow: hidden;
   }
   input {
-    width: calc(100% - 12px);
+    width: calc(100% - 22px);
     height: 40px;
     padding-left: 10px;
+    margin-left: 5px;
     border: 1px solid #222;
   }
 `
@@ -127,7 +132,7 @@ const searchSong = (text: string) => (s: everything_songs) => {
     .every(t => toComparable(`${s.title} ${s.author}`).includes(t))
 }
 
-const SongList = ({ tag }: { tag: string }) => (
+const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => (
   <SongsInTag tag={tag}>
     {songs =>
       !songs ? null : (
@@ -135,14 +140,17 @@ const SongList = ({ tag }: { tag: string }) => (
           {({ text, render }) => (
             <nav className={page}>
               <div className={search}>{render()}</div>
+              <TopMenu />
               <div className={listContainer}>
                 {songs.filter(searchSong(text)).map(s => (
                   <Song key={s.id} song={s} />
                 ))}
               </div>
-              <Link className={print} to={`/print/${tag}`}>
-                Print all
-              </Link>
+              {showPrint && (
+                <Link className={print} to={`/print/${tag}`}>
+                  Print all
+                </Link>
+              )}
             </nav>
           )}
         </Search>

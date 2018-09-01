@@ -1,9 +1,13 @@
 import React from 'react'
 import { hot } from 'react-hot-loader'
-import SongList from 'sections/song-list/song-list'
-import { InstallButton } from 'components/install';
-import styled from 'react-emotion';
+import TagList from 'sections/tag-list/tag-list'
+import { InstallButton } from 'components/install'
+import styled from 'react-emotion'
+import TopMenu from 'components/top-menu'
 
+const Spacer = styled.div`
+  height: 150px;
+`
 
 const InstallContainer = styled.div`
   position: absolute;
@@ -15,13 +19,14 @@ const InstallContainer = styled.div`
   width: 100%;
 `
 
-const Tag = ({ tag }: { tag: string }) => (
+const Home = () => (
   <div>
-    <SongList tag={tag} showPrint/>
-
+    <TopMenu />
+    <TagList />
+    <Spacer />
     <InstallContainer>
       <InstallButton />
     </InstallContainer>
   </div>
 )
-export default hot(module)(Tag)
+export default hot(module)(Home)

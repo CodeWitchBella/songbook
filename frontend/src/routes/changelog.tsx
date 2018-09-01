@@ -4,6 +4,10 @@ import Entry from 'components/changelog-entry'
 
 const Changelog = () => (
   <div>
+    <Entry date="2018-09-01">
+      <li>Vyhledávací lišta nyní &quot;plave&quot; nad obsahem</li>
+      <li>Úvodní obrazovka je nyní seznam písní</li>
+    </Entry>
     <Entry date="2018-08-25">
       <li>
         Drobná vylepšení v editoru písní

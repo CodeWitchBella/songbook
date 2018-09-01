@@ -33,6 +33,13 @@ const Tag = Loadable({
   webpack: () => [require.resolveWeak('./tag')],
 })
 
+const TagList = Loadable({
+  loader: () => import(/* webpackChunkName: "r-tag-list" */ './tag-list'),
+  loading,
+  modules: ['./tag-list'],
+  webpack: () => [require.resolveWeak('./tag-list')],
+})
+
 const CreateSong = Loadable({
   loader: () => import(/* webpackChunkName: "r-create-song" */ './create-song'),
   loading,
@@ -97,6 +104,7 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Print tag={match.params.tag} />}
         />
+        <Route path="/tag" exact render={({ match }) => <TagList />} />
         <Route
           path="/tag/:tag"
           exact

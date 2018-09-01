@@ -10,7 +10,7 @@ const tagContainer = css`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin: 10px;
+  margin: 0 10px 10px 10px;
 `
 
 const tagClass = css`
