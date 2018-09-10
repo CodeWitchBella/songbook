@@ -7,6 +7,7 @@
     "@types/request": "^2.47.1",
     "@types/ws": "^6.0.0",
     "apollo-server-express": "^2.0.4",
+    "automerge": "^0.8.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "graphql": "^0.13.2",
@@ -14,9 +15,7 @@
     "latinize": "^0.4.0",
     "mime": "^2.3.1",
     "request": "^2.88.0",
-    "sharedb": "^1.0.0-beta.12",
     "source-map-support": "^0.5.9",
-    "websocket-json-stream": "0.0.3",
     "ws": "^6.0.0"
   },
   "devDependencies": {
@@ -50,6 +49,7 @@
     "build": "babel -d build -x .ts -x .tsx src",
     "docker": "cd .. && npm run docker --",
     "lint": "eslint --ext ts --cache src",
+    "check": "tsc --noEmit",
     "watch": "nodemon -w . -e .js -e .graphql -e .song -e .ts build/index.js"
   },
   "author": "",

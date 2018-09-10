@@ -68,12 +68,12 @@ const PDF = Loadable({
   webpack: () => [require.resolveWeak('./pdf')],
 })
 
-const ShareDBTest = Loadable({
+const AutomergeTest = Loadable({
   loader: () =>
-    import(/* webpackChunkName: "r-sharedb-test" */ './sharedb-test'),
+    import(/* webpackChunkName: "r-automerge-test" */ './automerge-test'),
   loading,
-  modules: ['./sharedb-test'],
-  webpack: () => [require.resolveWeak('./sharedb-test')],
+  modules: ['./automerge-test'],
+  webpack: () => [require.resolveWeak('./automerge-test')],
 })
 
 export default class Routes extends React.Component {
@@ -111,7 +111,7 @@ export default class Routes extends React.Component {
           render={({ match }) => <Tag tag={match.params.tag} />}
         />
         <Route path="/changelog" exact render={() => <Changelog />} />
-        <Route path="/sharedb-test" exact render={() => <ShareDBTest />} />
+        <Route path="/automerge-test" exact render={() => <AutomergeTest />} />
         <Route>
           <NotFound />
         </Route>

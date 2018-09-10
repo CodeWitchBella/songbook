@@ -7,7 +7,7 @@ import htmlMiddleware from './middleware/html'
 import distMiddleware from './middleware/dist'
 import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
-import * as sharedb from './sharedb'
+import { automergeSocket } from './automerge'
 
 sms.install()
 ;(async () => {
@@ -27,7 +27,14 @@ sms.install()
 
   const server = http.createServer(app)
   const wss = new WebSocket.Server({ server })
-  await sharedb.register(wss)
+  wss.on('connection', (ws, req) => {
+    if (req.url === '/automerge') {
+      automergeSocket(ws)
+    } else {
+      ws.send('Invalid route')
+      ws.close()
+    }
+  })
 
   const PORT = 3001
   server.listen(PORT, () => {
