@@ -1,7 +1,7 @@
 import React from 'react'
 import * as parser from 'utils/parse-song'
 import styled, { css } from 'react-emotion'
-import { everything_songs } from 'containers/store/__generated__/everything'
+import { everything_songs } from 'queries-types'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
@@ -94,11 +94,11 @@ const EditButtonContainer = styled.div`
     display: none;
   }
 `
-const EditButton = styled(Link)`
-  display: block;
-  color: darkblue;
-  margin-left: 10px;
-`
+const EditButton = styled(Link)({
+  display: 'block',
+  color: 'darkblue',
+  marginLeft: '10px',
+})
 
 const shareButton = css`
   width: 100%;

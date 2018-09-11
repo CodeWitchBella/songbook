@@ -2,7 +2,7 @@ import React from 'react'
 import { css } from 'react-emotion'
 import { SongType, SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
-import { everything_songs } from 'containers/store/__generated__/everything'
+import { everything_songs } from 'queries-types'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 

@@ -1,6 +1,4 @@
-import { everything } from './__generated__/everything'
-import * as n from './__generated__/newSong'
-import * as e from './__generated__/editSong'
+import * as types from '../../queries-types'
 
 const gql = ([a]: TemplateStringsArray) => a
 
@@ -37,7 +35,7 @@ const query = <R, V = undefined>({
     return Promise.resolve(null)
   }) as any
 
-export const fetchEverything = query<everything>({
+export const fetchEverything = query<types.everything>({
   q: gql`
     query everything {
       tags {
@@ -58,6 +56,7 @@ export const fetchEverything = query<everything>({
           fontSize
           paragraphSpace
           titleSpace
+          spotify
         }
         tags {
           id
@@ -68,7 +67,7 @@ export const fetchEverything = query<everything>({
   opName: 'everything',
 })
 
-export const newSong = query<n.newSong, n.newSongVariables>({
+export const newSong = query<types.newSong, types.newSongVariables>({
   q: gql`
     mutation newSong($song: NewSongInput!) {
       newSong(song: $song)
@@ -77,7 +76,7 @@ export const newSong = query<n.newSong, n.newSongVariables>({
   opName: 'newSong',
 })
 
-export const editSong = query<e.editSong, e.editSongVariables>({
+export const editSong = query<types.editSong, types.editSongVariables>({
   q: gql`
     mutation editSong($song: EditSongInput!) {
       editSong(song: $song)

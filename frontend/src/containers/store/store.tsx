@@ -1,13 +1,13 @@
 import React from 'react'
 import createContext from 'utils/create-react-context'
 import localForage from 'localforage'
-import * as f from './fetchers'
 import {
   everything_songs as SongType,
   everything_tags as SimpleTagType,
   everything_tags_songs as MiniSongType,
   everything as Everything,
-} from './__generated__/everything'
+} from 'queries-types'
+import * as f from './fetchers'
 
 export type SongType = SongType
 export type TagType = {
