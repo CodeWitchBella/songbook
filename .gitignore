@@ -21,4 +21,4 @@ database.sqlite
 npm-token
 frontend/bundle
 /frontend/schema.json
-__generated__
+/frontend/src/queries-types.ts

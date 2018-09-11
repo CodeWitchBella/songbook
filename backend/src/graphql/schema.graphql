@@ -22,6 +22,7 @@ type SongMetadata {
   fontSize: Float
   paragraphSpace: Float
   titleSpace: Float
+  spotify: String
 }
 
 type Song {
@@ -55,4 +56,5 @@ input SongMetadataInput {
   fontSize: Float
   paragraphSpace: Float
   titleSpace: Float
+  spotify: String
 }

@@ -3,12 +3,10 @@ import { hot } from 'react-hot-loader'
 import styled, { css } from 'react-emotion'
 import { editSong } from 'containers/store/fetchers'
 import { Song, Refetch, SongType } from 'containers/store/store'
-import { editSongVariables } from 'containers/store/__generated__/editSong'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import QuillEditor from 'components/quill-editor'
-import { everything_songs_metadata } from 'containers/store/__generated__/everything'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
@@ -98,6 +96,7 @@ type State = {
   fontSize: string
   paragraphSpace: string
   titleSpace: string
+  spotify: string
   fancyEditor: boolean
   advanced: boolean
   preview: boolean
@@ -132,6 +131,7 @@ class EditSong extends React.Component<
     tags: this.props.song.tags.map(t => t.id).join(', '),
     title: this.props.song.title,
     textWithChords: this.props.song.textWithChords,
+    spotify: this.props.song.metadata.spotify || '',
     fontSize: numberToString(this.props.song.metadata.fontSize),
     paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
     titleSpace: numberToString(this.props.song.metadata.titleSpace),
@@ -159,6 +159,7 @@ class EditSong extends React.Component<
         fontSize: Number.parseFloat(this.state.fontSize),
         paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
         titleSpace: Number.parseFloat(this.state.titleSpace),
+        spotify: this.state.spotify || null,
       },
     }
   }
@@ -212,6 +213,8 @@ class EditSong extends React.Component<
   fontSizeChange = (val: string) => this.change({ fontSize: val })
   paragraphSpaceChange = (val: string) => this.change({ paragraphSpace: val })
   titleSpaceChange = (val: string) => this.change({ titleSpace: val })
+  spotifyChange = (val: string) => this.change({ spotify: val })
+
   fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
   advancedChange = (value: boolean) => this.setState({ advanced: value })
   previewChange = (value: boolean) => this.setState({ preview: value })
@@ -238,6 +241,11 @@ class EditSong extends React.Component<
               label="Tagy"
               value={this.state.tags}
               onChange={this.tagsChange}
+            />
+            <Input
+              label="Spotify odkaz"
+              value={this.state.spotify}
+              onChange={this.spotifyChange}
             />
             <InputLine>
               <Checkbox

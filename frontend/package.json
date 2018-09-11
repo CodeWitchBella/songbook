@@ -89,7 +89,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "codegen": "apollo-codegen introspect-schema http://localhost:3001/graphql && apollo-codegen generate --target typescript-modern --schema schema.json 'src/**/*.tsx'",
+    "codegen": "apollo-codegen introspect-schema http://localhost:3001/graphql && apollo-codegen generate --target typescript --schema schema.json 'src/**/*.tsx' --output src/queries-types.ts",
     "docker": "cd .. && npm run docker --",
     "start": "webpack-dev-server --env modern",
     "start-ssr": "webpack-dev-server --env ssr",
