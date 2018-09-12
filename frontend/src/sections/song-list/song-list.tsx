@@ -75,11 +75,22 @@ const page = css`
 const Song = ({
   song,
 }: {
-  song: { id: string; title: string; author: string }
+  song: {
+    id: string
+    title: string
+    author: string
+    metadata: { spotify: string | null }
+  }
 }) => (
   <div className={songClass}>
     <Link to={`/song/${song.id}`}>
-      {song.title} - {song.author}
+      {song.title} - {song.author}{' '}
+      {window.location &&
+      window.location.search.split(/[?&]/).includes('spotify')
+        ? song.metadata.spotify !== null
+          ? '🎵'
+          : '🔇'
+        : null}
     </Link>
   </div>
 )

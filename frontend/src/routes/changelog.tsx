@@ -4,6 +4,13 @@ import Entry from 'components/changelog-entry'
 
 const Changelog = () => (
   <div>
+    <Entry date="2018-09-12">
+      <li>Přidán spotify player</li>
+      <li>
+        Pokud v seznamu písní chcete vidět, které mají a nemají spotify tak za
+        URL přidejte ?spotify
+      </li>
+    </Entry>
     <Entry date="2018-09-01">
       <li>Vyhledávací lišta nyní &quot;plave&quot; nad obsahem</li>
       <li>Úvodní obrazovka je nyní seznam písní</li>

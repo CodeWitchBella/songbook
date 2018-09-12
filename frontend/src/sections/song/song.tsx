@@ -1,10 +1,9 @@
 import React from 'react'
-import styled, { css } from 'react-emotion'
-import * as page from 'utils/page'
-import Page from 'components/page'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import { Song } from 'containers/store/store'
+
+const IFrame = (props: any) => <iframe {...props} />
 
 class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
   state = { visible: false }
@@ -26,13 +25,12 @@ class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
         `}
       >
         {this.state.visible && (
-          <iframe
+          <IFrame
             src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
               parts[parts.length - 1]
             }`}
             height="80"
             frameBorder="0"
-            /* eslint-disable-next-line */
             allowtransparency="true"
             allow="encrypted-media"
           />
