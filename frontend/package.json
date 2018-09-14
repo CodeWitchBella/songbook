@@ -5,7 +5,7 @@
   "description": "",
   "dependencies": {
     "@react-pdf/renderer": "^1.0.0-alpha.15",
-    "@s-isabella/scripts-frontend": "0.0.6",
+    "@s-isabella/scripts-frontend": "^0.0.10",
     "@types/express": "^4.16.0",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/jspdf": "^1.1.31",
@@ -41,7 +41,8 @@
     "react-tree-walker": "^4.3.0",
     "reconnecting-websocket": "^4.0.0-rc5",
     "sharedb": "^1.0.0-beta.12",
-    "source-map-support": "^0.5.9"
+    "source-map-support": "^0.5.9",
+    "typescript": "^3.0.3"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^4.0.0-alpha.8",
