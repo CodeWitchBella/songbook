@@ -48,11 +48,11 @@
     }
   },
   "tmux": {
-    "hooks-before-all": [
-      "npm run docker -- install",
-      "npm run docker -- backend-build"
-    ],
     "devel": {
+      "before-all": [
+        "npm run docker -- install",
+        "npm run docker -- backend-build"
+      ],
       "panes": [
         {
           "name": "BE run",
@@ -73,6 +73,37 @@
           "name": "FE SSR",
           "dir": "frontend",
           "cmd": "npm run docker -- frontend-ssr"
+        }
+      ]
+    },
+    "devel-lerna": {
+      "before-all": [
+        [
+          "bash",
+          "-c",
+          "cd backend && npm run build"
+        ]
+      ],
+      "panes": [
+        {
+          "name": "BE run",
+          "dir": "backend",
+          "cmd": "npm run watch --"
+        },
+        {
+          "name": "BE build",
+          "dir": "backend",
+          "cmd": "npm run build -- --watch --skip-initial-build"
+        },
+        {
+          "name": "FE",
+          "dir": "frontend",
+          "cmd": "npm run start --"
+        },
+        {
+          "name": "FE SSR",
+          "dir": "frontend",
+          "cmd": "npm run start-ssr --"
         }
       ]
     }
