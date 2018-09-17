@@ -1,101 +1,110 @@
-import WebSocket from 'ws'
-import Automerge, { DocSet } from 'automerge'
+import AutomergeServer from 'automerge-server'
+import fs from 'fs'
+import path from 'path'
+import Automerge from 'automerge'
+import { promisify } from 'util'
+import { songDir, songs } from './graphql/resolvers'
+import Mutation from './graphql/mutations'
 
-function parseJSON(json: string) {
-  try {
-    return JSON.parse(json)
-  } catch {
-    return null
-  }
+const loaders: { [key: string]: (id: string) => Promise<any> } = {
+  async song(id) {
+    if (!/^[0-9a-z_-]+$/i.exec(id)) return false
+    try {
+      return await promisify(fs.readFile)(
+        path.join(songDir, `${id}.automerge`),
+        'utf8',
+      )
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        console.error(e)
+        return false
+      }
+    }
+    const song = songs.get().find(s => s.id === id)
+    if (!song) return false
+
+    return Automerge.change(Automerge.init(), (doc_: any) => {
+      const doc = doc_
+      doc.id = song.id
+
+      doc.author = new Automerge.Text()
+      doc.author.insertAt(0, ...song.author.split(''))
+      doc.title = new Automerge.Text()
+      doc.title.insertAt(0, ...song.title.split(''))
+      doc.textWithChords = new Automerge.Text()
+      doc.textWithChords.insertAt(0, ...song.textWithChords.split(''))
+
+      doc.metadata = song.metadata
+      doc.tags = song.tags
+    })
+  },
 }
 
-class Document {
-  /* eslint-disable lines-between-class-members */
-  name?: string
-  doc: any
-  docSets: any[] = []
-  /* eslint-enable lines-between-class-members */
-
-  constructor(name: string) {
-    this.name = name
+function textToString(text: any) {
+  let ret = ''
+  for (const ch of text) {
+    ret += ch
   }
-
-  set(doc: any) {
-    this.doc = doc
-    for (const docSet of this.docSets) {
-      docSet.setDoc(this.name, this.doc)
-    }
-    return this
-  }
-
-  addToDocSet(docSet: any) {
-    docSet.setDoc(this.name, this.doc)
-    this.docSets.push(docSet)
-  }
-
-  removeDocSet(docSet: any) {
-    this.docSets = this.docSets.filter(set => set !== docSet)
-  }
-
-  change(fn: (doc: any) => void) {
-    this.set(Automerge.change(this.doc, fn))
-  }
+  return ret
 }
 
-const documents = {
-  one: new Document('one').set(Automerge.init()),
-  two: new Document('two').set(Automerge.init()),
+function stringArray(arr: any) {
+  if (!Array.isArray(arr)) return undefined
+  return arr.map(e => `${e}`)
 }
 
-export const automergeSocket = (ws: WebSocket) => {
-  const docSet = new DocSet()
-
-  const subscribedDocuments: Document[] = []
-
-  function subscribeToDoc(doc: Document) {
-    if (subscribedDocuments.includes(doc)) return
-    doc.addToDocSet(docSet)
-    subscribedDocuments.push(doc)
-  }
-
-  subscribeToDoc(documents.one)
-  subscribeToDoc(documents.two)
-
-  const autocon = new Automerge.Connection(docSet, (frame: any) =>
-    ws.send(JSON.stringify(frame)),
-  )
-
-  autocon.open()
-
-  ws.on('message', message => {
-    const data = parseJSON(message.toString())
-    if (data !== null) {
-      autocon.receiveMsg(data)
-    }
-  })
-
-  ws.on('close', () => {
-    autocon.close()
-    subscribedDocuments.forEach(doc => doc.removeDocSet(docSet))
-  })
+function coerceNumber(d: number) {
+  if (Number.isFinite(d)) return d
+  return undefined
 }
 
-setInterval(() => {
-  documents.one.change(doc_ => {
-    const doc = doc_
-    if (!doc.prop) {
-      doc.prop = 1
-    } else {
-      doc.prop += 1
-    }
-  })
+const savers: {
+  [key: string]: (id: string, text: string, doc: any) => void | Promise<void>
+} = {
+  async song(id, text, doc) {
+    if (!/^[0-9a-z_-]+$/i.exec(id)) return
+    await promisify(fs.writeFile)(
+      path.join(songDir, `${id}.automerge`),
+      text,
+      'utf8',
+    )
+    console.log(doc.metadata)
+    await Mutation.editSong(
+      {},
+      {
+        song: {
+          id,
+          author: textToString(doc.author),
+          title: textToString(doc.title),
+          textWithChords: textToString(doc.textWithChords),
+          tags: stringArray(doc.tags),
+          metadata: {
+            audio: `${doc.metadata.audio}`,
+            fontSize: coerceNumber(doc.metadata.fontSize),
+            paragraphSpace: coerceNumber(doc.metadata.paragraphSpace),
+            titleSpace: coerceNumber(doc.metadata.titleSpace),
+          },
+        },
+      },
+    )
+  },
+}
 
-  documents.two.change(doc_ => {
-    const doc = doc_
-    if (!doc.hello) {
-      doc.hello = 1
-    } else {
-      doc.hello *= 1.2
-    }
-  })
-}, 1000)
+export default new AutomergeServer({
+  loadDocument: (id: string) => {
+    const parts = id.split('/')
+    if (parts.length !== 2) return Promise.resolve(false)
+
+    const loader = loaders[parts[0]]
+    if (!loader) return Promise.resolve(false)
+    return loader(parts[1])
+  },
+  saveDocument: (id: string, text: string, doc: any) => {
+    const parts = id.split('/')
+    if (parts.length !== 2) return Promise.resolve(false)
+
+    const saver = savers[parts[0]]
+    if (!saver) return Promise.resolve(false)
+    return saver(parts[1], text, doc)
+  },
+})

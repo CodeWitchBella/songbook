@@ -1,5 +1,5 @@
 import express from 'express'
-import { makeExecutableSchema } from 'graphql-tools'
+import { makeExecutableSchema, IResolvers } from 'graphql-tools'
 import fs from 'fs'
 import path from 'path'
 import resolvers from './resolvers'
@@ -17,7 +17,7 @@ function readGraphQLFile(src: string) {
 
 const schema = makeExecutableSchema({
   typeDefs: readGraphQLFile('schema'),
-  resolvers,
+  resolvers: resolvers as IResolvers<any, any>,
 })
 
 export async function getSchema() {
