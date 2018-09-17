@@ -20,6 +20,8 @@
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-schema": "^1.1.0",
+    "automerge": "^0.8.0",
+    "automerge-client": "0.0.6",
     "create-react-context": "^0.2.2",
     "dataloader": "^1.4.0",
     "emotion": "^9.2.6",
@@ -40,7 +42,6 @@
     "react-router-dom": "^4.3.1",
     "react-tree-walker": "^4.3.0",
     "reconnecting-websocket": "^4.0.0-rc5",
-    "sharedb": "^1.0.0-beta.12",
     "source-map-support": "^0.5.9",
     "typescript": "^3.0.3"
   },

@@ -3,11 +3,11 @@ import sms from 'source-map-support'
 import bodyParser from 'body-parser'
 import http from 'http'
 import WebSocket from 'ws'
+import automergeServer from './automerge'
 import htmlMiddleware from './middleware/html'
 import distMiddleware from './middleware/dist'
 import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
-import * as sharedb from './sharedb'
 
 sms.install()
 ;(async () => {
@@ -27,7 +27,14 @@ sms.install()
 
   const server = http.createServer(app)
   const wss = new WebSocket.Server({ server })
-  await sharedb.register(wss)
+  wss.on('connection', (ws, req) => {
+    if (req.url === '/automerge') {
+      automergeServer.handleSocket(ws, req)
+    } else {
+      ws.send('Invalid route')
+      ws.close()
+    }
+  })
 
   const PORT = 3001
   server.listen(PORT, () => {
