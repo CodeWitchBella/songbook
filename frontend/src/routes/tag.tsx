@@ -3,6 +3,7 @@ import { hot } from 'react-hot-loader'
 import SongList from 'sections/song-list/song-list'
 import { InstallButton } from 'components/install'
 import styled from 'react-emotion'
+import Button from 'components/button'
 
 const InstallContainer = styled.div`
   position: absolute;
@@ -18,9 +19,13 @@ const Tag = ({ tag }: { tag: string }) => (
   <div>
     <SongList tag={tag} showPrint />
 
-    <InstallContainer>
-      <InstallButton />
-    </InstallContainer>
+    <InstallButton>
+      {install => (
+        <InstallContainer>
+          <Button onClick={install} />
+        </InstallContainer>
+      )}
+    </InstallButton>
   </div>
 )
 export default hot(module)(Tag)

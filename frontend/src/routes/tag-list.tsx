@@ -4,6 +4,7 @@ import TagList from 'sections/tag-list/tag-list'
 import { InstallButton } from 'components/install'
 import styled from 'react-emotion'
 import TopMenu from 'components/top-menu'
+import Button from 'components/button'
 
 const Spacer = styled.div`
   height: 150px;
@@ -24,9 +25,14 @@ const Home = () => (
     <TopMenu />
     <TagList />
     <Spacer />
-    <InstallContainer>
-      <InstallButton />
-    </InstallContainer>
+
+    <InstallButton>
+      {install => (
+        <InstallContainer>
+          <Button onClick={install} />
+        </InstallContainer>
+      )}
+    </InstallButton>
   </div>
 )
 export default hot(module)(Home)

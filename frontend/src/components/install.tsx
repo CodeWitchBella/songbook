@@ -2,7 +2,7 @@ import React from 'react'
 import createContext from 'utils/create-react-context'
 import styled from 'react-emotion'
 
-type State = { install?: () => void }
+type State = { install?: (() => void) | null }
 const Ctx = createContext({} as State)
 
 export class InstallProvider extends React.Component<{}, State> {
@@ -15,36 +15,35 @@ export class InstallProvider extends React.Component<{}, State> {
     if (typeof window !== 'undefined')
       window.addEventListener('beforeinstallprompt', (event: any) => {
         event.preventDefault()
+        const install = () => {
+          // hide button
+          this.setState({ install: null })
+          event.prompt()
+          event.userChoice.then((choice: any) => {
+            console.log(choice)
+            if (choice.outcome !== 'accepted') {
+              // show it again
+              this.setState({ install })
+            }
+          })
+        }
         this.setState({
-          install: () => {
-            this.setState({})
-            event.prompt()
-            event.userChoice.then((choice: any) => {
-              console.log(choice)
-              if (choice.outcome === 'accepted') {
-              }
-            })
-          },
+          install,
         })
       })
   }
   componentWillUnmount() {}
 }
 
-const Button = styled.button`
-  border: 2px solid black;
-  background: white;
-  padding: 20px;
-  font-size: 20px;
-  border-radius: 30px;
-`
-
-export const InstallButton = () => (
+export const InstallButton = ({
+  children = () => null,
+}: {
+  children?: (install: () => void) => React.ReactNode
+}) => (
   <Ctx.Consumer>
-    {({ install }) =>
-      install ? (
-        <Button onClick={install}>Nainstalovat jako appku</Button>
-      ) : null
-    }
+    {({ install }) => {
+      if (!install) return null
+      return children(install)
+    }}
   </Ctx.Consumer>
 )
