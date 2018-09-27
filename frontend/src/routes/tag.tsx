@@ -4,6 +4,7 @@ import SongList from 'sections/song-list/song-list'
 import { InstallButton } from 'components/install'
 import styled from 'react-emotion'
 import Button from 'components/button'
+import { SaveScroll } from 'components/scroll'
 
 const InstallContainer = styled.div`
   position: absolute;
@@ -17,6 +18,7 @@ const InstallContainer = styled.div`
 
 const Tag = ({ tag }: { tag: string }) => (
   <div>
+    <SaveScroll />
     <SongList tag={tag} showPrint />
 
     <InstallButton>

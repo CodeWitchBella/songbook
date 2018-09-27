@@ -6,6 +6,17 @@ const Changelog = () => (
   <div>
     <Entry date="2018-09-27">
       <li>Opraveno skrývání tlačítka "Nainstalovat jako appku"</li>
+      <li>
+        Implementováno ukládání scroll pozice
+        <ul>
+          <li>Na seznamu písní to ukládá pozici</li>
+          <li>Při rozkliknutí písně to vždy vyscrolluje nahoru</li>
+          <li>
+            Pozice se ukládá do session storage, takže nevydrží restart
+            prohlížeče
+          </li>
+        </ul>
+      </li>
     </Entry>
     <Entry date="2018-09-12">
       <li>Přidán spotify player</li>
