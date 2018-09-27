@@ -5,7 +5,7 @@ import Entry from 'components/changelog-entry'
 const Changelog = () => (
   <div>
     <Entry date="2018-09-27">
-      <li>Opraveno skrývání tlačítka "Instalovat jako appku"</li>
+      <li>Opraveno skrývání tlačítka "Nainstalovat jako appku"</li>
     </Entry>
     <Entry date="2018-09-12">
       <li>Přidán spotify player</li>

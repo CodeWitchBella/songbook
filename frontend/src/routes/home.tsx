@@ -21,7 +21,7 @@ const Home = () => (
     <InstallButton>
       {install => (
         <InstallContainer>
-          <Button onClick={install} />
+          <Button onClick={install}>Nainstalovat jako appku</Button>
         </InstallContainer>
       )}
     </InstallButton>
