@@ -1,9 +1,19 @@
 import { withRouter, RouteComponentProps } from 'react-router'
 import React from 'react'
 
+function scrollTo(x: number, y: number) {
+  document.getElementById('app')!.scrollTo(x, y)
+}
+
+function getYScroll() {
+  return document.getElementById('app')!.scrollTop
+}
+
 export class ScrollToTopOnMount extends React.Component {
   componentDidMount() {
-    if (typeof window !== 'undefined') window.scrollTo(0, 0)
+    try {
+      if (typeof document !== 'undefined') scrollTo(0, 0)
+    } catch (e) {}
   }
 
   render() {
@@ -25,7 +35,7 @@ export const SaveScroll = withRouter(
           )
           console.log({ val })
           if (val !== null) {
-            document.getElementById('app')!.scrollTo(0, Number.parseFloat(val))
+            scrollTo(0, Number.parseFloat(val))
           }
         }
       } catch (e) {}
@@ -38,7 +48,7 @@ export const SaveScroll = withRouter(
         ) {
           sessionStorage.setItem(
             'scroll:' + this.props.location.key,
-            document.getElementById('app')!.scrollTop + '',
+            getYScroll() + '',
           )
         }
       } catch (e) {}
