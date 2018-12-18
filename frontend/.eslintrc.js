@@ -1,1 +1,4 @@
-module.exports = require('@s-isabella/scripts-frontend').eslintrc()
+module.exports = {
+  extends: 'eslint-config-react-app',
+  parser: 'typescript-eslint-parser',
+}

@@ -1,6 +1,7 @@
 import React from 'react'
 import * as parser from 'utils/parse-song'
-import styled, { css } from 'react-emotion'
+import styled from '@emotion/styled'
+import { css } from 'emotion'
 import { everything_songs } from 'queries-types'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'

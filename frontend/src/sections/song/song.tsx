@@ -2,8 +2,29 @@ import React from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import { Song } from 'containers/store/store'
+import styled from '@emotion/styled'
 
 const IFrame = (props: any) => <iframe {...props} />
+
+const SpotifyWrap = styled.div`
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  justify-content: flex-end;
+  align-items: start;
+`
+
+const SpotifyButton = styled.button`
+  width: 80px;
+  height: 80px;
+  background: white;
+  font-size: 40px;
+  border: 1px solid black;
+  :hover {
+    background: #eee;
+  }
+`
 
 class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
   state = { visible: false }
@@ -14,16 +35,7 @@ class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
   render() {
     const parts = this.props.link.split('/')
     return (
-      <div
-        css={`
-          display: flex;
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          justify-content: flex-end;
-          align-items: start;
-        `}
-      >
+      <SpotifyWrap>
         {this.state.visible && (
           <IFrame
             src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
@@ -35,22 +47,10 @@ class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
             allow="encrypted-media"
           />
         )}
-        <button
-          onClick={this.toggle}
-          css={`
-            width: 80px;
-            height: 80px;
-            background: white;
-            font-size: 40px;
-            border: 1px solid black;
-            :hover {
-              background: #eee;
-            }
-          `}
-        >
+        <SpotifyButton type="button" onClick={this.toggle}>
           {this.state.visible ? '⛌' : '⏯'}
-        </button>
-      </div>
+        </SpotifyButton>
+      </SpotifyWrap>
     )
   }
 }
@@ -73,7 +73,9 @@ const SongSection = ({
             song={song}
             parsed={parser.parseSong(song.textWithChords)}
           />
-          {song.metadata.spotify && <Spotify link={song.metadata.spotify} />}
+          {enableSpotify && song.metadata.spotify && (
+            <Spotify link={song.metadata.spotify} />
+          )}
         </>
       )
     }

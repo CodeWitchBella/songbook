@@ -1,5 +1,5 @@
 import LeQuill from 'quill'
-import { css } from 'react-emotion'
+import { css } from 'emotion'
 
 export const Quill = LeQuill
 

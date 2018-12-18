@@ -1,8 +1,7 @@
 import React from 'react'
-import { hot } from 'react-hot-loader'
 import SongList from 'sections/song-list/song-list'
 import { InstallButton } from 'components/install'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import Button from 'components/button'
 import { SaveScroll } from 'components/scroll'
 
@@ -30,4 +29,4 @@ const Tag = ({ tag }: { tag: string }) => (
     </InstallButton>
   </div>
 )
-export default hot(module)(Tag)
+export default Tag

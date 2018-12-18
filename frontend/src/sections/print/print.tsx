@@ -1,13 +1,10 @@
 import React from 'react'
-import styled from 'react-emotion'
 import Contents from 'sections/contents/contents'
 import TitlePage from 'sections/title-page/title-page'
 import { parseSong, Paragraph } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { AudioProvider } from 'components/song-look/audio-player'
-import { SongsInTag, Songs, Tag, SongType } from 'containers/store/store'
-
-const PlaceholderSongList = () => <div>Načítám seznam písní</div>
+import { SongsInTag, Songs, Tag, SongType } from '../../containers/store/store'
 
 const Print = ({ tag }: { tag: string }) => (
   <SongsInTag tag={tag}>

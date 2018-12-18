@@ -1,6 +1,6 @@
 import React from 'react'
-import styled, { css } from 'react-emotion'
-import createContext from 'create-react-context'
+import styled from '@emotion/styled'
+import { css } from 'emotion'
 
 type AudioState = {
   volume: number
@@ -13,7 +13,7 @@ type State = AudioState & {
   toggle: () => void
   playing: boolean
 }
-const AudioContext = createContext(null as null | State)
+const AudioContext = React.createContext(null as null | State)
 
 export class AudioProvider extends React.Component<{ src: string }, State> {
   ref = React.createRef<HTMLAudioElement>()

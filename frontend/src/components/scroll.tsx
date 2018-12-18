@@ -2,11 +2,11 @@ import { withRouter, RouteComponentProps } from 'react-router'
 import React from 'react'
 
 function scrollTo(x: number, y: number) {
-  document.getElementById('app')!.scrollTo(x, y)
+  document.getElementById('root')!.scrollTo(x, y)
 }
 
 function getYScroll() {
-  return document.getElementById('app')!.scrollTop
+  return document.getElementById('root')!.scrollTop
 }
 
 export class ScrollToTopOnMount extends React.Component {
@@ -31,7 +31,7 @@ export const SaveScroll = withRouter(
         ) {
           console.log(this.props.location.key)
           const val = sessionStorage.getItem(
-            'scroll:' + this.props.location.key,
+            `scroll:${this.props.location.key}`,
           )
           console.log({ val })
           if (val !== null) {
@@ -47,8 +47,8 @@ export const SaveScroll = withRouter(
           typeof document !== 'undefined'
         ) {
           sessionStorage.setItem(
-            'scroll:' + this.props.location.key,
-            getYScroll() + '',
+            `scroll:${this.props.location.key}`,
+            `${getYScroll()}`,
           )
         }
       } catch (e) {}

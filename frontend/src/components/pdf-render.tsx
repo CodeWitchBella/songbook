@@ -1,7 +1,6 @@
 import React from 'react'
 import { Paragraph, Line, parseSong } from 'utils/parse-song'
 import { Document, Page, Text, Font, View } from '@react-pdf/renderer'
-import { hot } from 'react-hot-loader'
 import Cantarell from './Cantarell-Regular.ttf'
 import CantarellBold from './Cantarell-Bold.ttf'
 import { Props } from './pdf'
@@ -90,4 +89,4 @@ class PDFRender extends React.Component<Props, {}> {
     )
   }
 }
-export default hot(module)(PDFRender)
+export default PDFRender

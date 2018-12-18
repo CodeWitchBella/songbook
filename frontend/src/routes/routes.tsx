@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route, Redirect } from 'react-router'
+import { Switch, Route } from 'react-router'
 import Loadable from 'react-loadable'
 import NotFound from './not-found'
 
@@ -68,14 +68,6 @@ const PDF = Loadable({
   webpack: () => [require.resolveWeak('./pdf')],
 })
 
-const AutomergeTest = Loadable({
-  loader: () =>
-    import(/* webpackChunkName: "r-automerge-test" */ './automerge-test'),
-  loading,
-  modules: ['./automerge-test'],
-  webpack: () => [require.resolveWeak('./automerge-test')],
-})
-
 export default class Routes extends React.Component {
   render() {
     return (
@@ -111,7 +103,6 @@ export default class Routes extends React.Component {
           render={({ match }) => <Tag tag={match.params.tag} />}
         />
         <Route path="/changelog" exact render={() => <Changelog />} />
-        <Route path="/automerge-test" exact render={() => <AutomergeTest />} />
         <Route>
           <NotFound />
         </Route>

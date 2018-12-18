@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, Route, Switch } from 'react-router-dom'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 
 const TopLinks = styled.div`
   font-size: 18px;

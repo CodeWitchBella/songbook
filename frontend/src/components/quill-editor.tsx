@@ -1,7 +1,7 @@
 import React from 'react'
 import Quill from 'quill'
 import { parseSongToDelta, stringifySongFromDelta } from 'utils/parse-song'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 
 function updateWithChord(quill: any, range: any, force: boolean) {
   const offset =
@@ -86,7 +86,7 @@ export default class QuillEditor extends React.Component<{
   onChange: (value: string) => void
 }> {
   ref = React.createRef<HTMLDivElement>()
-  quill?: Quill
+  quill?: any
 
   render() {
     return (
@@ -128,7 +128,7 @@ export default class QuillEditor extends React.Component<{
       }
     })
     */
-    quill.on('text-change', (delta, oldDelta, source) => {
+    quill.on('text-change', (delta: any, oldDelta: any, source: any) => {
       this.props.onChange(stringifySongFromDelta(quill.getContents()))
     })
     const delta = parseSongToDelta(this.props.initialValue)

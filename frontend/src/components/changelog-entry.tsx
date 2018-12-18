@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from '@emotion/styled'
 
 const months = [
   'ledna',
@@ -15,35 +16,35 @@ const months = [
   'prosince',
 ]
 
+const Entry = styled.div`
+  font-size: 20px;
+  padding: 0 10px;
+  ul {
+    margin-top: 0;
+  }
+`
+
+const H2 = styled.h2`
+  margin: 10px 0 0 0;
+`
+
+const Padding = styled.div`
+  padding-left: 10px;
+  padding-top: 10px;
+`
+
 const ChangelogEntry: React.SFC<{ date: string }> = ({ date, children }) => (
-  <div
-    css={`
-      font-size: 20px;
-      padding: 0 10px;
-      ul {
-        margin-top: 0;
-      }
-    `}
-  >
-    <h2
-      css={`
-        margin: 10px 0 0 0;
-      `}
-    >
+  <Entry>
+    <H2>
       {(() => {
         const parts = date.split('-').map(n => Number.parseInt(n, 10))
         return `${parts[2]}. ${months[parts[1] - 1]} ${parts[0]}`
       })()}
-    </h2>
-    <div
-      css={`
-        padding-left: 10px;
-        padding-top: 10px;
-      `}
-    >
+    </H2>
+    <Padding>
       <ul>{children}</ul>
-    </div>
-  </div>
+    </Padding>
+  </Entry>
 )
 
 export default ChangelogEntry

@@ -1,5 +1,5 @@
 import React from 'react'
-import { css } from 'react-emotion'
+import { css } from 'emotion'
 import { SongType, SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
 import { everything_songs } from 'queries-types'

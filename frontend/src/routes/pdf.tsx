@@ -1,14 +1,14 @@
-import React from 'react'
-import { hot } from 'react-hot-loader'
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
 import { Song } from 'containers/store/store'
 import PDF from 'components/pdf'
 
-export default hot(module)(({ id }: { id: string }) => (
+export default ({ id }: { id: string }) => (
   <Song id={id}>
     {song =>
       song && (
         <div
-          css={`
+          css={css`
             &,
             > iframe {
               width: 100%;
@@ -25,4 +25,4 @@ export default hot(module)(({ id }: { id: string }) => (
       )
     }
   </Song>
-))
+)

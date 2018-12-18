@@ -1,6 +1,6 @@
 import React from 'react'
 import { PrintPreviewToggle } from 'containers/print-preview'
-import { css } from 'react-emotion'
+import { css } from 'emotion'
 
 const toggleContainer = css`
   @media not print {

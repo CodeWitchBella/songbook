@@ -1,6 +1,6 @@
 import React from 'react'
 import Page from 'components/page'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import defaultImage from './image.png'
 
 const ImageContainer = styled.div`

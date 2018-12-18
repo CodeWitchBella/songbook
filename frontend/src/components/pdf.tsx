@@ -1,6 +1,4 @@
 import React from 'react'
-import { Paragraph } from 'utils/parse-song'
-import { SongType } from 'containers/store/store'
 
 export type Props = {
   song: {

@@ -1,11 +1,10 @@
-import { hot } from 'react-hot-loader'
 import React from 'react'
 import Entry from 'components/changelog-entry'
 
 const Changelog = () => (
   <div>
     <Entry date="2018-09-27">
-      <li>Opraveno skrývání tlačítka "Nainstalovat jako appku"</li>
+      <li>Opraveno skrývání tlačítka &ldquo;Nainstalovat jako appku&rdquo;</li>
       <li>
         Implementováno ukládání scroll pozice
         <ul>
@@ -48,4 +47,4 @@ const Changelog = () => (
     </Entry>
   </div>
 )
-export default hot(module)(Changelog)
+export default Changelog

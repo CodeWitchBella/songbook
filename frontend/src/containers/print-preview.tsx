@@ -1,7 +1,6 @@
-import createContext from 'utils/create-react-context'
 import React from 'react'
 
-const context = createContext({ value: false, set: (val: boolean) => {} })
+const context = React.createContext({ value: false, set: (val: boolean) => {} })
 
 export class PrintPreviewProvider extends React.Component<
   {},

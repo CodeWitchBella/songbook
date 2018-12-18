@@ -1,9 +1,7 @@
 import React from 'react'
-import createContext from 'utils/create-react-context'
-import styled from 'react-emotion'
 
 type State = { install?: (() => void) | null }
-const Ctx = createContext({} as State)
+const Ctx = React.createContext({} as State)
 
 export class InstallProvider extends React.Component<{}, State> {
   state: State = {}

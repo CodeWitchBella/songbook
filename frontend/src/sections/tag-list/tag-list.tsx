@@ -1,6 +1,6 @@
 import React from 'react'
 import { TagList } from 'containers/store/store'
-import { css } from 'react-emotion'
+import { css } from 'emotion'
 import { primary } from 'utils/colors'
 import { Link } from 'react-router-dom'
 

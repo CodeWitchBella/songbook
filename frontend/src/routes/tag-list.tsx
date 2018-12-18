@@ -1,8 +1,7 @@
 import React from 'react'
-import { hot } from 'react-hot-loader'
 import TagList from 'sections/tag-list/tag-list'
 import { InstallButton } from 'components/install'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import TopMenu from 'components/top-menu'
 import Button from 'components/button'
 
@@ -35,4 +34,4 @@ const Home = () => (
     </InstallButton>
   </div>
 )
-export default hot(module)(Home)
+export default Home

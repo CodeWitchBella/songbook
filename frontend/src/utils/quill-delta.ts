@@ -2,7 +2,7 @@ import * as qd from 'quill-delta'
 import * as q from 'quill'
 
 export class Delta extends ((qd.default as any) as {
-  new (ops?: DeltaOperation[] | { ops: DeltaOperation[] }): q.Delta
+  new (ops?: DeltaOperation[] | { ops: DeltaOperation[] }): any
 }) {}
 
-export type DeltaOperation = q.DeltaOperation
+export type DeltaOperation = any

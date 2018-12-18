@@ -1,6 +1,5 @@
 import React from 'react'
-import { hot } from 'react-hot-loader'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 import { newSong } from 'containers/store/fetchers'
 import Input from 'components/input'
 
@@ -82,4 +81,4 @@ class CreateSong extends React.Component<{}, State> {
     )
   }
 }
-export default hot(module)(CreateSong)
+export default CreateSong

@@ -1,15 +1,14 @@
+import { css, Global } from '@emotion/core'
 import React from 'react'
-import { hot } from 'react-hot-loader'
 import Print from 'sections/print/print'
-import { injectGlobal, css } from 'react-emotion'
-import { document, window } from 'utils/globals'
 import * as page from 'utils/page'
 import PreviewToggle from 'components/preview-toggle'
+import styled from '@emotion/styled'
 
 const { margin } = page
 
 // eslint-disable-next-line no-unused-expressions
-injectGlobal`
+const pageCss = css`
   @page {
     size: ${page.width} ${page.height};
     margin: ${margin.top} ${margin.outer} ${margin.bottom} ${margin.outer};
@@ -18,7 +17,8 @@ injectGlobal`
 
 const body = css`
   @media print {
-    & {
+    body,
+    html {
       width: ${page.width};
       height: ${page.height};
     }
@@ -26,46 +26,27 @@ const body = css`
 `
 
 const appScroll = css`
-  scroll-snap-type: mandatory;
+  #root {
+    scroll-snap-type: mandatory;
 
-  scroll-snap-destination: 0% 100%;
-  scroll-snap-points-y: repeat(100%);
+    scroll-snap-destination: 0% 100%;
+    scroll-snap-points-y: repeat(100%);
+  }
 `
 
-function bodyHtml(cb: (el: Element) => void) {
-  if (document) {
-    const list = document.querySelectorAll('body, html')
-    for (let i = 0; i < list.length; i += 1) {
-      const item = list.item(i)
-      cb(item)
-    }
-  }
-}
+const Relative = styled.div`
+  position: relative;
+`
 
 class PrintRoute extends React.Component<{ tag: string }> {
-  componentDidMount() {
-    bodyHtml(el => el.classList.add(body))
-    if (document) {
-      document.getElementById('app')!.classList.add(appScroll)
-    }
-  }
-  componentWillUnmount() {
-    bodyHtml(el => el.classList.remove(body))
-    if (document) {
-      document.getElementById('app')!.classList.remove(appScroll)
-    }
-  }
   render() {
     return (
-      <div
-        css={`
-          position: relative;
-        `}
-      >
+      <Relative>
+        <Global styles={[pageCss, appScroll, body]} />
         <Print tag={this.props.tag} />
         <PreviewToggle />
-      </div>
+      </Relative>
     )
   }
 }
-export default hot(module)(PrintRoute)
+export default PrintRoute

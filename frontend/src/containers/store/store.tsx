@@ -1,5 +1,4 @@
 import React from 'react'
-import createContext from 'utils/create-react-context'
 import localForage from 'localforage'
 import {
   everything_songs as SongType,
@@ -31,7 +30,7 @@ type Context = {
   }
 }
 
-const context = createContext(null as null | Context)
+const context = React.createContext(null as null | Context)
 
 const refetchAfter = 1000 * 60 * 60
 

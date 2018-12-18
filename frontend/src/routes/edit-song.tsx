@@ -1,6 +1,7 @@
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
 import React from 'react'
-import { hot } from 'react-hot-loader'
-import styled, { css } from 'react-emotion'
+import styled from '@emotion/styled'
 import { editSong } from 'containers/store/fetchers'
 import { Song, Refetch, SongType } from 'containers/store/store'
 import Input from 'components/input'
@@ -35,7 +36,7 @@ const Textarea = ({
   onChange: (v: string) => any
 }) => (
   <textarea
-    className={textAreaClass}
+    css={textAreaClass}
     value={value}
     onChange={evt => {
       evt.preventDefault()
@@ -55,7 +56,7 @@ const Help: React.SFC<{}> = ({ children }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
       <div
-        css={`
+        css={css`
           font-size: 18px;
           max-width: 600px;
           margin: 40px auto 0 auto;
@@ -63,7 +64,7 @@ const Help: React.SFC<{}> = ({ children }) => (
       >
         <button
           onClick={toggle}
-          css={`
+          css={css`
             margin: 0 auto;
             display: block;
           `}
@@ -346,7 +347,7 @@ class EditSong extends React.Component<
         </div>
         {this.state.preview && (
           <div
-            css={`
+            css={css`
               > iframe {
                 width: 100%;
                 height: 100%;
@@ -368,7 +369,7 @@ class EditSong extends React.Component<
     )
   }
 }
-export default hot(module)(({ id }: { id: string }) => (
+export default ({ id }: { id: string }) => (
   <Song id={id}>
     {song =>
       song && (
@@ -378,4 +379,4 @@ export default hot(module)(({ id }: { id: string }) => (
       )
     }
   </Song>
-))
+)

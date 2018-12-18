@@ -1,7 +1,7 @@
 import React from 'react'
 import { SongType as Song } from 'containers/store/store'
 import Page from 'components/page'
-import styled from 'react-emotion'
+import styled from '@emotion/styled'
 
 const Container = styled.nav`
   display: flex;
