@@ -1,18 +1,11 @@
 import express from 'express'
-import getFrontendFile from './get-frontend-file'
+import path from 'path'
 
 const htmlMiddleware = () => (
   _req: express.Request,
   res: express.Response,
-  next: express.NextFunction,
+  _next: express.NextFunction,
 ) => {
-  Promise.all([getFrontendFile('/dist/index.html', false, 'utf-8')])
-    .then(([index]) => {
-      if (!index) throw new Error('Failed to load index')
-
-      res.write(index)
-      res.end()
-    })
-    .catch(e => next(e))
+  res.sendFile(path.join(__dirname, '../../../frontend/build/index.html'))
 }
 export default htmlMiddleware

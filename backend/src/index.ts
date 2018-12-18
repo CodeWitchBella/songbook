@@ -6,7 +6,6 @@ import WebSocket from 'ws'
 import automergeServer from './automerge'
 import htmlMiddleware from './middleware/html'
 import distMiddleware from './middleware/dist'
-import staticMiddleware from './middleware/static'
 import * as graphqlMiddleware from './middleware/graphql'
 
 sms.install()
@@ -20,8 +19,7 @@ sms.install()
     res.status(500).send('Something broke!')
   }) as ErrorRequestHandler)
 
-  app.get('/dist/*', distMiddleware())
-  app.get('/static/*', staticMiddleware())
+  app.get('*', distMiddleware())
   await graphqlMiddleware.register(app)
   app.get('*', htmlMiddleware())
 
