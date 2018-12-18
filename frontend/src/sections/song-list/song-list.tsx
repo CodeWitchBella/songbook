@@ -1,19 +1,38 @@
 import React from 'react'
-import { css } from 'emotion'
-import { SongType, SongsInTag } from 'containers/store/store'
+import { SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
 import { everything_songs } from 'queries-types'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
+import styled from '@emotion/styled'
+import { css } from '@emotion/core'
 
-const Placeholder = () => <div>Načítám seznam písní</div>
+const columns = (n: number) => (p: { count: number }) => css`
+  @media (min-width: ${n * 400}px) {
+    grid-template-columns: repeat(${n}, 400px);
+    grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
+  }
+`
 
-const listContainer = css`
-  display: flex;
-  flex-wrap: wrap;
+const ListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(1, 400px);
+  grid-template-rows: repeat(
+    ${(props: { count: number }) => Math.ceil(props.count / 1)},
+    auto
+  );
+
+  ${columns(2)}
+  ${columns(3)}
+  ${columns(4)}
+  ${columns(5)}
+  ${columns(6)}
+  ${columns(7)}
+  ${columns(8)}
+
+  grid-auto-flow: column;
+  grid-template-rows: repeat(45, auto);
   justify-content: center;
-  margin: 0px auto;
-  flex-direction: row;
 `
 
 const a = css`
@@ -24,7 +43,7 @@ const a = css`
   }
 `
 
-const songClass = css`
+const TheSong = styled.div`
   font-size: 20px;
   width: 400px;
 
@@ -36,7 +55,7 @@ const songClass = css`
   }
 `
 
-const print = css`
+const Print = styled(Link)`
   display: flex;
   font-size: 20px;
   height: 100px;
@@ -45,7 +64,7 @@ const print = css`
   ${a};
 `
 
-const search = css`
+const TheSearch = styled.div`
   display: flex;
   font-size: 20px;
   margin-top: 20px;
@@ -68,7 +87,7 @@ const search = css`
   }
 `
 
-const page = css`
+const PageNav = styled.nav`
   height: 100%;
 `
 
@@ -82,7 +101,7 @@ const Song = ({
     metadata: { spotify: string | null }
   }
 }) => (
-  <div className={songClass}>
+  <TheSong>
     <Link to={`/song/${song.id}`}>
       {song.title} - {song.author}{' '}
       {window.location &&
@@ -92,7 +111,7 @@ const Song = ({
           : '🔇'
         : null}
     </Link>
-  </div>
+  </TheSong>
 )
 
 type State = {
@@ -149,20 +168,16 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => (
       !songs ? null : (
         <Search>
           {({ text, render }) => (
-            <nav className={page}>
-              <div className={search}>{render()}</div>
+            <PageNav>
+              <TheSearch>{render()}</TheSearch>
               <TopMenu />
-              <div className={listContainer}>
+              <ListContainer count={songs.length + (showPrint ? 1 : 0)}>
                 {songs.filter(searchSong(text)).map(s => (
                   <Song key={s.id} song={s} />
                 ))}
-              </div>
-              {showPrint && (
-                <Link className={print} to={`/print/${tag}`}>
-                  Print all
-                </Link>
-              )}
-            </nav>
+              </ListContainer>
+              {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
+            </PageNav>
           )}
         </Search>
       )
