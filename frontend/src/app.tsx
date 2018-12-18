@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { injectGlobal, cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
@@ -29,13 +29,15 @@ injectGlobal`
 //printSongbook([])
 
 export default () => (
-  <CacheProvider value={cache}>
-    <InstallProvider>
-      <StoreProvider>
-        <PrintPreviewProvider>
-          <Routes />
-        </PrintPreviewProvider>
-      </StoreProvider>
-    </InstallProvider>
-  </CacheProvider>
+  <Suspense fallback={<div>Načítám...</div>}>
+    <CacheProvider value={cache}>
+      <InstallProvider>
+        <StoreProvider>
+          <PrintPreviewProvider>
+            <Routes />
+          </PrintPreviewProvider>
+        </StoreProvider>
+      </InstallProvider>
+    </CacheProvider>
+  </Suspense>
 )

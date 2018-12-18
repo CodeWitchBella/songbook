@@ -3,6 +3,10 @@ import Entry from 'components/changelog-entry'
 
 const Changelog = () => (
   <div>
+    <Entry date="2018-12-19">
+      <li>Modernizace nástrojů</li>
+      <li>Písně jsou nyní seřazeny ve sloupečcích ne v řádcích</li>
+    </Entry>
     <Entry date="2018-09-27">
       <li>Opraveno skrývání tlačítka &ldquo;Nainstalovat jako appku&rdquo;</li>
       <li>

@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import { jsx, css } from '@emotion/core'
 import React from 'react'
 import styled from '@emotion/styled'
 import { editSong } from 'containers/store/fetchers'
@@ -20,7 +18,7 @@ const Form = styled.form`
   margin: 40px auto 0 auto;
 `
 
-const textAreaClass = css`
+const TextAreaC = styled.textarea`
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -35,8 +33,7 @@ const Textarea = ({
   value: string
   onChange: (v: string) => any
 }) => (
-  <textarea
-    css={textAreaClass}
+  <TextAreaC
     value={value}
     onChange={evt => {
       evt.preventDefault()
@@ -52,27 +49,26 @@ const Columns = styled.div`
   }
 `
 
+const HelpWrap = styled.div`
+  font-size: 18px;
+  max-width: 600px;
+  margin: 40px auto 0 auto;
+`
+
+const HideHelpButton = styled.button`
+  margin: 0 auto;
+  display: block;
+`
+
 const Help: React.SFC<{}> = ({ children }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
-      <div
-        css={css`
-          font-size: 18px;
-          max-width: 600px;
-          margin: 40px auto 0 auto;
-        `}
-      >
-        <button
-          onClick={toggle}
-          css={css`
-            margin: 0 auto;
-            display: block;
-          `}
-        >
+      <HelpWrap>
+        <HideHelpButton onClick={toggle}>
           {toggled ? 'Skrýt' : 'Zobrazit'} nápovědu
-        </button>
+        </HideHelpButton>
         {toggled && children}
-      </div>
+      </HelpWrap>
     )}
   </Togglable>
 )
@@ -119,6 +115,13 @@ function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
     SAVED: 'Uloženo',
   }[saveStatus]
 }
+
+const IFrameSizer = styled.div`
+  > iframe {
+    width: 100%;
+    height: 100%;
+  }
+`
 
 class EditSong extends React.Component<
   {
@@ -346,14 +349,7 @@ class EditSong extends React.Component<
           </Help>
         </div>
         {this.state.preview && (
-          <div
-            css={css`
-              > iframe {
-                width: 100%;
-                height: 100%;
-              }
-            `}
-          >
+          <IFrameSizer>
             {this.state.pdfPreview ? (
               <PDF song={this.result()} />
             ) : (
@@ -363,7 +359,7 @@ class EditSong extends React.Component<
                 noEdit
               />
             )}
-          </div>
+          </IFrameSizer>
         )}
       </Columns>
     )
