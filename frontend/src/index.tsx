@@ -22,6 +22,7 @@ function unregister() {
 let displayInstructions = false
 if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
   if (oldHosts.includes(window.location.host)) {
+    console.log('This is old host')
     if (window.matchMedia('(display-mode: standalone)').matches) {
       displayInstructions = true
       document.getElementById('root')!.innerHTML = `
@@ -36,7 +37,7 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
       </div>
       `
     } else {
-      serviceWorker.unregister().then(() => {
+      unregister().then(() => {
         window.location.assign(
           `https://${currentHost}${window.location.pathname}`,
         )
