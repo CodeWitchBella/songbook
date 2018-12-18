@@ -29,7 +29,8 @@
     "start": "NODE_PATH=src react-scripts start",
     "build": "NODE_PATH=src react-scripts build",
     "test": "NODE_PATH=src react-scripts test",
-    "eject": "NODE_PATH=src react-scripts eject"
+    "eject": "NODE_PATH=src react-scripts eject",
+    "lint": "eslint --ext ts --ext tsx --cache src"
   },
   "eslintConfig": {
     "extends": "react-app"

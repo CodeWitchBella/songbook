@@ -8,6 +8,7 @@ export const requestAnimationFrame_ = (typeof requestAnimationFrame !==
   ? requestAnimationFrame
   : // we have polyfill, eat it on ssr
     () => {}) as typeof requestAnimationFrame
+// eslint-disable-next-line no-restricted-globals
 export const history_ = typeof history !== 'undefined' ? history : null
 export const document_ = typeof document !== 'undefined' ? document : null
 export const fetch_ = typeof fetch !== 'undefined' ? fetch : null

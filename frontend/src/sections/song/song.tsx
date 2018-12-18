@@ -4,7 +4,7 @@ import * as parser from 'utils/parse-song'
 import { Song } from 'containers/store/store'
 import styled from '@emotion/styled'
 
-const IFrame = (props: any) => <iframe {...props} />
+const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
 const SpotifyWrap = styled.div`
   display: flex;
