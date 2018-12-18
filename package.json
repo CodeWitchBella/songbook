@@ -26,7 +26,7 @@
     "backend-watch": {
       "dir": "backend",
       "cmd": "npm run watch --",
-      "port": 4000
+      "port": 3001
     },
     "frontend": {
       "dir": "frontend",
