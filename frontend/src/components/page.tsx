@@ -13,7 +13,6 @@ const sizer = (print: boolean) => css`
     justify-content: center;
     align-items: center;
   }
-  background: papayawhip;
 `
 
 const width = `calc(${page.width} - ${page.margin.inner} - ${
@@ -43,6 +42,7 @@ const songClass = (left: boolean, print: boolean) => css`
     ${page.margin.inner}`};
         `
       : css`
+          box-sizing: border-box;
           padding: 1em;
           width: calc(100% - 2em);
           height: calc(100% - 2em);
