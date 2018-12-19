@@ -49,7 +49,7 @@ const songClass = (left: boolean, print: boolean) => css`
           @media (min-width: ${page.innerRatio * 100}vh) {
             font-size: 1.87vh;
             width: ${page.innerRatio * 100}vh;
-            height: calc(100vh - 2em);
+            height: calc(100vh);
             margin: 0 auto;
           }
           font-size: 3vw;
