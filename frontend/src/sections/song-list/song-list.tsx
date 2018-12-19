@@ -16,7 +16,7 @@ const columns = (n: number) => (p: { count: number }) => css`
 
 const ListContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(1, 400px);
+  grid-template-columns: repeat(1, 100%);
   grid-template-rows: repeat(
     ${(props: { count: number }) => Math.ceil(props.count / 1)},
     auto
@@ -31,7 +31,6 @@ const ListContainer = styled.div`
   ${columns(8)}
 
   grid-auto-flow: column;
-  grid-template-rows: repeat(45, auto);
   justify-content: center;
 `
 
@@ -45,7 +44,6 @@ const a = css`
 
 const TheSong = styled.div`
   font-size: 20px;
-  width: 400px;
 
   a {
     display: inline-block;
