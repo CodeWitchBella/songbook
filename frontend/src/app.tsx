@@ -2,10 +2,12 @@ import React, { Suspense } from 'react'
 import { injectGlobal, cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
+import { SongListProvider } from 'store/list-provider'
 import { StoreProvider } from 'containers/store/store'
 //import printSongbook from 'pdf/songbook'
 import { InstallProvider } from 'components/install'
 import { CacheProvider } from '@emotion/core'
+import { listSongs } from 'store/azure'
 
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
@@ -26,18 +28,18 @@ injectGlobal`
   }
 `
 
-//printSongbook([])
-
 export default () => (
   <Suspense fallback={<div>Načítám...</div>}>
     <CacheProvider value={cache}>
-      <InstallProvider>
-        <StoreProvider>
-          <PrintPreviewProvider>
-            <Routes />
-          </PrintPreviewProvider>
-        </StoreProvider>
-      </InstallProvider>
+      <SongListProvider>
+        <InstallProvider>
+          <StoreProvider>
+            <PrintPreviewProvider>
+              <Routes />
+            </PrintPreviewProvider>
+          </StoreProvider>
+        </InstallProvider>
+      </SongListProvider>
     </CacheProvider>
   </Suspense>
 )

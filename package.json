@@ -6,7 +6,7 @@
     "docker": "npm i && docker-run",
     "tmux": "npm i && in-tmux"
   },
-  "nodeVersion": "10.14.2",
+  "nodeVersion": "10.15.0",
   "configurations": {
     "install": {
       "cmd": [

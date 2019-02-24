@@ -6,6 +6,7 @@ import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
+import { useSongList } from 'store/list-provider'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -89,25 +90,16 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
-const Song = ({
-  song,
-}: {
-  song: {
-    id: string
-    title: string
-    author: string
-    metadata: { spotify: string | null }
-  }
-}) => (
+const Song = ({ song }: { song: string }) => (
   <TheSong>
-    <Link to={`/song/${song.id}`}>
-      {song.title} - {song.author}{' '}
-      {window.location &&
+    <Link to={`/song/${song.replace(/\.song$/, '')}`}>
+      {song}{' '}
+      {/*window.location &&
       window.location.search.split(/[?&]/).includes('spotify')
         ? song.metadata.spotify !== null
           ? '🎵'
           : '🔇'
-        : null}
+      : null*/}
     </Link>
   </TheSong>
 )
@@ -151,35 +143,34 @@ function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
 
-const searchSong = (text: string) => (s: everything_songs) => {
+const searchSong = (text: string) => (s: { name: string }) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => toComparable(`${s.title} ${s.author}`).includes(t))
+    .every(t => toComparable(`${s.name}`).includes(t))
 }
 
-const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => (
-  <SongsInTag tag={tag}>
-    {songs =>
-      !songs ? null : (
-        <Search>
-          {({ text, render }) => (
-            <PageNav>
-              <TheSearch>{render()}</TheSearch>
-              <TopMenu />
-              <ListContainer count={songs.length + (showPrint ? 1 : 0)}>
-                {songs.filter(searchSong(text)).map(s => (
-                  <Song key={s.id} song={s} />
-                ))}
-              </ListContainer>
-              {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
-            </PageNav>
-          )}
-        </Search>
-      )
-    }
-  </SongsInTag>
-)
+const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
+  const songs = useSongList()
+  console.log({ songs })
+  if (!songs) return null
+  return (
+    <Search>
+      {({ text, render }) => (
+        <PageNav>
+          <TheSearch>{render()}</TheSearch>
+          <TopMenu />
+          <ListContainer count={songs.length + (showPrint ? 1 : 0)}>
+            {songs.filter(searchSong(text)).map(s => (
+              <Song key={s.name} song={s.name} />
+            ))}
+          </ListContainer>
+          {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
+        </PageNav>
+      )}
+    </Search>
+  )
+}
 export default SongList
