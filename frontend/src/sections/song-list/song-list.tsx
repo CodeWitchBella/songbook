@@ -165,18 +165,21 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => (
     {songs =>
       !songs ? null : (
         <Search>
-          {({ text, render }) => (
-            <PageNav>
-              <TheSearch>{render()}</TheSearch>
-              <TopMenu />
-              <ListContainer count={songs.length + (showPrint ? 1 : 0)}>
-                {songs.filter(searchSong(text)).map(s => (
-                  <Song key={s.id} song={s} />
-                ))}
-              </ListContainer>
-              {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
-            </PageNav>
-          )}
+          {({ text, render }) => {
+            const filtered = songs
+              .filter(searchSong(text))
+              .map(s => <Song key={s.id} song={s} />)
+            return (
+              <PageNav>
+                <TheSearch>{render()}</TheSearch>
+                <TopMenu />
+                <ListContainer count={filtered.length + (showPrint ? 1 : 0)}>
+                  {filtered}
+                </ListContainer>
+                {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
+              </PageNav>
+            )
+          }}
         </Search>
       )
     }
