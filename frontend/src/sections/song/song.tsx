@@ -3,6 +3,7 @@ import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import { Song } from 'containers/store/store'
 import styled from '@emotion/styled'
+import { useSong } from 'store/song-provider'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -63,22 +64,19 @@ const SongSection = ({
   id: string
   share?: boolean
   enableSpotify?: boolean
-}) => (
-  <Song id={id}>
-    {song =>
-      !song ? null : (
-        <>
-          <SongLook
-            share={share}
-            song={song}
-            parsed={parser.parseSong(song.textWithChords)}
-          />
-          {enableSpotify && song.metadata.spotify && (
-            <Spotify link={song.metadata.spotify} />
-          )}
-        </>
-      )
-    }
-  </Song>
-)
+}) => {
+  const song = useSong(id + '.song').value
+  return !song ? null : (
+    <>
+      <SongLook
+        share={share}
+        song={song}
+        parsed={parser.parseSong(song.textWithChords)}
+      />
+      {enableSpotify && song.metadata.spotify && (
+        <Spotify link={song.metadata.spotify} />
+      )}
+    </>
+  )
+}
 export default SongSection
