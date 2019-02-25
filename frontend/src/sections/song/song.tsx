@@ -1,7 +1,6 @@
 import React from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
-import { Song } from 'containers/store/store'
 import styled from '@emotion/styled'
 import { useSong } from 'store/song-provider'
 

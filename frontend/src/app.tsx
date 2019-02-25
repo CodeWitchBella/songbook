@@ -3,7 +3,6 @@ import { injectGlobal, cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
 import { SongListProvider } from 'store/list-provider'
-import { StoreProvider } from 'containers/store/store'
 //import printSongbook from 'pdf/songbook'
 import { InstallProvider } from 'components/install'
 import { CacheProvider } from '@emotion/core'
@@ -35,11 +34,9 @@ export default () => (
       <SongListProvider>
         <SongProvider>
           <InstallProvider>
-            <StoreProvider>
-              <PrintPreviewProvider>
-                <Routes />
-              </PrintPreviewProvider>
-            </StoreProvider>
+            <PrintPreviewProvider>
+              <Routes />
+            </PrintPreviewProvider>
           </InstallProvider>
         </SongProvider>
       </SongListProvider>
