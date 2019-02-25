@@ -37,6 +37,7 @@ export default class ForageCache<T> {
     if (!this.promise || force || 'initial' in this.promise) {
       const prom = async () => {
         try {
+          if (!force && this.cache) return this.cache
           const v = await this.loader()
 
           this.promise = null
@@ -74,6 +75,10 @@ export default class ForageCache<T> {
   }
 
   subscribe(onChange: (v: T) => void) {
-    this.listeners.push(onChange)
+    const handler = (v: T) => onChange(v)
+    this.listeners.push(handler)
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== handler)
+    }
   }
 }

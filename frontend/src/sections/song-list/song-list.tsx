@@ -1,12 +1,10 @@
 import React from 'react'
-import { SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
-import { everything_songs } from 'queries-types'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
-import { useSongList } from 'store/list-provider'
+import { useSongList, useSong } from 'store/list-provider'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -90,19 +88,29 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
-const Song = ({ song }: { song: string }) => (
-  <TheSong>
-    <Link to={`/song/${song.replace(/\.song$/, '')}`}>
-      {song}{' '}
-      {/*window.location &&
+const Song = ({ name }: { name: string }) => {
+  const { value } = useSong(name)
+  const link = name.replace(/\.song$/, '')
+  return (
+    <TheSong>
+      <Link to={`/song/${link}`}>
+        {!value ? (
+          link
+        ) : (
+          <>
+            {value.title} - {value.author}
+          </>
+        )}
+        {/*window.location &&
       window.location.search.split(/[?&]/).includes('spotify')
         ? song.metadata.spotify !== null
           ? '🎵'
           : '🔇'
       : null*/}
-    </Link>
-  </TheSong>
-)
+      </Link>
+    </TheSong>
+  )
+}
 
 type State = {
   text: string
@@ -154,14 +162,13 @@ const searchSong = (text: string) => (s: { name: string }) => {
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const songs = useSongList()
-  console.log({ songs })
   if (!songs) return null
   return (
     <Search>
       {({ text, render }) => {
         const filtered = songs
           .filter(searchSong(text))
-          .map(s => <Song key={s.name} song={s.name} />)
+          .map(s => <Song key={s.name} name={s.name} />)
         return (
           <PageNav>
             <TheSearch>{render()}</TheSearch>

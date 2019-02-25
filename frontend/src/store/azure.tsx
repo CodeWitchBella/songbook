@@ -42,7 +42,7 @@ export async function listSongs() {
   return list
 }
 
-async function downloadSong(name: string) {
+async function downloadSongImpl(name: string) {
   const blobURL = BlobURL.fromContainerURL(containerURL, name)
   const resp = await blobURL.download(Aborter.none, 0)
   const blob = await resp.blobBody!
@@ -54,4 +54,17 @@ async function downloadSong(name: string) {
     }
     reader.onerror = reject
   })
+}
+
+function pfinally<T extends {}>(
+  p: Promise<any>,
+  fn: () => Promise<T>,
+): Promise<T> {
+  return p.then(fn).catch(fn)
+}
+
+let promise = Promise.resolve('')
+export function downloadSong(name: string) {
+  promise = pfinally(promise, () => downloadSongImpl(name))
+  return promise
 }
