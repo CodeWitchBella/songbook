@@ -4,7 +4,8 @@ import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
-import { useSongList, useSong } from 'store/list-provider'
+import { useSongList } from 'store/list-provider'
+import { useSong, suspendUntilInitialized } from 'store/song-provider'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -88,25 +89,26 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
-const Song = ({ name }: { name: string }) => {
-  const { value } = useSong(name)
+const Song = ({
+  name,
+  lastModified,
+}: {
+  name: string
+  lastModified: number
+}) => {
+  const { value } = useSong(name, lastModified)
   const link = name.replace(/\.song$/, '')
+  if (!value) return null
   return (
     <TheSong>
       <Link to={`/song/${link}`}>
-        {!value ? (
-          link
-        ) : (
-          <>
-            {value.title} - {value.author}
-          </>
-        )}
+        {value.title} - {value.author}
         {/*window.location &&
-      window.location.search.split(/[?&]/).includes('spotify')
-        ? song.metadata.spotify !== null
-          ? '🎵'
-          : '🔇'
-      : null*/}
+          window.location.search.split(/[?&]/).includes('spotify')
+            ? song.metadata.spotify !== null
+              ? '🎵'
+              : '🔇'
+          : null*/}
       </Link>
     </TheSong>
   )
@@ -162,13 +164,16 @@ const searchSong = (text: string) => (s: { name: string }) => {
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const songs = useSongList()
-  if (!songs) return null
+  suspendUntilInitialized()
+  console.log('Rendering song list')
   return (
     <Search>
       {({ text, render }) => {
         const filtered = songs
           .filter(searchSong(text))
-          .map(s => <Song key={s.name} name={s.name} />)
+          .map(s => (
+            <Song key={s.name} name={s.name} lastModified={s.lastModified} />
+          ))
         return (
           <PageNav>
             <TheSearch>{render()}</TheSearch>

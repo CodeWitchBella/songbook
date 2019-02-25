@@ -8,6 +8,7 @@ import { StoreProvider } from 'containers/store/store'
 import { InstallProvider } from 'components/install'
 import { CacheProvider } from '@emotion/core'
 import { listSongs } from 'store/azure'
+import { SongProvider } from 'store/song-provider'
 
 // eslint-disable-next-line no-unused-expressions
 injectGlobal`
@@ -32,13 +33,15 @@ export default () => (
   <Suspense fallback={<div>Načítám...</div>}>
     <CacheProvider value={cache}>
       <SongListProvider>
-        <InstallProvider>
-          <StoreProvider>
-            <PrintPreviewProvider>
-              <Routes />
-            </PrintPreviewProvider>
-          </StoreProvider>
-        </InstallProvider>
+        <SongProvider>
+          <InstallProvider>
+            <StoreProvider>
+              <PrintPreviewProvider>
+                <Routes />
+              </PrintPreviewProvider>
+            </StoreProvider>
+          </InstallProvider>
+        </SongProvider>
       </SongListProvider>
     </CacheProvider>
   </Suspense>

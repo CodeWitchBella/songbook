@@ -48,12 +48,17 @@ async function downloadSongImpl(name: string) {
   const blob = await resp.blobBody!
   const reader = new FileReader()
   reader.readAsText(blob, 'utf8')
-  return new Promise<string>((resolve, reject) => {
-    reader.onload = () => {
-      resolve(reader.result as string)
-    }
-    reader.onerror = reject
-  })
+  return new Promise<{ lastModified: number; text: string }>(
+    (resolve, reject) => {
+      reader.onload = () => {
+        resolve({
+          text: reader.result as string,
+          lastModified: resp.lastModified!.getTime(),
+        })
+      }
+      reader.onerror = reject
+    },
+  )
 }
 
 function pfinally<T extends {}>(
@@ -63,8 +68,10 @@ function pfinally<T extends {}>(
   return p.then(fn).catch(fn)
 }
 
-let promise = Promise.resolve('')
-export function downloadSong(name: string) {
+let promise = Promise.resolve<any>(null)
+export function downloadSong(
+  name: string,
+): ReturnType<typeof downloadSongImpl> {
   promise = pfinally(promise, () => downloadSongImpl(name))
   return promise
 }

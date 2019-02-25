@@ -8,7 +8,11 @@ export default class ForageCache<T> {
   private cache: T | null = null
   private error: Error | null = null
   private promise: { initial: Promise<T | null> } | Promise<T> | null = null
-  private listeners = [] as ((v: T) => void)[]
+  private listeners = [] as ((v: T | null) => void)[]
+  private _initialized = false
+  get initialized() {
+    return this._initialized
+  }
 
   constructor(key: string, loader: Loader<T>) {
     this.key = key
@@ -16,12 +20,17 @@ export default class ForageCache<T> {
     const promise = localForage
       .getItem<T>(key)
       .then(v => {
+        this._initialized = true
         this.promise = null
         this.cache = v
         this.listeners.forEach(l => l(v))
         return v
       })
-      .catch(e => null)
+      .catch(e => {
+        this._initialized = true
+        this.listeners.forEach(l => l(null))
+        return null
+      })
     this.promise = { initial: promise }
   }
 
@@ -74,8 +83,8 @@ export default class ForageCache<T> {
     return this.promise
   }
 
-  subscribe(onChange: (v: T) => void) {
-    const handler = (v: T) => onChange(v)
+  subscribe(onChange: (v: T | null) => void) {
+    const handler = (v: T | null) => onChange(v)
     this.listeners.push(handler)
     return () => {
       this.listeners = this.listeners.filter(l => l !== handler)
