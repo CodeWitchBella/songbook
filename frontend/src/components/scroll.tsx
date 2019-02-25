@@ -29,11 +29,9 @@ export const SaveScroll = withRouter(
           typeof sessionStorage !== 'undefined' &&
           typeof document !== 'undefined'
         ) {
-          console.log(this.props.location.key)
           const val = sessionStorage.getItem(
             `scroll:${this.props.location.key}`,
           )
-          console.log({ val })
           if (val !== null) {
             scrollTo(0, Number.parseFloat(val))
           }

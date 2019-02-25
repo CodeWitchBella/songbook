@@ -165,7 +165,6 @@ const searchSong = (text: string) => (s: { name: string }) => {
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const songs = useSongList()
   suspendUntilInitialized()
-  console.log('Rendering song list')
   return (
     <Search>
       {({ text, render }) => {

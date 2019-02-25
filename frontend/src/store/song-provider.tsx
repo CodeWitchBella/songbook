@@ -89,9 +89,7 @@ export const suspendUntilInitialized = () => {
           if (cache.initialized) {
             unsub()
             uninitializedCaches = uninitializedCaches.filter(c => c !== cache)
-            console.log(uninitializedCaches)
             if (uninitializedCaches.length === 0) {
-              console.log('resolving')
               resolve()
             }
           }
