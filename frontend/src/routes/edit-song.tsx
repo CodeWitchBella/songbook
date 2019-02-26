@@ -9,6 +9,7 @@ import QuillEditor from 'components/quill-editor'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
+import { errorBoundary } from 'containers/error-boundary'
 
 const Form = styled.form`
   display: flex;
@@ -365,7 +366,7 @@ class EditSong extends React.Component<
     )
   }
 }
-export default ({ id }: { id: string }) => (
+export default errorBoundary(({ id }: { id: string }) => (
   <Song id={id}>
     {song =>
       song && (
@@ -375,4 +376,4 @@ export default ({ id }: { id: string }) => (
       )
     }
   </Song>
-)
+))

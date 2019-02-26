@@ -8,12 +8,14 @@
     "@emotion/styled": "^10.0.7",
     "@react-pdf/renderer": "^1.4.0",
     "@types/raven-js": "^3.10.0",
-    "@types/react": "^16.8.4",
+    "@types/react": "^16.8.5",
     "@types/react-dom": "^16.8.2",
     "@types/react-loadable": "^5.5.0",
     "@types/react-router": "^4.4.4",
     "@types/react-router-dom": "^4.3.1",
+    "@typescript-eslint/parser": "^1.4.2",
     "emotion": "^10.0.7",
+    "eslint-plugin-emotion": "^10.0.7",
     "http-proxy-middleware": "^0.19.1",
     "localforage": "^1.7.3",
     "quill": "^1.3.6",
@@ -25,8 +27,7 @@
     "react-loadable": "^5.5.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.5",
-    "typescript": "^3.3.3333",
-    "typescript-eslint-parser": "^22.0.0"
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "start": "NODE_PATH=src react-scripts start",

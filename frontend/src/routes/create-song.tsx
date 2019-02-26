@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { newSong } from 'containers/store/fetchers'
 import Input from 'components/input'
+import { errorBoundary } from 'containers/error-boundary'
 
 const Form = styled.form`
   display: flex;
@@ -81,4 +82,4 @@ class CreateSong extends React.Component<{}, State> {
     )
   }
 }
-export default CreateSong
+export default errorBoundary(CreateSong)

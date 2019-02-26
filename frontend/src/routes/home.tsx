@@ -1,9 +1,10 @@
-import React from 'react'
+import * as React from 'react'
 import styled from '@emotion/styled'
 import SongList from 'sections/song-list/song-list'
 import { InstallButton } from 'components/install'
 import Button from 'components/button'
 import { SaveScroll } from 'components/scroll'
+import { errorBoundary } from 'containers/error-boundary'
 
 const InstallContainer = styled.div`
   position: absolute;
@@ -28,4 +29,4 @@ const Home = () => (
     </InstallButton>
   </div>
 )
-export default Home
+export default errorBoundary(Home)

@@ -4,6 +4,7 @@ import Print from 'sections/print/print'
 import * as page from 'utils/page'
 import PreviewToggle from 'components/preview-toggle'
 import styled from '@emotion/styled'
+import { errorBoundary } from 'containers/error-boundary'
 
 const { margin } = page
 
@@ -49,4 +50,4 @@ class PrintRoute extends React.Component<{ tag: string }> {
     )
   }
 }
-export default PrintRoute
+export default errorBoundary(PrintRoute)

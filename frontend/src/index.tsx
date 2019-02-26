@@ -5,10 +5,7 @@ import React from 'react'
 import ErrorBoundary from 'containers/error-boundary'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Loadable from 'react-loadable'
-import App from './app'
-import handleOutline from './utils/outline-handler'
-
-handleOutline()
+import App, { InjectGlobal } from './app'
 
 const oldHosts = ['songbook.skorepa.info']
 const currentHost = 'zpevnik.skorepova.info'
@@ -52,11 +49,14 @@ if (!displayInstructions) {
   Loadable.preloadReady().then(() => {
     const app = document.getElementById('root')
     ReactDOM.render(
-      <ErrorBoundary>
-        <Router>
-          <App />
-        </Router>
-      </ErrorBoundary>,
+      <React.Fragment>
+        <InjectGlobal />
+        <ErrorBoundary>
+          <Router>
+            <App />
+          </Router>
+        </ErrorBoundary>
+      </React.Fragment>,
       app,
     )
   })

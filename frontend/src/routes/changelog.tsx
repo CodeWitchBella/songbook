@@ -1,5 +1,6 @@
 import React from 'react'
 import Entry from 'components/changelog-entry'
+import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
@@ -51,4 +52,4 @@ const Changelog = () => (
     </Entry>
   </div>
 )
-export default Changelog
+export default errorBoundary(Changelog)

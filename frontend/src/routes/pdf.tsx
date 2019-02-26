@@ -2,6 +2,7 @@ import React from 'react'
 import { Song } from 'containers/store/store'
 import PDF from 'components/pdf'
 import styled from '@emotion/styled'
+import { errorBoundary } from 'containers/error-boundary'
 
 const Style = styled.div`
   &,
@@ -15,7 +16,7 @@ const Style = styled.div`
   }
 `
 
-export default ({ id }: { id: string }) => (
+export default errorBoundary(({ id }: { id: string }) => (
   <Song id={id}>
     {song =>
       song && (
@@ -25,4 +26,4 @@ export default ({ id }: { id: string }) => (
       )
     }
   </Song>
-)
+))

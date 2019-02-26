@@ -4,6 +4,7 @@ import { InstallButton } from 'components/install'
 import styled from '@emotion/styled'
 import Button from 'components/button'
 import { SaveScroll } from 'components/scroll'
+import { errorBoundary } from 'containers/error-boundary'
 
 const InstallContainer = styled.div`
   position: absolute;
@@ -29,4 +30,4 @@ const Tag = ({ tag }: { tag: string }) => (
     </InstallButton>
   </div>
 )
-export default Tag
+export default errorBoundary(Tag)

@@ -4,6 +4,7 @@ import { InstallButton } from 'components/install'
 import styled from '@emotion/styled'
 import TopMenu from 'components/top-menu'
 import Button from 'components/button'
+import { errorBoundary } from 'containers/error-boundary'
 
 const Spacer = styled.div`
   height: 150px;
@@ -19,7 +20,7 @@ const InstallContainer = styled.div`
   width: 100%;
 `
 
-const Home = () => (
+const TagListRoute = () => (
   <div>
     <TopMenu />
     <TagList />
@@ -34,4 +35,4 @@ const Home = () => (
     </InstallButton>
   </div>
 )
-export default Home
+export default errorBoundary(TagListRoute)
