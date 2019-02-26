@@ -10,6 +10,9 @@ const ctx = React.createContext(null as null | ForageCache<
 
 export const SongListProvider: React.FC<{}> = ({ children }) => {
   const ref = useRef(new ForageCache('songs', listSongs))
+  useEffect(() => {
+    ref.current.load({ force: true })
+  })
   return <ctx.Provider value={ref.current}>{children}</ctx.Provider>
 }
 
