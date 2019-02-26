@@ -45,6 +45,9 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
   }
 }
 
+// workaround for something removing import React from 'react'
+;(window as any).React = React
+
 if (!displayInstructions) {
   Loadable.preloadReady().then(() => {
     const app = document.getElementById('root')

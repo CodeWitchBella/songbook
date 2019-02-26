@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import React from 'react'
 import { Link, Route, Switch } from 'react-router-dom'
 import styled from '@emotion/styled'
@@ -16,11 +18,10 @@ const TopLinks = styled.div`
   }
 `
 
-const NotRoute: React.SFC<{ path: string; exact?: boolean }> = ({
-  path,
-  exact,
-  children,
-}) => (
+const NotRoute: React.FC<{
+  path: string
+  exact?: boolean
+}> = ({ path, exact, children }) => (
   <Switch>
     <Route path={path} exact={exact} />
     <Route>{children}</Route>

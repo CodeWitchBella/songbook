@@ -16,7 +16,6 @@ export default function OutlineHandler() {
     }
   })
 
-  // eslint-disable-next-line no-unused-expressions
   return (
     <Global
       styles={css`

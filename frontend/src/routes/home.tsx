@@ -1,4 +1,5 @@
-import * as React from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import styled from '@emotion/styled'
 import SongList from 'sections/song-list/song-list'
 import { InstallButton } from 'components/install'
