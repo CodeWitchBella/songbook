@@ -369,6 +369,6 @@ class EditSong extends React.Component<
 }
 export default errorBoundary(({ id }: { id: string }) => {
   const { value, reload } = useSong(id)
-  if (!value) return null
+  if (!value) return <div>Načítám...</div>
   return <EditSong song={value} refetch={reload} />
 })
