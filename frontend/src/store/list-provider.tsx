@@ -24,7 +24,7 @@ export const useSongList = () => {
   if (!value) {
     throw cache.load()
   }
-  return value
+  return value.map(v => ({ ...v, name: v.name.replace(/\.song$/, '') }))
 }
 
 export const useMaybeSongList = () => {

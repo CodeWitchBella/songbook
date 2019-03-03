@@ -97,11 +97,10 @@ const Song = ({
   lastModified: number
 }) => {
   const { value } = useSong(name, lastModified)
-  const link = name.replace(/\.song$/, '')
   if (!value) return null
   return (
     <TheSong>
-      <Link to={`/song/${link}`}>
+      <Link to={`/song/${name}`}>
         {value.title} - {value.author}
         {/*window.location &&
           window.location.search.split(/[?&]/).includes('spotify')
