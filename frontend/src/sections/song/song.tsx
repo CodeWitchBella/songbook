@@ -64,7 +64,7 @@ const SongSection = ({
   share?: boolean
   enableSpotify?: boolean
 }) => {
-  const song = useSong(id + '.song').value
+  const song = useSong(id).value
   return !song ? null : (
     <>
       <SongLook

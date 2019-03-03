@@ -64,7 +64,7 @@ const useForageCache = <T extends {}>(cache: ForageCache<T>) => {
 
 export const useSong = (name: string, lastModified?: number) => {
   const getCache = useContext(ctx)
-  const { value, ...rest } = useForageCache(getCache(name))
+  const { value, ...rest } = useForageCache(getCache(name + '.song'))
   useEffect(() => {
     if (lastModified && value && value.lastModified < lastModified) {
       rest.reload()

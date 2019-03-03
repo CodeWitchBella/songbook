@@ -18,7 +18,7 @@ const Style = styled.div`
 
 export default errorBoundary(({ id }: { id: string }) => {
   const { value } = useSong(id)
-  if (!value) return null
+  if (!value) return <div>Načítám píseň...</div>
   return (
     <Style>
       <PDF song={value} />
