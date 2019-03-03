@@ -11,3 +11,4 @@ export const parseSongFile = (fname: string, content: string) => {
     textWithChords: text,
   }
 }
+export type Song = ReturnType<typeof parseSongFile>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { TagList } from 'containers/store/store'
 import { css } from 'emotion'
 import { primary } from 'utils/colors'
 import { Link } from 'react-router-dom'
+import { useTags } from 'store/fetchers'
 
 const Placeholder = () => <div>Načítám seznam písní</div>
 
@@ -38,15 +38,16 @@ const Tag = ({ tag }: { tag: { name: string; id: string } }) => (
   </Link>
 )
 
-const TagListSection = () => (
-  <TagList>
-    {tags => (
-      <nav className={tagContainer}>
-        {tags.map((tag, i) => (
-          <Tag key={i} tag={tag} />
-        ))}
-      </nav>
-    )}
-  </TagList>
-)
+const TagListSection = () => {
+  const tags = useTags()
+  if (!tags) return <Placeholder />
+
+  return (
+    <nav className={tagContainer}>
+      {tags.map((tag, i) => (
+        <Tag key={i} tag={tag} />
+      ))}
+    </nav>
+  )
+}
 export default TagListSection

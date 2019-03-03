@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { newSong } from 'containers/store/fetchers'
 import Input from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
+import { newSong } from 'store/fetchers'
 
 const Form = styled.form`
   display: flex;

@@ -1,7 +1,7 @@
 import React from 'react'
-import { SongType as Song } from 'containers/store/store'
 import Page from 'components/page'
 import styled from '@emotion/styled'
+import { Song } from 'store/parse-song-file'
 
 const Container = styled.nav`
   display: flex;

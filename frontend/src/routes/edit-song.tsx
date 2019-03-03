@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { editSong } from 'containers/store/fetchers'
-import { Song, Refetch, SongType } from 'containers/store/store'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
@@ -10,6 +8,9 @@ import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
+import { editSong } from 'store/fetchers'
+import { useSong } from 'store/song-provider'
+import { Song } from 'store/parse-song-file'
 
 const Form = styled.form`
   display: flex;
@@ -126,14 +127,14 @@ const IFrameSizer = styled.div`
 
 class EditSong extends React.Component<
   {
-    song: SongType
-    refetch: (force?: boolean) => Promise<any>
+    song: Song
+    refetch: () => void
   },
   State
 > {
   state: State = {
     author: this.props.song.author,
-    tags: this.props.song.tags.map(t => t.id).join(', '),
+    tags: this.props.song.tags.join(', '),
     title: this.props.song.title,
     textWithChords: this.props.song.textWithChords,
     spotify: this.props.song.metadata.spotify || '',
@@ -187,7 +188,7 @@ class EditSong extends React.Component<
         console.log('result', ret)
         if (!ret || !ret.editSong) throw new Error('editSong failed')
       })
-      .then(() => this.props.refetch(true))
+      .then(() => this.props.refetch())
       .then(() => {
         if (version === this.changeCounter) {
           this.setState({ saveStatus: 'SAVED' })
@@ -366,14 +367,8 @@ class EditSong extends React.Component<
     )
   }
 }
-export default errorBoundary(({ id }: { id: string }) => (
-  <Song id={id}>
-    {song =>
-      song && (
-        <Refetch>
-          {refetch => <EditSong song={song} refetch={refetch} />}
-        </Refetch>
-      )
-    }
-  </Song>
-))
+export default errorBoundary(({ id }: { id: string }) => {
+  const { value, reload } = useSong(id)
+  if (!value) return null
+  return <EditSong song={value} refetch={reload} />
+})
