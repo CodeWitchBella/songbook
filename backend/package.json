@@ -10,11 +10,14 @@
     "serverless"
   ],
   "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-typescript": "^7.3.3",
     "@types/node": "^11.10.4",
     "@types/terser-webpack-plugin": "^1.2.1",
     "@types/webpack": "^4.4.25",
     "apollo-server": "^2.4.8",
     "apollo-server-azure-functions": "^2.4.8",
+    "babel-loader": "^8.0.5",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
     "serverless-azure-functions": "^0.7.0",

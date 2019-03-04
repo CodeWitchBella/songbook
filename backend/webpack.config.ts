@@ -19,9 +19,12 @@ function fromEntries(entries: [string, string][]) {
 const config = (env: Env): webpack.Configuration => ({
   mode: 'production',
   entry: envSwitch(env, {
-    localhost: './src/localhost.js',
-    azure: './src/handler.js',
+    localhost: './src/localhost.ts',
+    azure: './src/handler.ts',
   }),
+  resolve: {
+    extensions: ['.ts', '.mjs', '.js'],
+  },
   output: {
     path: __dirname,
     filename: envSwitch(env, {
@@ -57,6 +60,9 @@ const config = (env: Env): webpack.Configuration => ({
       }),
     ],
     nodeEnv: 'production',
+  },
+  module: {
+    rules: [{ test: /\.ts$/, loaders: [{ loader: 'babel-loader' }] }],
   },
 })
 
