@@ -1,0 +1,36 @@
+service: songbook-functions
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: azure
+  location: West Europe
+
+plugins:
+  - serverless-webpack
+  - serverless-azure-functions
+
+custom:
+  webpack:
+    includeModules: true
+    packager: 'npm'
+
+package:
+  individually: true
+
+functions:
+  graphql:
+    handler: handler.graphqlHandler
+    events:
+      - http: true
+        path: /graphql
+        x-azure-settings:
+          authLevel: anonymous
+  #graphiql:
+  #  handler: graphiql.run
+  #  events:
+  #    - http: true
+  #      path: /graphql
+  #      method: GET
