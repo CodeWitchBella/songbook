@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Azure Functions sample for the Serverless framework",
   "scripts": {
-    "deploy": "webpack --env azure && sls deploy"
+    "build:localhost": "webpack --env localhost",
+    "build:azure": "webpack --env azure",
+    "deploy": "webpack --env azure && sls deploy",
+    "start": "node localhost.js",
+    "start:watch": "nodemon localhost.js"
   },
   "keywords": [
     "azure",
