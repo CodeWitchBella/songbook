@@ -21,4 +21,10 @@ const server = new ApolloServer({
   introspection: true,
 })
 
-module.exports.graphqlHandler = server.createHandler()
+module.exports.graphqlHandler = server.createHandler({
+  cors: {
+    origin: ['http://localhost:3000', 'https://zpevnik.skorepova.info'],
+    credentials: true,
+    maxAge: 3600,
+  },
+})
