@@ -1,4 +1,4 @@
-const { gql, ApolloServer } = require('apollo-server-azure-functions')
+import { gql } from 'apollo-server'
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -14,18 +14,10 @@ const resolvers = {
   },
 }
 
-const server = new ApolloServer({
+export default {
   typeDefs,
   resolvers,
   playground: true,
   introspection: true,
   tracing: true,
-})
-
-module.exports.graphqlHandler = server.createHandler({
-  cors: {
-    origin: ['http://localhost:3000', 'https://zpevnik.skorepova.info'],
-    credentials: true,
-    maxAge: 3600,
-  },
-})
+}

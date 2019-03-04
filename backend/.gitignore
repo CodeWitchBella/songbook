@@ -5,3 +5,8 @@ jspm_packages
 # Serverless directories
 .serverless
 *-function.json
+
+/handler.js
+/build
+/localhost.js
+/localhost.js.map

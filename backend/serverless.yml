@@ -9,16 +9,15 @@ provider:
   location: West Europe
 
 plugins:
-  - serverless-webpack
   - serverless-azure-functions
-
-custom:
-  webpack:
-    includeModules: true
-    packager: 'npm'
 
 package:
   individually: true
+  exclude:
+    - '**/*'
+  include:
+    - graphql-function.json
+    - handler.js
 
 functions:
   graphql:

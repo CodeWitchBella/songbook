@@ -2,19 +2,26 @@
   "name": "songbook",
   "version": "1.0.0",
   "description": "Azure Functions sample for the Serverless framework",
+  "scripts": {
+    "deploy": "webpack --env azure && sls deploy"
+  },
   "keywords": [
     "azure",
     "serverless"
   ],
   "devDependencies": {
+    "@types/node": "^11.10.4",
+    "@types/terser-webpack-plugin": "^1.2.1",
+    "@types/webpack": "^4.4.25",
+    "apollo-server": "^2.4.8",
     "apollo-server-azure-functions": "^2.4.8",
     "graphql": "^14.1.1",
     "graphql-tools": "^4.0.4",
     "serverless-azure-functions": "^0.7.0",
-    "serverless-webpack": "^5.2.0",
-    "terser-webpack-plugin": "^1.2.3"
-  },
-  "dependencies": {
-    "webpack": "^4.29.6"
+    "terser-webpack-plugin": "^1.2.3",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   }
 }
