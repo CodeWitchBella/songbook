@@ -19,6 +19,7 @@ const server = new ApolloServer({
   resolvers,
   playground: true,
   introspection: true,
+  tracing: true,
 })
 
 module.exports.graphqlHandler = server.createHandler({
@@ -26,6 +27,5 @@ module.exports.graphqlHandler = server.createHandler({
     origin: ['http://localhost:3000', 'https://zpevnik.skorepova.info'],
     credentials: true,
     maxAge: 3600,
-    tracing: true,
   },
 })
