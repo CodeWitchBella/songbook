@@ -41,13 +41,13 @@ const config = (env: Env): webpack.Configuration => ({
     }),
     libraryTarget: 'commonjs2',
   },
-  externals: {
-    ...externalize('dependencies'),
-    ...envSwitch(env, {
-      localhost: externalize('devDependencies'),
-      azure: {},
-    }),
-  },
+  externals: envSwitch(env, {
+    localhost: {
+      ...externalize('devDependencies'),
+      ...externalize('dependencies'),
+    },
+    azure: {},
+  }),
   devtool: envSwitch<'source-map' | boolean>(env, {
     localhost: 'source-map',
     azure: false,
