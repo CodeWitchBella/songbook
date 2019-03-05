@@ -71,6 +71,19 @@ const config = (env: Env): webpack.Configuration => ({
   module: {
     rules: [{ test: /\.ts$/, loaders: [{ loader: 'babel-loader' }] }],
   },
+  plugins: [
+    new webpack.DefinePlugin(
+      fromEntries(
+        Object.entries(require('./keys.json')).map(
+          ([k, v]) =>
+            ['process.env.' + k.toUpperCase(), JSON.stringify(v)] as [
+              string,
+              string
+            ],
+        ),
+      ),
+    ),
+  ],
 })
 
 export default function configuration(env: unknown) {

@@ -11,6 +11,7 @@
     "build:production": "npm run prestart && npm prune --production"
   },
   "dependencies": {
+    "@azure/storage-blob": "^10.3.0",
     "apollo-server": "^2.4.8",
     "apollo-server-azure-functions": "^2.4.8",
     "graphql": "^14.1.1",

@@ -90,4 +90,5 @@ dist
 out
 
 graphql/index.js
-localhost.js
+localhost.js*
+keys.json
