@@ -1,29 +1,31 @@
 {
-  "name": "songbook",
-  "version": "1.0.0",
-  "description": "Azure Functions sample for the Serverless framework",
+  "name": "backend",
+  "description": "",
+  "version": "0.1.0",
   "scripts": {
-    "deploy": "webpack --env azure && sls deploy"
+    "build": "webpack --env azure",
+    "watch": "webpack --env azure --watch",
+    "prestart": "npm run build && func extensions install",
+    "start:host": "func start",
+    "start": "npm run start:host & npm run watch",
+    "build:production": "npm run prestart && npm prune --production"
   },
-  "keywords": [
-    "azure",
-    "serverless"
-  ],
-  "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/preset-typescript": "^7.3.3",
-    "@types/node": "^11.10.4",
-    "@types/terser-webpack-plugin": "^1.2.1",
-    "@types/webpack": "^4.4.25",
+  "dependencies": {
     "apollo-server": "^2.4.8",
     "apollo-server-azure-functions": "^2.4.8",
-    "babel-loader": "^8.0.5",
     "graphql": "^14.1.1",
-    "graphql-tools": "^4.0.4",
-    "serverless-azure-functions": "^0.7.0",
+    "graphql-tools": "^4.0.4"
+  },
+  "devDependencies": {
+    "@azure/functions": "^1.0.1-beta2",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/terser-webpack-plugin": "^1.2.1",
+    "@types/webpack": "^4.4.25",
+    "babel-loader": "^8.0.5",
     "terser-webpack-plugin": "^1.2.3",
     "ts-node": "^8.0.2",
-    "typescript": "^3.3.3333",
+    "typescript": "^3.3.3",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   }

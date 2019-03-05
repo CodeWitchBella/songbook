@@ -16,6 +16,14 @@ function fromEntries(entries: [string, string][]) {
   return ret
 }
 
+function externalize(key: string) {
+  return fromEntries(
+    Object.keys(require('./package.json')[key]).map(
+      k => [k, k] as [string, string],
+    ),
+  )
+}
+
 const config = (env: Env): webpack.Configuration => ({
   mode: 'production',
   entry: envSwitch(env, {
@@ -29,18 +37,17 @@ const config = (env: Env): webpack.Configuration => ({
     path: __dirname,
     filename: envSwitch(env, {
       localhost: 'localhost.js',
-      azure: 'handler.js',
+      azure: 'graphql/index.js',
     }),
     libraryTarget: 'commonjs2',
   },
-  externals: envSwitch(env, {
-    localhost: fromEntries(
-      Object.keys(require('./package.json').devDependencies).map(
-        k => [k, k] as [string, string],
-      ),
-    ),
-    azure: {},
-  }),
+  externals: {
+    ...externalize('dependencies'),
+    ...envSwitch(env, {
+      localhost: externalize('devDependencies'),
+      azure: {},
+    }),
+  },
   devtool: envSwitch<'source-map' | boolean>(env, {
     localhost: 'source-map',
     azure: false,
