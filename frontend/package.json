@@ -35,7 +35,9 @@
     "test": "NODE_PATH=src react-scripts test",
     "eject": "NODE_PATH=src react-scripts eject",
     "lint": "eslint --ext ts --ext tsx --cache src",
-    "deploy": "npm run build && az storage blob upload-batch -s build/ -d \\$web --account-name songbook"
+    "purge-cdn": "az cdn endpoint purge --profile-name songbook-cdn --resource-group songbook --name songbook --content-paths /\\*",
+    "upload": "az storage blob upload-batch -s build/ -d \\$web --account-name songbook",
+    "deploy": "npm run build && npm run upload && npm run purge-cdn"
   },
   "eslintConfig": {
     "extends": "react-app"
