@@ -97,7 +97,7 @@ const Song = ({
   lastModified: number
 }) => {
   const { value } = useSong(name, lastModified)
-  if (!value) return null
+  if (!value) return <TheSong>{name}</TheSong>
   return (
     <TheSong>
       <Link to={`/song/${name}`}>

@@ -33,6 +33,7 @@ export async function listSongs() {
 
     marker = resp.nextMarker
     for (const blob of resp.segment.blobItems) {
+      if (!/\.song$/.test(blob.name)) continue
       list.push({
         name: blob.name,
         lastModified: blob.properties.lastModified.getTime(),
