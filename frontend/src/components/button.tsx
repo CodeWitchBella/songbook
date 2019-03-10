@@ -6,5 +6,8 @@ const Button = styled.button`
   padding: 20px;
   font-size: 20px;
   border-radius: 30px;
+  :hover {
+    text-decoration: underline;
+  }
 `
 export default Button

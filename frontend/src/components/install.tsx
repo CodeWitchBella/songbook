@@ -58,6 +58,10 @@ const InstallContainer = styled.div`
   height: 150px;
   align-items: center;
   width: 100%;
+  pointer-events: none;
+  > * {
+    pointer-events: auto;
+  }
 `
 
 export const InstallButtonLook = () => (
