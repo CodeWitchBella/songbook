@@ -3,7 +3,7 @@
   "description": "",
   "version": "0.1.0",
   "scripts": {
-    "build": "webpack --env azure",
+    "build:azure": "webpack --env azure",
     "watch": "webpack --env azure --watch",
     "prestart": "npm run build && func extensions install",
     "start:host": "func start",

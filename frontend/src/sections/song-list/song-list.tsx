@@ -97,11 +97,16 @@ const Song = ({
   lastModified: number
 }) => {
   const { value } = useSong(name, lastModified)
-  if (!value) return null
   return (
     <TheSong>
       <Link to={`/song/${name}`}>
-        {value.title} - {value.author}
+        {value ? (
+          <>
+            {value.title} - {value.author}
+          </>
+        ) : (
+          <></>
+        )}
         {/*window.location &&
           window.location.search.split(/[?&]/).includes('spotify')
             ? song.metadata.spotify !== null

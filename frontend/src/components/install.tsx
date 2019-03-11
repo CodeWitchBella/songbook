@@ -1,4 +1,8 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import React from 'react'
+import styled from '@emotion/styled'
+import Button from './button'
 
 type State = { install?: (() => void) | null }
 const Ctx = React.createContext({} as State)
@@ -44,4 +48,31 @@ export const InstallButton = ({
       return children(install)
     }}
   </Ctx.Consumer>
+)
+
+const InstallContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  height: 150px;
+  align-items: center;
+  width: 100%;
+  pointer-events: none;
+  > * {
+    pointer-events: auto;
+  }
+`
+
+export const InstallButtonLook = () => (
+  <InstallButton>
+    {install => (
+      <>
+        <div css={{ height: 150 }} />
+        <InstallContainer>
+          <Button onClick={install}>Nainstalovat jako appku</Button>
+        </InstallContainer>
+      </>
+    )}
+  </InstallButton>
 )
