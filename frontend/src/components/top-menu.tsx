@@ -37,9 +37,6 @@ const TopMenu = () => (
       Návrhy
     </a>
     <Link to="/changelog">Změny</Link>
-    <NotRoute exact path="/tag">
-      <Link to="/tag">Tagy</Link>
-    </NotRoute>
     <NotRoute exact path="/">
       <Link to="/">Všechny písně</Link>
     </NotRoute>

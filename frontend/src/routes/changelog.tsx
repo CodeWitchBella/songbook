@@ -4,6 +4,17 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-03-18">
+      <li>
+        Zmigrováno k Azure
+        <ul>
+          <li>Většina funkcionality byla zachována</li>
+          <li>Odstraněny byly pouze štítky</li>
+          <li>Ty později znovu přidám a lépe</li>
+        </ul>
+      </li>
+      <li>Instalační tlačítko nyní nebrání otevření posledních písní</li>
+    </Entry>
     <Entry date="2019-02-26">
       <li>Započetí migrace k Azure</li>
       <li>Sloupce se nyní plní odshora i při vyhledávání</li>
