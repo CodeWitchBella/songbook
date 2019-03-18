@@ -1,8 +1,15 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Input from 'components/input'
+import Input, { LargeInput } from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
 import { newSong } from 'store/fetchers'
+import Button from 'components/button'
+
+const FormWrap = styled.div({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '50px',
+})
 
 const Form = styled.form`
   display: flex;
@@ -49,19 +56,21 @@ class CreateSong extends React.Component<{}, State> {
 
   render() {
     return (
-      <Form onSubmit={this.submit}>
-        <Input
-          label="Autor"
-          value={this.state.author}
-          onChange={this.authorChange}
-        />
-        <Input
-          label="Jméno songu"
-          value={this.state.title}
-          onChange={this.titleChange}
-        />
-        <button disabled={this.state.disabled}>Vytvořit</button>
-      </Form>
+      <FormWrap>
+        <Form onSubmit={this.submit}>
+          <LargeInput
+            label="Autor písně"
+            value={this.state.author}
+            onChange={this.authorChange}
+          />
+          <LargeInput
+            label="Jméno písně"
+            value={this.state.title}
+            onChange={this.titleChange}
+          />
+          <Button disabled={this.state.disabled}>Vytvořit</Button>
+        </Form>
+      </FormWrap>
     )
   }
 }
