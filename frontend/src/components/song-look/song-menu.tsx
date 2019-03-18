@@ -12,6 +12,10 @@ const MenuWrap = styled.div({
   width: '100%',
   justifyContent: 'flex-end',
   alignIems: 'start',
+  pointerEvents: 'none',
+  '> *': {
+    pointerEvents: 'auto',
+  },
 })
 
 const MenuList = styled.div({
@@ -57,48 +61,43 @@ export default function SongMenu({
     if (transposition >= 12) setTransposition(transposition - 12)
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
-  if (open) {
-    return (
-      <MenuWrap>
-        <MenuList>
-          {transposition ? (
-            <div css={[menuStyle, { border: 0 }]}>
-              {transposition > 0 ? '+' : ''}
-              {transposition}
-            </div>
-          ) : null}
-          <MenuLink to={`/edit/${songId}`}>
-            <EditButton />
-          </MenuLink>
-          <MenuLink to={`/pdf/${songId}`}>PDF</MenuLink>
-          <MenuButton onClick={() => setTransposition(transposition + 1)}>
-            +1
-          </MenuButton>
-          <MenuButton onClick={() => setTransposition(transposition - 1)}>
-            -1
-          </MenuButton>
-          {showSpotify ? (
-            <MenuButton
-              onClick={() => {
-                setSpotifyVisible(v => !v)
-              }}
-            >
-              <PlayButton />
-            </MenuButton>
-          ) : null}
-          <MenuButton onClick={() => setOpen(false)}>
-            <Burger />
-          </MenuButton>
-        </MenuList>
-      </MenuWrap>
-    )
-  }
 
   return (
     <MenuWrap>
-      <MenuButton onClick={() => setOpen(true)}>
-        <Burger />
-      </MenuButton>
+      <MenuList>
+        {open ? (
+          <>
+            {transposition ? (
+              <div css={[menuStyle, { border: 0 }]}>
+                {transposition > 0 ? '+' : ''}
+                {transposition}
+              </div>
+            ) : null}
+            <MenuLink to={`/edit/${songId}`}>
+              <EditButton />
+            </MenuLink>
+            <MenuLink to={`/pdf/${songId}`}>PDF</MenuLink>
+            <MenuButton onClick={() => setTransposition(transposition + 1)}>
+              +1
+            </MenuButton>
+            <MenuButton onClick={() => setTransposition(transposition - 1)}>
+              -1
+            </MenuButton>
+            {showSpotify ? (
+              <MenuButton
+                onClick={() => {
+                  setSpotifyVisible(v => !v)
+                }}
+              >
+                <PlayButton />
+              </MenuButton>
+            ) : null}
+          </>
+        ) : null}
+        <MenuButton onClick={() => setOpen(o => !o)}>
+          <Burger />
+        </MenuButton>
+      </MenuList>
     </MenuWrap>
   )
 }
