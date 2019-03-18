@@ -12,7 +12,6 @@ const Form = styled.form`
 
 type State = {
   author: string
-  tags: string
   title: string
   disabled: boolean
 }
@@ -20,34 +19,24 @@ type State = {
 class CreateSong extends React.Component<{}, State> {
   state: State = {
     author: '',
-    tags: '',
     title: '',
     disabled: false,
   }
   submit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
-    const { author, tags, title, disabled } = this.state
+    const { author, title, disabled } = this.state
     console.log('submit before check', this.state)
     if (!author || !title || disabled) return
     console.log('submit', this.state)
     this.setState({ disabled })
     newSong({
-      song: {
-        author,
-        title,
-        tags: tags
-          .split(',')
-          .map(t => t.trim())
-          .filter(t => t !== 'todo')
-          .concat(['todo']),
-        metadata: {},
-        textWithChords: 'Here be dragons...',
-      },
+      author,
+      title,
     })
       .then(ret => {
         console.log('result', ret)
-        if (!ret || !ret.newSong) throw new Error('newSong failed')
-        window.location.pathname = `/edit/${ret.newSong}`
+        if (!ret) throw new Error('newSong failed')
+        window.location.pathname = `/edit/${ret}`
       })
       .catch(e => {
         console.error(e)
@@ -56,7 +45,6 @@ class CreateSong extends React.Component<{}, State> {
   }
 
   authorChange = (val: string) => this.setState({ author: val })
-  tagsChange = (val: string) => this.setState({ tags: val })
   titleChange = (val: string) => this.setState({ title: val })
 
   render() {
@@ -71,11 +59,6 @@ class CreateSong extends React.Component<{}, State> {
           label="Jméno songu"
           value={this.state.title}
           onChange={this.titleChange}
-        />
-        <Input
-          label="Tagy"
-          value={this.state.tags}
-          onChange={this.tagsChange}
         />
         <button disabled={this.state.disabled}>Vytvořit</button>
       </Form>

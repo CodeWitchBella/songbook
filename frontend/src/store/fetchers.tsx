@@ -11,8 +11,22 @@ function graphqlFetch(query: string, variables: any) {
   }).then(v => v.json())
 }
 
-export function newSong(song: any): Promise<{ newSong: string }> {
-  throw new Error('Not implemented')
+export function newSong(song: {
+  author: string
+  title: string
+}): Promise<string> {
+  return graphqlFetch(
+    `
+    mutation($input: CreateSongInput!) {
+      createSong(input: $input)
+    }
+  `,
+    { input: { author: song.author, title: song.title } },
+  ).then(v =>
+    v && v.data && v.data.createSong
+      ? v.data.createSong.replace(/\.song$/, '')
+      : null,
+  )
 }
 export function writeSong(song: any) {
   return graphqlFetch(
