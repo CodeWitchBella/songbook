@@ -2,14 +2,13 @@ import React from 'react'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
-import { everything_songs } from 'queries-types'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
 import { Link } from 'react-router-dom'
 import ShareButton from 'components/song-look/share-button'
 
-type SongType = Pick<everything_songs, 'author' | 'id' | 'metadata' | 'title'>
+type SongType = Pick<any, 'author' | 'id' | 'metadata' | 'title'>
 
 const line = (hasChords: boolean) =>
   hasChords

@@ -1,11 +1,11 @@
 import React from 'react'
-import { SongsInTag } from 'containers/store/store'
 import { Link } from 'react-router-dom'
-import { everything_songs } from 'queries-types'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
+import { useSongList } from 'store/list-provider'
+import { useSong, suspendUntilInitialized } from 'store/song-provider'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -90,27 +90,33 @@ const PageNav = styled.nav`
 `
 
 const Song = ({
-  song,
+  name,
+  lastModified,
 }: {
-  song: {
-    id: string
-    title: string
-    author: string
-    metadata: { spotify: string | null }
-  }
-}) => (
-  <TheSong>
-    <Link to={`/song/${song.id}`}>
-      {song.title} - {song.author}{' '}
-      {window.location &&
-      window.location.search.split(/[?&]/).includes('spotify')
-        ? song.metadata.spotify !== null
-          ? '🎵'
-          : '🔇'
-        : null}
-    </Link>
-  </TheSong>
-)
+  name: string
+  lastModified: number
+}) => {
+  const { value } = useSong(name, lastModified)
+  return (
+    <TheSong>
+      <Link to={`/song/${name}`}>
+        {value ? (
+          <>
+            {value.title} - {value.author}
+          </>
+        ) : (
+          <></>
+        )}
+        {/*window.location &&
+          window.location.search.split(/[?&]/).includes('spotify')
+            ? song.metadata.spotify !== null
+              ? '🎵'
+              : '🔇'
+          : null*/}
+      </Link>
+    </TheSong>
+  )
+}
 
 type State = {
   text: string
@@ -151,38 +157,38 @@ function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
 
-const searchSong = (text: string) => (s: everything_songs) => {
+const searchSong = (text: string) => (s: { name: string }) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => toComparable(`${s.title} ${s.author}`).includes(t))
+    .every(t => toComparable(`${s.name}`).includes(t))
 }
 
-const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => (
-  <SongsInTag tag={tag}>
-    {songs =>
-      !songs ? null : (
-        <Search>
-          {({ text, render }) => {
-            const filtered = songs
-              .filter(searchSong(text))
-              .map(s => <Song key={s.id} song={s} />)
-            return (
-              <PageNav>
-                <TheSearch>{render()}</TheSearch>
-                <TopMenu />
-                <ListContainer count={filtered.length + (showPrint ? 1 : 0)}>
-                  {filtered}
-                </ListContainer>
-                {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
-              </PageNav>
-            )
-          }}
-        </Search>
-      )
-    }
-  </SongsInTag>
-)
+const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
+  const songs = useSongList()
+  suspendUntilInitialized()
+  return (
+    <Search>
+      {({ text, render }) => {
+        const filtered = songs
+          .filter(searchSong(text))
+          .map(s => (
+            <Song key={s.name} name={s.name} lastModified={s.lastModified} />
+          ))
+        return (
+          <PageNav>
+            <TheSearch>{render()}</TheSearch>
+            <TopMenu />
+            <ListContainer count={filtered.length + (showPrint ? 1 : 0)}>
+              {filtered}
+            </ListContainer>
+            {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
+          </PageNav>
+        )
+      }}
+    </Search>
+  )
+}
 export default SongList

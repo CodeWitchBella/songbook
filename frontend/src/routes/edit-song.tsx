@@ -1,14 +1,17 @@
-import React from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import React, { useRef } from 'react'
 import styled from '@emotion/styled'
-import { editSong } from 'containers/store/fetchers'
-import { Song, Refetch, SongType } from 'containers/store/store'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
-import QuillEditor from 'components/quill-editor'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
+import { errorBoundary } from 'containers/error-boundary'
+import { writeSong } from 'store/fetchers'
+import { useSong } from 'store/song-provider'
+import { Song } from 'store/parse-song-file'
 
 const Form = styled.form`
   display: flex;
@@ -60,12 +63,34 @@ const HideHelpButton = styled.button`
   display: block;
 `
 
-const Help: React.SFC<{}> = ({ children }) => (
+const Code = ({ text }: { text: string }) => {
+  const ref = useRef<HTMLTextAreaElement>(null)
+  return (
+    <code
+      onClick={() => {
+        const area = ref.current
+        if (area) {
+          area.select()
+          document.execCommand('copy')
+        }
+      }}
+    >
+      <textarea
+        ref={ref}
+        value={text}
+        readOnly
+        css={{ width: '100%', border: 0 }}
+      />
+    </code>
+  )
+}
+
+const Help: React.SFC<{ title?: string }> = ({ children, title }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
       <HelpWrap>
         <HideHelpButton onClick={toggle}>
-          {toggled ? 'Skrýt' : 'Zobrazit'} nápovědu
+          {toggled ? 'Skrýt' : 'Zobrazit'} {title || 'nápovědu'}
         </HideHelpButton>
         {toggled && children}
       </HelpWrap>
@@ -87,14 +112,12 @@ const InputLine = styled.div`
 type SaveStatus = 'NO_CHANGES' | 'SAVING' | 'UNSAVED' | 'FAILED' | 'SAVED'
 type State = {
   author: string
-  tags: string
   title: string
   textWithChords: string
   fontSize: string
   paragraphSpace: string
   titleSpace: string
   spotify: string
-  fancyEditor: boolean
   advanced: boolean
   preview: boolean
   pdfPreview: boolean
@@ -123,23 +146,27 @@ const IFrameSizer = styled.div`
   }
 `
 
+const nakytarushonzou = `
+var content = document.querySelector('.pisnicka_content font')
+Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+sup.innerText+']')
+copy(content.innerText)
+`.trim()
+
 class EditSong extends React.Component<
   {
-    song: SongType
-    refetch: (force?: boolean) => Promise<any>
+    song: Song
+    refetch: () => void
   },
   State
 > {
   state: State = {
     author: this.props.song.author,
-    tags: this.props.song.tags.map(t => t.id).join(', '),
     title: this.props.song.title,
     textWithChords: this.props.song.textWithChords,
     spotify: this.props.song.metadata.spotify || '',
     fontSize: numberToString(this.props.song.metadata.fontSize),
     paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
     titleSpace: numberToString(this.props.song.metadata.titleSpace),
-    fancyEditor: true,
     advanced: false,
     preview: false,
     pdfPreview: false,
@@ -149,15 +176,12 @@ class EditSong extends React.Component<
   changeCounter: number = 0
 
   result = () => {
-    const { author, tags, title, textWithChords } = this.state
+    const { author, title, textWithChords } = this.state
     return {
       ...this.props.song,
       author,
       title,
-      tags: tags.split(',').map(t => t.trim()),
-      textWithChords: parser.stringifySongFromDelta(
-        parser.parseSongToDelta(textWithChords),
-      ),
+      textWithChords,
       metadata: {
         ...this.props.song.metadata,
         fontSize: Number.parseFloat(this.state.fontSize),
@@ -179,14 +203,13 @@ class EditSong extends React.Component<
 
     const version = this.changeCounter
 
-    editSong({
-      song: this.result(),
-    })
+    writeSong(this.result())
       .then(ret => {
-        console.log('result', ret)
-        if (!ret || !ret.editSong) throw new Error('editSong failed')
+        console.log('result', ret, !ret || !ret.data || !ret.data.editSong)
+        if (!ret || !ret.data || !ret.data.writeSong)
+          throw new Error('writeSong failed')
       })
-      .then(() => this.props.refetch(true))
+      .then(() => this.props.refetch())
       .then(() => {
         if (version === this.changeCounter) {
           this.setState({ saveStatus: 'SAVED' })
@@ -210,7 +233,6 @@ class EditSong extends React.Component<
   }
 
   authorChange = (val: string) => this.change({ author: val })
-  tagsChange = (val: string) => this.change({ tags: val })
   titleChange = (val: string) => this.change({ title: val })
   textWithChordsChange = (val: string) => this.change({ textWithChords: val })
 
@@ -219,7 +241,6 @@ class EditSong extends React.Component<
   titleSpaceChange = (val: string) => this.change({ titleSpace: val })
   spotifyChange = (val: string) => this.change({ spotify: val })
 
-  fancyEditorChange = (value: boolean) => this.setState({ fancyEditor: value })
   advancedChange = (value: boolean) => this.setState({ advanced: value })
   previewChange = (value: boolean) => this.setState({ preview: value })
   pdfPreviewChange = (value: boolean) => this.setState({ pdfPreview: value })
@@ -241,11 +262,6 @@ class EditSong extends React.Component<
                 onChange={this.titleChange}
               />
             </InputLine>
-            <Input
-              label="Tagy"
-              value={this.state.tags}
-              onChange={this.tagsChange}
-            />
             <Input
               label="Spotify odkaz"
               value={this.state.spotify}
@@ -289,23 +305,11 @@ class EditSong extends React.Component<
                 />
               </>
             )}
-            <Checkbox
-              label="Vizuální editor"
-              checked={this.state.fancyEditor}
-              onChange={this.fancyEditorChange}
+            <Textarea
+              value={this.state.textWithChords}
+              onChange={this.textWithChordsChange}
             />
-            {this.state.fancyEditor ? (
-              <QuillEditor
-                //label="Text"
-                initialValue={this.state.textWithChords}
-                onChange={this.textWithChordsChange}
-              />
-            ) : (
-              <Textarea
-                value={this.state.textWithChords}
-                onChange={this.textWithChordsChange}
-              />
-            )}
+
             {this.state.saveStatus === 'FAILED' && <button>Uložit</button>}
             <i>{translateStatus(this.state.saveStatus)}</i>
           </Form>
@@ -313,18 +317,12 @@ class EditSong extends React.Component<
             <h3>Jak se tahle věc ovládá?</h3>
             <p>
               Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
-              vyplnění údajů o songu. Možná snad jenom tagy: to je seznam
-              zkratek oddělený čárkou.
+              vyplnění údajů o songu.
             </p>
             <p>
               Pod tím je pole na vyplnění songu. Do něj píšete text písně a
-              pokud chcete začít psát akord tak stačí zmáčknout tabulátor a
-              píšete akord. Když jste akord dopsali tak znova zmáčknete
-              tabulátor a jste zpět v normálním módu.
-            </p>
-            <p>
-              Nebo můžete odškrtnout checkbox vizuální editor a editovat přímo
-              zdrojový text.
+              pokud chcete začít psát akord tak ho napíšete do hranatých závorek
+              [A].
             </p>
             <p>
               Změny se automaticky ukládají, nebo je můžete uložit ručně
@@ -338,14 +336,16 @@ class EditSong extends React.Component<
               refrénů víc <b>R1:</b>, <b>R2:</b> atd
             </p>
             <p>
-              To že se sloka nevytuční je v pořádku - hlavně že se to zobrazí
-              správně v náhledu (vpravo)
-            </p>
-            <p>
               Pokud potřebujete udělat oddělovač stran tak napište{' '}
               <b>---&nbsp;page&nbsp;break&nbsp;---</b>
             </p>
             <p>Hodně štěstí a díky za pomoc</p>
+          </Help>
+          <Help title="cheaty">
+            Script pro extrakci textu z{' '}
+            <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
+            <br />
+            <Code text={nakytarushonzou} />
           </Help>
         </div>
         {this.state.preview && (
@@ -365,14 +365,9 @@ class EditSong extends React.Component<
     )
   }
 }
-export default ({ id }: { id: string }) => (
-  <Song id={id}>
-    {song =>
-      song && (
-        <Refetch>
-          {refetch => <EditSong song={song} refetch={refetch} />}
-        </Refetch>
-      )
-    }
-  </Song>
-)
+export default errorBoundary(({ id }: { id: string }) => {
+  const { value, reload } = useSong(id)
+  if (!value) return <div>Načítám...</div>
+  console.log(value)
+  return <EditSong song={value} refetch={reload} />
+})

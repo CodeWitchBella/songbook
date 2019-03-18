@@ -1,7 +1,8 @@
 import React from 'react'
-import { Song } from 'containers/store/store'
 import PDF from 'components/pdf'
 import styled from '@emotion/styled'
+import { errorBoundary } from 'containers/error-boundary'
+import { useSong } from 'store/song-provider'
 
 const Style = styled.div`
   &,
@@ -15,14 +16,12 @@ const Style = styled.div`
   }
 `
 
-export default ({ id }: { id: string }) => (
-  <Song id={id}>
-    {song =>
-      song && (
-        <Style>
-          <PDF song={song} />
-        </Style>
-      )
-    }
-  </Song>
-)
+export default errorBoundary(({ id }: { id: string }) => {
+  const { value } = useSong(id)
+  if (!value) return <div>Načítám píseň...</div>
+  return (
+    <Style>
+      <PDF song={value} />
+    </Style>
+  )
+})

@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@azure/storage-blob": "^10.3.0",
     "@emotion/core": "^10.0.7",
     "@emotion/styled": "^10.0.7",
     "@react-pdf/renderer": "^1.4.0",
     "@types/raven-js": "^3.10.0",
-    "@types/react": "^16.8.4",
+    "@types/react": "^16.8.5",
     "@types/react-dom": "^16.8.2",
     "@types/react-loadable": "^5.5.0",
     "@types/react-router": "^4.4.4",
     "@types/react-router-dom": "^4.3.1",
+    "@typescript-eslint/parser": "^1.4.2",
     "emotion": "^10.0.7",
+    "eslint-plugin-emotion": "^10.0.7",
     "http-proxy-middleware": "^0.19.1",
     "localforage": "^1.7.3",
     "quill": "^1.3.6",
@@ -24,15 +27,16 @@
     "react-loadable": "^5.5.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.5",
-    "typescript": "^3.3.3333",
-    "typescript-eslint-parser": "^22.0.0"
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "start": "NODE_PATH=src react-scripts start",
     "build": "NODE_PATH=src react-scripts build",
     "test": "NODE_PATH=src react-scripts test",
     "eject": "NODE_PATH=src react-scripts eject",
-    "lint": "eslint --ext ts --ext tsx --cache src"
+    "lint": "eslint --ext ts --ext tsx --cache src",
+    "upload": "az storage blob upload-batch -s build/ -d \\$web --account-name songbook",
+    "deploy": "npm run build && npm run upload"
   },
   "eslintConfig": {
     "extends": "react-app"

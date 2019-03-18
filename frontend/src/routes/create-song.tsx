@@ -1,7 +1,15 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { newSong } from 'containers/store/fetchers'
-import Input from 'components/input'
+import Input, { LargeInput } from 'components/input'
+import { errorBoundary } from 'containers/error-boundary'
+import { newSong } from 'store/fetchers'
+import Button from 'components/button'
+
+const FormWrap = styled.div({
+  display: 'flex',
+  justifyContent: 'center',
+  marginTop: '50px',
+})
 
 const Form = styled.form`
   display: flex;
@@ -11,7 +19,6 @@ const Form = styled.form`
 
 type State = {
   author: string
-  tags: string
   title: string
   disabled: boolean
 }
@@ -19,34 +26,24 @@ type State = {
 class CreateSong extends React.Component<{}, State> {
   state: State = {
     author: '',
-    tags: '',
     title: '',
     disabled: false,
   }
   submit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
-    const { author, tags, title, disabled } = this.state
+    const { author, title, disabled } = this.state
     console.log('submit before check', this.state)
     if (!author || !title || disabled) return
     console.log('submit', this.state)
     this.setState({ disabled })
     newSong({
-      song: {
-        author,
-        title,
-        tags: tags
-          .split(',')
-          .map(t => t.trim())
-          .filter(t => t !== 'todo')
-          .concat(['todo']),
-        metadata: {},
-        textWithChords: 'Here be dragons...',
-      },
+      author,
+      title,
     })
       .then(ret => {
         console.log('result', ret)
-        if (!ret || !ret.newSong) throw new Error('newSong failed')
-        window.location.pathname = `/edit/${ret.newSong}`
+        if (!ret) throw new Error('newSong failed')
+        window.location.pathname = `/edit/${ret}`
       })
       .catch(e => {
         console.error(e)
@@ -55,30 +52,26 @@ class CreateSong extends React.Component<{}, State> {
   }
 
   authorChange = (val: string) => this.setState({ author: val })
-  tagsChange = (val: string) => this.setState({ tags: val })
   titleChange = (val: string) => this.setState({ title: val })
 
   render() {
     return (
-      <Form onSubmit={this.submit}>
-        <Input
-          label="Autor"
-          value={this.state.author}
-          onChange={this.authorChange}
-        />
-        <Input
-          label="Jméno songu"
-          value={this.state.title}
-          onChange={this.titleChange}
-        />
-        <Input
-          label="Tagy"
-          value={this.state.tags}
-          onChange={this.tagsChange}
-        />
-        <button disabled={this.state.disabled}>Vytvořit</button>
-      </Form>
+      <FormWrap>
+        <Form onSubmit={this.submit}>
+          <LargeInput
+            label="Autor písně"
+            value={this.state.author}
+            onChange={this.authorChange}
+          />
+          <LargeInput
+            label="Jméno písně"
+            value={this.state.title}
+            onChange={this.titleChange}
+          />
+          <Button disabled={this.state.disabled}>Vytvořit</Button>
+        </Form>
+      </FormWrap>
     )
   }
 }
-export default CreateSong
+export default errorBoundary(CreateSong)

@@ -1,43 +1,57 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import React, { Suspense } from 'react'
-import { injectGlobal, cache } from 'emotion'
+import { cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
-import { StoreProvider } from 'containers/store/store'
-//import printSongbook from 'pdf/songbook'
+import { SongListProvider } from 'store/list-provider'
 import { InstallProvider } from 'components/install'
-import { CacheProvider } from '@emotion/core'
+import { CacheProvider, css, Global } from '@emotion/core'
+import { SongProvider } from 'store/song-provider'
+import OutlineHandler from 'utils/outline-handler'
+import ErrorBoundary from 'containers/error-boundary'
 
-// eslint-disable-next-line no-unused-expressions
-injectGlobal`
-  html, body, #root {
-    font-family: Cantarell;
-    font-size: 2.542mm;
-    margin: 0;
-    padding: 0;
-    @media not print {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  #root {
-    @media not print {
-      overflow: auto;
-    }
-  }
-`
-
-//printSongbook([])
+export const InjectGlobal = () => (
+  <Global
+    styles={css`
+      html,
+      body,
+      #root {
+        font-family: Cantarell;
+        font-size: 2.542mm;
+        margin: 0;
+        padding: 0;
+        @media not print {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      #root {
+        @media not print {
+          overflow: auto;
+        }
+      }
+    `}
+  />
+)
 
 export default () => (
-  <Suspense fallback={<div>Načítám...</div>}>
+  <React.Fragment>
+    <OutlineHandler />
     <CacheProvider value={cache}>
-      <InstallProvider>
-        <StoreProvider>
-          <PrintPreviewProvider>
-            <Routes />
-          </PrintPreviewProvider>
-        </StoreProvider>
-      </InstallProvider>
+      <SongListProvider>
+        <SongProvider>
+          <InstallProvider>
+            <PrintPreviewProvider>
+              <Suspense fallback={<div>Načítám...</div>}>
+                <ErrorBoundary>
+                  <Routes />
+                </ErrorBoundary>
+              </Suspense>
+            </PrintPreviewProvider>
+          </InstallProvider>
+        </SongProvider>
+      </SongListProvider>
     </CacheProvider>
-  </Suspense>
+  </React.Fragment>
 )
