@@ -1,4 +1,6 @@
-import React from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import React, { useRef } from 'react'
 import styled from '@emotion/styled'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
@@ -61,12 +63,34 @@ const HideHelpButton = styled.button`
   display: block;
 `
 
-const Help: React.SFC<{}> = ({ children }) => (
+const Code = ({ text }: { text: string }) => {
+  const ref = useRef<HTMLTextAreaElement>(null)
+  return (
+    <code
+      onClick={() => {
+        const area = ref.current
+        if (area) {
+          area.select()
+          document.execCommand('copy')
+        }
+      }}
+    >
+      <textarea
+        ref={ref}
+        value={text}
+        readOnly
+        css={{ width: '100%', border: 0 }}
+      />
+    </code>
+  )
+}
+
+const Help: React.SFC<{ title?: string }> = ({ children, title }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
       <HelpWrap>
         <HideHelpButton onClick={toggle}>
-          {toggled ? 'Skrýt' : 'Zobrazit'} nápovědu
+          {toggled ? 'Skrýt' : 'Zobrazit'} {title || 'nápovědu'}
         </HideHelpButton>
         {toggled && children}
       </HelpWrap>
@@ -121,6 +145,12 @@ const IFrameSizer = styled.div`
     height: 100%;
   }
 `
+
+const nakytarushonzou = `
+var content = document.querySelector('.pisnicka_content font')
+Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+sup.innerText+']')
+copy(content.innerText)
+`.trim()
 
 class EditSong extends React.Component<
   {
@@ -310,6 +340,12 @@ class EditSong extends React.Component<
               <b>---&nbsp;page&nbsp;break&nbsp;---</b>
             </p>
             <p>Hodně štěstí a díky za pomoc</p>
+          </Help>
+          <Help title="cheaty">
+            Script pro extrakci textu z{' '}
+            <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
+            <br />
+            <Code text={nakytarushonzou} />
           </Help>
         </div>
         {this.state.preview && (
