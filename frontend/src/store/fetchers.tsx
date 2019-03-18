@@ -1,5 +1,6 @@
+const enableLocalhostBackend = false
 const url =
-  window.location.hostname === 'localhost'
+  window.location.hostname === 'localhost' && enableLocalhostBackend
     ? 'http://localhost:7071/api/graphql'
     : 'https://songbook-fn.azurewebsites.net/api/graphql'
 

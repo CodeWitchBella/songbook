@@ -8,8 +8,7 @@ const handler = server.createHandler({
   cors: {
     origin: [
       'http://localhost:3000',
-      'https://zpevnik.skorepova.info',
-      'https://zpevnik-azure.skorepova.info',
+      // everything else is missing here, because it is configured through GUI
     ],
     credentials: true,
     maxAge: 3600,
