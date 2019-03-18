@@ -6,7 +6,7 @@ import { errorBoundary } from 'containers/error-boundary'
 const SongRoute = ({ id }: { id: string }) => (
   <main>
     <ScrollToTopOnMount />
-    <Song id={id} share enableSpotify />
+    <Song id={id} share enableMenu />
   </main>
 )
 export default errorBoundary(SongRoute)
