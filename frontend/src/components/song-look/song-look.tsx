@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
@@ -35,7 +35,43 @@ const Chord = styled.span`
   width: 100vw;
 `
 
-const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
+const notes = [
+  ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'H'],
+  ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'B', 'H'],
+]
+
+function remainder(num: number, div: number) {
+  while (num < 0) num += div
+  while (num >= div) num -= div
+  return num
+}
+
+function transposeChord(tag: string, transposition: number) {
+  for (const list of notes) {
+    let idx = 0
+    for (const note of list) {
+      if (tag.startsWith(note))
+        return tag.replace(
+          note,
+          list[remainder(idx + transposition, list.length)],
+        )
+      idx += 1
+    }
+  }
+  return tag
+}
+
+function transposeChords(tags: string, transposition: number) {
+  return tags
+    .split(/ /)
+    .map(t => transposeChord(t, transposition))
+    .join(' ')
+}
+
+const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
+  children,
+  transposition,
+}) => {
   const parsed = children
   const hasChords = parsed.content.some(p => !!p.ch)
   return (
@@ -49,10 +85,12 @@ const Line: React.SFC<{ children: parser.Line }> = ({ children }) => {
       {parsed.content.map((l, i, list) => (
         <span key={i}>
           {l.ch && l.ch.startsWith('_') ? (
-            <Chord sp>{l.ch.substring(1)}</Chord>
+            <Chord sp>
+              {transposeChords(l.ch.substring(1), transposition)}
+            </Chord>
           ) : (
             <Chord sp={i === list.length - 1 && l.text.trim() === ''}>
-              {l.ch}
+              {transposeChords(l.ch, transposition)}
             </Chord>
           )}
           {l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')}
@@ -67,13 +105,16 @@ const paragraph = (paragraphSpace: number) => css`
   margin-bottom: ${paragraphSpace}em;
 `
 
-const Paragraph: React.SFC<{ children: parser.Paragraph; song: SongType }> = ({
-  children,
-  song,
-}) => (
+const Paragraph: React.SFC<{
+  children: parser.Paragraph
+  song: SongType
+  transposition: number
+}> = ({ children, song, transposition }) => (
   <div className={paragraph(song.metadata.paragraphSpace || 1)}>
     {children.map((c, i) => (
-      <Line key={i}>{c}</Line>
+      <Line key={i} transposition={transposition}>
+        {c}
+      </Line>
     ))}
   </div>
 )
@@ -117,9 +158,11 @@ export const SongPage = ({
   pageData,
   noEdit = false,
   share = false,
+  transposition = 0,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
+  transposition?: number
   number?: number
   pageNumber?: number
   noEdit?: boolean
@@ -148,7 +191,7 @@ export const SongPage = ({
     />
     <div className={fontSize(song.metadata.fontSize || 1)}>
       {pageData.map((p, i) => (
-        <Paragraph song={song} key={i}>
+        <Paragraph song={song} key={i} transposition={transposition}>
           {p}
         </Paragraph>
       ))}
@@ -161,11 +204,13 @@ export const SongLook = ({
   parsed,
   noEdit = false,
   share = false,
+  transposition = 0,
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
   noEdit?: boolean
   share?: boolean
+  transposition?: number
 }) => {
   const content = (
     <>
@@ -182,6 +227,7 @@ export const SongLook = ({
           }}
           noEdit={noEdit}
           share={share}
+          transposition={transposition}
         />
       ))}
     </>

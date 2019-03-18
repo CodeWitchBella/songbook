@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, Interpolation } from '@emotion/core'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps } from 'react-router-dom'
 import { PlayButton, Burger, EditButton } from './song-menu-icons'
@@ -53,6 +53,10 @@ export default function SongMenu({
   showSpotify: boolean
 }) {
   const [open, setOpen] = useState(false)
+  useEffect(() => {
+    if (transposition >= 12) setTransposition(transposition - 12)
+    else if (transposition <= -12) setTransposition(transposition + 12)
+  })
   if (open) {
     return (
       <MenuWrap>

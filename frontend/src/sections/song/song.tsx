@@ -92,6 +92,7 @@ const SongSection = ({
               share={share}
               song={song}
               parsed={parser.parseSong(song.textWithChords)}
+              transposition={transposition}
             />
             {enableMenu && (
               <SongMenu
