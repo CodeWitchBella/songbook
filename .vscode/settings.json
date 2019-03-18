@@ -11,5 +11,7 @@
       "autoFix": true
     }
   ],
-  "prettier.requireConfig": true
+  "prettier.requireConfig": true,
+  "azureFunctions.projectLanguage": "JavaScript",
+  "azureFunctions.projectRuntime": "~2"
 }

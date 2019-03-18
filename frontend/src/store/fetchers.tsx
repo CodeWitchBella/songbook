@@ -1,4 +1,7 @@
-const url = 'http://localhost:7071/api/graphql'
+const url =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:7071/api/graphql'
+    : 'https://songbook-fn.azurewebsites.net/api/graphql'
 
 function graphqlFetch(query: string, variables: any) {
   return fetch(url, {

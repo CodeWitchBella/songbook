@@ -6,7 +6,11 @@ const server = new ApolloServer(config)
 
 const handler = server.createHandler({
   cors: {
-    origin: ['http://localhost:3000', 'https://zpevnik.skorepova.info'],
+    origin: [
+      'http://localhost:3000',
+      'https://zpevnik.skorepova.info',
+      'https://zpevnik-azure.skorepova.info',
+    ],
     credentials: true,
     maxAge: 3600,
   },
