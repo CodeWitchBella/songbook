@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server'
-import { writeBlob, blobExists, rewriteBlob } from './blobs'
+import { writeBlob, rewriteBlob } from './blobs'
 import latinize from 'latinize'
 
 function sanitizeSongId(part: string) {
