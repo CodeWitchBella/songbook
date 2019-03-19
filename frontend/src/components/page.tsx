@@ -8,7 +8,6 @@ const sizer = (print: boolean) => css`
   @media not print {
     position: relative;
     display: flex;
-    width: 100%;
     height: 100vh;
     justify-content: center;
     align-items: center;

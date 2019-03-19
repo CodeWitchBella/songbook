@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import React, { useState } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
@@ -66,12 +68,20 @@ const SongSection = ({
         )
         return (
           <>
-            <SongLook
-              share={share}
-              song={song}
-              parsed={parser.parseSong(song.textWithChords)}
-              transposition={transposition}
-            />
+            <div
+              css={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
+              <SongLook
+                share={share}
+                song={song}
+                parsed={parser.parseSong(song.textWithChords)}
+                transposition={transposition}
+              />
+            </div>
             {enableMenu && (
               <SongMenu
                 songId={id}

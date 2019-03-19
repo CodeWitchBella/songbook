@@ -5,6 +5,9 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-03-18">
+      <li>Stránky písně se zobrazují vedle sebe, pokud je dost místa</li>
+    </Entry>
+    <Entry date="2019-03-18">
       <li>Přidáno transponování</li>
       <li>
         Zmigrováno k Azure
