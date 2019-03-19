@@ -19,42 +19,20 @@ const SpotifyWrap = styled.div`
   pointer-events: none;
 `
 
-const SpotifyButton = styled.button`
-  pointer-events: all;
-  width: 80px;
-  height: 80px;
-  background: white;
-  font-size: 40px;
-  border: 1px solid black;
-  :hover {
-    background: #eee;
-  }
-`
-
 class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
-  state = { visible: false }
-  toggle = () =>
-    this.setState(st => ({
-      visible: !st.visible,
-    }))
   render() {
     const parts = this.props.link.split('/')
     return (
       <SpotifyWrap>
-        {this.state.visible && (
-          <IFrame
-            src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
-              parts[parts.length - 1]
-            }`}
-            height="80"
-            frameBorder="0"
-            allowtransparency="true"
-            allow="encrypted-media"
-          />
-        )}
-        <SpotifyButton type="button" onClick={this.toggle}>
-          {this.state.visible ? '⛌' : '⏯'}
-        </SpotifyButton>
+        <IFrame
+          src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
+            parts[parts.length - 1]
+          }`}
+          height="80"
+          frameBorder="0"
+          allowtransparency="true"
+          allow="encrypted-media"
+        />
       </SpotifyWrap>
     )
   }
