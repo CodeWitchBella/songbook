@@ -365,7 +365,7 @@ class EditSong extends React.Component<
               <SongLook
                 song={this.result()}
                 parsed={parser.parseSong(this.state.textWithChords)}
-                noEdit
+                noBack
               />
             )}
           </IFrameSizer>

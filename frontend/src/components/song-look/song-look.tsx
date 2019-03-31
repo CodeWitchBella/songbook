@@ -1,14 +1,13 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { useEffect, PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from 'react'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
-import { Link } from 'react-router-dom'
-import ShareButton from 'components/song-look/share-button'
+import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 type SongType = Pick<any, 'author' | 'id' | 'metadata' | 'title'>
 
@@ -137,9 +136,9 @@ const fontSize = (size: number) =>
     font-size: ${size}em;
   `
 
-const EditButtonContainer = styled.div`
+const BackButtonContainer = styled.div`
   position: absolute;
-  right: 0;
+
   display: flex;
   justify-content: right;
   margin-top: -0.5em;
@@ -148,29 +147,43 @@ const EditButtonContainer = styled.div`
     display: none;
   }
 `
-const EditButton = styled(Link)({
-  display: 'block',
-  color: 'darkblue',
-  marginLeft: '10px',
-})
 
-const shareButton = css`
-  width: 100%;
-  height: 0;
-  display: flex;
-  justify-content: center;
-  @media print {
-    display: none;
-  }
-`
+function BackButtonImpl({
+  children,
+  history,
+}: PropsWithChildren<RouteComponentProps<any>>) {
+  return (
+    <button
+      css={{
+        all: 'unset',
+        display: 'block',
+        color: 'darkblue',
+        marginRight: '10px',
+        textDecoration: 'underline',
+        ':hover': {
+          fontWeight: 'bold',
+          textDecoration: 'none',
+        },
+      }}
+      type="button"
+      onClick={() => {
+        if (history.length > 1) history.goBack()
+        else history.push('/')
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+const BackButton = withRouter(BackButtonImpl)
 
 export const SongPage = ({
   song,
   number,
   pageNumber,
   pageData,
-  noEdit = false,
-  share = false,
+  noBack = false,
   transposition = 0,
 }: {
   song: SongType
@@ -178,22 +191,15 @@ export const SongPage = ({
   transposition?: number
   number?: number
   pageNumber?: number
-  noEdit?: boolean
-  share?: boolean
+  noBack?: boolean
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
     <AudioControls />
-    {share && (
-      <ShareButton
-        title={`${song.title} - ${song.author}`}
-        className={shareButton}
-      />
-    )}
-    {noEdit ? null : (
-      <EditButtonContainer>
-        <EditButton to={`/edit/${song.id}`}>Upravit</EditButton>
-        <EditButton to={`/pdf/${song.id}`}>PDF</EditButton>
-      </EditButtonContainer>
+
+    {noBack ? null : (
+      <BackButtonContainer>
+        <BackButton>Zpět</BackButton>
+      </BackButtonContainer>
     )}
     <SongHeader
       titleSpace={song.metadata.titleSpace}
@@ -215,14 +221,12 @@ export const SongPage = ({
 export const SongLook = ({
   song,
   parsed,
-  noEdit = false,
-  share = false,
+  noBack = false,
   transposition = 0,
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
-  noEdit?: boolean
-  share?: boolean
+  noBack?: boolean
   transposition?: number
 }) => {
   const content = (
@@ -238,8 +242,7 @@ export const SongLook = ({
                 ? `${song.title} (${i + 1}/${parsed.length})`
                 : song.title,
           }}
-          noEdit={noEdit}
-          share={share}
+          noBack={noBack}
           transposition={transposition}
         />
       ))}

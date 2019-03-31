@@ -11,6 +11,8 @@ const Changelog = () => (
       </li>
       <li>Opraveno řazení písní pokud se změní její název</li>
       <li>Fulltextové vyhledávání</li>
+      <li>Odstraněny horní odkazy</li>
+      <li>Přidáno tlačítko zpět</li>
     </Entry>
     <Entry date="2019-03-19">
       <li>Stránky písně se zobrazují vedle sebe, pokud je dost místa</li>

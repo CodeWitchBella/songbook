@@ -47,11 +47,9 @@ function queryJoin(path: string, query: string) {
 
 const SongSection = ({
   id,
-  share = false,
   enableMenu = false,
 }: {
   id: string
-  share?: boolean
   enableMenu?: boolean
 }) => {
   const theSong = useSong(id)
@@ -77,7 +75,6 @@ const SongSection = ({
               }}
             >
               <SongLook
-                share={share}
                 song={song}
                 parsed={parser.parseSong(song.textWithChords)}
                 transposition={transposition}
