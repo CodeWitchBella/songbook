@@ -4,8 +4,8 @@ import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
-import { useSongList } from 'store/list-provider'
-import { useSong, suspendUntilInitialized } from 'store/song-provider'
+import { useSongList } from 'store/store'
+import { useSong } from 'store/store'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -14,11 +14,11 @@ const columns = (n: number) => (p: { count: number }) => css`
   }
 `
 
-const ListContainer = styled.div`
+const ListContainer = styled('div')<{ count: number }>`
   display: grid;
   grid-template-columns: repeat(1, 100%);
   grid-template-rows: repeat(
-    ${(props: { count: number }) => Math.ceil(props.count / 1)},
+    ${props => Math.ceil(props.count / 1)},
     auto
   );
 
@@ -89,20 +89,16 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
-const Song = ({
-  name,
-  lastModified,
-}: {
-  name: string
-  lastModified: number
-}) => {
-  const { value } = useSong(name, lastModified)
+const Song = ({ name }: { name: string }) => {
+  const song = useSong(name)
+  if (!song) return null
+  const { data } = song
   return (
     <TheSong>
       <Link to={`/song/${name}`}>
-        {value ? (
+        {data ? (
           <>
-            {value.title} - {value.author}
+            {data.title} - {data.author}
           </>
         ) : (
           <></>
@@ -157,26 +153,23 @@ function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
 
-const searchSong = (text: string) => (s: { name: string }) => {
+const searchSong = (text: string) => (s: { id: string }) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => toComparable(`${s.name}`).includes(t))
+    .every(t => toComparable(`${s.id}`).includes(t))
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const songs = useSongList()
-  suspendUntilInitialized()
   return (
     <Search>
       {({ text, render }) => {
         const filtered = songs
           .filter(searchSong(text))
-          .map(s => (
-            <Song key={s.name} name={s.name} lastModified={s.lastModified} />
-          ))
+          .map(s => <Song key={s.id} name={s.id} />)
         return (
           <PageNav>
             <TheSearch>{render()}</TheSearch>

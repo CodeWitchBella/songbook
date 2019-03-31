@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
-import { useSong } from 'store/song-provider'
+import { useSong } from 'store/store'
 import SongMenu from 'components/song-look/song-menu'
 import { Route } from 'react-router-dom'
 import queryString from 'query-string'
@@ -54,7 +54,8 @@ const SongSection = ({
   share?: boolean
   enableMenu?: boolean
 }) => {
-  const song = useSong(id).value
+  const theSong = useSong(id)
+  const song = theSong ? theSong.data : null
   const [spotifyVisible, setSpotifyVisible] = useState(false)
 
   return !song ? null : (

@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
-import React, { useRef } from 'react'
+import { jsx, css } from '@emotion/core'
+import React, { useRef, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
@@ -10,7 +10,7 @@ import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
 import { writeSong } from 'store/fetchers'
-import { useSong } from 'store/song-provider'
+import { useSong } from 'store/store'
 import { Song } from 'store/parse-song-file'
 
 const Form = styled.form`
@@ -45,12 +45,21 @@ const Textarea = ({
   />
 )
 
-const Columns = styled.div`
-  display: flex;
-  > * {
-    width: ${(props: { number: number }) => 100 / props.number}%;
-  }
-`
+const Columns = ({
+  children,
+  number,
+}: PropsWithChildren<{ number: number }>) => (
+  <div
+    css={css`
+      display: flex;
+      > * {
+        width: ${100 / number}%;
+      }
+    `}
+  >
+    {children}
+  </div>
+)
 
 const HelpWrap = styled.div`
   font-size: 18px;
@@ -366,8 +375,9 @@ class EditSong extends React.Component<
   }
 }
 export default errorBoundary(({ id }: { id: string }) => {
-  const { value, reload } = useSong(id)
-  if (!value) return <div>Načítám...</div>
-  console.log(value)
-  return <EditSong song={value} refetch={reload} />
+  const song = useSong(id)
+  if (!song) return <div>Píseň nenalezena</div>
+  const { data } = song
+  if (!data) return <div>Načítám...</div>
+  return <EditSong song={data} refetch={song.reload} />
 })

@@ -4,39 +4,31 @@ import TitlePage from 'sections/title-page/title-page'
 import { parseSong, Paragraph } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { AudioProvider } from 'components/song-look/audio-player'
-import { useSongList } from 'store/list-provider'
-import { useSong } from 'store/song-provider'
+import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
 
-function Song({
-  name,
-  number,
-  lastModified,
-}: {
-  name: string
-  number: number
-  lastModified: number
-}) {
-  const { value } = useSong(name, lastModified)
-  if (!value) return null
-  const parsed = parseSong(value.textWithChords)
+function Song({ name, number }: { name: string; number: number }) {
+  const song = useSong(name)
+  if (!song || !song.data) return null
+  const { data } = song
+  const parsed = parseSong(data.textWithChords)
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}
       song={{
-        title: value.title,
-        metadata: value.metadata,
-        id: value.id,
-        author: value.author,
+        title: data.title,
+        metadata: data.metadata,
+        id: data.id,
+        author: data.author,
       }}
       number={number + 1}
       pageNumber={number /* FIXME */}
       key={i}
     />
   ))
-  if (value.metadata.audio) {
+  if (data.metadata.audio) {
     return (
-      <AudioProvider key={value.id} src={value.metadata.audio}>
+      <AudioProvider key={data.id} src={data.metadata.audio}>
         {content}
       </AudioProvider>
     )
@@ -55,12 +47,7 @@ const Print = ({ tag }: { tag: string }) => {
       <TitlePage image={tagMeta.cover || undefined} />
       <main>
         {songList.map((song, i) => (
-          <Song
-            name={song.name}
-            lastModified={song.lastModified}
-            number={i}
-            key={i}
-          />
+          <Song name={song.id} number={i} key={song.id} />
         ))}
       </main>
       <Contents list={songList as any /* FIXME */} left />

@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import React, { useEffect, PropsWithChildren } from 'react'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
@@ -26,14 +28,19 @@ const line = (hasChords: boolean) =>
         vertical-align: baseline;
       `
 
-const Chord = styled.span`
-  position: ${(props: { sp?: boolean }) =>
-    props.sp ? 'relative' : 'absolute'};
-  transform: translateY(-1em);
-  top: ${({ sp }) => (sp ? '-1em' : undefined)};
-  font-weight: bold;
-  width: 100vw;
-`
+const Chord = ({ children, sp }: PropsWithChildren<{ sp?: boolean }>) => (
+  <span
+    css={css`
+      position: ${sp ? 'relative' : 'absolute'};
+      transform: translateY(-1em);
+      top: ${sp ? '-1em' : undefined};
+      font-weight: bold;
+      width: 100vw;
+    `}
+  >
+    {children}
+  </span>
+)
 
 const notes = [
   ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'H'],

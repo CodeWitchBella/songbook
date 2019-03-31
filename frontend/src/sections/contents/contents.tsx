@@ -22,8 +22,8 @@ const Counter = styled.div`
   padding-right: 0.2em;
 `
 
-const Spacer = styled.div`
-  height: ${({ space }: { space: string }) => space};
+const Spacer = styled.div<{ space: string }>`
+  height: ${({ space }) => space};
 `
 
 const mapSong = (offset: number = 0) => (song: Song, i: number) => (

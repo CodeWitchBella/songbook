@@ -4,12 +4,11 @@ import React, { Suspense } from 'react'
 import { cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
-import { SongListProvider } from 'store/list-provider'
 import { InstallProvider } from 'components/install'
 import { CacheProvider, css, Global } from '@emotion/core'
-import { SongProvider } from 'store/song-provider'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
+import { StoreProvider } from 'store/store'
 
 export const InjectGlobal = () => (
   <Global
@@ -39,19 +38,17 @@ export default () => (
   <React.Fragment>
     <OutlineHandler />
     <CacheProvider value={cache}>
-      <SongListProvider>
-        <SongProvider>
-          <InstallProvider>
-            <PrintPreviewProvider>
-              <Suspense fallback={<div>Načítám...</div>}>
-                <ErrorBoundary>
-                  <Routes />
-                </ErrorBoundary>
-              </Suspense>
-            </PrintPreviewProvider>
-          </InstallProvider>
-        </SongProvider>
-      </SongListProvider>
+      <StoreProvider>
+        <InstallProvider>
+          <PrintPreviewProvider>
+            <Suspense fallback={<div>Načítám...</div>}>
+              <ErrorBoundary>
+                <Routes />
+              </ErrorBoundary>
+            </Suspense>
+          </PrintPreviewProvider>
+        </InstallProvider>
+      </StoreProvider>
     </CacheProvider>
   </React.Fragment>
 )

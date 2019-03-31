@@ -22,7 +22,7 @@ const containerURL = (() => {
 })()
 
 export async function listSongs() {
-  const list = [] as { name: string; lastModified: number }[]
+  const list = [] as { id: string; lastModified: number }[]
   let marker: string | undefined = undefined
   do {
     type Resp = Models.ContainerListBlobFlatSegmentResponse
@@ -35,7 +35,7 @@ export async function listSongs() {
     for (const blob of resp.segment.blobItems) {
       if (!/\.song$/.test(blob.name)) continue
       list.push({
-        name: blob.name,
+        id: blob.name,
         lastModified: blob.properties.lastModified.getTime(),
       })
     }
@@ -70,9 +70,7 @@ function pfinally<T extends {}>(
 }
 
 let promise = Promise.resolve<any>(null)
-export function downloadSong(
-  name: string,
-): ReturnType<typeof downloadSongImpl> {
-  promise = pfinally(promise, () => downloadSongImpl(name))
+export function downloadSong(id: string): ReturnType<typeof downloadSongImpl> {
+  promise = pfinally(promise, () => downloadSongImpl(id))
   return promise
 }
