@@ -24,6 +24,8 @@ export type SongWithData = SongWithoutData & { data: SongData }
 
 type SongStore = { list: (SongBase & { data: SongData | null })[] }
 
+const localForageKey = 'store'
+
 class Store {
   private songMap = new Map<string, Song>()
   private _setSong(
@@ -60,7 +62,7 @@ class Store {
     this.recache = false
     new Promise(resolve => setTimeout(resolve, 1000))
       .then(() =>
-        localForage.setItem<SongStore>('store', {
+        localForage.setItem<SongStore>(localForageKey, {
           list: Array.from(this.songMap.values()).map(song => ({
             id: song.id,
             lastModified: song.lastModified,
@@ -78,7 +80,7 @@ class Store {
   loading = true
   init() {
     localForage
-      .getItem<SongStore>('store')
+      .getItem<SongStore>(localForageKey)
       .then(cache => {
         console.log('cache', cache)
         if (cache) {
@@ -174,6 +176,13 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
   useEffect(() => {
     store.init()
   }, [store])
+  useEffect(() => {
+    localForage.keys().then(keys =>
+      keys.forEach(key => {
+        if (key !== localForageKey) localForage.removeItem(key)
+      }),
+    )
+  }, [])
   return <context.Provider value={store}>{children}</context.Provider>
 }
 
