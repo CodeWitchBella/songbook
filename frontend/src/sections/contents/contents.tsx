@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/page'
 import styled from '@emotion/styled'
-import { Song } from 'store/parse-song-file'
+import { ParsedSong } from 'store/parse-song-file'
 
 const Container = styled.nav`
   display: flex;
@@ -26,7 +26,7 @@ const Spacer = styled.div<{ space: string }>`
   height: ${({ space }) => space};
 `
 
-const mapSong = (offset: number = 0) => (song: Song, i: number) => (
+const mapSong = (offset: number = 0) => (song: ParsedSong, i: number) => (
   <SongComp key={song.id}>
     <Counter>{i + 1 + offset}.</Counter>
     <div>
@@ -35,7 +35,7 @@ const mapSong = (offset: number = 0) => (song: Song, i: number) => (
   </SongComp>
 )
 
-const Contents = ({ list, left }: { list: Song[]; left?: boolean }) => (
+const Contents = ({ list, left }: { list: ParsedSong[]; left?: boolean }) => (
   <Page left={left}>
     <Container>
       <Col>

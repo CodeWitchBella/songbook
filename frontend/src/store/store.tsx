@@ -7,25 +7,22 @@ import React, {
 } from 'react'
 import localForage from 'localforage'
 import { listSongs, downloadSong } from './azure'
-import { parseSong } from 'utils/parse-song'
-import { parseSongFile } from './parse-song-file'
+import { parseSongFile, ParsedSong } from './parse-song-file'
+
+type SongData = {
+  lastModified: number
+} & ParsedSong
 
 type SongBase = {
   id: string
   lastModified: number
-  data?: {
-    id: string
-    author: string
-    title: string
-    metadata: any
-    textWithChords: string
-    lastModified: number
-  }
 }
 
-type Song = SongBase & { loading: boolean; reload: () => void }
+type SongWithoutData = SongBase & { loading: boolean; reload: () => void }
+export type Song = SongWithoutData & { data: SongData | null }
+export type SongWithData = SongWithoutData & { data: SongData }
 
-type SongStore = { list: SongBase[] }
+type SongStore = { list: (SongBase & { data: SongData | null })[] }
 
 class Store {
   private songMap = new Map<string, Song>()
@@ -33,14 +30,14 @@ class Store {
     id: string,
     song: {
       lastModified: number
-      data?: SongBase['data']
+      data?: SongData
     },
     { save = true, onChange = true } = {},
   ) {
     const prev = this.songMap.get(id)
     this.songMap.set(id, {
       lastModified: song.lastModified,
-      data: song.data || (prev ? prev.data : undefined),
+      data: song.data || (prev ? prev.data : undefined) || null,
       id,
       loading: false,
       reload: () => this._downloadSong(id),

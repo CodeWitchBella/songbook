@@ -11,7 +11,7 @@ import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
 import { writeSong } from 'store/fetchers'
 import { useSong } from 'store/store'
-import { Song } from 'store/parse-song-file'
+import { ParsedSong } from 'store/parse-song-file'
 
 const Form = styled.form`
   display: flex;
@@ -163,7 +163,7 @@ copy(content.innerText)
 
 class EditSong extends React.Component<
   {
-    song: Song
+    song: ParsedSong
     refetch: () => void
   },
   State

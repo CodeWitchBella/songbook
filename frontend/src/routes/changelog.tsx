@@ -4,6 +4,14 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-03-31">
+      <li>Transgender day of visibility</li>
+      <li>
+        Seznam písní by se měl při druhé a další návštěvě načítat rychleji
+      </li>
+      <li>Opraveno řazení písní pokud se změní její název</li>
+      <li>Fulltextové vyhledávání</li>
+    </Entry>
     <Entry date="2019-03-19">
       <li>Stránky písně se zobrazují vedle sebe, pokud je dost místa</li>
     </Entry>

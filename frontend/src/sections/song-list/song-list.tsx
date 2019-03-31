@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { PropsWithChildren, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { css } from '@emotion/core'
-import { useSongList } from 'store/store'
+import { useSongList, Song, SongWithData } from 'store/store'
 import { useSong } from 'store/store'
+import { notNull } from '@codewitchbella/ts-utils'
 
 const columns = (n: number) => (p: { count: number }) => css`
   @media (min-width: ${n * 400}px) {
@@ -45,11 +46,17 @@ const a = css`
 const TheSong = styled.div`
   font-size: 20px;
 
-  a {
+  a,
+  .title {
     display: inline-block;
     padding: 10px;
     color: black;
+  }
+  a {
     ${a};
+  }
+  .title {
+    font-weight: bold;
   }
 `
 
@@ -89,13 +96,13 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
-const Song = ({ name }: { name: string }) => {
-  const song = useSong(name)
+const SongItem = ({ id }: { id: string }) => {
+  const song = useSong(id)
   if (!song) return null
   const { data } = song
   return (
     <TheSong>
-      <Link to={`/song/${name}`}>
+      <Link to={`/song/${id}`}>
         {data ? (
           <>
             {data.title} - {data.author}
@@ -113,6 +120,12 @@ const Song = ({ name }: { name: string }) => {
     </TheSong>
   )
 }
+
+const SearchTitle = ({ children }: PropsWithChildren<{}>) => (
+  <TheSong>
+    <span className="title">{children}</span>
+  </TheSong>
+)
 
 type State = {
   text: string
@@ -153,30 +166,74 @@ function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
 
-const searchSong = (text: string) => (s: { id: string }) => {
+const searchSong = (
+  text: string,
+  field: 'author' | 'title' | 'textWithChords',
+) => (s: Song) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => toComparable(`${s.id}`).includes(t))
+    .every(t => !!s.data && toComparable(s.data[field]).includes(t))
+}
+
+function compareSongs(a: SongWithData, b: SongWithData) {
+  const ret = a.data!.title.localeCompare(b.data!.title)
+  if (ret !== 0) return ret
+  return a.data!.author.localeCompare(b.data!.author)
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
-  const songs = useSongList()
+  const source = useSongList()
+
+  const songs = useMemo(
+    () =>
+      source
+        .filter(s => s.data)
+        .map(s => ({ ...s, data: s.data! }))
+        .sort(compareSongs),
+    [source],
+  )
   return (
     <Search>
       {({ text, render }) => {
-        const filtered = songs
-          .filter(searchSong(text))
-          .map(s => <Song key={s.id} name={s.id} />)
+        const byTitle = songs.filter(searchSong(text, 'title'))
+
+        const byAuthor = text
+          ? songs
+              .filter(searchSong(text, 'author'))
+              .filter(s => !byTitle.includes(s))
+          : []
+        const byText = text
+          ? songs
+              .filter(searchSong(text, 'textWithChords'))
+              .filter(s => !byTitle.includes(s) && !byAuthor.includes(s))
+          : []
+
+        const showTitles = byAuthor.length + byText.length > 0
+
+        const list = [
+          showTitles && byTitle.length > 0 ? (
+            <SearchTitle>Podle názvu</SearchTitle>
+          ) : null,
+          ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
+
+          showTitles && byAuthor.length > 0 ? (
+            <SearchTitle>Podle autora</SearchTitle>
+          ) : null,
+          ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
+
+          showTitles && byText.length > 0 ? (
+            <SearchTitle>Text obsahuje</SearchTitle>
+          ) : null,
+          ...byText.map(s => <SongItem key={s.id} id={s.id} />),
+        ].filter(notNull)
         return (
           <PageNav>
             <TheSearch>{render()}</TheSearch>
             <TopMenu />
-            <ListContainer count={filtered.length + (showPrint ? 1 : 0)}>
-              {filtered}
-            </ListContainer>
+            <ListContainer count={list.length}>{list}</ListContainer>
             {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
           </PageNav>
         )

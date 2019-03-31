@@ -28,4 +28,4 @@ export const parseSongFile = (
   }
   return parseTextSongFile(fname, content)
 }
-export type Song = ReturnType<typeof parseSongFile>
+export type ParsedSong = ReturnType<typeof parseSongFile>
