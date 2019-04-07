@@ -10,5 +10,6 @@ module.exports = {
     'emotion/styled-import': 'error',
     'no-loop-func': 0,
     'react-hooks/exhaustive-deps': 'error',
+    'import/no-webpack-loader-syntax': 0,
   },
 }

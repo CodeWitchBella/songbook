@@ -82,7 +82,6 @@ class Store {
     localForage
       .getItem<SongStore>(localForageKey)
       .then(cache => {
-        console.log('cache', cache)
         if (cache) {
           for (const song of cache.list) {
             // do not save because we just loaded it
@@ -139,7 +138,6 @@ class Store {
     const songsToUpdate = songs.filter(
       song => song.data && song.data.lastModified < song.lastModified,
     )
-    console.log({ songsWithoutData, songsToUpdate })
     // this is here to first download new songs
     const songsToDownload = songsWithoutData.concat(songsToUpdate)
 

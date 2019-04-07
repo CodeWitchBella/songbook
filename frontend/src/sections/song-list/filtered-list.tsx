@@ -1,22 +1,43 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Song } from 'store/store'
-import latinize from 'utils/latinize'
 import { SearchTitle, SongItem, ListContainer } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
+import getFilteredSongList from './alg'
+import SearchWorker from 'worker-loader!./worker.ts'
 
-function toComparable(text: string) {
-  return latinize(text.toLocaleLowerCase())
-}
-const searchSong = (
-  text: string,
-  field: 'author' | 'title' | 'textWithChords',
-) => (s: Song) => {
-  if (!text) return true
-  return toComparable(text)
-    .split(' ')
-    .map(t => t.trim())
-    .filter(t => t)
-    .every(t => !!s.data && toComparable(s.data[field]).includes(t))
+const getWorker = (() => {
+  let worker: null | SearchWorker = null
+  return function getOrCreateWorker() {
+    if (!('Worker' in window)) return null
+    if (!worker) worker = new SearchWorker()
+    return worker!
+  }
+})()
+
+const filteredToComponents = (
+  showTitles: boolean,
+  filtered: ReturnType<typeof getFilteredSongList> | string[],
+) => {
+  if (Array.isArray(filtered)) {
+    return filtered.map(s => <SongItem key={s} id={s} />)
+  }
+
+  return [
+    showTitles && filtered.byTitle.length > 0 ? (
+      <SearchTitle key="title">Podle názvu</SearchTitle>
+    ) : null,
+    ...filtered.byTitle.map(s => <SongItem key={s} id={s} />),
+
+    showTitles && filtered.byAuthor.length > 0 ? (
+      <SearchTitle key="author">Podle autora</SearchTitle>
+    ) : null,
+    ...filtered.byAuthor.map(s => <SongItem key={s} id={s} />),
+
+    showTitles && filtered.byText.length > 0 ? (
+      <SearchTitle key="text">Text obsahuje</SearchTitle>
+    ) : null,
+    ...filtered.byText.map(s => <SongItem key={s} id={s} />),
+  ].filter(notNull)
 }
 
 export default function FilteredList({
@@ -26,50 +47,55 @@ export default function FilteredList({
   search: string
   songs: Song[]
 }) {
-  const getList = useCallback(() => {
-    const used = new Set<string>()
-    const byTitle = songs.filter(searchSong(search, 'title'))
-    byTitle.forEach(s => {
-      used.add(s.id)
-    })
+  const [list, setList] = useState(
+    filteredToComponents(false, songs.map(s => s.id)),
+  )
 
-    const byAuthor = search
-      ? songs.filter(searchSong(search, 'author')).filter(s => !used.has(s.id))
-      : []
-    byAuthor.forEach(s => {
-      used.add(s.id)
-    })
-
-    const byText = search
-      ? songs
-          .filter(searchSong(search, 'textWithChords'))
-          .filter(s => !used.has(s.id))
-      : []
-
-    const showTitles = byAuthor.length + byText.length > 0
-
-    return [
-      showTitles && byTitle.length > 0 ? (
-        <SearchTitle key="title">Podle názvu</SearchTitle>
-      ) : null,
-      ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
-
-      showTitles && byAuthor.length > 0 ? (
-        <SearchTitle key="author">Podle autora</SearchTitle>
-      ) : null,
-      ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
-
-      showTitles && byText.length > 0 ? (
-        <SearchTitle key="text">Text obsahuje</SearchTitle>
-      ) : null,
-      ...byText.map(s => <SongItem key={s.id} id={s.id} />),
-    ].filter(notNull)
-  }, [search, songs])
-
-  const [list, setList] = useState(getList)
+  const worker = getWorker()
   useEffect(() => {
-    setList(getList())
-  }, [getList])
+    if (worker) {
+      const handler = (msg: MessageEvent) => {
+        const { type, value } = msg.data
+        if (type === 'setList') {
+          if (value.search === search) {
+            setList(filteredToComponents(!!search, value.list))
+          }
+        } else {
+          console.warn('Unknown message type ' + type)
+        }
+      }
+      worker.addEventListener('message', handler)
+      return () => worker.removeEventListener('message', handler)
+    }
+    return undefined
+  }, [search, worker])
+
+  useEffect(() => {
+    if (worker) {
+      worker.postMessage({
+        type: 'setSongs',
+        value: songs.map(song => ({
+          data: song.data,
+          id: song.id,
+          lastModified: song.lastModified,
+          loading: song.loading,
+        })),
+      })
+    }
+  }, [songs, worker])
+
+  useEffect(() => {
+    if (!search) {
+      // short-circuit empty search
+      setList(filteredToComponents(false, songs.map(s => s.id)))
+    } else if (worker) {
+      worker.postMessage({ type: 'setSearch', value: search })
+    } else {
+      const filtered = getFilteredSongList(songs, search)
+
+      setList(filteredToComponents(!!search, filtered))
+    }
+  }, [search, songs, worker])
 
   return <ListContainer count={list.length}>{list}</ListContainer>
 }
