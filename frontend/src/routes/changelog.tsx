@@ -4,6 +4,9 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-04-07">
+      <li>Zrychleno vyhledávání</li>
+    </Entry>
     <Entry date="2019-03-31">
       <li>Transgender day of visibility</li>
       <li>
