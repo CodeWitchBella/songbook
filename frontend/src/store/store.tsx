@@ -95,7 +95,9 @@ class Store {
       })
       .then(newSongs => {
         for (const song of newSongs) {
-          this._setSong(song.id, song)
+          const existing = this.songMap.get(song.id)
+          if (!existing || song.lastModified !== existing.lastModified)
+            this._setSong(song.id, song)
         }
       })
       .then(() => {
