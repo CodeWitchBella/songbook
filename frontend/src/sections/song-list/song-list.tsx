@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo } from 'react'
+import React, { PropsWithChildren, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
@@ -131,35 +131,35 @@ type State = {
   text: string
   render: () => React.ReactNode
 }
-class Search extends React.Component<
-  { children: (st: State) => React.ReactNode },
-  State
-> {
-  ref = React.createRef<HTMLInputElement>()
-  state: State = {
-    text: '',
-    render: () => (
-      <form
-        onSubmit={evt => {
-          evt.preventDefault()
-          const ref = this.ref.current
-          if (!ref) return
-          ref.blur()
+
+function Search({
+  text,
+  onChange,
+}: {
+  text: string
+  onChange: (v: string) => void
+}) {
+  const ref = useRef<HTMLInputElement>(null)
+  return (
+    <form
+      onSubmit={evt => {
+        evt.preventDefault()
+        const refc = ref.current
+        if (!refc) return
+        refc.blur()
+      }}
+    >
+      <input
+        ref={ref}
+        onChange={evt => {
+          onChange(evt.target.value)
         }}
-      >
-        <input
-          ref={this.ref}
-          onChange={evt => this.setState({ text: evt.target.value })}
-          value={this.state.text}
-          placeholder="Vyhledávání"
-        />
-        <button style={{ display: 'none' }} />
-      </form>
-    ),
-  }
-  render() {
-    return this.props.children(this.state)
-  }
+        value={text}
+        placeholder="Vyhledávání"
+      />
+      <button style={{ display: 'none' }} />
+    </form>
+  )
 }
 
 function toComparable(text: string) {
@@ -195,50 +195,55 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         .sort(compareSongs),
     [source],
   )
+  const [search, setSearch] = useState('')
+
+  const used = new Set<string>()
+  const byTitle = songs.filter(searchSong(search, 'title'))
+  byTitle.forEach(s => {
+    used.add(s.id)
+  })
+
+  const byAuthor = search
+    ? songs.filter(searchSong(search, 'author')).filter(s => !used.has(s.id))
+    : []
+  byAuthor.forEach(s => {
+    used.add(s.id)
+  })
+
+  const byText = search
+    ? songs
+        .filter(searchSong(search, 'textWithChords'))
+        .filter(s => !used.has(s.id))
+    : []
+
+  const showTitles = byAuthor.length + byText.length > 0
+
+  const list = [
+    showTitles && byTitle.length > 0 ? (
+      <SearchTitle key="title">Podle názvu</SearchTitle>
+    ) : null,
+    ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
+
+    showTitles && byAuthor.length > 0 ? (
+      <SearchTitle key="author">Podle autora</SearchTitle>
+    ) : null,
+    ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
+
+    showTitles && byText.length > 0 ? (
+      <SearchTitle key="text">Text obsahuje</SearchTitle>
+    ) : null,
+    ...byText.map(s => <SongItem key={s.id} id={s.id} />),
+  ].filter(notNull)
+
   return (
-    <Search>
-      {({ text, render }) => {
-        const byTitle = songs.filter(searchSong(text, 'title'))
-
-        const byAuthor = text
-          ? songs
-              .filter(searchSong(text, 'author'))
-              .filter(s => !byTitle.includes(s))
-          : []
-        const byText = text
-          ? songs
-              .filter(searchSong(text, 'textWithChords'))
-              .filter(s => !byTitle.includes(s) && !byAuthor.includes(s))
-          : []
-
-        const showTitles = byAuthor.length + byText.length > 0
-
-        const list = [
-          showTitles && byTitle.length > 0 ? (
-            <SearchTitle>Podle názvu</SearchTitle>
-          ) : null,
-          ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
-
-          showTitles && byAuthor.length > 0 ? (
-            <SearchTitle>Podle autora</SearchTitle>
-          ) : null,
-          ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
-
-          showTitles && byText.length > 0 ? (
-            <SearchTitle>Text obsahuje</SearchTitle>
-          ) : null,
-          ...byText.map(s => <SongItem key={s.id} id={s.id} />),
-        ].filter(notNull)
-        return (
-          <PageNav>
-            <TheSearch>{render()}</TheSearch>
-            <TopMenu />
-            <ListContainer count={list.length}>{list}</ListContainer>
-            {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
-          </PageNav>
-        )
-      }}
-    </Search>
+    <PageNav>
+      <TheSearch>
+        <Search text={search} onChange={setSearch} />
+      </TheSearch>
+      <TopMenu />
+      <ListContainer count={list.length}>{list}</ListContainer>
+      {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
+    </PageNav>
   )
 }
 export default SongList
