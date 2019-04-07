@@ -1,4 +1,11 @@
-import React, { PropsWithChildren, useMemo, useRef, useState } from 'react'
+import React, {
+  PropsWithChildren,
+  useMemo,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import { Link } from 'react-router-dom'
 import latinize from 'utils/latinize'
 import TopMenu from 'components/top-menu'
@@ -127,11 +134,6 @@ const SearchTitle = ({ children }: PropsWithChildren<{}>) => (
   </TheSong>
 )
 
-type State = {
-  text: string
-  render: () => React.ReactNode
-}
-
 function Search({
   text,
   onChange,
@@ -184,6 +186,55 @@ function compareSongs(a: SongWithData, b: SongWithData) {
   return a.data!.author.localeCompare(b.data!.author)
 }
 
+function TheList({ search, songs }: { search: string; songs: Song[] }) {
+  const getList = useCallback(() => {
+    const used = new Set<string>()
+    const byTitle = songs.filter(searchSong(search, 'title'))
+    byTitle.forEach(s => {
+      used.add(s.id)
+    })
+
+    const byAuthor = search
+      ? songs.filter(searchSong(search, 'author')).filter(s => !used.has(s.id))
+      : []
+    byAuthor.forEach(s => {
+      used.add(s.id)
+    })
+
+    const byText = search
+      ? songs
+          .filter(searchSong(search, 'textWithChords'))
+          .filter(s => !used.has(s.id))
+      : []
+
+    const showTitles = byAuthor.length + byText.length > 0
+
+    return [
+      showTitles && byTitle.length > 0 ? (
+        <SearchTitle key="title">Podle názvu</SearchTitle>
+      ) : null,
+      ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
+
+      showTitles && byAuthor.length > 0 ? (
+        <SearchTitle key="author">Podle autora</SearchTitle>
+      ) : null,
+      ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
+
+      showTitles && byText.length > 0 ? (
+        <SearchTitle key="text">Text obsahuje</SearchTitle>
+      ) : null,
+      ...byText.map(s => <SongItem key={s.id} id={s.id} />),
+    ].filter(notNull)
+  }, [search, songs])
+
+  const [list, setList] = useState(getList)
+  useEffect(() => {
+    setList(getList())
+  }, [getList])
+
+  return <ListContainer count={list.length}>{list}</ListContainer>
+}
+
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const source = useSongList()
 
@@ -197,51 +248,13 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   )
   const [search, setSearch] = useState('')
 
-  const used = new Set<string>()
-  const byTitle = songs.filter(searchSong(search, 'title'))
-  byTitle.forEach(s => {
-    used.add(s.id)
-  })
-
-  const byAuthor = search
-    ? songs.filter(searchSong(search, 'author')).filter(s => !used.has(s.id))
-    : []
-  byAuthor.forEach(s => {
-    used.add(s.id)
-  })
-
-  const byText = search
-    ? songs
-        .filter(searchSong(search, 'textWithChords'))
-        .filter(s => !used.has(s.id))
-    : []
-
-  const showTitles = byAuthor.length + byText.length > 0
-
-  const list = [
-    showTitles && byTitle.length > 0 ? (
-      <SearchTitle key="title">Podle názvu</SearchTitle>
-    ) : null,
-    ...byTitle.map(s => <SongItem key={s.id} id={s.id} />),
-
-    showTitles && byAuthor.length > 0 ? (
-      <SearchTitle key="author">Podle autora</SearchTitle>
-    ) : null,
-    ...byAuthor.map(s => <SongItem key={s.id} id={s.id} />),
-
-    showTitles && byText.length > 0 ? (
-      <SearchTitle key="text">Text obsahuje</SearchTitle>
-    ) : null,
-    ...byText.map(s => <SongItem key={s.id} id={s.id} />),
-  ].filter(notNull)
-
   return (
     <PageNav>
       <TheSearch>
         <Search text={search} onChange={setSearch} />
       </TheSearch>
       <TopMenu />
-      <ListContainer count={list.length}>{list}</ListContainer>
+      <TheList songs={songs} search={search} />
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
     </PageNav>
   )
