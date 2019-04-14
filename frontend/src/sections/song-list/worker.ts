@@ -4,17 +4,38 @@ import { Song } from 'store/store'
 let songs: Song[] = []
 let search = ''
 
-declare var self: any
+function onlyCallLast(f: (arg: string) => void) {
+  let calculating = false
+  let shouldRecalculate: false | string = false
+  return (arg: string) => {
+    if (calculating) {
+      shouldRecalculate = origin
+      return
+    }
+    shouldRecalculate = false
+    calculating = true
+    f(arg)
+    if (shouldRecalculate === false) {
+      calculating = false
+    } else {
+      setImmediate(() => {
+        calculating = false
+        if (shouldRecalculate) recalculate(shouldRecalculate)
+      })
+    }
+  }
+}
 
-function recalculate(origin: string) {
+const recalculate = onlyCallLast((origin: string) => {
   ;(postMessage as any)({
     type: 'setList',
     value: {
       search,
+      sourceListLength: songs.length,
       list: getFilteredSongList(songs, search),
     },
   })
-}
+})
 
 onmessage = function(evt) {
   const { type, value } = evt.data

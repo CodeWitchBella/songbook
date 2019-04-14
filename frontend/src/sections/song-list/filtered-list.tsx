@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import { Song } from 'store/store'
 import { SearchTitle, SongItem, ListContainer } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
@@ -14,10 +14,8 @@ const getWorker = (() => {
   }
 })()
 
-const filteredToComponents = (
-  showTitles: boolean,
-  filtered: ReturnType<typeof getFilteredSongList> | string[],
-) => {
+type FilteredList = ReturnType<typeof getFilteredSongList> | string[]
+const filteredToComponents = (showTitles: boolean, filtered: FilteredList) => {
   if (Array.isArray(filtered)) {
     return filtered.map(s => <SongItem key={s} id={s} />)
   }
@@ -47,8 +45,13 @@ export default function FilteredList({
   search: string
   songs: Song[]
 }) {
-  const [list, setList] = useState(
-    filteredToComponents(false, songs.map(s => s.id)),
+  const [list, setList] = useReducer(
+    (
+      _prevState,
+      { showTitles, ids }: { showTitles: boolean; ids: FilteredList },
+    ) => filteredToComponents(showTitles, ids),
+    null,
+    (_arg: null) => filteredToComponents(false, songs.map(s => s.id)),
   )
 
   const worker = getWorker()
@@ -57,8 +60,11 @@ export default function FilteredList({
       const handler = (msg: MessageEvent) => {
         const { type, value } = msg.data
         if (type === 'setList') {
-          if (value.search === search) {
-            setList(filteredToComponents(!!search, value.list))
+          if (
+            value.search === search &&
+            value.sourceListLength === songs.length
+          ) {
+            setList({ showTitles: !!search, ids: value.list })
           }
         } else {
           console.warn('Unknown message type ' + type)
@@ -68,7 +74,7 @@ export default function FilteredList({
       return () => worker.removeEventListener('message', handler)
     }
     return undefined
-  }, [search, worker])
+  }, [search, songs.length, worker])
 
   useEffect(() => {
     if (worker) {
@@ -87,13 +93,12 @@ export default function FilteredList({
   useEffect(() => {
     if (!search) {
       // short-circuit empty search
-      setList(filteredToComponents(false, songs.map(s => s.id)))
+      setList({ showTitles: false, ids: songs.map(s => s.id) })
     } else if (worker) {
       worker.postMessage({ type: 'setSearch', value: search })
     } else {
       const filtered = getFilteredSongList(songs, search)
-
-      setList(filteredToComponents(!!search, filtered))
+      setList({ showTitles: !!search, ids: filtered })
     }
   }, [search, songs, worker])
 

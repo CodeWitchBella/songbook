@@ -87,7 +87,9 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         <Search text={search} onChange={setSearch} />
       </TheSearch>
       <TopMenu />
-      <FilteredList songs={songs} search={search} />
+      {songs.length === 0 ? null : (
+        <FilteredList songs={songs} search={search} />
+      )}
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
     </PageNav>
   )
