@@ -28,7 +28,28 @@ export function newSong(song: {
       : null,
   )
 }
-export function writeSong(song: any) {
+
+function pick(v: { [key: string]: any }, keys: string[]): any {
+  const ret: any = {}
+  for (const k of keys) {
+    if (k in v) ret[k] = v[k]
+  }
+  return ret
+}
+
+export function writeSong(song: {
+  id: string
+  title: string
+  author: string
+  textWithChords: string
+  metadata: {
+    audio?: string
+    fontSize?: number
+    paragraphSpace?: number
+    titleSpace?: number
+    spotify?: string
+  }
+}) {
   return graphqlFetch(
     `
     mutation($input: WriteSongInput!) {
@@ -38,7 +59,19 @@ export function writeSong(song: any) {
       }
     }
   `,
-    { input: { ...song, id: song.id + '.song' } },
+    {
+      input: {
+        ...pick(song, ['title', 'author', 'textWithChords']),
+        metadata: pick(song.metadata, [
+          'audio',
+          'fontSize',
+          'paragraphSpace',
+          'titleSpace',
+          'spotify',
+        ]),
+        id: song.id + '.song',
+      },
+    },
   )
 }
 export function useTag() {
