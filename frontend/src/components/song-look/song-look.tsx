@@ -1,9 +1,8 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx, css } from '@emotion/core'
 import React, { PropsWithChildren } from 'react'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
-import { css } from 'emotion'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
@@ -75,7 +74,7 @@ function transposeChord(chord: string, transposition: number) {
 
 function transposeChords(tags: string, transposition: number) {
   return tags
-    .split(/ /)
+    .split(/ \+/)
     .map(t => transposeChord(t, transposition))
     .join(' ')
 }
@@ -87,7 +86,7 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
   const parsed = children
   const hasChords = parsed.content.some(p => !!p.ch)
   return (
-    <div className={line(hasChords)}>
+    <div css={line(hasChords)}>
       {parsed.tag && (
         <b>
           {parsed.tag}
@@ -122,7 +121,7 @@ const Paragraph: React.SFC<{
   song: SongType
   transposition: number
 }> = ({ children, song, transposition }) => (
-  <div className={paragraph(song.metadata.paragraphSpace || 1)}>
+  <div css={paragraph(song.metadata.paragraphSpace || 1)}>
     {children.map((c, i) => (
       <Line key={i} transposition={transposition}>
         {c}
@@ -208,7 +207,7 @@ export const SongPage = ({
         typeof number === 'number' ? `${number}. ${song.title}` : song.title
       }
     />
-    <div className={fontSize(song.metadata.fontSize || 1)}>
+    <div css={fontSize(song.metadata.fontSize || 1)}>
       {pageData.map((p, i) => (
         <Paragraph song={song} key={i} transposition={transposition}>
           {p}
