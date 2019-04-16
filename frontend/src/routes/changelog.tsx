@@ -5,6 +5,10 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-04-15">
+      <li>Nový pokus o opravení nenačtených písní</li>
+      <li>Informace o dostupné aktualizaci a jak ji dostat</li>
+    </Entry>
+    <Entry date="2019-04-15">
       <li>Znak + jako oddělovač akordů</li>
     </Entry>
     <Entry date="2019-04-14">
