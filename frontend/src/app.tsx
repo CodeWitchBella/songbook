@@ -9,6 +9,7 @@ import { CacheProvider, css, Global } from '@emotion/core'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
+import ServiceWorkerUpdated from 'components/service-worker-updated'
 
 export const InjectGlobal = () => (
   <Global
@@ -43,6 +44,7 @@ export default () => (
           <PrintPreviewProvider>
             <Suspense fallback={<div>Načítám...</div>}>
               <ErrorBoundary>
+                <ServiceWorkerUpdated />
                 <Routes />
               </ErrorBoundary>
             </Suspense>
