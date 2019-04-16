@@ -6,6 +6,7 @@ import ErrorBoundary from 'containers/error-boundary'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Loadable from 'react-loadable'
 import App, { InjectGlobal } from './app'
+import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
 
 const oldHosts = ['songbook.skorepa.info']
 const currentHost = 'zpevnik.skorepova.info'
@@ -40,8 +41,6 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV !== 'development') {
         )
       })
     }
-  } else {
-    serviceWorker.register({})
   }
 }
 
@@ -55,9 +54,11 @@ if (!displayInstructions) {
       <React.Fragment>
         <InjectGlobal />
         <ErrorBoundary>
-          <Router>
-            <App />
-          </Router>
+          <ServiceWorkerStatusProvider register={serviceWorker.register}>
+            <Router>
+              <App />
+            </Router>
+          </ServiceWorkerStatusProvider>
         </ErrorBoundary>
       </React.Fragment>,
       app,

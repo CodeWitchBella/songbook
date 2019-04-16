@@ -80,6 +80,7 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
     [source],
   )
   const [search, setSearch] = useState('')
+  console.log('songs.length', songs.length)
 
   return (
     <PageNav>

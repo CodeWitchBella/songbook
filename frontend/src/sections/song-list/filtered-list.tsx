@@ -14,7 +14,7 @@ const getWorker = (() => {
   }
 })()
 
-type FilteredList = ReturnType<typeof getFilteredSongList> | string[]
+type FilteredList = ReturnType<typeof getFilteredSongList>
 const filteredToComponents = (showTitles: boolean, filtered: FilteredList) => {
   if (Array.isArray(filtered)) {
     return filtered.map(s => <SongItem key={s} id={s} />)
@@ -48,10 +48,25 @@ export default function FilteredList({
   const [list, setList] = useReducer(
     (
       _prevState,
-      { showTitles, ids }: { showTitles: boolean; ids: FilteredList },
-    ) => filteredToComponents(showTitles, ids),
+      {
+        showTitles,
+        ids,
+        tag,
+      }: { showTitles: boolean; ids: FilteredList; tag: string },
+    ) => {
+      console.log(`[${tag}] Setting list to`, { showTitles, ids })
+      return filteredToComponents(showTitles, ids)
+    },
     null,
-    (_arg: null) => filteredToComponents(false, songs.map(s => s.id)),
+    (_arg: null) => {
+      const ids = {
+        byTitle: songs.map(s => s.id),
+        byAuthor: [],
+        byText: [],
+      }
+      console.log('Initial set list to', { showTitles: false, ids })
+      return filteredToComponents(false, ids)
+    },
   )
 
   const worker = getWorker()
@@ -64,7 +79,7 @@ export default function FilteredList({
             value.search === search &&
             value.sourceListLength === songs.length
           ) {
-            setList({ showTitles: !!search, ids: value.list })
+            setList({ showTitles: !!search, ids: value.list, tag: 'from-sw' })
           }
         } else {
           console.warn('Unknown message type ' + type)
@@ -93,12 +108,21 @@ export default function FilteredList({
   useEffect(() => {
     if (!search) {
       // short-circuit empty search
-      setList({ showTitles: false, ids: songs.map(s => s.id) })
+      setList({
+        showTitles: false,
+        ids: {
+          byTitle: songs.map(s => s.id),
+          byAuthor: [],
+          byText: [],
+        },
+        tag: 'short-circuit',
+      })
     } else if (worker) {
+      console.log('Posting search to SW', JSON.stringify(search))
       worker.postMessage({ type: 'setSearch', value: search })
     } else {
       const filtered = getFilteredSongList(songs, search)
-      setList({ showTitles: !!search, ids: filtered })
+      setList({ showTitles: !!search, ids: filtered, tag: 'no-worker' })
     }
   }, [search, songs, worker])
 

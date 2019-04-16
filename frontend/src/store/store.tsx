@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from 'react'
 import localForage from 'localforage'
 import { listSongs, downloadSong } from './azure'
@@ -34,7 +35,12 @@ class Store {
       lastModified: number
       data?: SongData
     },
-    { save = true, onChange = true } = {},
+    {
+      save = true,
+      ...args
+    }: { save?: boolean } & (
+      | { onChange: false; reason?: string }
+      | { onChange: true; reason: string }),
   ) {
     const prev = this.songMap.get(id)
     this.songMap.set(id, {
@@ -45,7 +51,7 @@ class Store {
       reload: () => this._downloadSong(id),
     })
 
-    if (onChange) this._triggerOnChange()
+    if (args.onChange) this._triggerOnChange(args.reason)
     if (save) this._cacheSongMap()
   }
 
@@ -87,7 +93,7 @@ class Store {
             // do not save because we just loaded it
             this._setSong(song.id, song, { onChange: false, save: false })
           }
-          this._triggerOnChange()
+          this._triggerOnChange('init loaded from cache')
         }
 
         return listSongs()
@@ -96,7 +102,7 @@ class Store {
         for (const song of newSongs) {
           const existing = this.songMap.get(song.id)
           if (!existing || song.lastModified !== existing.lastModified)
-            this._setSong(song.id, song)
+            this._setSong(song.id, song, { reason: 'new song', onChange: true })
         }
       })
       .then(() => {
@@ -119,13 +125,17 @@ class Store {
         data: parseSongFile(origSong.id, song.text),
       }))
       .then(song => {
-        this._setSong(origSong.id, {
-          data: {
-            ...song.data,
+        this._setSong(
+          origSong.id,
+          {
+            data: {
+              ...song.data,
+              lastModified: song.lastModified,
+            },
             lastModified: song.lastModified,
           },
-          lastModified: song.lastModified,
-        })
+          { onChange: true, reason: 'song downloaded' },
+        )
         this._cacheSongMap()
       })
       .catch(e => console.error(e))
@@ -147,8 +157,15 @@ class Store {
     }
   }
 
-  private _triggerOnChange() {
-    setImmediate(() => this.handlers.forEach(h => h()))
+  private _updateCounter = 0
+  get updateCounter() {
+    return this._updateCounter
+  }
+  private _triggerOnChange(reason: string) {
+    setImmediate(() => {
+      this._updateCounter += 1
+      this.handlers.forEach(h => h(reason))
+    })
   }
 
   listSongs() {
@@ -159,9 +176,9 @@ class Store {
     return this.songMap.get(id)
   }
 
-  handlers: (() => void)[] = []
-  onChange(handler: () => void) {
-    const v = () => handler()
+  handlers: ((reason: string) => void)[] = []
+  onChange(handler: (reason: string) => void) {
+    const v = (r: string) => handler(r)
     this.handlers.push(v)
     return () => {
       this.handlers = this.handlers.filter(h => h !== v)
@@ -194,8 +211,20 @@ function useStore() {
 
 export function useSongList() {
   const store = useStore()
+  const initialUpdateCounter = useMemo(() => store.updateCounter, [store])
   const [songs, setSongs] = useState(() => store.listSongs())
-  useEffect(() => store.onChange(() => setSongs(store.listSongs())), [store])
+  useEffect(() => {
+    if (initialUpdateCounter !== store.updateCounter) {
+      console.log(
+        'Updating useSongList. Reason: update between initial and useEffect',
+      )
+      setSongs(store.listSongs())
+    }
+    return store.onChange(reason => {
+      console.log('Updating useSongList. Reason:', reason)
+      setSongs(store.listSongs())
+    })
+  }, [initialUpdateCounter, store])
   return songs
 }
 
