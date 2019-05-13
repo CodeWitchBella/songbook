@@ -1,6 +1,6 @@
-import loadable from '@loadable/component'
+import React from 'react'
 
-const PDF = loadable(() =>
+const PDF = React.lazy(() =>
   import(/* webpackChunkName: "components_pdf-render" */ './pdf-render'),
 )
 export default PDF

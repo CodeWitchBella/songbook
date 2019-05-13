@@ -7,7 +7,6 @@
     "@codewitchbella/ts-utils": "^0.1.10",
     "@emotion/core": "^10.0.10",
     "@emotion/styled": "^10.0.10",
-    "@loadable/component": "^5.10.0",
     "@react-pdf/renderer": "^1.4.2",
     "@types/loadable__component": "^5.9.0",
     "@types/raven-js": "^3.10.0",
