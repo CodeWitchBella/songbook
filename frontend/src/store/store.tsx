@@ -230,7 +230,13 @@ export function useSongList() {
 
 export function useSong(id: string) {
   const store = useStore()
+  const initialUpdateCounter = useMemo(() => store.updateCounter, [store])
   const [song, setSong] = useState(() => store.getSong(id))
-  useEffect(() => store.onChange(() => setSong(store.getSong(id))), [id, store])
+  useEffect(() => {
+    if (initialUpdateCounter !== store.updateCounter) {
+      setSong(store.getSong(id))
+    }
+    store.onChange(() => setSong(store.getSong(id)))
+  }, [id, initialUpdateCounter, store])
   return song
 }
