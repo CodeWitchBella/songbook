@@ -11,9 +11,30 @@ import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
 import ServiceWorkerUpdated from 'components/service-worker-updated'
 
+import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
+import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
+import cantarellBoldWoff from './webfonts/cantarell-bold.woff'
+import cantarellBoldWoff2 from './webfonts/cantarell-bold.woff2'
+
 export const InjectGlobal = () => (
   <Global
     styles={css`
+      @font-face {
+        font-family: 'Cantarell';
+        src: url('${cantarellRegularWoff2}') format('woff2'),
+          url('${cantarellRegularWoff}') format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: 'Cantarell';
+        src: url('${cantarellBoldWoff2}') format('woff2'),
+          url('${cantarellBoldWoff}') format('woff');
+        font-weight: bold;
+        font-style: normal;
+      }
+
       html,
       body,
       #root {

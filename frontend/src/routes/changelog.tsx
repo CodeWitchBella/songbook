@@ -5,6 +5,11 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-04-16">
+      <li>Přidán webfont cantarell</li>
+      <li>Opraven bug v načítání písně (stejný problém jako u seznamu)</li>
+      <li>Vyčištěn kód</li>
+    </Entry>
+    <Entry date="2019-04-16">
       <li>Nový pokus o opravení nenačtených písní</li>
       <li>Informace o dostupné aktualizaci a jak ji dostat</li>
     </Entry>
