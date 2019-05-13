@@ -6,6 +6,7 @@ import { SongPage } from 'components/song-look/song-look'
 import { AudioProvider } from 'components/song-look/audio-player'
 import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
+import { notNull } from '@codewitchbella/ts-utils'
 
 function Song({ name, number }: { name: string; number: number }) {
   const song = useSong(name)
@@ -50,7 +51,7 @@ const Print = ({ tag }: { tag: string }) => {
           <Song name={song.id} number={i} key={song.id} />
         ))}
       </main>
-      <Contents list={songList as any /* FIXME */} left />
+      <Contents list={songList.map(s => s.data).filter(notNull)} left />
     </div>
   )
 }

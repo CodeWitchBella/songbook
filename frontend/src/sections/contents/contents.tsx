@@ -26,14 +26,17 @@ const Spacer = styled.div<{ space: string }>`
   height: ${({ space }) => space};
 `
 
-const mapSong = (offset: number = 0) => (song: ParsedSong, i: number) => (
-  <SongComp key={song.id}>
-    <Counter>{i + 1 + offset}.</Counter>
-    <div>
-      {song.title} ({song.author.replace(/ /g, '\u00a0')})
-    </div>
-  </SongComp>
-)
+const mapSong = (offset: number = 0) => (song: ParsedSong, i: number) => {
+  if (!song.author) console.log(song)
+  return (
+    <SongComp key={song.id}>
+      <Counter>{i + 1 + offset}.</Counter>
+      <div>
+        {song.title} ({song.author.replace(/ /g, '\u00a0')})
+      </div>
+    </SongComp>
+  )
+}
 
 const Contents = ({ list, left }: { list: ParsedSong[]; left?: boolean }) => (
   <Page left={left}>
