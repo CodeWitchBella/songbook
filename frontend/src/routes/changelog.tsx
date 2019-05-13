@@ -5,7 +5,8 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-04-16">
-      <li>Opraven odkaz zpět pokud přijdete přímo na píseň</li>
+      <li>Odstraněn jeden z audio přehrávačů</li>
+      <li>Opraven odkaz zpět pokud otevřete přímo píseň</li>
       <li>Přidán webfont cantarell</li>
       <li>Opraven bug v načítání písně (stejný problém jako u seznamu)</li>
       <li>Vyčištěn kód</li>
