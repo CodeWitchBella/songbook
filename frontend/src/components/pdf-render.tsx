@@ -3,7 +3,20 @@ import { Paragraph, Line, parseSong } from 'utils/parse-song'
 import { Document, Page, Text, Font, View } from '@react-pdf/renderer'
 import Cantarell from './Cantarell-Regular.ttf'
 import CantarellBold from './Cantarell-Bold.ttf'
-import { Props } from './pdf'
+
+type Props = {
+  song: {
+    author: string
+    title: string
+    textWithChords: string
+    metadata: {
+      fontSize: number | null
+      paragraphSpace: number | null
+      titleSpace: number | null
+    }
+    id: string
+  }
+}
 
 Font.register(
   `${window.location.protocol}//${window.location.host}${Cantarell}`,
