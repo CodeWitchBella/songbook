@@ -1,7 +1,7 @@
 import React from 'react'
 import Contents from 'sections/contents/contents'
 import TitlePage from 'sections/title-page/title-page'
-import { parseSong, Paragraph } from 'utils/parse-song'
+import { parseSong } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'

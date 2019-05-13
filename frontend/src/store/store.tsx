@@ -4,7 +4,6 @@ import React, {
   useContext,
   useEffect,
   useState,
-  useRef,
 } from 'react'
 import localForage from 'localforage'
 import { listSongs, downloadSong } from './azure'

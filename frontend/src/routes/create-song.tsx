@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Input, { LargeInput } from 'components/input'
+import { LargeInput } from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
 import { newSong } from 'store/fetchers'
 import Button from 'components/button'

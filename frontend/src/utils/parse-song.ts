@@ -1,5 +1,3 @@
-import { Delta, DeltaOperation } from 'utils/quill-delta'
-
 export type Line = {
   content: { ch: string; text: string }[]
   tag: string | null

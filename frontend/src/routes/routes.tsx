@@ -1,9 +1,6 @@
 import React from 'react'
 import { Switch, Route } from 'react-router'
-import Loadable from 'react-loadable'
 import NotFound from './not-found'
-
-const loading = () => <div>Načítám...</div>
 
 const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
@@ -44,7 +41,7 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Song id={match.params.id} />}
         />
-        <Route path="/new" exact render={({ match }) => <CreateSong />} />
+        <Route path="/new" exact render={() => <CreateSong />} />
         <Route
           path="/edit/:id"
           exact
@@ -60,7 +57,7 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Print tag={match.params.tag} />}
         />
-        <Route path="/tag" exact render={({ match }) => <TagList />} />
+        <Route path="/tag" exact render={() => <TagList />} />
         <Route
           path="/tag/:tag"
           exact
