@@ -6,8 +6,9 @@ import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
+import { SongWithData } from 'store/store'
 
-type SongType = Pick<any, 'author' | 'id' | 'metadata' | 'title'>
+type SongType = SongWithData['data']
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -120,7 +121,7 @@ const Paragraph: React.SFC<{
   song: SongType
   transposition: number
 }> = ({ children, song, transposition }) => (
-  <div css={paragraph(song.metadata.paragraphSpace || 1)}>
+  <div css={paragraph(song.metadata.paragraphSpace)}>
     {children.map((c, i) => (
       <Line key={i} transposition={transposition}>
         {c}
@@ -205,7 +206,7 @@ export const SongPage = ({
         typeof number === 'number' ? `${number}. ${song.title}` : song.title
       }
     />
-    <div css={fontSize(song.metadata.fontSize || 1)}>
+    <div css={fontSize(song.metadata.fontSize)}>
       {pageData.map((p, i) => (
         <Paragraph song={song} key={i} transposition={transposition}>
           {p}

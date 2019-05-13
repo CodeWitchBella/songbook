@@ -1,10 +1,9 @@
 import React, { PropsWithChildren } from 'react'
-import styled from '@emotion/styled'
 import { css } from 'emotion'
 import * as page from 'utils/page'
 import { usePrintPreview } from 'containers/print-preview'
 
-const sizer = (print: boolean) => css`
+const sizer = () => css`
   @media not print {
     position: relative;
     display: flex;
@@ -79,7 +78,7 @@ export default function Page({
 }: PropsWithChildren<{ left?: boolean }>) {
   const print = usePrintPreview()
   return (
-    <section className={sizer(print)}>
+    <section className={sizer()}>
       <div className={marginDisplay(print)}>
         <div className={songClass(!!left, print)}>{children}</div>
       </div>

@@ -116,7 +116,7 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
       {p.map((line, i) => (
         <LineC l={line} key={i} />
       ))}
-      <View style={{ height: (settings.paragraphSpace || 1) * settings.em }} />
+      <View style={{ height: settings.paragraphSpace * settings.em }} />
     </>
   )
 }

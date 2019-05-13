@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useReducer, useCallback } from 'react'
+import { useContext, useEffect, useMemo } from 'react'
 // @ts-ignore
 import { __RouterContext, RouteComponentProps } from 'react-router'
 import useForceUpdate from './use-force-update'

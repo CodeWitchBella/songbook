@@ -15,12 +15,7 @@ function Song({ name, number }: { name: string; number: number }) {
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}
-      song={{
-        title: data.title,
-        metadata: data.metadata,
-        id: data.id,
-        author: data.author,
-      }}
+      song={data}
       number={number + 1}
       pageNumber={number /* FIXME */}
       key={i}
