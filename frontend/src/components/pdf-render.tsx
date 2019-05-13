@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Paragraph, Line, parseSong } from 'utils/parse-song'
-import { Document, Page, Text, Font, View } from '@react-pdf/renderer'
+import {
+  Document,
+  Page,
+  Text,
+  Font,
+  View,
+  PDFViewer,
+} from '@react-pdf/renderer'
 import Cantarell from './Cantarell-Regular.ttf'
 import CantarellBold from './Cantarell-Bold.ttf'
 
@@ -18,6 +25,13 @@ type Props = {
   }
 }
 
+const emctx = React.createContext(0)
+function useEm() {
+  const ret = useContext(emctx)
+  if (!ret) throw new Error('Unknown em')
+  return ret
+}
+
 Font.register(
   `${window.location.protocol}//${window.location.host}${Cantarell}`,
   { family: 'Cantarell' },
@@ -33,42 +47,73 @@ const nbsp = (text: string) =>
 
 const hasChord = (l: Line) => l.content.some(el => !!el.ch)
 
-const LineC = ({ l, em }: { l: Line; em: number }) => (
-  <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-    {l.content.map((c, i) => (
-      <>
-        <View
-          style={{
-            fontFamily: 'Cantarell Bold',
-            width: 0,
-            height: (hasChord(l) ? 2.2 : 1.3) * em,
-            flexDirection: 'column',
-          }}
-        >
-          <View style={{ width: 100 * em, marginTop: -0.5 * em }}>
-            <Text>{c.ch}</Text>
-          </View>
-        </View>
-        <View
-          style={{
-            //paddingTop: (hasChord(l) ? 1.2 : 0.3) * em,
-            verticalAlign: 'baseline',
-            height: (hasChord(l) ? 2.2 : 1.3) * em,
-            alignItems: 'flex-end',
-            flexDirection: 'row',
-          }}
-        >
-          <Text>{nbsp(c.text)}</Text>
-        </View>
-      </>
-    ))}
-  </View>
-)
+function Chord({
+  chord,
+  space,
+  lineHasChord,
+}: {
+  chord: string
+  space: boolean
+  lineHasChord: boolean
+}) {
+  const em = useEm()
+  return (
+    <View
+      style={{
+        fontFamily: 'Cantarell Bold',
+        width: space ? 'auto' : 0,
+        height: (lineHasChord ? 2.2 : 1.3) * em,
+        flexDirection: 'column',
+      }}
+    >
+      <View
+        style={{
+          width: space ? 'auto' : 100 * em,
+          marginTop: -0.5 * em,
+        }}
+      >
+        <Text>{chord}</Text>
+      </View>
+    </View>
+  )
+}
 
-const ParagraphC = ({ p, em }: { p: Paragraph; em: number }) => (
+function LineC({ l }: { l: Line }) {
+  const em = useEm()
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+      {l.content.map((c, i) => (
+        <>
+          {c.ch ? (
+            <Chord
+              chord={c.ch.replace(/^_/, '')}
+              space={!!c.ch && c.ch.startsWith('_')}
+              lineHasChord={hasChord(l)}
+            />
+          ) : null}
+          {c.text ? (
+            <View
+              style={{
+                //paddingTop: (hasChord(l) ? 1.2 : 0.3) * em,
+                verticalAlign: 'baseline',
+                height: (hasChord(l) ? 2.2 : 1.3) * em,
+                alignItems: 'flex-end',
+                flexDirection: 'row',
+              }}
+            >
+              <Text>{nbsp(c.text)}</Text>
+            </View>
+          ) : null}
+        </>
+      ))}
+    </View>
+  )
+}
+
+const ParagraphC = ({ p }: { p: Paragraph }) => (
   <>
     {p.map((line, i) => (
-      <LineC em={em} l={line} key={i} />
+      <LineC l={line} key={i} />
     ))}
   </>
 )
@@ -82,23 +127,27 @@ class PDFRender extends React.Component<Props, {}> {
     const em = 7.20566929133848 * Math.sqrt(2) ** (6 - size) /* 2.542 mm */
 
     return (
-      <Document>
-        {pages.map((page, i) => (
-          <Page
-            key={i}
-            style={{
-              fontFamily: 'Cantarell',
-              fontSize: em,
-              fontWeight: 'normal',
-            }}
-            size={`A${size}`}
-          >
-            {page.map((paragraph, i2) => (
-              <ParagraphC em={em} p={paragraph} key={i2} />
+      <PDFViewer>
+        <emctx.Provider value={em}>
+          <Document>
+            {pages.map((page, i) => (
+              <Page
+                key={i}
+                style={{
+                  fontFamily: 'Cantarell',
+                  fontSize: em,
+                  fontWeight: 'normal',
+                }}
+                size={`A${size}`}
+              >
+                {page.map((paragraph, i2) => (
+                  <ParagraphC p={paragraph} key={i2} />
+                ))}
+              </Page>
             ))}
-          </Page>
-        ))}
-      </Document>
+          </Document>
+        </emctx.Provider>
+      </PDFViewer>
     )
   }
 }
