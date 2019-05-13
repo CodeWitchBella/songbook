@@ -10,26 +10,15 @@ import {
 } from '@react-pdf/renderer'
 import Cantarell from './Cantarell-Regular.ttf'
 import CantarellBold from './Cantarell-Bold.ttf'
+import { SongWithData } from 'store/store'
 
-type Props = {
-  song: {
-    author: string
-    title: string
-    textWithChords: string
-    metadata: {
-      fontSize: number | null
-      paragraphSpace: number | null
-      titleSpace: number | null
-    }
-    id: string
-  }
-}
+type Props = { song: SongWithData['data'] }
 
 const settingsCtx = React.createContext(null as null | {
   em: number
-  fontSize: number | null
-  paragraphSpace: number | null
-  titleSpace: number | null
+  fontSize: number
+  paragraphSpace: number
+  titleSpace: number
 })
 function useSettings() {
   const ret = useContext(settingsCtx)
@@ -120,13 +109,17 @@ function LineC({ l }: { l: Line }) {
   )
 }
 
-const ParagraphC = ({ p }: { p: Paragraph }) => (
-  <>
-    {p.map((line, i) => (
-      <LineC l={line} key={i} />
-    ))}
-  </>
-)
+const ParagraphC = ({ p }: { p: Paragraph }) => {
+  const settings = useSettings()
+  return (
+    <>
+      {p.map((line, i) => (
+        <LineC l={line} key={i} />
+      ))}
+      <View style={{ height: (settings.paragraphSpace || 1) * settings.em }} />
+    </>
+  )
+}
 
 class PDFRender extends React.Component<Props, {}> {
   render() {

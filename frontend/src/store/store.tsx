@@ -10,10 +10,12 @@ import localForage from 'localforage'
 import { listSongs, downloadSong } from './azure'
 import { parseSongFile, ParsedSong } from './parse-song-file'
 import useForceUpdate from 'components/use-force-update'
+import { PickExcept } from '@codewitchbella/ts-utils'
 
 type SongData = {
   lastModified: number
-} & ParsedSong
+  metadata: ReturnType<typeof metadataDefaults>
+} & PickExcept<ParsedSong, 'metadata'>
 
 type SongBase = {
   id: string
@@ -27,6 +29,32 @@ export type SongWithData = SongWithoutData & { data: SongData }
 type SongStore = { list: (SongBase & { data: SongData | null })[] }
 
 const localForageKey = 'store'
+
+function d<T>(v: T | null, f: T): T {
+  return v === null ? f : v
+}
+
+export function metadataDefaults(meta: {
+  fontSize: number | null
+  paragraphSpace: number | null
+  titleSpace: number | null
+  spotify: string | null
+}) {
+  return {
+    fontSize: d(meta.fontSize, 1),
+    paragraphSpace: d(meta.paragraphSpace, 1),
+    titleSpace: d(meta.titleSpace, 1),
+    spotify: meta.spotify,
+  }
+}
+
+function dataSetDefaultMetadata<T extends { metadata: any }>(data: T | null) {
+  if (data === null) return null
+  return {
+    ...data,
+    metadata: metadataDefaults(data.metadata),
+  }
+}
 
 class Store {
   private songMap = new Map<string, Song>()
@@ -46,7 +74,9 @@ class Store {
     const prev = this.songMap.get(id)
     this.songMap.set(id, {
       lastModified: song.lastModified,
-      data: song.data || (prev ? prev.data : undefined) || null,
+      data: dataSetDefaultMetadata(
+        song.data || (prev ? prev.data : undefined) || null,
+      ),
       id,
       loading: false,
       reload: () => this._downloadSong(id),
