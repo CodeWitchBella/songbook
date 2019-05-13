@@ -233,7 +233,7 @@ export function useSong(id: string) {
   const [song, setSong] = useState(() => store.getSong(id))
   useEffect(() => {
     setSong(store.getSong(id))
-    store.onChange(() => setSong(store.getSong(id)))
+    return store.onChange(() => setSong(store.getSong(id)))
   }, [id, store])
   return song
 }
