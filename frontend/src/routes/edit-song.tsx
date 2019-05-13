@@ -10,8 +10,7 @@ import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
 import { writeSong } from 'store/fetchers'
-import { useSong } from 'store/store'
-import { ParsedSong } from 'store/parse-song-file'
+import { useSong, SongWithData } from 'store/store'
 
 const Form = styled.form`
   display: flex;
@@ -133,11 +132,6 @@ type State = {
   saveStatus: SaveStatus
 }
 
-function numberToString(input: any) {
-  if (typeof input === 'number') return `${input}`
-  return input
-}
-
 function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
   return {
     NO_CHANGES: outputOnNoChange ? 'Nebyly provedeny žádné změny' : '',
@@ -163,7 +157,7 @@ copy(content.innerText)
 
 class EditSong extends React.Component<
   {
-    song: ParsedSong
+    song: SongWithData['data']
     refetch: () => void
   },
   State
@@ -173,9 +167,9 @@ class EditSong extends React.Component<
     title: this.props.song.title,
     textWithChords: this.props.song.textWithChords,
     spotify: this.props.song.metadata.spotify || '',
-    fontSize: numberToString(this.props.song.metadata.fontSize),
-    paragraphSpace: numberToString(this.props.song.metadata.paragraphSpace),
-    titleSpace: numberToString(this.props.song.metadata.titleSpace),
+    fontSize: this.props.song.metadata.fontSize.toFixed(2),
+    paragraphSpace: this.props.song.metadata.paragraphSpace.toFixed(2),
+    titleSpace: this.props.song.metadata.titleSpace.toFixed(2),
     advanced: false,
     preview: false,
     pdfPreview: false,

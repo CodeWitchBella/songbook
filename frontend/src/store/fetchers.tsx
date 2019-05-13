@@ -43,10 +43,10 @@ export function writeSong(song: {
   author: string
   textWithChords: string
   metadata: {
-    fontSize?: number
-    paragraphSpace?: number
-    titleSpace?: number
-    spotify?: string
+    fontSize: number | null
+    paragraphSpace: number | null
+    titleSpace: number | null
+    spotify: string | null
   }
 }) {
   return graphqlFetch(
