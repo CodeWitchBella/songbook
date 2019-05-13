@@ -1,11 +1,7 @@
 import { useContext, useEffect, useMemo, useReducer, useCallback } from 'react'
 // @ts-ignore
 import { __RouterContext, RouteComponentProps } from 'react-router'
-
-function useForceUpdate() {
-  const [, dispatch] = useReducer((state, _action: null) => !state, true)
-  return useCallback(() => dispatch(null), [])
-}
+import useForceUpdate from './use-force-update'
 
 /**
  * Use this only if you know what you are doing

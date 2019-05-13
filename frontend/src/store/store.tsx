@@ -9,6 +9,7 @@ import React, {
 import localForage from 'localforage'
 import { listSongs, downloadSong } from './azure'
 import { parseSongFile, ParsedSong } from './parse-song-file'
+import useForceUpdate from 'components/use-force-update'
 
 type SongData = {
   lastModified: number
@@ -230,10 +231,12 @@ export function useSongList() {
 
 export function useSong(id: string) {
   const store = useStore()
-  const [song, setSong] = useState(() => store.getSong(id))
+  const forceUpdate = useForceUpdate()
+  const song = store.getSong(id)
+
   useEffect(() => {
-    setSong(store.getSong(id))
-    return store.onChange(() => setSong(store.getSong(id)))
-  }, [id, store])
+    if (song !== store.getSong(id)) forceUpdate()
+    return store.onChange(forceUpdate)
+  }, [forceUpdate, id, song, store])
   return song
 }
