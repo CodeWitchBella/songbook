@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import { css } from 'emotion'
 import * as page from 'utils/page'
-import { PrintPreview, PrintPreviewToggle } from 'containers/print-preview'
+import { usePrintPreview } from 'containers/print-preview'
 
 const sizer = (print: boolean) => css`
   @media not print {
@@ -73,15 +73,16 @@ const marginDisplay = (print: boolean) =>
         }
       `
 
-const Page: React.SFC<{ left?: boolean }> = ({ children, left }) => (
-  <PrintPreview>
-    {print => (
-      <section className={sizer(print)}>
-        <div className={marginDisplay(print)}>
-          <div className={songClass(!!left, print)}>{children}</div>
-        </div>
-      </section>
-    )}
-  </PrintPreview>
-)
-export default Page
+export default function Page({
+  children,
+  left,
+}: PropsWithChildren<{ left?: boolean }>) {
+  const print = usePrintPreview()
+  return (
+    <section className={sizer(print)}>
+      <div className={marginDisplay(print)}>
+        <div className={songClass(!!left, print)}>{children}</div>
+      </div>
+    </section>
+  )
+}

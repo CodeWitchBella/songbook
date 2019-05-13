@@ -1,5 +1,5 @@
 import React from 'react'
-import { PrintPreviewToggle } from 'containers/print-preview'
+import { usePrintPreviewToggle } from 'containers/print-preview'
 import { css } from 'emotion'
 
 const toggleContainer = css`
@@ -57,17 +57,15 @@ const previewToggle = css`
   }
 `
 
-const PreviewToggle = () => (
-  <PrintPreviewToggle>
-    {(toggle, value) => (
-      <label className={toggleContainer}>
-        <span>Print preview:</span>
-        <span className={previewToggle}>
-          <input type="checkbox" checked={value} onChange={toggle} />
-          <span />
-        </span>
-      </label>
-    )}
-  </PrintPreviewToggle>
-)
-export default PreviewToggle
+export default function PreviewToggle() {
+  const [value, toggle] = usePrintPreviewToggle()
+  return (
+    <label className={toggleContainer}>
+      <span>Print preview:</span>
+      <span className={previewToggle}>
+        <input type="checkbox" checked={value} onChange={toggle} />
+        <span />
+      </span>
+    </label>
+  )
+}
