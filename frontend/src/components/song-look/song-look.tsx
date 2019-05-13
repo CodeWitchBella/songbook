@@ -5,7 +5,6 @@ import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
-import { AudioProvider, AudioControls } from 'components/song-look/audio-player'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 
 type SongType = Pick<any, 'author' | 'id' | 'metadata' | 'title'>
@@ -194,8 +193,6 @@ export const SongPage = ({
   noBack?: boolean
 }) => (
   <Page left={typeof pageNumber === 'number' && pageNumber % 2 === 0}>
-    <AudioControls />
-
     {noBack ? null : (
       <BackButtonContainer>
         <BackButton>Zpět</BackButton>
@@ -248,7 +245,5 @@ export const SongLook = ({
       ))}
     </>
   )
-  if (song.metadata.audio)
-    return <AudioProvider src={song.metadata.audio}>{content}</AudioProvider>
   return content
 }

@@ -3,7 +3,6 @@ import Contents from 'sections/contents/contents'
 import TitlePage from 'sections/title-page/title-page'
 import { parseSong, Paragraph } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
-import { AudioProvider } from 'components/song-look/audio-player'
 import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
 import { notNull } from '@codewitchbella/ts-utils'
@@ -27,13 +26,6 @@ function Song({ name, number }: { name: string; number: number }) {
       key={i}
     />
   ))
-  if (data.metadata.audio) {
-    return (
-      <AudioProvider key={data.id} src={data.metadata.audio}>
-        {content}
-      </AudioProvider>
-    )
-  }
   return <React.Fragment>{content}</React.Fragment>
 }
 

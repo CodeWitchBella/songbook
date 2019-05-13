@@ -43,7 +43,6 @@ export function writeSong(song: {
   author: string
   textWithChords: string
   metadata: {
-    audio?: string
     fontSize?: number
     paragraphSpace?: number
     titleSpace?: number
@@ -63,7 +62,6 @@ export function writeSong(song: {
       input: {
         ...pick(song, ['title', 'author', 'textWithChords']),
         metadata: pick(song.metadata, [
-          'audio',
           'fontSize',
           'paragraphSpace',
           'titleSpace',

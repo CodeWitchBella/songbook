@@ -21,7 +21,6 @@ const typeDefs = gql`
   }
 
   input SongMetadataInput {
-    audio: String
     fontSize: Float
     paragraphSpace: Float
     titleSpace: Float
@@ -38,7 +37,6 @@ const typeDefs = gql`
   }
 
   type SongMetadata {
-    audio: String
     fontSize: Float
     paragraphSpace: Float
     titleSpace: Float
