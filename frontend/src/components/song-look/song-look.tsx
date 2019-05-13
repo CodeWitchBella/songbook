@@ -149,6 +149,7 @@ const BackButtonContainer = styled.div`
 
 function BackButtonImpl({
   children,
+  location,
   history,
 }: PropsWithChildren<RouteComponentProps<any>>) {
   return (
@@ -166,7 +167,7 @@ function BackButtonImpl({
       }}
       type="button"
       onClick={() => {
-        if (history.length > 1) history.goBack()
+        if (location.state && location.state.canGoBack) history.goBack()
         else history.push('/')
       }}
     >

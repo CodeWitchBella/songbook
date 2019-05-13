@@ -3,6 +3,7 @@ import { useSong } from 'store/store'
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 import { css } from '@emotion/core'
+import { useHistoryChange } from 'components/use-router'
 
 const a = css`
   color: black;
@@ -44,13 +45,29 @@ export const SearchTitle = ({ children }: PropsWithChildren<{}>) => (
   </TheSong>
 )
 
+function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
+  const { push } = useHistoryChange()
+  const href = `/song/${id}`
+  return (
+    <a
+      href={href}
+      onClick={evt => {
+        evt.preventDefault()
+        push(href, { canGoBack: true })
+      }}
+    >
+      {children}
+    </a>
+  )
+}
+
 export const SongItem = ({ id }: { id: string }) => {
   const song = useSong(id)
   if (!song) return null
   const { data } = song
   return (
     <TheSong>
-      <Link to={`/song/${id}`}>
+      <LinkToSong id={id}>
         {data ? (
           <>
             {data.title} - {data.author}
@@ -64,7 +81,7 @@ export const SongItem = ({ id }: { id: string }) => {
               ? '🎵'
               : '🔇'
           : null*/}
-      </Link>
+      </LinkToSong>
     </TheSong>
   )
 }
