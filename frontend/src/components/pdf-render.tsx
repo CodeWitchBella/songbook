@@ -25,11 +25,19 @@ type Props = {
   }
 }
 
-const emctx = React.createContext(0)
-function useEm() {
-  const ret = useContext(emctx)
+const settingsCtx = React.createContext(null as null | {
+  em: number
+  fontSize: number | null
+  paragraphSpace: number | null
+  titleSpace: number | null
+})
+function useSettings() {
+  const ret = useContext(settingsCtx)
   if (!ret) throw new Error('Unknown em')
   return ret
+}
+function useEm() {
+  return useSettings().em
 }
 
 Font.register(
@@ -40,6 +48,7 @@ Font.register(
   `${window.location.protocol}//${window.location.host}${CantarellBold}`,
   { family: 'Cantarell Bold' },
 )
+const bold = { fontFamily: 'Cantarell Bold' }
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
   text.trim() +
@@ -60,7 +69,7 @@ function Chord({
   return (
     <View
       style={{
-        fontFamily: 'Cantarell Bold',
+        ...bold,
         width: space ? 'auto' : 0,
         height: (lineHasChord ? 2.2 : 1.3) * em,
         flexDirection: 'column',
@@ -82,6 +91,7 @@ function LineC({ l }: { l: Line }) {
   const em = useEm()
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+      {l.tag ? <Text style={bold}>{l.tag}&nbsp;</Text> : null}
       {l.content.map((c, i) => (
         <>
           {c.ch ? (
@@ -128,7 +138,7 @@ class PDFRender extends React.Component<Props, {}> {
 
     return (
       <PDFViewer>
-        <emctx.Provider value={em}>
+        <settingsCtx.Provider value={{ ...song.metadata, em }}>
           <Document>
             {pages.map((page, i) => (
               <Page
@@ -146,7 +156,7 @@ class PDFRender extends React.Component<Props, {}> {
               </Page>
             ))}
           </Document>
-        </emctx.Provider>
+        </settingsCtx.Provider>
       </PDFViewer>
     )
   }
