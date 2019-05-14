@@ -29,8 +29,8 @@ type SongStore = { list: (SongBase & { data: SongData | null })[] }
 
 const localForageKey = 'store'
 
-function d<T>(v: T | null, f: T): T {
-  return v === null ? f : v
+function d<T>(v: T | null | undefined, f: T): T {
+  return v === null || v === undefined ? f : v
 }
 
 export function metadataDefaults(meta: {
@@ -40,9 +40,9 @@ export function metadataDefaults(meta: {
   spotify: string | null
 }) {
   return {
-    fontSize: d(meta.fontSize, 1),
-    paragraphSpace: d(meta.paragraphSpace, 1),
-    titleSpace: d(meta.titleSpace, 1),
+    fontSize: d<number>(meta.fontSize, 1),
+    paragraphSpace: d<number>(meta.paragraphSpace, 1),
+    titleSpace: d<number>(meta.titleSpace, 1),
     spotify: meta.spotify,
   }
 }
