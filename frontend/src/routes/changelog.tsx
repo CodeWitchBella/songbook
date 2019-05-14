@@ -12,7 +12,12 @@ const Changelog = () => (
           <li>Také přidáno tlačítko na vyčištění vyhledávání</li>
         </ul>
       </li>
-      <li>Další pokrok na PDF exportu</li>
+      <li>
+        Další pokrok na PDF exportu
+        <ul>
+          <li>Funkční export jednotlivých písní</li>
+        </ul>
+      </li>
     </Entry>
     <Entry date="2019-05-14">
       <li>Pokrok na PDF exportu</li>
