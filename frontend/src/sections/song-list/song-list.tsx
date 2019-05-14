@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
+import { useMemo, useRef } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
-import useRouter, { useRouterUnsafe } from 'components/use-router'
+import useRouter, { useQueryParam } from 'components/use-router'
 
 const TheSearch = styled.div`
   display: flex;
@@ -96,52 +96,6 @@ function compareSongs(a: SongWithData, b: SongWithData) {
   const ret = a.data!.title.localeCompare(b.data!.title)
   if (ret !== 0) return ret
   return a.data!.author.localeCompare(b.data!.author)
-}
-
-type Setter = (
-  value: string | null,
-  opts?: { push?: boolean; state?: any },
-) => void
-function useQueryParam(param: string): [string | null, Setter] {
-  const router = useRouterUnsafe()
-  const [value, setValue] = useState(() =>
-    new URLSearchParams(router.location.search).get(param),
-  )
-
-  useEffect(() => {
-    return router.history.listen(location => {
-      console.log(location)
-      setImmediate(() => {
-        setValue(new URLSearchParams(location.search).get(param))
-      })
-    })
-  }, [param, router.history])
-
-  const setValueOnRouter = useCallback<Setter>(
-    (
-      value,
-      {
-        push = false,
-        state: locationState,
-      }: { push?: boolean; state?: any } = {},
-    ) => {
-      const params = new URLSearchParams(router.location.search)
-      if (value !== null) params.set(param, value)
-      else params.delete(param)
-      params.sort()
-      const state = {
-        ...router.location,
-        state:
-          locationState === undefined ? router.location.state : locationState,
-        search: params.toString(),
-      }
-      if (push) router.history.push(state)
-      else router.history.replace(state)
-    },
-    [param, router.history, router.location],
-  )
-
-  return [value, setValueOnRouter]
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {

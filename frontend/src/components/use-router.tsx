@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
 // @ts-ignore
 import { __RouterContext, RouteComponentProps } from 'react-router'
 import useForceUpdate from './use-force-update'
@@ -31,4 +31,50 @@ export function useHistoryChange() {
     }),
     [history],
   )
+}
+
+type Setter = (
+  value: string | null,
+  opts?: { push?: boolean; state?: any },
+) => void
+export function useQueryParam(param: string): [string | null, Setter] {
+  const router = useRouterUnsafe()
+  const [value, setValue] = useState(() =>
+    new URLSearchParams(router.location.search).get(param),
+  )
+
+  useEffect(() => {
+    return router.history.listen(location => {
+      console.log(location)
+      setImmediate(() => {
+        setValue(new URLSearchParams(location.search).get(param))
+      })
+    })
+  }, [param, router.history])
+
+  const setValueOnRouter = useCallback<Setter>(
+    (
+      value,
+      {
+        push = false,
+        state: locationState,
+      }: { push?: boolean; state?: any } = {},
+    ) => {
+      const params = new URLSearchParams(router.location.search)
+      if (value !== null) params.set(param, value)
+      else params.delete(param)
+      params.sort()
+      const state = {
+        ...router.location,
+        state:
+          locationState === undefined ? router.location.state : locationState,
+        search: params.toString(),
+      }
+      if (push) router.history.push(state)
+      else router.history.replace(state)
+    },
+    [param, router.history, router.location],
+  )
+
+  return [value, setValueOnRouter]
 }
