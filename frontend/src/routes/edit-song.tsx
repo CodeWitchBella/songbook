@@ -50,6 +50,7 @@ const Columns = ({
 }: PropsWithChildren<{ number: number }>) => (
   <div
     css={css`
+      height: 100%;
       display: flex;
       > * {
         width: ${100 / number}%;
