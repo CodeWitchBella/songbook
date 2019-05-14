@@ -7,7 +7,7 @@ import useForceUpdate from './use-force-update'
  * Use this only if you know what you are doing
  */
 export function useRouterUnsafe<T = {}>(): RouteComponentProps<T> {
-  return useContext(__RouterContext)
+  return useContext(__RouterContext as any)
 }
 
 export default function useRouter() {

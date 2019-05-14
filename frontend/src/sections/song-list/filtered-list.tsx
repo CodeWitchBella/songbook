@@ -3,6 +3,7 @@ import { Song } from 'store/store'
 import { SearchTitle, SongItem, ListContainer } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList from './alg'
+// eslint-disable-next-line import/no-webpack-loader-syntax
 import SearchWorker from 'workers-loader?inline&fallback=false!./worker'
 
 const getWorker = (() => {

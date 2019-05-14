@@ -19,6 +19,7 @@ const settingsCtx = React.createContext(null as null | {
   fontSize: number
   paragraphSpace: number
   titleSpace: number
+  percent: number
 })
 function useSettings() {
   const ret = useContext(settingsCtx)
@@ -29,15 +30,25 @@ function useEm() {
   return useSettings().em
 }
 
-Font.register(
-  `${window.location.protocol}//${window.location.host}${Cantarell}`,
-  { family: 'Cantarell' },
-)
-Font.register(
-  `${window.location.protocol}//${window.location.host}${CantarellBold}`,
-  { family: 'Cantarell Bold' },
-)
-const bold = { fontFamily: 'Cantarell Bold' }
+Font.register({
+  family: 'Cantarell',
+  src: `${window.location.protocol}//${window.location.host}${Cantarell}`,
+  fonts: [
+    {
+      src: `${window.location.protocol}//${window.location.host}${Cantarell}`,
+      fontStyle: 'normal',
+      fontWeight: 'normal',
+    },
+    {
+      src: `${window.location.protocol}//${
+        window.location.host
+      }${CantarellBold}`,
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+    },
+  ],
+})
+const bold = { fontWeight: 'bold' }
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
   text.trim() +
@@ -81,30 +92,30 @@ function LineC({ l }: { l: Line }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
       {l.tag ? <Text style={bold}>{l.tag}&nbsp;</Text> : null}
-      {l.content.map((c, i) => (
-        <>
-          {c.ch ? (
-            <Chord
-              chord={c.ch.replace(/^_/, '')}
-              space={!!c.ch && c.ch.startsWith('_')}
-              lineHasChord={hasChord(l)}
-            />
-          ) : null}
-          {c.text ? (
-            <View
-              style={{
-                //paddingTop: (hasChord(l) ? 1.2 : 0.3) * em,
-                verticalAlign: 'baseline',
-                height: (hasChord(l) ? 2.2 : 1.3) * em,
-                alignItems: 'flex-end',
-                flexDirection: 'row',
-              }}
-            >
-              <Text>{nbsp(c.text)}</Text>
-            </View>
-          ) : null}
-        </>
-      ))}
+      {l.content.map((c, i) => [
+        c.ch ? (
+          <Chord
+            key={i * 2}
+            chord={c.ch.replace(/^_/, '')}
+            space={!!c.ch && c.ch.startsWith('_')}
+            lineHasChord={hasChord(l)}
+          />
+        ) : null,
+        c.text ? (
+          <View
+            key={i * 2 + 1}
+            style={{
+              //paddingTop: (hasChord(l) ? 1.2 : 0.3) * em,
+              verticalAlign: 'baseline',
+              height: (hasChord(l) ? 2.2 : 1.3) * em,
+              alignItems: 'flex-end',
+              flexDirection: 'row',
+            }}
+          >
+            <Text>{nbsp(c.text)}</Text>
+          </View>
+        ) : null,
+      ])}
     </View>
   )
 }
@@ -121,8 +132,29 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
   )
 }
 
-function SongPage({ page, size }: { page: Line[][]; size: number }) {
-  const { em } = useSettings()
+const pageValues = {
+  width: 105,
+  height: 148,
+
+  margin: {
+    top: (7.8 / 148) * 100,
+    bottom: (6 / 148) * 100,
+    outer: (12.4 / 105) * 100,
+    inner: (18.8 / 105) * 100,
+  },
+  innerRatio: (105 - 12.4 - 18.8) / (148 - 6 - 7.8),
+}
+
+function SongPage({
+  page,
+  size,
+  left,
+}: {
+  page: Line[][]
+  size: number
+  left: boolean
+}) {
+  const { em, percent } = useSettings()
   return (
     <Page
       style={{
@@ -132,9 +164,32 @@ function SongPage({ page, size }: { page: Line[][]; size: number }) {
       }}
       size={`A${size}`}
     >
-      {page.map((paragraph, i2) => (
-        <ParagraphC p={paragraph} key={i2} />
-      ))}
+      <View
+        style={{
+          backgroundColor: '#caa',
+          height: '100%',
+          paddingTop: pageValues.margin.top * percent,
+          paddingBottom: pageValues.margin.bottom * percent,
+          paddingRight: left
+            ? pageValues.margin.inner * percent
+            : pageValues.margin.outer * percent,
+          paddingLeft: left
+            ? pageValues.margin.outer * percent
+            : pageValues.margin.inner * percent,
+        }}
+      >
+        <View
+          style={{
+            position: 'relative',
+            backgroundColor: '#aca',
+            height: '100%',
+          }}
+        >
+          {page.map((paragraph, i2) => (
+            <ParagraphC p={paragraph} key={i2} />
+          ))}
+        </View>
+      </View>
     </Page>
   )
 }
@@ -145,14 +200,16 @@ class PDFRender extends React.Component<Props, {}> {
     const pages = parseSong(song.textWithChords)
 
     const size = 6
-    const em = 7.20566929133848 * Math.sqrt(2) ** (6 - size) /* 2.542 mm */
+    const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
 
     return (
       <PDFViewer>
-        <settingsCtx.Provider value={{ ...song.metadata, em }}>
+        <settingsCtx.Provider
+          value={{ ...song.metadata, em, percent: em / 2.54 }}
+        >
           <Document>
             {pages.map((page, i) => (
-              <SongPage key={i} page={page} size={size} />
+              <SongPage key={i} page={page} size={size} left={i % 2 === 0} />
             ))}
           </Document>
         </settingsCtx.Provider>
