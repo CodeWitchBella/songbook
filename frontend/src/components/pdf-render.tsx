@@ -192,7 +192,6 @@ function SongPage({
     >
       <View
         style={{
-          backgroundColor: '#caa',
           height: '100%',
           paddingTop: pageValues.margin.top * percent,
           paddingBottom: pageValues.margin.bottom * percent,
@@ -207,7 +206,6 @@ function SongPage({
         <View
           style={{
             position: 'relative',
-            backgroundColor: 'white',
             height: '100%',
             fontSize: fontSize * em,
           }}
