@@ -57,7 +57,16 @@ function LinkToSong({
       href={href}
       onClick={evt => {
         evt.preventDefault()
-        history.replace(location.pathname, { searchText })
+        // abuse history to be able to quickly clear search
+        if (
+          location.state &&
+          typeof location.state === 'object' &&
+          location.state.searchText
+        ) {
+          history.replace(location.pathname, { searchText })
+        } else {
+          history.push(location.pathname, { searchText })
+        }
         history.push(href, { canGoBack: true })
       }}
     >

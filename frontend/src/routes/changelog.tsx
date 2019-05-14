@@ -4,6 +4,15 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-05-15">
+      <li>
+        Vyhledávání se nyní ukládá
+        <ul>
+          <li>Další stiskem tlačítka zpět se vyhledávací lišta vyčistí</li>
+        </ul>
+      </li>
+      <li>Další pokrok na PDF exportu</li>
+    </Entry>
     <Entry date="2019-05-14">
       <li>Pokrok na PDF exportu</li>
       <li>Odstraněn jeden z audio přehrávačů</li>

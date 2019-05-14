@@ -1,10 +1,10 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState, useEffect } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
-import { useRouterUnsafe } from 'components/use-router'
+import useRouter from 'components/use-router'
 
 const TheSearch = styled.div`
   display: flex;
@@ -69,6 +69,16 @@ function compareSongs(a: SongWithData, b: SongWithData) {
   return a.data!.author.localeCompare(b.data!.author)
 }
 
+function useOnChange<T>(value: T, handler: (v: T) => void) {
+  const last = useRef(value)
+  useEffect(() => {
+    if (last.current !== value) {
+      handler(value)
+      last.current = value
+    }
+  })
+}
+
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const source = useSongList()
 
@@ -80,12 +90,15 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         .sort(compareSongs),
     [source],
   )
-  const initialLocationState = useRouterUnsafe().location.state
-  const [search, setSearch] = useState(
-    typeof initialLocationState === 'object' && initialLocationState
-      ? initialLocationState.searchText || ''
-      : '',
-  )
+  const locationState = useRouter().location.state
+  const locationStateSearchText =
+    typeof locationState === 'object' && locationState
+      ? locationState.searchText || ''
+      : ''
+
+  const [search, setSearch] = useState(locationStateSearchText)
+
+  useOnChange(locationStateSearchText, text => setSearch(text))
   console.log('songs.length', songs.length)
 
   return (
