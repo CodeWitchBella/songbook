@@ -9,6 +9,7 @@ const Changelog = () => (
         Vyhledávání se nyní ukládá
         <ul>
           <li>Další stiskem tlačítka zpět se vyhledávací lišta vyčistí</li>
+          <li>Také přidáno tlačítko na vyčištění vyhledávání</li>
         </ul>
       </li>
       <li>Další pokrok na PDF exportu</li>

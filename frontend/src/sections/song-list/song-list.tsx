@@ -1,4 +1,6 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import { useMemo, useRef, useState, useEffect } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
@@ -33,6 +35,31 @@ const PageNav = styled.nav`
   height: 100%;
 `
 
+function ClearButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      css={{
+        all: 'unset',
+        position: 'absolute',
+        right: 6,
+        top: 2,
+        height: 40,
+        width: 40,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      type="button"
+      onClick={onClick}
+    >
+      <svg viewBox="0 0 47.271 47.271" height="25" width="25">
+        <path d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z" />
+        <path d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z" />
+      </svg>
+    </button>
+  )
+}
+
 function Search({
   text,
   onChange,
@@ -43,6 +70,7 @@ function Search({
   const ref = useRef<HTMLInputElement>(null)
   return (
     <form
+      css={{ position: 'relative' }}
       onSubmit={evt => {
         evt.preventDefault()
         const refc = ref.current
@@ -58,6 +86,7 @@ function Search({
         value={text}
         placeholder="Vyhledávání"
       />
+      <ClearButton onClick={() => onChange('')} />
       <button style={{ display: 'none' }} />
     </form>
   )
