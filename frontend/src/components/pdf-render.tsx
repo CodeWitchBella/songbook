@@ -121,6 +121,24 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
   )
 }
 
+function SongPage({ page, size }: { page: Line[][]; size: number }) {
+  const { em } = useSettings()
+  return (
+    <Page
+      style={{
+        fontFamily: 'Cantarell',
+        fontSize: em,
+        fontWeight: 'normal',
+      }}
+      size={`A${size}`}
+    >
+      {page.map((paragraph, i2) => (
+        <ParagraphC p={paragraph} key={i2} />
+      ))}
+    </Page>
+  )
+}
+
 class PDFRender extends React.Component<Props, {}> {
   render() {
     const { song } = this.props
@@ -134,19 +152,7 @@ class PDFRender extends React.Component<Props, {}> {
         <settingsCtx.Provider value={{ ...song.metadata, em }}>
           <Document>
             {pages.map((page, i) => (
-              <Page
-                key={i}
-                style={{
-                  fontFamily: 'Cantarell',
-                  fontSize: em,
-                  fontWeight: 'normal',
-                }}
-                size={`A${size}`}
-              >
-                {page.map((paragraph, i2) => (
-                  <ParagraphC p={paragraph} key={i2} />
-                ))}
-              </Page>
+              <SongPage key={i} page={page} size={size} />
             ))}
           </Document>
         </settingsCtx.Provider>
