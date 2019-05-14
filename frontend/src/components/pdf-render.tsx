@@ -8,10 +8,11 @@ import {
   View,
   PDFViewer,
 } from '@react-pdf/renderer'
-import Cantarell from './Cantarell-Regular.ttf'
-import CantarellBold from './Cantarell-Bold.ttf'
+import Cantarell from 'webfonts/cantarell-regular.woff'
+import CantarellBold from 'webfonts/cantarell-bold.woff'
 import { SongWithData } from 'store/store'
 import { useQueryParam } from './use-router'
+import { notNull } from '@codewitchbella/ts-utils'
 
 type Props = { song: SongWithData['data'] }
 
@@ -30,17 +31,15 @@ function useSettings() {
 
 Font.register({
   family: 'Cantarell',
-  src: `${window.location.protocol}//${window.location.host}${Cantarell}`,
+  src: Cantarell,
   fonts: [
     {
-      src: `${window.location.protocol}//${window.location.host}${Cantarell}`,
+      src: Cantarell,
       fontStyle: 'normal',
       fontWeight: 'normal',
     },
     {
-      src: `${window.location.protocol}//${
-        window.location.host
-      }${CantarellBold}`,
+      src: CantarellBold,
       fontStyle: 'normal',
       fontWeight: 'bold',
     },
@@ -53,20 +52,40 @@ const nbsp = (text: string) =>
 
 const hasChord = (l: Line) => l.content.some(el => !!el.ch)
 
-function Chord({ chord, space }: { chord: string; space: boolean }) {
-  const { em } = useSettings()
+const lineStyle = {
+  verticalAlign: 'baseline',
+  alignItems: 'flex-end',
+  flexDirection: 'row',
+}
+
+function ChordLine({ l }: { l: Line }) {
+  const { em, percent } = useSettings()
   return (
-    <View
-      style={{
-        fontWeight: 'bold',
-        width: space ? 'auto' : 0,
-        height: 2.2 * em,
-        flexDirection: 'column',
-      }}
-    >
-      <View style={{ width: space ? 'auto' : 100 * em }}>
-        <Text>{chord}</Text>
-      </View>
+    <View style={{ width: 0, height: 2.3 * em, flexDirection: 'row' }}>
+      {l.content
+        .map((cur, i) => (
+          <View style={{ width: 0 }} key={i}>
+            <View style={{ width: 100 * percent }}>
+              <Text>
+                <Text
+                  style={{
+                    opacity: 0,
+                    ...lineStyle,
+                  }}
+                >
+                  {l.content.slice(0, i).map((t, i2) => (
+                    <Text key={i2}>{t.text}</Text>
+                  ))}
+                </Text>
+                <Text style={{ fontWeight: 'bold' }}>
+                  {cur.ch.replace(/^_/, '')}
+                </Text>
+              </Text>
+            </View>
+          </View>
+        ))
+        .filter(notNull)}
+      <Text style={{ fontWeight: 'bold' }} />
     </View>
   )
 }
@@ -82,27 +101,20 @@ function LineC({ l }: { l: Line }) {
       }}
     >
       {l.tag ? <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text> : null}
-      {l.content.map((c, i) => [
-        c.ch ? (
-          <Chord
-            key={i * 2}
-            chord={c.ch.replace(/^_/, '')}
-            space={!!c.ch && c.ch.startsWith('_')}
-          />
-        ) : null,
-        c.text ? (
-          <View
-            key={i * 2 + 1}
-            style={{
-              verticalAlign: 'baseline',
-              alignItems: 'flex-end',
-              flexDirection: 'row',
-            }}
-          >
-            <Text>{nbsp(c.text)}</Text>
-          </View>
-        ) : null,
-      ])}
+      {hasChord(l) ? <ChordLine l={l} /> : null}
+
+      <Text style={lineStyle}>
+        {l.content
+          .map((c, i) => [
+            c.ch && c.ch.startsWith('_') ? (
+              <Text key={i * 2} style={{ opacity: 0 }}>
+                {c.ch.replace(/^_/, '')}
+              </Text>
+            ) : null,
+            c.text ? <Text key={i * 2 + 1}>{nbsp(c.text)}</Text> : null,
+          ])
+          .filter(notNull)}
+      </Text>
     </View>
   )
 }
