@@ -16,26 +16,38 @@ const getWorker = (() => {
 })()
 
 type FilteredList = ReturnType<typeof getFilteredSongList>
-const filteredToComponents = (showTitles: boolean, filtered: FilteredList) => {
+const filteredToComponents = (
+  searchText: string,
+  showTitles: boolean,
+  filtered: FilteredList,
+) => {
   if (Array.isArray(filtered)) {
-    return filtered.map(s => <SongItem key={s} id={s} />)
+    return filtered.map(s => (
+      <SongItem key={s} id={s} searchText={searchText} />
+    ))
   }
 
   return [
     showTitles && filtered.byTitle.length > 0 ? (
       <SearchTitle key="title">Podle názvu</SearchTitle>
     ) : null,
-    ...filtered.byTitle.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byTitle.map(s => (
+      <SongItem key={s} id={s} searchText={searchText} />
+    )),
 
     showTitles && filtered.byAuthor.length > 0 ? (
       <SearchTitle key="author">Podle autora</SearchTitle>
     ) : null,
-    ...filtered.byAuthor.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byAuthor.map(s => (
+      <SongItem key={s} id={s} searchText={searchText} />
+    )),
 
     showTitles && filtered.byText.length > 0 ? (
       <SearchTitle key="text">Text obsahuje</SearchTitle>
     ) : null,
-    ...filtered.byText.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byText.map(s => (
+      <SongItem key={s} id={s} searchText={searchText} />
+    )),
   ].filter(notNull)
 }
 
@@ -56,7 +68,7 @@ export default function FilteredList({
       }: { showTitles: boolean; ids: FilteredList; tag: string },
     ) => {
       console.log(`[${tag}] Setting list to`, { showTitles, ids })
-      return filteredToComponents(showTitles, ids)
+      return filteredToComponents(search, showTitles, ids)
     },
     null,
     (_arg: null) => {
@@ -66,7 +78,11 @@ export default function FilteredList({
         byText: [],
       }
       console.log('Initial set list to', { showTitles: false, ids })
-      return filteredToComponents(false, ids)
+      return filteredToComponents(
+        search,
+        !!search,
+        getFilteredSongList(songs, search),
+      )
     },
   )
 

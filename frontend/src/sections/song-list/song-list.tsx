@@ -4,6 +4,7 @@ import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
+import { useRouterUnsafe } from 'components/use-router'
 
 const TheSearch = styled.div`
   display: flex;
@@ -79,7 +80,12 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         .sort(compareSongs),
     [source],
   )
-  const [search, setSearch] = useState('')
+  const initialLocationState = useRouterUnsafe().location.state
+  const [search, setSearch] = useState(
+    typeof initialLocationState === 'object' && initialLocationState
+      ? initialLocationState.searchText || ''
+      : '',
+  )
   console.log('songs.length', songs.length)
 
   return (

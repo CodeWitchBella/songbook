@@ -3,7 +3,7 @@ import { useSong } from 'store/store'
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 import { css } from '@emotion/core'
-import { useHistoryChange } from 'components/use-router'
+import useRouter from 'components/use-router'
 
 const a = css`
   color: black;
@@ -45,15 +45,20 @@ export const SearchTitle = ({ children }: PropsWithChildren<{}>) => (
   </TheSong>
 )
 
-function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
-  const { push } = useHistoryChange()
+function LinkToSong({
+  id,
+  children,
+  searchText,
+}: PropsWithChildren<{ id: string; searchText: string }>) {
+  const { history, location } = useRouter()
   const href = `/song/${id}`
   return (
     <a
       href={href}
       onClick={evt => {
         evt.preventDefault()
-        push(href, { canGoBack: true })
+        history.replace(location.pathname, { searchText })
+        history.push(href, { canGoBack: true })
       }}
     >
       {children}
@@ -61,13 +66,19 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   )
 }
 
-export const SongItem = ({ id }: { id: string }) => {
+export const SongItem = ({
+  id,
+  searchText,
+}: {
+  id: string
+  searchText: string
+}) => {
   const song = useSong(id)
   if (!song) return null
   const { data } = song
   return (
     <TheSong>
-      <LinkToSong id={id}>
+      <LinkToSong id={id} searchText={searchText}>
         {data ? (
           <>
             {data.title} - {data.author}
