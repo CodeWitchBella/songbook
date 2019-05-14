@@ -154,7 +154,7 @@ function SongPage({
   size: number
   left: boolean
 }) {
-  const { em, percent } = useSettings()
+  const { em, percent, fontSize } = useSettings()
   return (
     <Page
       style={{
@@ -181,8 +181,9 @@ function SongPage({
         <View
           style={{
             position: 'relative',
-            backgroundColor: '#aca',
+            backgroundColor: 'white',
             height: '100%',
+            fontSize: fontSize * em,
           }}
         >
           {page.map((paragraph, i2) => (
