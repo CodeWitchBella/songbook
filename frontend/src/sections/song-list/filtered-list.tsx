@@ -22,32 +22,24 @@ const filteredToComponents = (
   filtered: FilteredList,
 ) => {
   if (Array.isArray(filtered)) {
-    return filtered.map(s => (
-      <SongItem key={s} id={s} searchText={searchText} />
-    ))
+    return filtered.map(s => <SongItem key={s} id={s} />)
   }
 
   return [
     showTitles && filtered.byTitle.length > 0 ? (
       <SearchTitle key="title">Podle názvu</SearchTitle>
     ) : null,
-    ...filtered.byTitle.map(s => (
-      <SongItem key={s} id={s} searchText={searchText} />
-    )),
+    ...filtered.byTitle.map(s => <SongItem key={s} id={s} />),
 
     showTitles && filtered.byAuthor.length > 0 ? (
       <SearchTitle key="author">Podle autora</SearchTitle>
     ) : null,
-    ...filtered.byAuthor.map(s => (
-      <SongItem key={s} id={s} searchText={searchText} />
-    )),
+    ...filtered.byAuthor.map(s => <SongItem key={s} id={s} />),
 
     showTitles && filtered.byText.length > 0 ? (
       <SearchTitle key="text">Text obsahuje</SearchTitle>
     ) : null,
-    ...filtered.byText.map(s => (
-      <SongItem key={s} id={s} searchText={searchText} />
-    )),
+    ...filtered.byText.map(s => <SongItem key={s} id={s} />),
   ].filter(notNull)
 }
 

@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useMemo, useRef, useState, useEffect } from 'react'
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
-import useRouter from 'components/use-router'
+import useRouter, { useRouterUnsafe } from 'components/use-router'
 
 const TheSearch = styled.div`
   display: flex;
@@ -98,14 +98,50 @@ function compareSongs(a: SongWithData, b: SongWithData) {
   return a.data!.author.localeCompare(b.data!.author)
 }
 
-function useOnChange<T>(value: T, handler: (v: T) => void) {
-  const last = useRef(value)
+type Setter = (
+  value: string | null,
+  opts?: { push?: boolean; state?: any },
+) => void
+function useQueryParam(param: string): [string | null, Setter] {
+  const router = useRouterUnsafe()
+  const [value, setValue] = useState(() =>
+    new URLSearchParams(router.location.search).get(param),
+  )
+
   useEffect(() => {
-    if (last.current !== value) {
-      handler(value)
-      last.current = value
-    }
-  })
+    return router.history.listen(location => {
+      console.log(location)
+      setImmediate(() => {
+        setValue(new URLSearchParams(location.search).get(param))
+      })
+    })
+  }, [param, router.history])
+
+  const setValueOnRouter = useCallback<Setter>(
+    (
+      value,
+      {
+        push = false,
+        state: locationState,
+      }: { push?: boolean; state?: any } = {},
+    ) => {
+      const params = new URLSearchParams(router.location.search)
+      if (value !== null) params.set(param, value)
+      else params.delete(param)
+      params.sort()
+      const state = {
+        ...router.location,
+        state:
+          locationState === undefined ? router.location.state : locationState,
+        search: params.toString(),
+      }
+      if (push) router.history.push(state)
+      else router.history.replace(state)
+    },
+    [param, router.history, router.location],
+  )
+
+  return [value, setValueOnRouter]
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
@@ -119,25 +155,42 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         .sort(compareSongs),
     [source],
   )
-  const locationState = useRouter().location.state
-  const locationStateSearchText =
-    typeof locationState === 'object' && locationState
-      ? locationState.searchText || ''
-      : ''
 
-  const [search, setSearch] = useState(locationStateSearchText)
+  const router = useRouter()
 
-  useOnChange(locationStateSearchText, text => setSearch(text))
+  const [search, setSearch] = useQueryParam('q')
+
   console.log('songs.length', songs.length)
 
   return (
     <PageNav>
       <TheSearch>
-        <Search text={search} onChange={setSearch} />
+        <Search
+          text={search || ''}
+          onChange={v => {
+            const { state } = router.location
+            if (typeof state === 'object' && state && state.goBackOnClear) {
+              if (v) {
+                setSearch(v, { push: false })
+              } else {
+                router.history.goBack()
+              }
+            } else {
+              if (v) {
+                setSearch(v, {
+                  push: true,
+                  state: { goBackOnClear: true },
+                })
+              } else {
+                setSearch(null)
+              }
+            }
+          }}
+        />
       </TheSearch>
       <TopMenu />
       {songs.length === 0 ? null : (
-        <FilteredList songs={songs} search={search} />
+        <FilteredList songs={songs} search={search || ''} />
       )}
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
     </PageNav>

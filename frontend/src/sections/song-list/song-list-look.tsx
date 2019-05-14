@@ -45,28 +45,14 @@ export const SearchTitle = ({ children }: PropsWithChildren<{}>) => (
   </TheSong>
 )
 
-function LinkToSong({
-  id,
-  children,
-  searchText,
-}: PropsWithChildren<{ id: string; searchText: string }>) {
-  const { history, location } = useRouter()
+function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
+  const { history } = useRouter()
   const href = `/song/${id}`
   return (
     <a
       href={href}
       onClick={evt => {
         evt.preventDefault()
-        // abuse history to be able to quickly clear search
-        if (
-          location.state &&
-          typeof location.state === 'object' &&
-          location.state.searchText
-        ) {
-          history.replace(location.pathname, { searchText })
-        } else {
-          history.push(location.pathname, { searchText })
-        }
         history.push(href, { canGoBack: true })
       }}
     >
@@ -75,19 +61,13 @@ function LinkToSong({
   )
 }
 
-export const SongItem = ({
-  id,
-  searchText,
-}: {
-  id: string
-  searchText: string
-}) => {
+export const SongItem = ({ id }: { id: string }) => {
   const song = useSong(id)
   if (!song) return null
   const { data } = song
   return (
     <TheSong>
-      <LinkToSong id={id} searchText={searchText}>
+      <LinkToSong id={id}>
         {data ? (
           <>
             {data.title} - {data.author}
