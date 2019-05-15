@@ -106,8 +106,8 @@ const resolvers = {
     songBySlug: (_: {}, { slug }: { slug: string }) => songBySlug(slug),
   },
   SongRecord: {
-    data: src => src.data(),
-    lastModified: src => src.updateTime.toDate().toISOString(),
+    data: (src: any) => src.data(),
+    lastModified: (src: any) => src.updateTime.toDate().toISOString(),
   },
   Mutation: {
     createSong: async (
