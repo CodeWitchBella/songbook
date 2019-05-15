@@ -15,7 +15,7 @@ const server = new ApolloServer(config)
 //    maxAge: 3600,
 //  },
 //})
-export const httpTrigger = server.createHandler({
+export const graphql = server.createHandler({
   cors: {
     origin: ['localhost:3000', 'https://zpevnik.skorepova.info'],
     credentials: true,

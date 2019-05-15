@@ -3,9 +3,11 @@
   "description": "",
   "version": "0.1.0",
   "scripts": {
-    "build-watch": "webpack --env google --watch",
-    "start": "nodemon -w index.js -x functions-framework --target=httpTrigger",
-    "build:production": "webpack --env google"
+    "build": "webpack --env google",
+    "build-watch": "npm run build -- --watch",
+    "start": "nodemon -w index.js -x functions-framework --target=graphql",
+    "build:production": "webpack --env google",
+    "deploy": "npm run build && gcloud functions deploy graphql --runtime nodejs10 --trigger-http --memory 128MB --clear-env-vars"
   },
   "dependencies": {
     "@google-cloud/firestore": "^1.3.0",
