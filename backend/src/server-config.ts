@@ -42,26 +42,21 @@ const typeDefs = gql`
     title: String!
   }
 
-  input SongMetadataInput {
+  input UpdateSongInput {
+    slug: String
+    author: String
+    title: String
+    text: String
+
     fontSize: Float
     paragraphSpace: Float
     titleSpace: Float
     spotify: String
   }
 
-  input WriteSongInput {
-    id: String!
-    title: String!
-    author: String!
-    metadata: SongMetadataInput!
-    textWithChords: String!
-    # no tags here
-  }
-
   type Mutation {
-    writeBlob(name: String!, content: String!): String
     createSong(input: CreateSongInput!): SongRecord
-    writeSong(input: WriteSongInput!): Song
+    updateSong(id: String!, input: UpdateSongInput!): SongRecord
   }
 `
 
@@ -85,6 +80,14 @@ async function randomID(length: number) {
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=/g, '')
+}
+
+function fromEntries(entries: [string, any][]) {
+  const ret: { [key: string]: any } = {}
+  for (const [k, v] of entries) {
+    ret[k] = v
+  }
+  return ret
 }
 
 // A map of functions which return data for the schema.
@@ -125,9 +128,18 @@ const resolvers = {
       })
       return await doc.get()
     },
-    writeSong: async (_: {}, { input: { id, ...rest } }: { input: any }) => {
-      await rewriteBlob(id, JSON.stringify(rest))
-      return { id, ...rest }
+    updateSong: async (
+      _: {},
+      { id, input: input }: { input: any; id: string },
+    ) => {
+      const doc = firestore.doc('songs/' + id)
+      const prev = await doc.get()
+      if (!prev.exists) throw new Error('Song does not exist')
+      const w = await doc.set({
+        ...prev.data(),
+        ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
+      })
+      return doc.get()
     },
   },
 }
