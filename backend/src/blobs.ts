@@ -1,23 +1,8 @@
-import {
-  ContainerURL,
-  ServiceURL,
-  AnonymousCredential,
-  StorageURL,
-  Aborter,
-  Models,
-  BlobURL,
-  BlockBlobURL,
-  uploadStreamToBlockBlob,
-  SharedKeyCredential,
-} from '@azure/storage-blob'
 import { Readable } from 'stream'
 import uuid from 'uuid/v4'
+import { Firestore } from '@google-cloud/firestore'
 
-const settings = {
-  token: process.env.TOKEN || '',
-  account: 'songbook',
-}
-
+/*
 const containerURL = () => {
   const credential = new SharedKeyCredential(settings.account, settings.token)
   const pipeline = StorageURL.newPipeline(credential)
@@ -67,3 +52,24 @@ export async function rewriteBlob(name: string, content: string) {
     throw e
   }
 }
+*/
+
+const credentials = process.env.CREDENTIALS as any
+const firestore = new Firestore({
+  credentials,
+  projectId: credentials.project_id,
+})
+
+export async function writeBlob(
+  name: string,
+  content: string,
+  leaseId?: string,
+) {
+  const doc = await firestore
+    .collection('songs')
+    .where('slug', '==', 'Amazonka-Hop_Trop')
+    .limit(1)
+    .get()
+  return doc.docs[0].data()
+}
+export async function rewriteBlob(name: string, content: string) {}

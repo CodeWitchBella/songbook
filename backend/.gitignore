@@ -92,3 +92,5 @@ out
 graphql/index.js
 localhost.js*
 keys.json
+credentials.json
+index.js

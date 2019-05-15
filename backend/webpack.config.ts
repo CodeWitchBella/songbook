@@ -1,7 +1,7 @@
 import webpack from 'webpack'
 import TerserPlugin from 'terser-webpack-plugin'
 
-type Env = 'azure' | 'localhost'
+type Env = 'google' | 'localhost'
 
 function envSwitch<T extends {}>(env: Env, config: { [key in Env]: T }) {
   if (!(env in config)) throw new Error('Unsuported env ' + env)
@@ -28,7 +28,7 @@ const config = (env: Env): webpack.Configuration => ({
   mode: 'production',
   entry: envSwitch(env, {
     localhost: './src/localhost.ts',
-    azure: './src/handler.ts',
+    google: './src/handler.ts',
   }),
   resolve: {
     extensions: ['.ts', '.mjs', '.js'],
@@ -37,24 +37,21 @@ const config = (env: Env): webpack.Configuration => ({
     path: __dirname,
     filename: envSwitch(env, {
       localhost: 'localhost.js',
-      azure: 'graphql/index.js',
+      google: 'index.js',
     }),
     libraryTarget: 'commonjs2',
   },
-  externals: envSwitch(env, {
-    localhost: {
-      ...externalize('devDependencies'),
-      ...externalize('dependencies'),
-    },
-    azure: {},
-  }),
+  externals: {
+    ...externalize('devDependencies'),
+    ...externalize('dependencies'),
+  },
   devtool: envSwitch<'source-map' | boolean>(env, {
     localhost: 'source-map',
-    azure: false,
+    google: false,
   }),
   target: 'node',
   optimization: {
-    minimize: envSwitch(env, { azure: true, localhost: false }),
+    minimize: envSwitch(env, { google: true, localhost: false }),
     minimizer: [
       new TerserPlugin({
         cache: true,
@@ -72,23 +69,15 @@ const config = (env: Env): webpack.Configuration => ({
     rules: [{ test: /\.ts$/, loaders: [{ loader: 'babel-loader' }] }],
   },
   plugins: [
-    new webpack.DefinePlugin(
-      fromEntries(
-        Object.entries(require('./keys.json')).map(
-          ([k, v]) =>
-            ['process.env.' + k.toUpperCase(), JSON.stringify(v)] as [
-              string,
-              string
-            ],
-        ),
-      ),
-    ),
+    new webpack.DefinePlugin({
+      'process.env.CREDENTIALS': JSON.stringify(require('./credentials.json')),
+    }),
   ],
 })
 
 export default function configuration(env: unknown) {
-  if (!env) return [config('azure'), config('localhost')]
+  if (!env) return [config('google'), config('localhost')]
   if (typeof env !== 'string') throw new Error('Env must be string')
-  if (env !== 'azure' && env !== 'localhost') throw new Error('Unkown env')
+  if (env !== 'google' && env !== 'localhost') throw new Error('Unkown env')
   return config(env)
 }
