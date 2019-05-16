@@ -2,6 +2,7 @@ import React from 'react'
 import { Switch, Route } from 'react-router'
 import NotFound from './not-found'
 import PrivacyPolicy from './privacy-policy'
+import LoginFB from './login-fb'
 
 const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
@@ -66,6 +67,7 @@ export default class Routes extends React.Component {
         />
         <Route path="/changelog" exact render={() => <Changelog />} />
         <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
+        <Route path="/login/fb" exact render={() => <LoginFB />} />
         <Route>
           <NotFound />
         </Route>
