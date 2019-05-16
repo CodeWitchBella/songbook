@@ -1,12 +1,13 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, useState, PropsWithChildren } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
+import { Burger } from 'components/song-look/song-menu-icons'
 
 const TheSearch = styled.div`
   display: flex;
@@ -20,13 +21,13 @@ const TheSearch = styled.div`
     width: 100vw;
     flex-grow: 1;
     max-width: 420px;
-    overflow: hidden;
   }
   input {
-    width: calc(100% - 22px);
+    box-sizing: border-box;
+    width: calc(100% - 4px);
     height: 40px;
+    padding: 0;
     padding-left: 10px;
-    margin-left: 5px;
     border: 1px solid #222;
   }
 `
@@ -41,8 +42,8 @@ function ClearButton({ onClick }: { onClick: () => void }) {
       css={{
         all: 'unset',
         position: 'absolute',
-        right: 6,
-        top: 2,
+        right: 5,
+        top: 0,
         height: 40,
         width: 40,
         display: 'flex',
@@ -60,6 +61,87 @@ function ClearButton({ onClick }: { onClick: () => void }) {
   )
 }
 
+function Menu() {
+  const [isOpen, setOpen] = useState(false)
+  return (
+    <div css={{ width: 40 }}>
+      <button
+        css={{
+          all: 'unset',
+          boxSizing: 'border-box',
+          height: 40,
+          width: 40,
+          border: '1px solid',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+          position: 'relative',
+        }}
+        onClick={() => setOpen(v => !v)}
+      >
+        <Burger />
+      </button>
+      {isOpen && <MenuContent />}
+    </div>
+  )
+}
+
+function MenuItem({
+  children,
+  as: As = 'li',
+  href,
+}: PropsWithChildren<
+  { as?: 'li'; href?: undefined } | { as: 'a'; href: string }
+>) {
+  return (
+    <As
+      href={href}
+      css={{
+        all: 'unset',
+        boxSizing: 'border-box',
+        border: '1px solid',
+        height: 40,
+        display: 'block',
+        lineHeight: '40px',
+        padding: '0 20px',
+        background: 'white',
+      }}
+      {...(As === 'a' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      {children}
+    </As>
+  )
+}
+
+function MenuContent() {
+  return (
+    <ul
+      css={{
+        all: 'unset',
+        position: 'absolute',
+        right: 4,
+        top: 40,
+        margin: '5px 0',
+      }}
+    >
+      <MenuItem
+        as="a"
+        href={
+          'https://www.facebook.com/v3.3/dialog/oauth?' +
+          new URLSearchParams({
+            client_id: '331272811153847',
+            redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
+            state: 'abc',
+          }).toString()
+        }
+      >
+        Přihlásit se
+      </MenuItem>
+    </ul>
+  )
+}
+
 function Search({
   text,
   onChange,
@@ -70,7 +152,7 @@ function Search({
   const ref = useRef<HTMLInputElement>(null)
   return (
     <form
-      css={{ position: 'relative' }}
+      css={{ position: 'relative', width: 'calc(100% - 22px)' }}
       onSubmit={evt => {
         evt.preventDefault()
         const refc = ref.current
@@ -78,15 +160,20 @@ function Search({
         refc.blur()
       }}
     >
-      <input
-        ref={ref}
-        onChange={evt => {
-          onChange(evt.target.value)
-        }}
-        value={text}
-        placeholder="Vyhledávání"
-      />
-      <ClearButton onClick={() => onChange('')} />
+      <div css={{ display: 'flex', padding: '0 4px' }}>
+        <div css={{ position: 'relative', flexGrow: 1 }}>
+          <input
+            ref={ref}
+            onChange={evt => {
+              onChange(evt.target.value)
+            }}
+            value={text}
+            placeholder="Vyhledávání"
+          />
+          <ClearButton onClick={() => onChange('')} />
+        </div>
+        <Menu />
+      </div>
       <button style={{ display: 'none' }} />
     </form>
   )
