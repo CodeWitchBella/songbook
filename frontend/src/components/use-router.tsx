@@ -1,4 +1,11 @@
-import { useContext, useEffect, useMemo, useState, useCallback } from 'react'
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+} from 'react'
 // @ts-ignore
 import { __RouterContext, RouteComponentProps } from 'react-router'
 import useForceUpdate from './use-force-update'
@@ -42,13 +49,19 @@ export function useQueryParam(param: string): [string | null, Setter] {
   const [value, setValue] = useState(() =>
     new URLSearchParams(router.location.search).get(param),
   )
+  const scheduled = useRef([] as string[])
 
   useEffect(() => {
     return router.history.listen(location => {
       console.log(location)
-      setImmediate(() => {
-        setValue(new URLSearchParams(location.search).get(param))
-      })
+      const value = new URLSearchParams(location.search).get(param) || ''
+      if (scheduled.current.includes(value)) {
+        scheduled.current.splice(scheduled.current.indexOf(value), 1)
+      } else {
+        setImmediate(() => {
+          setValue(value)
+        })
+      }
     })
   }, [param, router.history])
 
@@ -70,6 +83,8 @@ export function useQueryParam(param: string): [string | null, Setter] {
           locationState === undefined ? router.location.state : locationState,
         search: params.toString(),
       }
+      setValue(value || '')
+      scheduled.current.push(value || '')
       if (push) router.history.push(state)
       else router.history.replace(state)
     },
