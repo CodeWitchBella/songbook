@@ -1,3 +1,5 @@
+import { Workbox } from 'workbox-window'
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -21,8 +23,7 @@ const isLocalhost = Boolean(
 )
 
 export type ServiceWorkerRegisterConfig = {
-  onUpdate?: (reg: ServiceWorkerRegistration) => void
-  onSuccess?: (reg: ServiceWorkerRegistration) => void
+  onUpdate?: (wb: Workbox) => void
 }
 
 export function register(config: ServiceWorkerRegisterConfig = {}) {
@@ -59,47 +60,27 @@ export function register(config: ServiceWorkerRegisterConfig = {}) {
 }
 
 function registerValidSW(swUrl: string, config: ServiceWorkerRegisterConfig) {
-  navigator.serviceWorker
-    .register(swUrl)
-    .then(registration => {
-      registration.onupdatefound = () => {
-        const installingWorker = registration.installing
-        if (installingWorker == null) {
-          return
-        }
-        installingWorker.onstatechange = () => {
-          if (installingWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              // At this point, the updated precached content has been fetched,
-              // but the previous service worker will still serve the older
-              // content until all client tabs are closed.
-              console.log(
-                'New content is available and will be used when all ' +
-                  'tabs for this page are closed. See http://bit.ly/CRA-PWA.',
-              )
+  const wb = new Workbox(swUrl)
 
-              // Execute callback
-              if (config && config.onUpdate) {
-                config.onUpdate(registration)
-              }
-            } else {
-              // At this point, everything has been precached.
-              // It's the perfect time to display a
-              // "Content is cached for offline use." message.
-              console.log('Content is cached for offline use.')
+  wb.addEventListener('controlling', event => {
+    window.location.reload()
+  })
 
-              // Execute callback
-              if (config && config.onSuccess) {
-                config.onSuccess(registration)
-              }
-            }
-          }
-        }
-      }
-    })
-    .catch(error => {
-      console.error('Error during service worker registration:', error)
-    })
+  wb.addEventListener('waiting', event => {
+    // At this point, the updated precached content has been fetched,
+    // but the previous service worker will still serve the older
+    // content until all client tabs are closed.
+    console.log(
+      'New content is available and will be used when all ' +
+        'tabs for this page are closed. See http://bit.ly/CRA-PWA.',
+    )
+    // Execute callback
+    if (config && config.onUpdate) {
+      config.onUpdate(wb)
+    }
+  })
+
+  wb.register()
 }
 
 function checkValidServiceWorker(

@@ -287,5 +287,5 @@ export default {
   resolvers,
   playground: true,
   introspection: true,
-  tracing: true,
+  //tracing: true,
 }

@@ -1,26 +1,24 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react'
+import React, { useContext, useEffect, useState, useMemo } from 'react'
 import { ServiceWorkerRegisterConfig } from 'serviceWorker'
+import { Workbox } from 'workbox-window'
 
-const context = React.createContext({ updated: false, hideUpdated: () => {} })
+const context = React.createContext({
+  updated: null as null | Workbox,
+  hideUpdated: () => {},
+})
 
 export const ServiceWorkerStatusProvider: React.FC<{
   register: (config?: ServiceWorkerRegisterConfig) => void
 }> = ({ children, register }) => {
-  const [updated, setUpdated] = useState(false)
-  const hideUpdated = useCallback(() => setUpdated(false), [])
-  const providedValue = useMemo(() => ({ updated, hideUpdated }), [
-    hideUpdated,
-    updated,
-  ])
+  const [updated, setUpdated] = useState(null as null | Workbox)
+  const providedValue = useMemo(
+    () => ({ updated, hideUpdated: () => setUpdated(null) }),
+    [updated],
+  )
+
   useEffect(() => {
     register({
-      onUpdate: () => setUpdated(true),
+      onUpdate: wb => setUpdated(wb),
     })
   }, [register])
   return <context.Provider value={providedValue}>{children}</context.Provider>
