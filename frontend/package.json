@@ -39,10 +39,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext ts --ext tsx --cache src",
-    "az:docker": "docker run --rm -it -v $(pwd):/app -w /app -v $HOME/.azure:/root/.azure microsoft/azure-cli",
-    "upload-docker": "npm run az:docker -- az storage blob upload-batch -s build/ -d '\\$web' --account-name songbook",
-    "upload": "az storage blob upload-batch -s build/ -d \\$web --account-name songbook",
-    "deploy": "npm run build && npm run upload-docker"
+    "deploy": "npm run build && firebase deploy"
   },
   "eslintConfig": {
     "extends": "react-app"
