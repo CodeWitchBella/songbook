@@ -7,6 +7,7 @@ const Changelog = () => (
     <Entry date="2019-05-16">
       <li>WIP Přihlášení přes Facebook</li>
       <li>Lepší menu v seznamu písní</li>
+      <li>Dialog s aktualizací nyní umožňuje přímý restart</li>
     </Entry>
     <Entry date="2019-05-15">
       <li>
