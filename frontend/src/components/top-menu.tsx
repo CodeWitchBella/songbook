@@ -82,6 +82,7 @@ function MenuContent() {
             client_id: '331272811153847',
             redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
             state: 'abc',
+            scope: 'user_gender',
           }).toString()
         }
       >
