@@ -71,6 +71,7 @@ const config = (env: Env): webpack.Configuration => ({
   plugins: [
     new webpack.DefinePlugin({
       'process.env.CREDENTIALS': JSON.stringify(require('./credentials.json')),
+      'process.env.SECRETS': JSON.stringify(require('./secrets.json')),
     }),
   ],
 })

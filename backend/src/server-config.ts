@@ -2,6 +2,8 @@ import { gql, UserInputError } from 'apollo-server'
 import { firestore } from './firestore'
 import latinize from 'latinize'
 import crypto from 'crypto'
+import fetch from 'node-fetch'
+import { DateTime } from 'luxon'
 
 function sanitizeSongId(part: string) {
   return latinize(part)
@@ -54,9 +56,30 @@ const typeDefs = gql`
     spotify: String
   }
 
+  type LoginSuccess {
+    user: User!
+  }
+  type LoginError {
+    message: String!
+  }
+  union LoginPayload = LoginSuccess | LoginError
+
+  type UserPicture {
+    url: String!
+    width: Int!
+    height: Int!
+  }
+
+  type User {
+    name: String!
+    gender: String!
+    picture: UserPicture!
+  }
+
   type Mutation {
     createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
+    fbLogin(code: String): LoginPayload!
   }
 `
 
@@ -140,6 +163,86 @@ const resolvers = {
         ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
       })
       return doc.get()
+    },
+    async fbLogin(_: {}, { code }: { code: string }) {
+      const secrets = process.env.SECRETS as any
+      const res:
+        | {
+            access_token: string
+            token_type: 'bearer'
+            expires_in: number
+          }
+        | {
+            error: {
+              message: string
+              type: string
+              code: number
+              fbtrace_id: string
+            }
+          } = await (await fetch(
+        'https://graph.facebook.com/v3.3/oauth/access_token?' +
+          new URLSearchParams({
+            client_id: '331272811153847',
+            redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
+            client_secret: secrets.fb_secret,
+            code,
+          }).toString(),
+      )).json()
+      if ('error' in res) {
+        return { __typename: 'LoginError', message: res.error.message }
+      }
+      const tokenExpiration = DateTime.utc().plus({ seconds: res.expires_in })
+      const basicInfo: {
+        id: string
+        name: string
+        gender: string
+        email: string
+      } = await (await fetch(
+        'https://graph.facebook.com/v3.3/me?' +
+          new URLSearchParams({
+            fields: 'id,name,gender,email',
+            access_token: res.access_token,
+          }).toString(),
+      )).json()
+      const picture: {
+        data: {
+          height: number
+          is_silhouette: boolean
+          url: string
+          width: number
+        }
+      } = await (await fetch(
+        'https://graph.facebook.com/v3.3/me/picture?' +
+          new URLSearchParams({
+            type: 'large',
+            access_token: res.access_token,
+            redirect: '0',
+          }).toString(),
+      )).json()
+
+      const doc = firestore.doc('users/' + basicInfo.id)
+      const existingData = await (async () => {
+        const d = await doc.get()
+        if (!d.exists) return {}
+        return d.data()
+      })()
+      await doc.set({
+        ...existingData,
+        fbId: basicInfo.id,
+        name: basicInfo.name,
+        gender: basicInfo.gender,
+        email: basicInfo.email,
+        picture: picture.data,
+        fbToken: {
+          token: res.access_token,
+          expires: tokenExpiration.toISO(),
+        },
+      })
+
+      return {
+        __typename: 'LoginSuccess',
+        user: (await doc.get()).data(),
+      }
     },
   },
 }
