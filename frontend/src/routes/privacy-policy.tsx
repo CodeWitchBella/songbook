@@ -14,8 +14,9 @@ function PrintRoute() {
       </p>
       <h3>Co tedy sbírám?</h3>
       <p>
-        Osobní informace. Duh. Jméno, příjmení a email. Prostě chci vědět, kdo
-        mi smazal půlku písní, nebo komu můžu poděkovat za přidání super akordů
+        Osobní informace. Duh. Jméno, příjmení, obrázek, gender a email. Prostě
+        chci vědět, kdo mi smazal půlku písní, nebo komu můžu poděkovat za
+        přidání super akordů
       </p>
       <p>
         Taky si ukládám nastavení která si nastavíš. V momentě psaní tohoto
@@ -29,6 +30,11 @@ function PrintRoute() {
         situacích se po mě chce abych Tě o některých věcech informovala, takže
         tak jako pro jistotu. Taky kdybych náhodou chtěla přidat přihlášení přes
         email tak abych to měla jak napojit.
+      </p>
+      <p>
+        Jméno, příjmení a obrázek zobrazuji tobě a taky to zobrazuji u písní
+        které jsi přidal/a. A gender? Ten si requestuji, abych nemusela psát
+        věci podobné tomu předchozímu :-)
       </p>
       <p>
         A uložené hodnoty nastavení používám k aplikování změn, které to
