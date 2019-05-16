@@ -3,7 +3,8 @@ import { firestore } from './firestore'
 import latinize from 'latinize'
 import crypto from 'crypto'
 import fetch from 'node-fetch'
-import { DateTime } from 'luxon'
+import { DateTime, Duration } from 'luxon'
+import * as functions from 'firebase-functions'
 
 function sanitizeSongId(part: string) {
   return latinize(part)
@@ -37,6 +38,7 @@ const typeDefs = gql`
     songs: [SongRecord!]!
     songBySlug(slug: String!): SongRecord
     songById(id: String!): SongRecord
+    viewer: User
   }
 
   input CreateSongInput {
@@ -113,6 +115,7 @@ function fromEntries(entries: [string, any][]) {
   return ret
 }
 
+type Context = { req: functions.https.Request; res: functions.Response }
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
@@ -127,6 +130,20 @@ const resolvers = {
       return null
     },
     songBySlug: (_: {}, { slug }: { slug: string }) => songBySlug(slug),
+    viewer: async (_: {}, _2: {}, { req, res }: Context) => {
+      res.set('Set-Cookie', `__session2=abc; Max-Age=60; HttpOnly; Path=/`)
+      const cookies = req.get('cookie')
+      if (!cookies) return null
+      for (const cookie of cookies.split(';')) {
+        if (cookie.startsWith('__session=')) {
+          const token = cookie.replace('__session=', '').trim()
+          const session = firestore.doc('sessions/' + token)
+          const data = (await session.get()).data()
+          if (!data) return
+          return (await firestore.doc(data.user).get()).data()
+        }
+      }
+    },
   },
   SongRecord: {
     data: (src: any) => src.data(),
@@ -164,9 +181,9 @@ const resolvers = {
       })
       return doc.get()
     },
-    async fbLogin(_: {}, { code }: { code: string }) {
+    async fbLogin(_: {}, { code }: { code: string }, { res }: Context) {
       const secrets = process.env.SECRETS as any
-      const res:
+      const token:
         | {
             access_token: string
             token_type: 'bearer'
@@ -188,10 +205,10 @@ const resolvers = {
             code,
           }).toString(),
       )).json()
-      if ('error' in res) {
-        return { __typename: 'LoginError', message: res.error.message }
+      if ('error' in token) {
+        return { __typename: 'LoginError', message: token.error.message }
       }
-      const tokenExpiration = DateTime.utc().plus({ seconds: res.expires_in })
+      const tokenExpiration = DateTime.utc().plus({ seconds: token.expires_in })
       const basicInfo: {
         id: string
         name: string
@@ -201,7 +218,7 @@ const resolvers = {
         'https://graph.facebook.com/v3.3/me?' +
           new URLSearchParams({
             fields: 'id,name,gender,email',
-            access_token: res.access_token,
+            access_token: token.access_token,
           }).toString(),
       )).json()
       const picture: {
@@ -215,18 +232,18 @@ const resolvers = {
         'https://graph.facebook.com/v3.3/me/picture?' +
           new URLSearchParams({
             type: 'large',
-            access_token: res.access_token,
+            access_token: token.access_token,
             redirect: '0',
           }).toString(),
       )).json()
 
-      const doc = firestore.doc('users/' + basicInfo.id)
+      const user = firestore.doc('users/' + basicInfo.id)
       const existingData = await (async () => {
-        const d = await doc.get()
+        const d = await user.get()
         if (!d.exists) return {}
         return d.data()
       })()
-      await doc.set({
+      await user.set({
         ...existingData,
         fbId: basicInfo.id,
         name: basicInfo.name,
@@ -234,14 +251,32 @@ const resolvers = {
         email: basicInfo.email,
         picture: picture.data,
         fbToken: {
-          token: res.access_token,
+          token: token.access_token,
           expires: tokenExpiration.toISO(),
         },
       })
 
+      const sessionToken = await randomID(30)
+      const session = firestore.doc('sessions/' + sessionToken)
+      const sessionDuration = Duration.fromObject({ months: 2 })
+      await session.set({
+        user: 'users/' + basicInfo.id,
+        token: sessionToken,
+        expires: DateTime.utc()
+          .plus(sessionDuration)
+          .toISO(),
+      })
+
+      res.set(
+        'Set-Cookie',
+        `__session=${sessionToken}; Max-Age=${sessionDuration.as(
+          'seconds',
+        )}; HttpOnly; Path=/`,
+      )
+
       return {
         __typename: 'LoginSuccess',
-        user: (await doc.get()).data(),
+        user: (await user.get()).data(),
       }
     },
   },
