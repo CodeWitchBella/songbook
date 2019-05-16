@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import fetch from 'node-fetch'
 import { DateTime, Duration } from 'luxon'
 import * as functions from 'firebase-functions'
+import { notNull } from '@codewitchbella/ts-utils'
 
 function sanitizeSongId(part: string) {
   return latinize(part)
@@ -36,8 +37,8 @@ const typeDefs = gql`
   type Query {
     hello: String
     songs: [SongRecord!]!
-    songBySlug(slug: String!): SongRecord
-    songById(id: String!): SongRecord
+    songsBySlugs(slugs: [String!]!): [SongRecord!]!
+    songsByIds(ids: [String!]!): [SongRecord!]!
     viewer: User
   }
 
@@ -124,12 +125,20 @@ const resolvers = {
       const docs = await firestore.collection('songs').listDocuments()
       return Promise.all(docs.map(doc => doc.get()))
     },
-    songById: async (_: {}, { id }: { id: string }) => {
-      const doc = await firestore.doc('songs/' + id).get()
-      if (doc.exists) return doc
-      return null
+    songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
+      const songs = await Promise.all(
+        ids.map(async id => {
+          const doc = await firestore.doc('songs/' + id).get()
+          if (doc.exists) return doc
+          return null
+        }),
+      )
+      return songs.filter(notNull)
     },
-    songBySlug: (_: {}, { slug }: { slug: string }) => songBySlug(slug),
+    songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
+      const songs = await Promise.all(slugs.map(songBySlug))
+      return songs.filter(notNull)
+    },
     viewer: async (_: {}, _2: {}, { req, res }: Context) => {
       res.set('Set-Cookie', `__session2=abc; Max-Age=60; HttpOnly; Path=/`)
       const cookies = req.get('cookie')
