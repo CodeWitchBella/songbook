@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import localForage from 'localforage'
-import { listSongs, downloadSongsByIds } from './graphql'
+import { listSongs, downloadSongsByIds, listSongsInitial } from './graphql'
 import useForceUpdate from 'components/use-force-update'
 import { DateTime } from 'luxon'
 import { PickExcept } from '@codewitchbella/ts-utils'
@@ -208,9 +208,9 @@ class Store {
             )
           }
           this._triggerOnChange('init loaded from cache')
+          return listSongs()
         }
-
-        return listSongs()
+        return listSongsInitial()
       })
       .then(newSongs => {
         for (const song of newSongs) {
