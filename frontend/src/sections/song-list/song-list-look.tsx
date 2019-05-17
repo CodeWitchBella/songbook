@@ -62,7 +62,7 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
 }
 
 export const SongItem = ({ id }: { id: string }) => {
-  const song = useSong({ id })
+  const { song } = useSong({ id })
   if (!song || !song.shortData) return null
   return (
     <TheSong>

@@ -52,7 +52,7 @@ const SongSection = ({
   slug: string
   enableMenu?: boolean
 }) => {
-  const song = useSong({ slug })
+  const { song } = useSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   console.log(song)
   if (!song) return null

@@ -180,7 +180,14 @@ class Store {
       })
   }
 
-  loading = true
+  private initializing = false
+  private _initializingEnd() {
+    this.initializing = false
+    this._triggerOnChange('init end')
+  }
+  isInitializing() {
+    return this.initializing
+  }
   init() {
     localForage
       .getItem<SongStore>(localForageKey)
@@ -212,9 +219,10 @@ class Store {
               { onChange: false, save: false },
             )
           }
-          this._triggerOnChange('init loaded from cache')
-          return listSongs()
         }
+        this.initializing = true
+        this._triggerOnChange('Init start')
+        if (cache) return listSongs()
         return listSongsInitial()
       })
       .then(newSongs => {
@@ -242,10 +250,10 @@ class Store {
           this._cacheSongMap()
         }
       })
-      .then(() => {
-        this._update()
-      })
+      .then(() => this._update())
+      .then(() => this._initializingEnd())
       .catch(e => {
+        this._initializingEnd()
         console.error(e)
       })
   }
@@ -288,7 +296,7 @@ class Store {
     })
 
     if (toLoad.length > 0)
-      downloadSongsByIds(toLoad)
+      return downloadSongsByIds(toLoad)
         .then(songs => {
           for (const song of songs) {
             this._setSong(
@@ -301,25 +309,25 @@ class Store {
           }
           this._cacheSongMap()
         })
-        .catch(e => console.error(e))
+        .catch(e => {
+          console.error(e)
+        })
+    else return Promise.resolve()
   }
 
   // only updates songs it knows should be updated
   private _update() {
     const songs = Array.from(this.songMapId.values())
-    const songsWithoutLongData = songs.filter(
-      song => !song.longData || !song.shortData,
-    )
-    const songsToUpdate = songs.filter(
+    const songsToDownload = songs.filter(
       song =>
-        (song.longData && song.longData.lastModified < song.lastModified) ||
-        (song.shortData && song.shortData.lastModified < song.lastModified),
+        !song.longData ||
+        !song.shortData ||
+        song.longData.lastModified < song.lastModified ||
+        song.shortData.lastModified < song.lastModified,
     )
-    // this is here to first download new songs
-    const songsToDownload = songsWithoutLongData.concat(songsToUpdate)
 
     // download/update songs
-    this._downloadSongsByIds(songsToDownload.map(s => s.id))
+    return this._downloadSongsByIds(songsToDownload.map(s => s.id))
   }
 
   private _updateCounter = 0
@@ -384,15 +392,20 @@ export function useSongList() {
   const store = useStore()
   const initialUpdateCounter = useMemo(() => store.updateCounter, [store])
   const [songs, setSongs] = useState(() => store.listSongs())
+  const [initing, setIniting] = useState(store.isInitializing())
   useEffect(() => {
+    if (initing !== store.isInitializing()) {
+      setIniting(store.isInitializing())
+    }
     if (initialUpdateCounter !== store.updateCounter) {
       setSongs(store.listSongs())
     }
     return store.onChange(reason => {
       setSongs(store.listSongs())
+      setIniting(store.isInitializing())
     })
-  }, [initialUpdateCounter, store])
-  return songs
+  }, [initialUpdateCounter, initing, store])
+  return useMemo(() => ({ songs, initing }), [songs, initing])
 }
 
 export function useSong(param: { slug: string } | { id: string }) {
@@ -413,5 +426,8 @@ export function useSong(param: { slug: string } | { id: string }) {
       forceUpdate()
     return store.onChange(forceUpdate)
   }, [forceUpdate, param, song, store])
-  return song
+  return useMemo(() => ({ song, initing: store.isInitializing() }), [
+    song,
+    store,
+  ])
 }

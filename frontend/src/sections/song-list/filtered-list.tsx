@@ -64,12 +64,6 @@ export default function FilteredList({
     },
     null,
     (_arg: null) => {
-      const ids = {
-        byTitle: songs.map(s => s.id),
-        byAuthor: [],
-        byText: [],
-      }
-
       return filteredToComponents(
         search,
         !!search,

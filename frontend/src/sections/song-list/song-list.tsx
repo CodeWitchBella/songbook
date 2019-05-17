@@ -103,8 +103,25 @@ function compareSongs(a: SongWithShortData, b: SongWithShortData) {
   return a.shortData.author.localeCompare(b.shortData.author)
 }
 
+function Loader() {
+  return (
+    <div
+      css={{
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: 18,
+      }}
+    >
+      Načítám seznam písní...
+    </div>
+  )
+}
+
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
-  const source = useSongList()
+  const { songs: source, initing } = useSongList()
 
   const songs = useMemo(() => source.filter(hasShortData).sort(compareSongs), [
     source,
@@ -140,9 +157,11 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
           }}
         />
       </TheSearch>
-      {songs.length === 0 ? null : (
+      {songs.length !== 0 ? (
         <FilteredList songs={songs} search={search || ''} />
-      )}
+      ) : initing ? (
+        <Loader />
+      ) : null}
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
     </PageNav>
   )

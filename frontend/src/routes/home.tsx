@@ -6,7 +6,7 @@ import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 
 const Home = () => (
-  <div>
+  <div css={{ height: '100%' }}>
     <SaveScroll />
     <SongList tag="all" />
     <InstallButtonLook />

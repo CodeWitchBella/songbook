@@ -8,7 +8,7 @@ import { useTag } from 'store/fetchers'
 import { notNull } from '@codewitchbella/ts-utils'
 
 function Song({ slug, number }: { slug: string; number: number }) {
-  const song = useSong({ slug })
+  const { song } = useSong({ slug })
   if (!song) return null
   const { longData, shortData } = song
   if (!longData || !shortData) return null
@@ -28,7 +28,7 @@ function Song({ slug, number }: { slug: string; number: number }) {
 
 const Print = ({ tag }: { tag: string }) => {
   // TODO: use tag to filter songs
-  const songList = useSongList()
+  const { songs: songList } = useSongList()
   const tagMeta = useTag()
   if (!tagMeta) return <div>Načítám...</div>
 

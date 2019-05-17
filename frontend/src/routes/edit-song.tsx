@@ -378,7 +378,7 @@ class EditSong extends React.Component<
   }
 }
 export default errorBoundary(({ slug }: { slug: string }) => {
-  const song = useSong({ slug })
+  const { song } = useSong({ slug })
   if (!song) return <div>Píseň nenalezena</div>
   const { longData, shortData } = song
   if (!longData || !shortData) return <div>Načítám...</div>
