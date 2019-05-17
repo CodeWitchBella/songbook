@@ -123,17 +123,13 @@ const resolvers = {
     hello: () => 'world',
     songs: async () => {
       const docs = await firestore.collection('songs').listDocuments()
-      return Promise.all(docs.map(doc => doc.get()))
+      return firestore.getAll(...docs)
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      const songs = await Promise.all(
-        ids.map(async id => {
-          const doc = await firestore.doc('songs/' + id).get()
-          if (doc.exists) return doc
-          return null
-        }),
+      const songs = await firestore.getAll(
+        ...ids.map(id => firestore.doc('songs/' + id)),
       )
-      return songs.filter(notNull)
+      return songs.filter(snap => snap.exists)
     },
     songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
       const songs = await Promise.all(slugs.map(songBySlug))
