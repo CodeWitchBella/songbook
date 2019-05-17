@@ -17,6 +17,11 @@ const Input = ({
     <input
       type={type}
       value={value}
+      css={{
+        background: '#eee',
+        color: 'black',
+        padding: '3px 7px',
+      }}
       onChange={evt => {
         evt.preventDefault()
         onChange(evt.target.value)

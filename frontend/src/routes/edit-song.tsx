@@ -27,6 +27,9 @@ const TextAreaC = styled.textarea`
   max-width: 100%;
   min-width: 100%;
   height: 30em;
+  background: #eee;
+  color: black;
+  padding: 5px;
 `
 
 const Textarea = ({
@@ -117,6 +120,7 @@ const InputLine = styled.div`
   > *:first-child {
     margin-left: 0;
   }
+  margin-bottom: 2px;
 `
 
 type SaveStatus = 'NO_CHANGES' | 'SAVING' | 'UNSAVED' | 'FAILED' | 'SAVED'
@@ -152,7 +156,7 @@ const IFrameSizer = styled.div`
 `
 
 const nakytarushonzou = `
-var content = document.querySelector('.pisnicka_content font')
+var content = document.querySelector('.pisnicka_content')
 Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+sup.innerText+']')
 copy(content.innerText)
 `.trim()
