@@ -8,7 +8,10 @@ import Page from 'components/page'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { SongWithData } from 'store/store'
 
-type SongType = SongWithData['data']
+type SongType = {
+  longData: SongWithData['longData']
+  shortData: SongWithData['shortData']
+}
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -121,7 +124,7 @@ const Paragraph: React.SFC<{
   song: SongType
   transposition: number
 }> = ({ children, song, transposition }) => (
-  <div css={paragraph(song.metadata.paragraphSpace)}>
+  <div css={paragraph(song.longData.paragraphSpace)}>
     {children.map((c, i) => (
       <Line key={i} transposition={transposition}>
         {c}
@@ -200,13 +203,15 @@ export const SongPage = ({
       </BackButtonContainer>
     )}
     <SongHeader
-      titleSpace={song.metadata.titleSpace}
-      author={song.author}
+      titleSpace={song.longData.titleSpace}
+      author={song.shortData.author}
       title={
-        typeof number === 'number' ? `${number}. ${song.title}` : song.title
+        typeof number === 'number'
+          ? `${number}. ${song.shortData.title}`
+          : song.shortData.title
       }
     />
-    <div css={fontSize(song.metadata.fontSize)}>
+    <div css={fontSize(song.longData.fontSize)}>
       {pageData.map((p, i) => (
         <Paragraph song={song} key={i} transposition={transposition}>
           {p}
@@ -237,8 +242,8 @@ export const SongLook = ({
             ...song,
             title:
               parsed.length > 1
-                ? `${song.title} (${i + 1}/${parsed.length})`
-                : song.title,
+                ? `${song.shortData.title} (${i + 1}/${parsed.length})`
+                : song.shortData.title,
           }}
           noBack={noBack}
           transposition={transposition}

@@ -4,7 +4,6 @@ import {
   AnonymousCredential,
   StorageURL,
   Aborter,
-  Models,
   BlobURL,
 } from '@azure/storage-blob'
 
@@ -20,28 +19,6 @@ const containerURL = (() => {
   )
   return ContainerURL.fromServiceURL(serviceURL, 'songs')
 })()
-
-export async function listSongs() {
-  const list = [] as { id: string; lastModified: number }[]
-  let marker: string | undefined = undefined
-  do {
-    type Resp = Models.ContainerListBlobFlatSegmentResponse
-    const resp: Resp = await containerURL.listBlobFlatSegment(
-      Aborter.none,
-      marker,
-    )
-
-    marker = resp.nextMarker
-    for (const blob of resp.segment.blobItems) {
-      if (!/\.song$/.test(blob.name)) continue
-      list.push({
-        id: blob.name,
-        lastModified: blob.properties.lastModified.getTime(),
-      })
-    }
-  } while (marker)
-  return list
-}
 
 async function downloadSongImpl(name: string) {
   const blobURL = BlobURL.fromContainerURL(containerURL, name)

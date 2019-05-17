@@ -1,28 +1,17 @@
-const enableLocalhostBackend = false
-const url =
-  window.location.hostname === 'localhost' && enableLocalhostBackend
-    ? 'http://localhost:7071/api/graphql'
-    : 'https://songbook-fn.azurewebsites.net/api/graphql'
-
-function graphqlFetch(query: string, variables: any) {
-  return fetch(url, {
-    body: JSON.stringify({ operationName: null, query, variables }),
-    method: 'POST',
-  }).then(v => v.json())
-}
+import { graphqlFetch } from './graphql'
 
 export function newSong(song: {
   author: string
   title: string
 }): Promise<string> {
-  return graphqlFetch(
-    `
-    mutation($input: CreateSongInput!) {
-      createSong(input: $input)
-    }
-  `,
-    { input: { author: song.author, title: song.title } },
-  ).then(v =>
+  return graphqlFetch({
+    query: `
+      mutation($input: CreateSongInput!) {
+        createSong(input: $input)
+      }
+    `,
+    variables: { input: { author: song.author, title: song.title } },
+  }).then(v =>
     v && v.data && v.data.createSong
       ? v.data.createSong.replace(/\.song$/, '')
       : null,
@@ -49,16 +38,16 @@ export function writeSong(song: {
     spotify: string | null
   }
 }) {
-  return graphqlFetch(
-    `
-    mutation($input: WriteSongInput!) {
-      writeSong(input: $input) {
-        id
-        textWithChords
+  return graphqlFetch({
+    query: `
+      mutation($input: WriteSongInput!) {
+        writeSong(input: $input) {
+          id
+          textWithChords
+        }
       }
-    }
-  `,
-    {
+    `,
+    variables: {
       input: {
         ...pick(song, ['title', 'author', 'textWithChords']),
         metadata: pick(song.metadata, [
@@ -70,7 +59,7 @@ export function writeSong(song: {
         id: song.id + '.song',
       },
     },
-  )
+  })
 }
 export function useTag() {
   if (false) return null

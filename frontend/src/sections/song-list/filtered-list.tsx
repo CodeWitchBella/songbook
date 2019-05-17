@@ -102,12 +102,22 @@ export default function FilteredList({
 
   useEffect(() => {
     if (worker) {
+      console.log(songs)
       worker.postMessage({
         type: 'setSongs',
         value: songs.map(song => ({
-          data: song.data,
+          longData: song.longData
+            ? {
+                ...song.longData,
+                lastModified: song.longData.lastModified.toISO(),
+              }
+            : null,
+          shortData: {
+            ...song.shortData,
+            lastModified: song.shortData.lastModified.toISO(),
+          },
           id: song.id,
-          lastModified: song.lastModified,
+          lastModified: song.lastModified.toISO(),
           loading: song.loading,
         })),
       })

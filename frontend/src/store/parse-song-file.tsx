@@ -7,7 +7,7 @@ export function parseTextSongFile(fname: string, content: string) {
     author: head[0],
     title: head[1],
     metadata: JSON.parse(head[3] || '{}'),
-    textWithChords: text,
+    text: text,
   }
 }
 
@@ -21,7 +21,7 @@ export const parseSongFile = (
       author: '',
       title: '',
       metadata: {},
-      textWithChords: '',
+      text: '',
       ...parsed,
       id: fname.replace(/\.song$/, '').replace(/\./g, ''),
     }

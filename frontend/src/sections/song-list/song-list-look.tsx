@@ -64,17 +64,14 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
 export const SongItem = ({ id }: { id: string }) => {
   const song = useSong(id)
   if (!song) return null
-  const { data } = song
   return (
     <TheSong>
-      <LinkToSong id={id}>
-        {data ? (
+      <LinkToSong id={song.shortData.slug}>
+        {
           <>
-            {data.title} - {data.author}
+            {song.shortData.title} - {song.shortData.author}
           </>
-        ) : (
-          <></>
-        )}
+        }
         {/*window.location &&
           window.location.search.split(/[?&]/).includes('spotify')
             ? song.metadata.spotify !== null

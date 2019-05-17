@@ -10,11 +10,13 @@ import {
 } from '@react-pdf/renderer'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
-import { SongWithData } from 'store/store'
+import { SongWithDataNoReload } from 'store/store'
 import { useQueryParam } from './use-router'
 import { notNull } from '@codewitchbella/ts-utils'
 
-type Props = { song: SongWithData['data'] }
+type Props = {
+  song: SongWithDataNoReload
+}
 
 const settingsCtx = React.createContext(null as null | {
   em: number
@@ -232,7 +234,7 @@ function SongPage({
 }
 
 export default function PDFRender({ song }: Props) {
-  const pages = parseSong(song.textWithChords)
+  const pages = parseSong(song.longData.text)
 
   const [footer] = useQueryParam('footer')
 
@@ -242,7 +244,7 @@ export default function PDFRender({ song }: Props) {
   return (
     <PDFViewer>
       <settingsCtx.Provider
-        value={{ ...song.metadata, em, percent: em / 2.54 }}
+        value={{ ...song.longData, em, percent: em / 2.54 }}
       >
         <Document>
           {pages.map((page, i) => (
@@ -251,8 +253,8 @@ export default function PDFRender({ song }: Props) {
               page={page}
               size={size}
               left={i % 2 === 0}
-              title={song.title}
-              author={song.author}
+              title={song.shortData.title}
+              author={song.shortData.author}
               footer={footer || ''}
             />
           ))}

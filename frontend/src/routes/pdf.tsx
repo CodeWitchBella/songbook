@@ -19,11 +19,11 @@ const Style = styled.div`
 export default errorBoundary(({ id }: { id: string }) => {
   const song = useSong(id)
   if (!song) return <div>Píseň nenalezena</div>
-  const { data } = song
-  if (!data) return <div>Načítám píseň...</div>
+  const { longData } = song
+  if (!longData) return <div>Načítám píseň...</div>
   return (
     <Style>
-      <PDF song={data} />
+      <PDF song={{ ...song, longData }} />
     </Style>
   )
 })

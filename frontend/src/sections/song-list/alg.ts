@@ -4,16 +4,19 @@ import { Song } from 'store/store'
 function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
-const searchSong = (
-  text: string,
-  field: 'author' | 'title' | 'textWithChords',
-) => (s: Song) => {
+const searchSong = (text: string, field: 'author' | 'title' | 'text') => (
+  s: Song,
+) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => !!s.data && toComparable(s.data[field]).includes(t))
+    .every(t => {
+      if (field === 'text')
+        return !!s.longData && toComparable(s.longData.text).includes(t)
+      return toComparable(s.shortData[field]).includes(t)
+    })
 }
 
 export default function getFilteredSongList(songs: Song[], search: string) {
@@ -31,9 +34,7 @@ export default function getFilteredSongList(songs: Song[], search: string) {
   })
 
   const byText = search
-    ? songs
-        .filter(searchSong(search, 'textWithChords'))
-        .filter(s => !used.has(s.id))
+    ? songs.filter(searchSong(search, 'text')).filter(s => !used.has(s.id))
     : []
 
   return {

@@ -9,8 +9,9 @@ import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
-import { writeSong } from 'store/fetchers'
-import { useSong, SongWithData } from 'store/store'
+import { useSong, SongWithData, SongWithDataNoReload } from 'store/store'
+import { DateTime } from 'luxon'
+import { updateSong } from 'store/graphql'
 
 const Form = styled.form`
   display: flex;
@@ -158,19 +159,19 @@ copy(content.innerText)
 
 class EditSong extends React.Component<
   {
-    song: SongWithData['data']
+    song: SongWithData
     refetch: () => void
   },
   State
 > {
   state: State = {
-    author: this.props.song.author,
-    title: this.props.song.title,
-    textWithChords: this.props.song.textWithChords,
-    spotify: this.props.song.metadata.spotify || '',
-    fontSize: this.props.song.metadata.fontSize.toFixed(2),
-    paragraphSpace: this.props.song.metadata.paragraphSpace.toFixed(2),
-    titleSpace: this.props.song.metadata.titleSpace.toFixed(2),
+    author: this.props.song.shortData.author,
+    title: this.props.song.shortData.title,
+    textWithChords: this.props.song.longData.text,
+    spotify: this.props.song.longData.spotify || '',
+    fontSize: this.props.song.longData.fontSize.toFixed(2),
+    paragraphSpace: this.props.song.longData.paragraphSpace.toFixed(2),
+    titleSpace: this.props.song.longData.titleSpace.toFixed(2),
     advanced: false,
     preview: false,
     pdfPreview: false,
@@ -179,15 +180,19 @@ class EditSong extends React.Component<
 
   changeCounter: number = 0
 
-  result = () => {
+  result = (): SongWithDataNoReload => {
     const { author, title, textWithChords } = this.state
     return {
       ...this.props.song,
-      author,
-      title,
-      textWithChords,
-      metadata: {
-        ...this.props.song.metadata,
+      shortData: {
+        author,
+        title,
+        lastModified: DateTime.utc(),
+        slug: this.props.song.shortData.slug,
+      },
+      longData: {
+        lastModified: DateTime.utc(),
+        text: textWithChords,
         fontSize: Number.parseFloat(this.state.fontSize),
         paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
         titleSpace: Number.parseFloat(this.state.titleSpace),
@@ -207,7 +212,16 @@ class EditSong extends React.Component<
 
     const version = this.changeCounter
 
-    writeSong(this.result())
+    const result = this.result()
+    updateSong(this.props.song.id, {
+      author: result.shortData.author,
+      title: result.shortData.title,
+      text: result.longData.text,
+      fontSize: result.longData.fontSize,
+      paragraphSpace: result.longData.paragraphSpace,
+      titleSpace: result.longData.titleSpace,
+      spotify: result.longData.spotify || '',
+    })
       .then(ret => {
         console.log('result', ret, !ret || !ret.data || !ret.data.editSong)
         if (!ret || !ret.data || !ret.data.writeSong)
@@ -372,7 +386,7 @@ class EditSong extends React.Component<
 export default errorBoundary(({ id }: { id: string }) => {
   const song = useSong(id)
   if (!song) return <div>Píseň nenalezena</div>
-  const { data } = song
-  if (!data) return <div>Načítám...</div>
-  return <EditSong song={data} refetch={song.reload} />
+  const { longData } = song
+  if (!longData) return <div>Načítám...</div>
+  return <EditSong song={{ ...song, longData }} refetch={song.reload} />
 })

@@ -52,11 +52,14 @@ const SongSection = ({
   id: string
   enableMenu?: boolean
 }) => {
-  const theSong = useSong(id)
-  const song = theSong ? theSong.data : null
+  const song = useSong(id)
   const [spotifyVisible, setSpotifyVisible] = useState(false)
+  console.log(song)
+  if (!song) return null
+  const { longData } = song
+  if (!song || !longData) return null
 
-  return !song ? null : (
+  return (
     <Route>
       {route => {
         const query = queryString.parse(route.location.search)
@@ -75,8 +78,8 @@ const SongSection = ({
               }}
             >
               <SongLook
-                song={song}
-                parsed={parser.parseSong(song.textWithChords)}
+                song={{ shortData: song.shortData, longData }}
+                parsed={parser.parseSong(longData.text)}
                 transposition={transposition}
               />
             </div>
@@ -84,7 +87,7 @@ const SongSection = ({
               <SongMenu
                 songId={id}
                 setSpotifyVisible={setSpotifyVisible}
-                showSpotify={!!song.metadata.spotify}
+                showSpotify={!!longData.spotify}
                 transposition={transposition}
                 setTransposition={v =>
                   route.history.replace(
@@ -99,8 +102,8 @@ const SongSection = ({
                 }
               />
             )}
-            {spotifyVisible && song.metadata.spotify && (
-              <Spotify link={song.metadata.spotify} />
+            {spotifyVisible && longData.spotify && (
+              <Spotify link={longData.spotify} />
             )}
           </>
         )

@@ -9,13 +9,15 @@ import { notNull } from '@codewitchbella/ts-utils'
 
 function Song({ name, number }: { name: string; number: number }) {
   const song = useSong(name)
-  if (!song || !song.data) return null
-  const { data } = song
-  const parsed = parseSong(data.textWithChords)
+  if (!song) return null
+  const { longData: data } = song
+  if (!song || !data) return null
+
+  const parsed = parseSong(data.text)
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}
-      song={data}
+      song={{ ...song, longData: data }}
       number={number + 1}
       pageNumber={number /* FIXME */}
       key={i}
@@ -38,7 +40,22 @@ const Print = ({ tag }: { tag: string }) => {
           <Song name={song.id} number={i} key={song.id} />
         ))}
       </main>
-      <Contents list={songList.map(s => s.data).filter(notNull)} left />
+      <Contents
+        list={songList
+          .map(s =>
+            s.longData
+              ? {
+                  text: s.longData.text,
+                  author: s.shortData.author,
+                  title: s.shortData.title,
+                  id: s.id,
+                  metadata: s.longData,
+                }
+              : null,
+          )
+          .filter(notNull)}
+        left
+      />
     </div>
   )
 }
