@@ -8,6 +8,7 @@ const Changelog = () => (
       <li>Rychlejší první načtení písní</li>
       <li>Rychlejší update více písní</li>
       <li>Dokončen přechod na Firebase</li>
+      <li>Opraven přechod na editor po přidání písně</li>
     </Entry>
     <Entry date="2019-05-16">
       <li>WIP Přihlášení přes Facebook</li>
