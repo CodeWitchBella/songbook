@@ -4,7 +4,7 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
-    <Entry date="2019-05-16">
+    <Entry date="2019-05-17">
       <li>Rychlejší první načtení písní</li>
       <li>Rychlejší update více písní</li>
       <li>Dokončen přechod na Firebase</li>
