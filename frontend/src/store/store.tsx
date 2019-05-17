@@ -10,6 +10,7 @@ import { listSongs, downloadSongsByIds, listSongsInitial } from './graphql'
 import useForceUpdate from 'components/use-force-update'
 import { DateTime } from 'luxon'
 import { PickExcept } from '@codewitchbella/ts-utils'
+import { newSong } from './fetchers'
 
 type LongData<DT = DateTime> = {
   lastModified: DT
@@ -124,7 +125,7 @@ class Store {
         ? prev.longData
         : null,
       loading: false,
-      reload: () => this._downloadSongsByIds([song.id]),
+      reload: () => this.downloadSongsByIds([song.id]),
     }
     this.songMapSlug.set(song.slug, v)
     this.songMapId.set(song.id, v)
@@ -287,7 +288,7 @@ class Store {
   */
 
   // triggers song loading
-  private _downloadSongsByIds(ids: string[]) {
+  downloadSongsByIds(ids: string[]) {
     const toLoad = ids.filter(id => {
       const origSong = this.songMapId.get(id)
       if (!origSong || origSong.loading) return false
@@ -327,7 +328,7 @@ class Store {
     )
 
     // download/update songs
-    return this._downloadSongsByIds(songsToDownload.map(s => s.id))
+    return this.downloadSongsByIds(songsToDownload.map(s => s.id))
   }
 
   private _updateCounter = 0
@@ -430,4 +431,13 @@ export function useSong(param: { slug: string } | { id: string }) {
     song,
     store,
   ])
+}
+
+export function useNewSong() {
+  const store = useStore()
+  return async ({ author, title }: { author: string; title: string }) => {
+    const ret = await newSong({ author, title })
+    await store.downloadSongsByIds([ret.id])
+    return ret
+  }
 }

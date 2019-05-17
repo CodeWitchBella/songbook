@@ -56,6 +56,7 @@ const SongSection = ({
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   console.log(song)
   if (!song) return null
+  console.log('song id:', song.id)
   const { longData, shortData } = song
   if (!longData || !shortData) return null
 

@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
-import { newSong } from 'store/fetchers'
 import Button from 'components/button'
+import { useNewSong } from 'store/store'
 
 const FormWrap = styled.div({
   display: 'flex',
@@ -23,19 +23,19 @@ type State = {
   disabled: boolean
 }
 
-class CreateSong extends React.Component<{}, State> {
-  state: State = {
-    author: '',
-    title: '',
-    disabled: false,
-  }
-  submit = (evt: React.FormEvent<HTMLFormElement>) => {
+function CreateSong() {
+  const newSong = useNewSong()
+  const [author, setAuthor] = useState('')
+  const [title, setTitle] = useState('')
+  const [disabled, setDisabled] = useState(false)
+
+  const submit = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault()
-    const { author, title, disabled } = this.state
-    console.log('submit before check', this.state)
+
+    console.log('submit', { author, title, disabled })
     if (!author || !title || disabled) return
-    console.log('submit', this.state)
-    this.setState({ disabled })
+    setDisabled(true)
+
     newSong({
       author,
       title,
@@ -46,31 +46,18 @@ class CreateSong extends React.Component<{}, State> {
       })
       .catch(e => {
         console.error(e)
-        this.setState({ disabled: false })
+        setDisabled(false)
       })
   }
 
-  authorChange = (val: string) => this.setState({ author: val })
-  titleChange = (val: string) => this.setState({ title: val })
-
-  render() {
-    return (
-      <FormWrap>
-        <Form onSubmit={this.submit}>
-          <LargeInput
-            label="Autor písně"
-            value={this.state.author}
-            onChange={this.authorChange}
-          />
-          <LargeInput
-            label="Jméno písně"
-            value={this.state.title}
-            onChange={this.titleChange}
-          />
-          <Button disabled={this.state.disabled}>Vytvořit</Button>
-        </Form>
-      </FormWrap>
-    )
-  }
+  return (
+    <FormWrap>
+      <Form onSubmit={submit}>
+        <LargeInput label="Autor písně" value={author} onChange={setAuthor} />
+        <LargeInput label="Jméno písně" value={title} onChange={setTitle} />
+        <Button disabled={disabled}>Vytvořit</Button>
+      </Form>
+    </FormWrap>
+  )
 }
 export default errorBoundary(CreateSong)
