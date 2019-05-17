@@ -114,8 +114,6 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
 
   const [search, setSearch] = useQueryParam('q')
 
-  console.log('songs.length', songs.length)
-
   return (
     <PageNav>
       <TheSearch>

@@ -59,7 +59,7 @@ export default function FilteredList({
         tag,
       }: { showTitles: boolean; ids: FilteredList; tag: string },
     ) => {
-      console.log(`[${tag}] Setting list to`, { showTitles, ids })
+      //console.log(`[${tag}] Setting list to`, { showTitles, ids })
       return filteredToComponents(search, showTitles, ids)
     },
     null,
@@ -69,7 +69,7 @@ export default function FilteredList({
         byAuthor: [],
         byText: [],
       }
-      console.log('Initial set list to', { showTitles: false, ids })
+
       return filteredToComponents(
         search,
         !!search,
@@ -102,7 +102,6 @@ export default function FilteredList({
 
   useEffect(() => {
     if (worker) {
-      console.log(songs)
       worker.postMessage({
         type: 'setSongs',
         value: songs.map(song => ({

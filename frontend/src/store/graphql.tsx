@@ -14,26 +14,31 @@ export function graphqlFetch<V = any>({
   query: string
   variables?: V
 }) {
-  promise = promise.then(async () => {
-    const req = await fetch(url, {
-      credentials: 'include',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        operationName: null,
-        variables,
-        query,
-      }),
-      method: 'POST',
+  const tmpe = new Error()
+  const p = promise
+    .catch(() => {})
+    .then(async () => {
+      const req = await fetch(url, {
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          operationName: null,
+          variables,
+          query,
+        }),
+        method: 'POST',
+      })
+      const json = await req.json()
+      if (json.errors) {
+        const error = new Error('Network error: Graphql request failed')
+        ;(error as any).data = json
+        error.stack = tmpe.stack
+        throw error
+      }
+      return json
     })
-    const json = await req.json()
-    if (json.errors) {
-      const error = new Error('Network error: Graphql request failed')
-      ;(error as any).data = json
-      throw error
-    }
-    return json
-  })
-  return promise
+  promise = p
+  return p
 }
 
 const fullSong = `
@@ -182,5 +187,7 @@ export async function updateSong(
     
     `,
     variables: { id, input },
+  }).then(v => {
+    if (!v.data.updateSong) throw new Error('updateSong failed')
   })
 }

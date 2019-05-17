@@ -221,11 +221,6 @@ class EditSong extends React.Component<
       titleSpace: result.longData.titleSpace,
       spotify: result.longData.spotify || '',
     })
-      .then(ret => {
-        console.log('result', ret, !ret || !ret.data || !ret.data.editSong)
-        if (!ret || !ret.data || !ret.data.writeSong)
-          throw new Error('writeSong failed')
-      })
       .then(() => this.props.refetch())
       .then(() => {
         if (version === this.changeCounter) {

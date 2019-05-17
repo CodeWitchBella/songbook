@@ -104,7 +104,7 @@ class Store {
       | { onChange: false; reason?: string }
       | { onChange: true; reason: string }),
   ) {
-    const prev = this.songMapSlug.get(song.slug)
+    const prev = this.songMapId.get(song.id)
     const v = {
       lastModified: song.lastModified,
       slug: song.slug,
@@ -131,6 +131,13 @@ class Store {
 
     if (args.onChange) this._triggerOnChange(args.reason)
     if (save) this._cacheSongMap()
+  }
+  private _rmSong(id: string) {
+    const song = this.songMapId.get(id)
+    if (song) {
+      this.songMapId.delete(song.id)
+      this.songMapSlug.delete(song.slug)
+    }
   }
 
   caching = false
@@ -175,8 +182,6 @@ class Store {
 
   loading = true
   init() {
-    localForage.removeItem('store')
-
     localForage
       .getItem<SongStore>(localForageKey)
       .then(cache => {
@@ -213,10 +218,28 @@ class Store {
         return listSongsInitial()
       })
       .then(newSongs => {
+        let changed = false
+        for (const id of this.songMapId.keys()) {
+          if (!newSongs.some(s => s.id === id)) {
+            changed = true
+            this._rmSong(id)
+          }
+        }
+
         for (const song of newSongs) {
           const existing = this.songMapId.get(song.id)
-          if (!existing || !song.lastModified.equals(existing.lastModified))
-            this._setSong(song, { reason: 'new song', onChange: true })
+          if (!existing || !song.lastModified.equals(existing.lastModified)) {
+            changed = true
+            this._setSong(song, {
+              reason: 'new song',
+              onChange: false,
+              save: false,
+            })
+          }
+        }
+        if (changed) {
+          this._triggerOnChange('new songs')
+          this._cacheSongMap()
         }
       })
       .then(() => {
@@ -306,7 +329,9 @@ class Store {
   private _triggerOnChange(reason: string) {
     setImmediate(() => {
       this._updateCounter += 1
-      this.handlers.forEach(h => h(reason))
+      this.handlers.forEach(h => {
+        if (this.handlers.includes(h)) h(reason)
+      })
     })
   }
 
@@ -361,13 +386,9 @@ export function useSongList() {
   const [songs, setSongs] = useState(() => store.listSongs())
   useEffect(() => {
     if (initialUpdateCounter !== store.updateCounter) {
-      console.log(
-        'Updating useSongList. Reason: update between initial and useEffect',
-      )
       setSongs(store.listSongs())
     }
     return store.onChange(reason => {
-      console.log('Updating useSongList. Reason:', reason)
       setSongs(store.listSongs())
     })
   }, [initialUpdateCounter, store])

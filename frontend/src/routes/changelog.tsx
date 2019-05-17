@@ -5,6 +5,11 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-05-16">
+      <li>Rychlejší první načtení písní</li>
+      <li>Rychlejší update více písní</li>
+      <li>Dokončen přechod na Firebase</li>
+    </Entry>
+    <Entry date="2019-05-16">
       <li>WIP Přihlášení přes Facebook</li>
       <li>Lepší menu v seznamu písní</li>
       <li>Dialog s aktualizací nyní umožňuje přímý restart</li>

@@ -40,10 +40,9 @@ class CreateSong extends React.Component<{}, State> {
       author,
       title,
     })
-      .then(ret => {
-        console.log('result', ret)
-        if (!ret) throw new Error('newSong failed')
-        window.location.pathname = `/edit/${ret}`
+      .then(({ slug }) => {
+        console.log('result', slug)
+        window.location.pathname = `/edit/${slug}`
       })
       .catch(e => {
         console.error(e)

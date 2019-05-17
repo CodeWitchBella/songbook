@@ -3,19 +3,19 @@ import { graphqlFetch } from './graphql'
 export function newSong(song: {
   author: string
   title: string
-}): Promise<string> {
+}): Promise<{ slug: string; id: string }> {
   return graphqlFetch({
     query: `
       mutation($input: CreateSongInput!) {
-        createSong(input: $input)
+        createSong(input: $input) { id data{slug} }
       }
     `,
     variables: { input: { author: song.author, title: song.title } },
-  }).then(v =>
-    v && v.data && v.data.createSong
-      ? v.data.createSong.replace(/\.song$/, '')
-      : null,
-  )
+  }).then(v => {
+    if (v && v.data && v.data.createSong)
+      return { slug: v.data.createSong.data.slug, id: v.data.createSong.id }
+    throw new Error('New song failed')
+  })
 }
 
 function pick(v: { [key: string]: any }, keys: string[]): any {
