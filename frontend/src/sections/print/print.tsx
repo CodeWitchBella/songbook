@@ -7,17 +7,17 @@ import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
 import { notNull } from '@codewitchbella/ts-utils'
 
-function Song({ name, number }: { name: string; number: number }) {
-  const song = useSong(name)
+function Song({ slug, number }: { slug: string; number: number }) {
+  const song = useSong({ slug })
   if (!song) return null
-  const { longData: data } = song
-  if (!song || !data) return null
+  const { longData, shortData } = song
+  if (!longData || !shortData) return null
 
-  const parsed = parseSong(data.text)
+  const parsed = parseSong(longData.text)
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}
-      song={{ ...song, longData: data }}
+      song={{ ...song, longData, shortData }}
       number={number + 1}
       pageNumber={number /* FIXME */}
       key={i}
@@ -37,13 +37,13 @@ const Print = ({ tag }: { tag: string }) => {
       <TitlePage image={tagMeta.cover || undefined} />
       <main>
         {songList.map((song, i) => (
-          <Song name={song.id} number={i} key={song.id} />
+          <Song slug={song.slug} number={i} key={song.id} />
         ))}
       </main>
       <Contents
         list={songList
           .map(s =>
-            s.longData
+            s.longData && s.shortData
               ? {
                   text: s.longData.text,
                   author: s.shortData.author,

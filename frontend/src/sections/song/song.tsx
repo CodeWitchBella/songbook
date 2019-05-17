@@ -46,18 +46,18 @@ function queryJoin(path: string, query: string) {
 }
 
 const SongSection = ({
-  id,
+  slug,
   enableMenu = false,
 }: {
-  id: string
+  slug: string
   enableMenu?: boolean
 }) => {
-  const song = useSong(id)
+  const song = useSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   console.log(song)
   if (!song) return null
-  const { longData } = song
-  if (!song || !longData) return null
+  const { longData, shortData } = song
+  if (!longData || !shortData) return null
 
   return (
     <Route>
@@ -78,14 +78,14 @@ const SongSection = ({
               }}
             >
               <SongLook
-                song={{ shortData: song.shortData, longData }}
+                song={{ shortData, longData }}
                 parsed={parser.parseSong(longData.text)}
                 transposition={transposition}
               />
             </div>
             {enableMenu && (
               <SongMenu
-                songId={id}
+                slug={slug}
                 setSpotifyVisible={setSpotifyVisible}
                 showSpotify={!!longData.spotify}
                 transposition={transposition}

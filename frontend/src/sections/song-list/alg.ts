@@ -4,9 +4,10 @@ import { Song } from 'store/store'
 function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
-const searchSong = (text: string, field: 'author' | 'title' | 'text') => (
-  s: Song,
-) => {
+const searchSong = (text: string, field: 'author' | 'title' | 'text') => ({
+  shortData,
+  longData,
+}: Song) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
@@ -14,8 +15,8 @@ const searchSong = (text: string, field: 'author' | 'title' | 'text') => (
     .filter(t => t)
     .every(t => {
       if (field === 'text')
-        return !!s.longData && toComparable(s.longData.text).includes(t)
-      return toComparable(s.shortData[field]).includes(t)
+        return !!longData && toComparable(longData.text).includes(t)
+      return !!shortData && toComparable(shortData[field]).includes(t)
     })
 }
 

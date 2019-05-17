@@ -188,7 +188,6 @@ class EditSong extends React.Component<
         author,
         title,
         lastModified: DateTime.utc(),
-        slug: this.props.song.shortData.slug,
       },
       longData: {
         lastModified: DateTime.utc(),
@@ -383,10 +382,12 @@ class EditSong extends React.Component<
     )
   }
 }
-export default errorBoundary(({ id }: { id: string }) => {
-  const song = useSong(id)
+export default errorBoundary(({ slug }: { slug: string }) => {
+  const song = useSong({ slug })
   if (!song) return <div>Píseň nenalezena</div>
-  const { longData } = song
-  if (!longData) return <div>Načítám...</div>
-  return <EditSong song={{ ...song, longData }} refetch={song.reload} />
+  const { longData, shortData } = song
+  if (!longData || !shortData) return <div>Načítám...</div>
+  return (
+    <EditSong song={{ ...song, longData, shortData }} refetch={song.reload} />
+  )
 })

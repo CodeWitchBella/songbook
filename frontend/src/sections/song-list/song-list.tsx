@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core'
 import { useMemo, useRef } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
-import { useSongList, Song } from 'store/store'
+import { useSongList, SongWithShortData, hasShortData } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
@@ -97,7 +97,7 @@ function Search({
   )
 }
 
-function compareSongs(a: Song, b: Song) {
+function compareSongs(a: SongWithShortData, b: SongWithShortData) {
   const ret = a.shortData.title.localeCompare(b.shortData.title)
   if (ret !== 0) return ret
   return a.shortData.author.localeCompare(b.shortData.author)
@@ -106,7 +106,9 @@ function compareSongs(a: Song, b: Song) {
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const source = useSongList()
 
-  const songs = useMemo(() => source.sort(compareSongs), [source])
+  const songs = useMemo(() => source.filter(hasShortData).sort(compareSongs), [
+    source,
+  ])
 
   const router = useRouter()
 

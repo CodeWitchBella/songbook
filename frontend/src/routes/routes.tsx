@@ -39,20 +39,20 @@ export default class Routes extends React.Component {
           <Home />
         </Route>
         <Route
-          path="/song/:id"
+          path="/song/:slug"
           exact
-          render={({ match }) => <Song id={match.params.id} />}
+          render={({ match }) => <Song slug={match.params.slug} />}
         />
         <Route path="/new" exact render={() => <CreateSong />} />
         <Route
-          path="/edit/:id"
+          path="/edit/:slug"
           exact
-          render={({ match }) => <EditSong id={match.params.id} />}
+          render={({ match }) => <EditSong slug={match.params.slug} />}
         />
         <Route
-          path="/pdf/:id"
+          path="/pdf/:slug"
           exact
-          render={({ match }) => <PDF id={match.params.id} />}
+          render={({ match }) => <PDF slug={match.params.slug} />}
         />
         <Route
           path="/print/:tag"

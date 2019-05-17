@@ -44,13 +44,13 @@ const MenuButton = (
 const MenuLink = (props: LinkProps) => <Link css={menuStyle} {...props} />
 
 export default function SongMenu({
-  songId,
+  slug,
   transposition,
   setTransposition,
   setSpotifyVisible,
   showSpotify,
 }: {
-  songId: string
+  slug: string
   transposition: number
   setTransposition: (v: number) => void
   setSpotifyVisible: (v: boolean | ((v: boolean) => boolean)) => void
@@ -73,10 +73,10 @@ export default function SongMenu({
                 {transposition}
               </div>
             ) : null}
-            <MenuLink to={`/edit/${songId}`}>
+            <MenuLink to={`/edit/${slug}`}>
               <EditButton />
             </MenuLink>
-            <MenuLink to={`/pdf/${songId}`}>PDF</MenuLink>
+            <MenuLink to={`/pdf/${slug}`}>PDF</MenuLink>
             <MenuButton onClick={() => setTransposition(transposition + 1)}>
               +1
             </MenuButton>

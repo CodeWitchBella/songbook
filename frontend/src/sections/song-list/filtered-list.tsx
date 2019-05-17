@@ -112,10 +112,12 @@ export default function FilteredList({
                 lastModified: song.longData.lastModified.toISO(),
               }
             : null,
-          shortData: {
-            ...song.shortData,
-            lastModified: song.shortData.lastModified.toISO(),
-          },
+          shortData: song.shortData
+            ? {
+                ...song.shortData,
+                lastModified: song.shortData.lastModified.toISO(),
+              }
+            : null,
           id: song.id,
           lastModified: song.lastModified.toISO(),
           loading: song.loading,

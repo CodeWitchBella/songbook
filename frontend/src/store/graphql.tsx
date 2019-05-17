@@ -40,8 +40,8 @@ const fullSong = `
   fragment fullSong on SongRecord {
     id
     lastModified
+    data { slug }
     shortData: data {
-      slug
       author
       title
     }
@@ -57,8 +57,8 @@ const fullSong = `
 type FullSong = {
   id: string
   lastModified: DateTime
+  slug: string
   shortData: {
-    slug: string
     author: string
     title: string
   }
@@ -82,11 +82,7 @@ export async function listSongs(): Promise<
   {
     id: string
     lastModified: DateTime
-    shortData: {
-      slug: string
-      author: string
-      title: string
-    }
+    slug: string
   }[]
 > {
   return graphqlFetch({
@@ -95,18 +91,31 @@ export async function listSongs(): Promise<
         songs {
           id
           lastModified
-          shortData: data {
-            slug
-            author
-            title
-          }
+          data { slug }
         }
       }
     `,
-  }).then(v => v.data.songs.map(mapLastModified))
+  }).then(v =>
+    v.data.songs.map(mapLastModified).map((v: any) => ({
+      id: v.id,
+      lastModified: v.lastModified,
+      slug: v.data.slug,
+    })),
+  )
 }
 
-export async function listSongsInitial() {
+function mapFullSong(data: any) {
+  const v = mapLastModified(data)
+  return {
+    id: v.id,
+    lastModified: v.lastModified,
+    longData: v.longData,
+    shortData: v.shortData,
+    slug: v.data.slug,
+  }
+}
+
+export async function listSongsInitial(): Promise<FullSong[]> {
   return graphqlFetch({
     query: `
       {
@@ -116,10 +125,12 @@ export async function listSongsInitial() {
       }
       ${fullSong}
     `,
-  }).then(v => v.data.songs.map(mapLastModified))
+  }).then(v => v.data.songs.map(mapFullSong))
 }
 
-export async function downloadSongs(slugs: string[]): Promise<FullSong[]> {
+export async function downloadSongsBySlugs(
+  slugs: string[],
+): Promise<FullSong[]> {
   return graphqlFetch({
     query: `
       query($slugs: [String!]!) {
@@ -130,7 +141,22 @@ export async function downloadSongs(slugs: string[]): Promise<FullSong[]> {
       ${fullSong}
     `,
     variables: { slugs },
-  }).then(v => v.data.songsBySlugs.map(mapLastModified))
+  }).then(v => v.data.songsBySlugs.map(mapFullSong))
+}
+
+export async function downloadSongsByIds(ids: string[]): Promise<FullSong[]> {
+  if (ids.some(id => !id)) throw new Error('Invalid ids')
+  return graphqlFetch({
+    query: `
+      query($ids: [String!]!) {
+        songsByIds(ids: $ids) {
+          ...fullSong
+        }
+      }
+      ${fullSong}
+    `,
+    variables: { ids },
+  }).then(v => v.data.songsByIds.map(mapFullSong))
 }
 
 export async function updateSong(

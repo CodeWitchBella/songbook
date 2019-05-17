@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import localForage from 'localforage'
-import { listSongs, downloadSongs } from './graphql'
+import { listSongs, downloadSongsByIds } from './graphql'
 import useForceUpdate from 'components/use-force-update'
 import { DateTime } from 'luxon'
 import { PickExcept } from '@codewitchbella/ts-utils'
@@ -22,7 +22,6 @@ type LongData<DT = DateTime> = {
 
 type ShortData<DT = DateTime> = {
   lastModified: DT
-  slug: string
   author: string
   title: string
 }
@@ -30,16 +29,35 @@ type ShortData<DT = DateTime> = {
 type SongBase<DT = DateTime> = {
   id: string
   lastModified: DT
-  shortData: ShortData<DT>
+  slug: string
 }
 
 type SongWithoutData = SongBase & { loading: boolean; reload: () => void }
-export type Song = SongWithoutData & { longData: LongData | null }
-export type SongWithData = SongWithoutData & { longData: LongData }
-export type SongWithDataNoReload = SongBase & { longData: LongData }
+export type Song = SongWithoutData & {
+  longData: LongData | null
+  shortData: ShortData | null
+}
+export type SongWithShortData = SongWithoutData & {
+  shortData: ShortData
+  longData: LongData | null
+}
+export function hasShortData(song: Song): song is SongWithShortData {
+  return !!song.shortData
+}
+export type SongWithData = SongWithoutData & {
+  longData: LongData
+  shortData: ShortData
+}
+export type SongWithDataNoReload = SongBase & {
+  longData: LongData
+  shortData: ShortData
+}
 
 type SongStore = {
-  list: (SongBase<string> & { longData: LongData<string> | null })[]
+  list: (SongBase<string> & {
+    longData: LongData<string> | null
+    shortData: ShortData<string> | null
+  })[]
 }
 
 const localForageKey = 'store2'
@@ -65,11 +83,14 @@ export function longDataDefaults(meta: {
 }
 
 class Store {
-  private songMap = new Map<string, Song>()
+  private songMapSlug = new Map<string, Song>()
+  private songMapId = new Map<string, Song>()
   private _setSong(
     song: {
       lastModified: DateTime
-      shortData: PickExcept<ShortData, 'lastModified'> & {
+      id: string
+      slug: string
+      shortData?: PickExcept<ShortData, 'lastModified'> & {
         lastModified?: DateTime
       }
       longData?: PickExcept<LongData, 'lastModified'> & {
@@ -83,14 +104,17 @@ class Store {
       | { onChange: false; reason?: string }
       | { onChange: true; reason: string }),
   ) {
-    const slug = song.shortData.slug
-    const prev = this.songMap.get(slug)
-    this.songMap.set(slug, {
+    const prev = this.songMapSlug.get(song.slug)
+    const v = {
       lastModified: song.lastModified,
-      shortData: {
-        ...song.shortData,
-        lastModified: song.shortData.lastModified || song.lastModified,
-      },
+      slug: song.slug,
+      id: song.id,
+      shortData: song.shortData
+        ? {
+            ...song.shortData,
+            lastModified: song.shortData.lastModified || song.lastModified,
+          }
+        : null,
       longData: song.longData
         ? {
             ...longDataDefaults(song.longData),
@@ -99,10 +123,11 @@ class Store {
         : prev
         ? prev.longData
         : null,
-      id: slug,
       loading: false,
-      reload: () => this._downloadSongs([song.shortData.slug]),
-    })
+      reload: () => this._downloadSongsByIds([song.id]),
+    }
+    this.songMapSlug.set(song.slug, v)
+    this.songMapId.set(song.id, v)
 
     if (args.onChange) this._triggerOnChange(args.reason)
     if (save) this._cacheSongMap()
@@ -122,12 +147,15 @@ class Store {
     new Promise(resolve => setTimeout(resolve, 1000))
       .then(() =>
         localForage.setItem<SongStore>(localForageKey, {
-          list: Array.from(this.songMap.values()).map(song => ({
+          list: Array.from(this.songMapId.values()).map(song => ({
             id: song.id,
-            shortData: {
-              ...song.shortData,
-              lastModified: song.shortData.lastModified.toISO(),
-            },
+            slug: song.slug,
+            shortData: song.shortData
+              ? {
+                  ...song.shortData,
+                  lastModified: song.shortData.lastModified.toISO(),
+                }
+              : null,
             lastModified: song.lastModified.toISO(),
             longData: song.longData
               ? {
@@ -167,10 +195,14 @@ class Store {
                       ),
                     }
                   : undefined,
-                shortData: {
-                  ...song.shortData,
-                  lastModified: DateTime.fromISO(song.shortData.lastModified),
-                },
+                shortData: song.shortData
+                  ? {
+                      ...song.shortData,
+                      lastModified: DateTime.fromISO(
+                        song.shortData.lastModified,
+                      ),
+                    }
+                  : undefined,
               },
               { onChange: false, save: false },
             )
@@ -182,7 +214,7 @@ class Store {
       })
       .then(newSongs => {
         for (const song of newSongs) {
-          const existing = this.songMap.get(song.id)
+          const existing = this.songMapId.get(song.id)
           if (!existing || !song.lastModified.equals(existing.lastModified))
             this._setSong(song, { reason: 'new song', onChange: true })
         }
@@ -195,17 +227,45 @@ class Store {
       })
   }
 
+  /*
   // triggers song loading
-  private _downloadSongs(slugs: string[]) {
+  private _downloadSongsBySlugs(slugs: string[]) {
     const toLoad = slugs.filter(slug => {
-      const origSong = this.songMap.get(slug)
+      const origSong = this.songMapSlug.get(slug)
       if (!origSong || origSong.loading) return false
       origSong.loading = true
       return true
     })
 
     if (toLoad.length > 0)
-      downloadSongs(toLoad)
+      downloadSongsBySlugs(toLoad)
+        .then(songs => {
+          for (const song of songs) {
+            this._setSong(
+              { ...song, longData: longDataDefaults(song.longData) },
+              {
+                onChange: true,
+                reason: 'song downloaded',
+              },
+            )
+          }
+          this._cacheSongMap()
+        })
+        .catch(e => console.error(e))
+  }
+  */
+
+  // triggers song loading
+  private _downloadSongsByIds(ids: string[]) {
+    const toLoad = ids.filter(id => {
+      const origSong = this.songMapId.get(id)
+      if (!origSong || origSong.loading) return false
+      origSong.loading = true
+      return true
+    })
+
+    if (toLoad.length > 0)
+      downloadSongsByIds(toLoad)
         .then(songs => {
           for (const song of songs) {
             this._setSong(
@@ -223,16 +283,20 @@ class Store {
 
   // only updates songs it knows should be updated
   private _update() {
-    const songs = Array.from(this.songMap.values())
-    const songsWithoutLongData = songs.filter(song => !song.longData)
+    const songs = Array.from(this.songMapId.values())
+    const songsWithoutLongData = songs.filter(
+      song => !song.longData || !song.shortData,
+    )
     const songsToUpdate = songs.filter(
-      song => song.longData && song.longData.lastModified < song.lastModified,
+      song =>
+        (song.longData && song.longData.lastModified < song.lastModified) ||
+        (song.shortData && song.shortData.lastModified < song.lastModified),
     )
     // this is here to first download new songs
     const songsToDownload = songsWithoutLongData.concat(songsToUpdate)
 
     // download/update songs
-    this._downloadSongs(songsToDownload.map(s => s.shortData.slug))
+    this._downloadSongsByIds(songsToDownload.map(s => s.id))
   }
 
   private _updateCounter = 0
@@ -247,11 +311,15 @@ class Store {
   }
 
   listSongs() {
-    return Array.from(this.songMap.values())
+    return Array.from(this.songMapId.values())
   }
 
-  getSong(slug: string) {
-    return this.songMap.get(slug)
+  getSongBySlug(slug: string) {
+    return this.songMapSlug.get(slug)
+  }
+
+  getSongById(id: string) {
+    return this.songMapId.get(id)
   }
 
   handlers: ((reason: string) => void)[] = []
@@ -306,14 +374,23 @@ export function useSongList() {
   return songs
 }
 
-export function useSong(slug: string) {
+export function useSong(param: { slug: string } | { id: string }) {
   const store = useStore()
   const forceUpdate = useForceUpdate()
-  const song = store.getSong(slug)
+  const song =
+    'slug' in param
+      ? store.getSongBySlug(param.slug)
+      : store.getSongById(param.id)
 
   useEffect(() => {
-    if (song !== store.getSong(slug)) forceUpdate()
+    if (
+      song !==
+      ('slug' in param
+        ? store.getSongBySlug(param.slug)
+        : store.getSongById(param.id))
+    )
+      forceUpdate()
     return store.onChange(forceUpdate)
-  }, [forceUpdate, slug, song, store])
+  }, [forceUpdate, param, song, store])
   return song
 }
