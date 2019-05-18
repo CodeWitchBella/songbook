@@ -4,7 +4,7 @@ const enableLocalhostBackend = false
 const url =
   window.location.hostname === 'localhost' && enableLocalhostBackend
     ? 'http://localhost:8080/graphql'
-    : 'https://europe-west2-songbook-240720.cloudfunctions.net/graphql'
+    : 'https://europe-west1-songbook-240720.cloudfunctions.net/graphql'
 
 export function getGraphqlUrl() {
   return url
