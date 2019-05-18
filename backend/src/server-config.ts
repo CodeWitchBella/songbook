@@ -148,11 +148,15 @@ const resolvers = {
           return (await firestore.doc(data.user).get()).data()
         }
       }
+      return null
     },
   },
   SongRecord: {
     data: (src: any) => src.data(),
     lastModified: (src: any) => src.updateTime.toDate().toISOString(),
+  },
+  LoginPayload: {
+    __resolveType: (src: any) => src.__typename,
   },
   Mutation: {
     createSong: async (
@@ -180,7 +184,7 @@ const resolvers = {
       const doc = firestore.doc('songs/' + id)
       const prev = await doc.get()
       if (!prev.exists) throw new Error('Song does not exist')
-      const w = await doc.set({
+      await doc.set({
         ...prev.data(),
         ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
       })

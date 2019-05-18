@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
-    "outDir": "dist",
-    "rootDir": ".",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "esModuleInterop": true,
     "sourceMap": true,
     "strict": true,
-    "esModuleInterop": true
-  }
+    "target": "es2017",
+    "noEmit": true
+  },
+  "include": ["src"]
 }

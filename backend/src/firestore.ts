@@ -1,5 +1,3 @@
-import { Readable } from 'stream'
-import uuid from 'uuid/v4'
 import { Firestore } from '@google-cloud/firestore'
 
 const credentials = process.env.CREDENTIALS as any

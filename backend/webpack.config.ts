@@ -37,7 +37,7 @@ const config = (env: Env): webpack.Configuration => ({
     path: __dirname,
     filename: envSwitch(env, {
       localhost: 'localhost.js',
-      google: 'index.js',
+      google: 'lib/index.js',
     }),
     libraryTarget: 'commonjs2',
   },
@@ -51,7 +51,7 @@ const config = (env: Env): webpack.Configuration => ({
   }),
   target: 'node',
   optimization: {
-    minimize: envSwitch(env, { google: true, localhost: false }),
+    minimize: envSwitch(env, { google: false, localhost: false }),
     minimizer: [
       new TerserPlugin({
         cache: true,
