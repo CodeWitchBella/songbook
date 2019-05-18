@@ -7,7 +7,7 @@
     "build-watch": "npm run build -- --watch",
     "start": "nodemon -w index.js -x functions-framework --target=graphql",
     "build:production": "webpack --env google",
-    "deploy": "npm run build && gcloud functions deploy graphql --runtime nodejs10 --trigger-http --memory 128MB --clear-env-vars"
+    "deploy": "npm run build && gcloud functions deploy graphql --runtime nodejs10 --region europe-west2 --trigger-http --memory 128MB --clear-env-vars"
   },
   "dependencies": {
     "@codewitchbella/ts-utils": "^0.1.14",
