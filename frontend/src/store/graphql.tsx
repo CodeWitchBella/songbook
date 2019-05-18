@@ -87,13 +87,34 @@ function mapLastModified(s: any) {
   }
 }
 
-export async function listSongs(): Promise<
-  {
+export type Viewer = {
+  name: string
+  picture: {
+    url: string
+    width: string
+    height: string
+  }
+}
+
+const viewerFragment = `
+  fragment viewer on User {
+    name
+    picture {
+      url
+      width
+      height
+    }
+  }
+`
+
+export async function onLoadQuery(): Promise<{
+  songs: {
     id: string
     lastModified: DateTime
     slug: string
   }[]
-> {
+  viewer: null | Viewer
+}> {
   return graphqlFetch({
     query: `
       {
@@ -102,15 +123,20 @@ export async function listSongs(): Promise<
           lastModified
           data { slug }
         }
+        viewer {
+          ...viewer
+        }
       }
+      ${viewerFragment}
     `,
-  }).then(v =>
-    v.data.songs.map(mapLastModified).map((v: any) => ({
+  }).then(v => ({
+    songs: v.data.songs.map(mapLastModified).map((v: any) => ({
       id: v.id,
       lastModified: v.lastModified,
       slug: v.data.slug,
     })),
-  )
+    viewer: v.data.viewer,
+  }))
 }
 
 function mapFullSong(data: any) {
@@ -124,7 +150,10 @@ function mapFullSong(data: any) {
   }
 }
 
-export async function listSongsInitial(): Promise<FullSong[]> {
+export async function onLoadQueryInitial(): Promise<{
+  songs: FullSong[]
+  viewer: null
+}> {
   return graphqlFetch({
     query: `
       {
@@ -134,7 +163,7 @@ export async function listSongsInitial(): Promise<FullSong[]> {
       }
       ${fullSong}
     `,
-  }).then(v => v.data.songs.map(mapFullSong))
+  }).then(v => ({ songs: v.data.songs.map(mapFullSong), viewer: null }))
 }
 
 export async function downloadSongsBySlugs(
@@ -193,5 +222,33 @@ export async function updateSong(
     variables: { id, input },
   }).then(v => {
     if (!v.data.updateSong) throw new Error('updateSong failed')
+  })
+}
+
+export async function fbLogin(code: string): Promise<Viewer> {
+  return graphqlFetch({
+    query: `
+      mutation($code: String!) {
+        fbLogin(code: $code) {
+          __typename
+          ... on LoginError {
+            message
+          }
+          ... on LoginSuccess {
+            user {
+              ...viewer
+            }
+          }
+        }
+      }
+      ${viewerFragment}
+    `,
+    variables: { code },
+  }).then(v => {
+    if (v.data.fbLogin.__typename !== 'LoginSuccess') {
+      console.log(v.data.fbLogin)
+      throw new Error('Login failed')
+    }
+    return v.data.fbLogin.user
   })
 }

@@ -3,6 +3,7 @@ import { jsx } from '@emotion/core'
 import { useState, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
+import { useViewer } from 'store/store'
 
 export default function TopMenu({
   sortByAuthor,
@@ -85,6 +86,8 @@ function MenuContent({
   sortByAuthor: boolean
   setSortByAuthor: (v: boolean) => void
 }) {
+  const [viewer] = useViewer()
+  console.log({ viewer })
   return (
     <ul
       css={{
@@ -94,20 +97,22 @@ function MenuContent({
         top: 40,
       }}
     >
-      <MenuItem
-        as="a"
-        to={
-          'https://www.facebook.com/v3.3/dialog/oauth?' +
-          new URLSearchParams({
-            client_id: '331272811153847',
-            redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
-            state: 'abc',
-            scope: 'email',
-          }).toString()
-        }
-      >
-        Přihlásit se
-      </MenuItem>
+      {viewer ? null : (
+        <MenuItem
+          as="a"
+          to={
+            'https://www.facebook.com/v3.3/dialog/oauth?' +
+            new URLSearchParams({
+              client_id: '331272811153847',
+              redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
+              state: 'abc',
+              scope: 'email',
+            }).toString()
+          }
+        >
+          Přihlásit se
+        </MenuItem>
+      )}
       <MenuItem as={Link} to="/new">
         Přidat píseň
       </MenuItem>

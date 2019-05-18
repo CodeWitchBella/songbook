@@ -6,7 +6,12 @@ import React, {
   useState,
 } from 'react'
 import localForage from 'localforage'
-import { listSongs, downloadSongsByIds, listSongsInitial } from './graphql'
+import {
+  downloadSongsByIds,
+  onLoadQueryInitial,
+  onLoadQuery,
+  Viewer,
+} from './graphql'
 import useForceUpdate from 'components/use-force-update'
 import { DateTime } from 'luxon'
 import { PickExcept } from '@codewitchbella/ts-utils'
@@ -191,7 +196,7 @@ class Store {
   isInitializing() {
     return this.initializing
   }
-  init() {
+  init({ setViewer }: { setViewer: (viewer: Viewer | null) => void }) {
     localForage
       .getItem<SongStore>(localForageKey)
       .then(cache => {
@@ -225,10 +230,11 @@ class Store {
         }
         this.initializing = true
         this._triggerOnChange('Init start')
-        if (cache) return listSongs()
-        return listSongsInitial()
+        if (cache) return onLoadQuery()
+        return onLoadQueryInitial()
       })
-      .then(newSongs => {
+      .then(({ songs: newSongs, viewer }) => {
+        setViewer(viewer)
         let changed = false
         for (const id of this.songMapId.keys()) {
           if (!newSongs.some(s => s.id === id)) {
@@ -368,12 +374,17 @@ class Store {
   }
 }
 
-const context = React.createContext(null as null | Store)
+const context = React.createContext(null as null | {
+  store: Store
+  viewer: Viewer | null
+  setViewer: (v: Viewer | null) => void
+})
 
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const store = useMemo(() => new Store(), [])
+  const [viewer, setViewer] = useState(null as null | Viewer)
   useEffect(() => {
-    store.init()
+    store.init({ setViewer })
   }, [store])
   useEffect(() => {
     localForage.keys().then(keys =>
@@ -382,13 +393,23 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
       }),
     )
   }, [])
-  return <context.Provider value={store}>{children}</context.Provider>
+  return (
+    <context.Provider
+      value={useMemo(() => ({ store, viewer, setViewer }), [store, viewer])}
+    >
+      {children}
+    </context.Provider>
+  )
 }
 
-function useStore() {
+function useStoreContext() {
   const store = useContext(context)
   if (!store) throw new Error('No StoreProvider')
   return store
+}
+
+function useStore() {
+  return useStoreContext().store
 }
 
 export function useSongList() {
@@ -442,4 +463,9 @@ export function useNewSong() {
     await store.downloadSongsByIds([ret.id])
     return ret
   }
+}
+
+export function useViewer() {
+  const { viewer, setViewer } = useStoreContext()
+  return [viewer, setViewer] as const
 }
