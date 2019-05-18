@@ -115,6 +115,8 @@ class Store {
             ...song.shortData,
             lastModified: song.shortData.lastModified || song.lastModified,
           }
+        : prev
+        ? prev.shortData
         : null,
       longData: song.longData
         ? {
