@@ -4,7 +4,11 @@ const enableLocalhostBackend = false
 const url =
   window.location.hostname === 'localhost' && enableLocalhostBackend
     ? 'http://localhost:8080/graphql'
-    : 'https://zpevnik.skorepova.info/graphql'
+    : 'https://europe-west2-songbook-240720.cloudfunctions.net/graphql'
+
+export function getGraphqlUrl() {
+  return url
+}
 
 let promise = Promise.resolve(null as any)
 export function graphqlFetch<V = any>({

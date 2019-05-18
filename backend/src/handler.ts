@@ -19,7 +19,7 @@ const handler = server.createHandler({
 })
 
 export const graphql = functions
-  .region('europe-west2')
+  .region('europe-west1')
   .runWith({ memory: '128MB', timeoutSeconds: 30 })
   .https.onRequest((req: functions.https.Request, res: functions.Response) => {
     res.set('Access-Control-Allow-Credentials', 'true')

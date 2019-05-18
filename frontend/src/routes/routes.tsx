@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, Route } from 'react-router'
 import NotFound from './not-found'
 import PrivacyPolicy from './privacy-policy'
 import LoginFB from './login-fb'
+import { getGraphqlUrl } from 'store/graphql'
 
 const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
@@ -30,6 +31,13 @@ const Changelog = React.lazy(() =>
   import(/* webpackChunkName: "r-changelog" */ './changelog'),
 )
 const PDF = React.lazy(() => import(/* webpackChunkName: "r-pdf" */ './pdf'))
+
+function AbsoluteRedirect({ to }: { to: string }) {
+  useEffect(() => {
+    window.location.assign(to)
+  })
+  return null
+}
 
 export default class Routes extends React.Component {
   render() {
@@ -68,6 +76,11 @@ export default class Routes extends React.Component {
         <Route path="/changelog" exact render={() => <Changelog />} />
         <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
         <Route path="/login/fb" exact render={() => <LoginFB />} />
+        <Route
+          path="/graphql"
+          exact
+          render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
+        />
         <Route>
           <NotFound />
         </Route>
