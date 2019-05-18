@@ -66,6 +66,7 @@ function MenuItem({
         padding: '0 20px',
         background: 'white',
         marginTop: 5,
+        cursor: 'pointer',
       }}
       {...(As === 'a' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
