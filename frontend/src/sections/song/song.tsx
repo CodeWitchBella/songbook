@@ -34,6 +34,7 @@ class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
           frameBorder="0"
           allowtransparency="true"
           allow="encrypted-media"
+          css={{ pointerEvents: 'all' }}
         />
       </SpotifyWrap>
     )
