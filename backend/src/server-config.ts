@@ -75,7 +75,6 @@ const typeDefs = gql`
 
   type User {
     name: String!
-    gender: String!
     picture: UserPicture!
   }
 
@@ -221,12 +220,11 @@ const resolvers = {
       const basicInfo: {
         id: string
         name: string
-        gender: string
         email: string
       } = await (await fetch(
         'https://graph.facebook.com/v3.3/me?' +
           new URLSearchParams({
-            fields: 'id,name,gender,email',
+            fields: 'id,name,email',
             access_token: token.access_token,
           }).toString(),
       )).json()
@@ -256,7 +254,6 @@ const resolvers = {
         ...existingData,
         fbId: basicInfo.id,
         name: basicInfo.name,
-        gender: basicInfo.gender,
         email: basicInfo.email,
         picture: picture.data,
         fbToken: {
