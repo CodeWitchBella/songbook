@@ -65,8 +65,8 @@ export default () => (
           <PrintPreviewProvider>
             <Suspense fallback={<div>Načítám...</div>}>
               <ErrorBoundary>
-                <ServiceWorkerUpdated />
                 <Routes />
+                <ServiceWorkerUpdated />
               </ErrorBoundary>
             </Suspense>
           </PrintPreviewProvider>
