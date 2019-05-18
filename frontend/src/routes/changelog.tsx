@@ -8,6 +8,7 @@ const Changelog = () => (
       <li>Hezčí PDF náhled</li>
       <li>Opraven spotify přehrávač</li>
       <li>Opraveno zobrazení na "úzkých" telefonech</li>
+      <li>Přidáno řazení podle interpreta</li>
     </Entry>
     <Entry date="2019-05-17">
       <li>Rychlejší první načtení písní</li>

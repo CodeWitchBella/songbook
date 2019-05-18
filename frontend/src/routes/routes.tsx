@@ -15,10 +15,6 @@ const Print = React.lazy(() =>
 
 const Tag = React.lazy(() => import(/* webpackChunkName: "r-tag" */ './tag'))
 
-const TagList = React.lazy(() =>
-  import(/* webpackChunkName: "r-tag-list" */ './tag-list'),
-)
-
 const CreateSong = React.lazy(() =>
   import(/* webpackChunkName: "r-create-song" */ './create-song'),
 )
@@ -67,7 +63,6 @@ export default class Routes extends React.Component {
           exact
           render={({ match }) => <Print tag={match.params.tag} />}
         />
-        <Route path="/tag" exact render={() => <TagList />} />
         <Route
           path="/tag/:tag"
           exact

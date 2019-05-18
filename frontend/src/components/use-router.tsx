@@ -49,7 +49,7 @@ export function useQueryParam(param: string): [string | null, Setter] {
   const [value, setValue] = useState(() =>
     new URLSearchParams(router.location.search).get(param),
   )
-  const scheduled = useRef([] as string[])
+  const scheduled = useRef([] as (string | null)[])
 
   useEffect(() => {
     return router.history.listen(location => {
@@ -83,8 +83,8 @@ export function useQueryParam(param: string): [string | null, Setter] {
           locationState === undefined ? router.location.state : locationState,
         search: params.toString(),
       }
-      setValue(value || '')
-      scheduled.current.push(value || '')
+      setValue(value)
+      scheduled.current.push(value)
       if (push) router.history.push(state)
       else router.history.replace(state)
     },

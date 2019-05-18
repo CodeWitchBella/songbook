@@ -4,7 +4,13 @@ import { useState, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 
-export default function TopMenu() {
+export default function TopMenu({
+  sortByAuthor,
+  setSortByAuthor,
+}: {
+  sortByAuthor: boolean
+  setSortByAuthor: (v: boolean) => void
+}) {
   const [isOpen, setOpen] = useState(false)
   return (
     <div css={{ width: 40 }}>
@@ -25,22 +31,29 @@ export default function TopMenu() {
       >
         <Burger />
       </button>
-      {isOpen && <MenuContent />}
+      {isOpen && (
+        <MenuContent
+          sortByAuthor={sortByAuthor}
+          setSortByAuthor={setSortByAuthor}
+        />
+      )}
     </div>
   )
 }
 
 function MenuItem({
   children,
-  as: As = 'li',
+  as: As = 'button',
   to,
+  onClick,
 }: PropsWithChildren<
-  | { as?: 'li'; to?: undefined }
-  | { as: 'a'; to: string }
-  | { as: typeof Link; to: string }
+  | { as?: 'button'; to?: undefined; onClick: () => void }
+  | { as: 'a'; to: string; onClick?: undefined }
+  | { as: typeof Link; to: string; onClick?: undefined }
 >) {
   return (
     <As
+      onClick={onClick}
       href={As === 'a' ? to : undefined}
       to={As === 'a' ? (undefined as any) : to}
       css={{
@@ -64,7 +77,13 @@ function MenuItem({
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
-function MenuContent() {
+function MenuContent({
+  sortByAuthor,
+  setSortByAuthor,
+}: {
+  sortByAuthor: boolean
+  setSortByAuthor: (v: boolean) => void
+}) {
   return (
     <ul
       css={{
@@ -96,6 +115,9 @@ function MenuContent() {
       </MenuItem>
       <MenuItem as={Link} to="/changelog">
         Seznam změn
+      </MenuItem>
+      <MenuItem as="button" onClick={() => setSortByAuthor(!sortByAuthor)}>
+        Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
       </MenuItem>
     </ul>
   )

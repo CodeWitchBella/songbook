@@ -63,9 +63,13 @@ function ClearButton({ onClick }: { onClick: () => void }) {
 function Search({
   text,
   onChange,
+  sortByAuthor,
+  setSortByAuthor,
 }: {
   text: string
   onChange: (v: string) => void
+  sortByAuthor: boolean
+  setSortByAuthor: (v: boolean) => void
 }) {
   const ref = useRef<HTMLInputElement>(null)
   return (
@@ -90,17 +94,28 @@ function Search({
           />
           <ClearButton onClick={() => onChange('')} />
         </div>
-        <TopMenu />
+        <TopMenu
+          sortByAuthor={sortByAuthor}
+          setSortByAuthor={setSortByAuthor}
+        />
       </div>
       <button style={{ display: 'none' }} />
     </form>
   )
 }
 
-function compareSongs(a: SongWithShortData, b: SongWithShortData) {
-  const ret = a.shortData.title.localeCompare(b.shortData.title)
-  if (ret !== 0) return ret
-  return a.shortData.author.localeCompare(b.shortData.author)
+function compareSongs(sortByAuthor: boolean) {
+  return (a: SongWithShortData, b: SongWithShortData) => {
+    if (sortByAuthor) {
+      const ret = a.shortData.author.localeCompare(b.shortData.author)
+      if (ret !== 0) return ret
+      return a.shortData.title.localeCompare(b.shortData.title)
+    } else {
+      const ret = a.shortData.title.localeCompare(b.shortData.title)
+      if (ret !== 0) return ret
+      return a.shortData.author.localeCompare(b.shortData.author)
+    }
+  }
 }
 
 function Loader() {
@@ -122,10 +137,13 @@ function Loader() {
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const { songs: source, initing } = useSongList()
+  const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
+  const sortByAuthor = sortByAuthorSrc === 'yes'
 
-  const songs = useMemo(() => source.filter(hasShortData).sort(compareSongs), [
-    source,
-  ])
+  const songs = useMemo(
+    () => source.filter(hasShortData).sort(compareSongs(sortByAuthor)),
+    [sortByAuthor, source],
+  )
 
   const router = useRouter()
 
@@ -135,6 +153,11 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
     <PageNav>
       <TheSearch>
         <Search
+          sortByAuthor={sortByAuthor}
+          setSortByAuthor={(v: boolean) => {
+            console.log('Setting to ' + (v ? 'yes' : null))
+            setSortByAuthor(v ? 'yes' : null)
+          }}
           text={search || ''}
           onChange={v => {
             const { state } = router.location
