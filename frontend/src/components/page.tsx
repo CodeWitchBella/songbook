@@ -42,15 +42,15 @@ const songClass = (left: boolean, print: boolean) => css`
       : css`
           box-sizing: border-box;
           padding: 1em;
-          width: calc(100% - 2em);
-          height: calc(100% - 2em);
+          width: 100vw;
+          height: ${100 / page.innerRatio}vw;
+          font-size: 3.4vw;
           @media (min-width: ${page.innerRatio * 100}vh) {
             font-size: 1.87vh;
             width: ${page.innerRatio * 100}vh;
             height: calc(100vh);
             margin: 0 auto;
           }
-          font-size: 3vw;
         `};
   }
   @media print {
