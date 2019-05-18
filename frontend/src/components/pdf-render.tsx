@@ -1,4 +1,6 @@
-import React, { useContext } from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import React, { useContext, useState } from 'react'
 import { Paragraph, Line, parseSong } from 'utils/parse-song'
 import {
   Document,
@@ -6,13 +8,23 @@ import {
   Text,
   Font,
   View,
-  PDFViewer,
+  BlobProvider,
 } from '@react-pdf/renderer'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
 import { SongWithDataNoReload } from 'store/store'
 import { useQueryParam } from './use-router'
 import { notNull } from '@codewitchbella/ts-utils'
+import {
+  pdfjs,
+  Document as ReactPDFDocument,
+  Page as ReactPDFPage,
+} from 'react-pdf'
+import 'react-pdf/dist/Page/AnnotationLayer.css'
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
+  pdfjs.version
+}/pdf.worker.js`
 
 type Props = {
   song: SongWithDataNoReload
@@ -235,31 +247,70 @@ function SongPage({
 
 export default function PDFRender({ song }: Props) {
   const pages = parseSong(song.longData.text)
+  const [numPages, setNumPages] = useState(0)
 
   const [footer] = useQueryParam('footer')
 
   const size = 6
   const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
 
-  return (
-    <PDFViewer>
+  const doc = (
+    <Document>
       <settingsCtx.Provider
         value={{ ...song.longData, em, percent: em / 2.54 }}
       >
-        <Document>
-          {pages.map((page, i) => (
-            <SongPage
-              key={i}
-              page={page}
-              size={size}
-              left={i % 2 === 0}
-              title={song.shortData.title}
-              author={song.shortData.author}
-              footer={footer || ''}
-            />
-          ))}
-        </Document>
+        {pages.map((page, i) => (
+          <SongPage
+            key={i}
+            page={page}
+            size={size}
+            left={i % 2 === 0}
+            title={song.shortData.title}
+            author={song.shortData.author}
+            footer={footer || ''}
+          />
+        ))}
       </settingsCtx.Provider>
-    </PDFViewer>
+    </Document>
+  )
+
+  return (
+    <div
+      css={{
+        '.react-pdf__Page__svg': {
+          height: '100vh !important',
+          width: `${100 / Math.sqrt(2)}vh !important`,
+          margin: '0 auto',
+          border: '1px solid black',
+        },
+        svg: {
+          width: '100%',
+          height: '100%',
+        },
+      }}
+    >
+      <BlobProvider document={doc}>
+        {({ url }) => (
+          <ReactPDFDocument
+            file={url}
+            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+            renderMode="svg"
+          >
+            <div css={{ display: 'flex', justifyContent: 'center' }}>
+              {Array.from(new Array(numPages), (el, index) => (
+                <div
+                  css={{ width: `${100 / Math.sqrt(2)}vh`, margin: '0 10px' }}
+                >
+                  <ReactPDFPage
+                    key={`page_${index + 1}`}
+                    pageNumber={index + 1}
+                  />
+                </div>
+              ))}
+            </div>
+          </ReactPDFDocument>
+        )}
+      </BlobProvider>
+    </div>
   )
 }
