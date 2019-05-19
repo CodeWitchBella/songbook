@@ -1,18 +1,10 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import {
-  useState,
-  PropsWithChildren,
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-} from 'react'
+import { PropsWithChildren, useReducer } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 import { useLogin } from './use-login'
-import { createInstance } from 'localforage'
-
-const imageCache = createInstance({ name: 'imagecache' })
+import { CachedRoundImage } from './cached-round-image'
 
 export default function TopMenu({
   sortByAuthor,
@@ -99,55 +91,6 @@ function MenuItem({
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
-function useImageCache(srcUrl: string) {
-  const [blob, setBlob] = useState<null | Blob>(null)
-
-  useEffect(() => {
-    imageCache
-      .getItem<Blob>(srcUrl)
-      .then(blob => {
-        if (blob) {
-          return blob
-        } else {
-          return fetch(srcUrl).then(r => r.blob())
-        }
-      })
-      .then(blob => setBlob(blob))
-      .catch(e => setBlob(null))
-  }, [srcUrl])
-
-  const [url, setUrl] = useState<string | null>(null)
-
-  useLayoutEffect(() => {
-    if (blob) {
-      const v = window.URL.createObjectURL(blob)
-      setUrl(v)
-      return () => window.URL.revokeObjectURL(v)
-    } else {
-      setUrl(null)
-      return undefined
-    }
-  }, [blob])
-
-  return url
-}
-
-function RoundImage({
-  src,
-}: {
-  src: { url: string; width: number; height: number }
-}) {
-  const cached = useImageCache(src.url)
-  const style = {
-    width: src.width,
-    height: src.height,
-    background: '#aaa',
-    borderRadius: Math.min(src.width, src.height) / 2,
-  }
-  if (!cached) return <div css={style} />
-  return <img src={cached} alt="" css={style} />
-}
-
 function MenuContent({
   sortByAuthor,
   setSortByAuthor,
@@ -188,7 +131,7 @@ function MenuContent({
                 marginTop: 0, // top item
               }}
             >
-              <RoundImage src={login.viewer.picture} />
+              <CachedRoundImage src={login.viewer.picture} />
             </div>
 
             <MenuItem as={Link} to="/new">
