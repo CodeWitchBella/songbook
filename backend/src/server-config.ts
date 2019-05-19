@@ -81,7 +81,7 @@ const typeDefs = gql`
   type Mutation {
     createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
-    fbLogin(code: String): LoginPayload!
+    fbLogin(code: String!, redirectUri: String!): LoginPayload!
   }
 `
 
@@ -189,7 +189,11 @@ const resolvers = {
       })
       return doc.get()
     },
-    async fbLogin(_: {}, { code }: { code: string }, { res }: Context) {
+    async fbLogin(
+      _: {},
+      { code, redirectUri }: { code: string; redirectUri: string },
+      { res }: Context,
+    ) {
       const secrets = process.env.SECRETS as any
       const token:
         | {
@@ -208,7 +212,7 @@ const resolvers = {
         'https://graph.facebook.com/v3.3/oauth/access_token?' +
           new URLSearchParams({
             client_id: '331272811153847',
-            redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
+            redirect_uri: redirectUri,
             client_secret: secrets.fb_secret,
             code,
           }).toString(),
