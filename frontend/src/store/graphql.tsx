@@ -225,11 +225,14 @@ export async function updateSong(
   })
 }
 
-export async function fbLogin(code: string): Promise<Viewer> {
+export async function fbLogin(
+  code: string,
+  redirectUri: string,
+): Promise<Viewer> {
   return graphqlFetch({
     query: `
-      mutation($code: String!) {
-        fbLogin(code: $code) {
+      mutation($code: String!, $redirectUri: String!) {
+        fbLogin(code: $code, redirectUri: $redirectUri) {
           __typename
           ... on LoginError {
             message
@@ -243,7 +246,7 @@ export async function fbLogin(code: string): Promise<Viewer> {
       }
       ${viewerFragment}
     `,
-    variables: { code },
+    variables: { code, redirectUri },
   }).then(v => {
     if (v.data.fbLogin.__typename !== 'LoginSuccess') {
       console.log(v.data.fbLogin)

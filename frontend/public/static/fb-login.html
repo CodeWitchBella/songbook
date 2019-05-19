@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Přihlásit se | Zpěvník</title>
+  </head>
+  <body>
+    <script>
+      window.localStorage.setItem(
+        'auth',
+        JSON.stringify({ search: window.location.search }),
+      )
+      //window.postMessage(
+      //  JSON.stringify({ search: window.location.search }),
+      //  window.location.protocol + '//' + window.location.host,
+      //)
+      setTimeout(() => {
+        document.querySelector('#close').innerHTML =
+          'Toto okno nyní můžeš zavřít'
+        window.close()
+      }, 2000)
+    </script>
+    <div id="close">Přihlašuji tě...</div>
+  </body>
+</html>

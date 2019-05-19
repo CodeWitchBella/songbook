@@ -3,7 +3,7 @@ import { jsx } from '@emotion/core'
 import { useState, PropsWithChildren } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
-import { useViewer } from 'store/store'
+import { useLogin } from './use-login'
 
 export default function TopMenu({
   sortByAuthor,
@@ -63,6 +63,7 @@ function MenuItem({
         border: '1px solid',
         height: 40,
         display: 'block',
+        width: '100%',
         lineHeight: '40px',
         padding: '0 20px',
         background: 'white',
@@ -86,8 +87,7 @@ function MenuContent({
   sortByAuthor: boolean
   setSortByAuthor: (v: boolean) => void
 }) {
-  const [viewer] = useViewer()
-  console.log({ viewer })
+  const login = useLogin()
   return (
     <ul
       css={{
@@ -97,19 +97,8 @@ function MenuContent({
         top: 40,
       }}
     >
-      {viewer ? null : (
-        <MenuItem
-          as="a"
-          to={
-            'https://www.facebook.com/v3.3/dialog/oauth?' +
-            new URLSearchParams({
-              client_id: '331272811153847',
-              redirect_uri: 'https://zpevnik.skorepova.info/login/fb',
-              state: 'abc',
-              scope: 'email',
-            }).toString()
-          }
-        >
+      {login.viewer ? null : (
+        <MenuItem as="button" onClick={login.onClick}>
           Přihlásit se
         </MenuItem>
       )}
