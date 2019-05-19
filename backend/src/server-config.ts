@@ -28,6 +28,7 @@ const typeDefs = gql`
     spotify: String
 
     editor: User
+    insertedAt: String
   }
 
   type SongRecord {
@@ -163,7 +164,7 @@ const resolvers = {
       const songs = await Promise.all(slugs.map(songBySlug))
       return songs.filter(notNull)
     },
-    viewer: async (_: {}, _2: {}, { req, res }: Context) => {
+    viewer: async (_: {}, _2: {}, { req }: Context) => {
       const data = await getViewer(req)
       if (data) return (await data.viewer.get()).data()
       return null
@@ -174,6 +175,7 @@ const resolvers = {
       if (src.editor) return (await firestore.doc(src.editor).get()).data()
       return null
     },
+    insertedAt: (src: any) => (src.insertedAt ? src.insertedAt.toISO() : null),
   },
   SongRecord: {
     data: (src: any) => src.data(),
@@ -203,6 +205,7 @@ const resolvers = {
         slug,
         text: '',
         editor: 'users/' + viewer.viewer.id,
+        insertedAt: DateTime.utc().toISO(),
       })
       return await doc.get()
     },
