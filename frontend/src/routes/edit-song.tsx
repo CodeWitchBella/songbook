@@ -200,6 +200,8 @@ class EditSong extends React.Component<
         paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
         titleSpace: Number.parseFloat(this.state.titleSpace),
         spotify: this.state.spotify || null,
+        editor: this.props.song.longData.editor,
+        insertedAt: this.props.song.longData.insertedAt,
       },
     }
   }

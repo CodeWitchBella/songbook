@@ -14,7 +14,7 @@ export default function TopMenu({
   setSortByAuthor: (v: boolean) => void
 }) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
-    (st: { isOpen: boolean; wasOpen: boolean }, action: null) => {
+    (st: { isOpen: boolean; wasOpen: boolean }, _action: null) => {
       return { isOpen: !st.isOpen, wasOpen: true }
     },
     { isOpen: false, wasOpen: false },

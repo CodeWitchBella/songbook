@@ -3,7 +3,8 @@ import { jsx, Interpolation } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps } from 'react-router-dom'
-import { PlayButton, Burger, EditButton } from './song-menu-icons'
+import { PlayButton, Burger, EditButton, InfoButton } from './song-menu-icons'
+import { SongWithData } from 'store/store'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -18,10 +19,12 @@ const MenuWrap = styled.div({
   },
 })
 
-const MenuList = styled.div({
+const MenuList = styled.ul({
+  unset: 'all',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'right',
+  margin: 0,
 })
 
 const menuStyle: Interpolation = {
@@ -43,24 +46,72 @@ const MenuButton = (
 
 const MenuLink = (props: LinkProps) => <Link css={menuStyle} {...props} />
 
+function Info({ close, song }: { close: () => void; song: SongWithData }) {
+  return (
+    <button
+      type="button"
+      css={{
+        all: 'unset',
+        display: 'flex',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        background: 'rgba(255,255,255,0.7)',
+        pointerEvents: 'all',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+      onClick={close}
+    >
+      <div
+        css={{
+          boxShadow: '10px 10px 36px -8px rgba(0,0,0,0.75)',
+          padding: '20px 10px',
+          background: 'white',
+          fontSize: 18,
+        }}
+      >
+        <div>
+          Vložil/a:{' '}
+          {song.longData.editor ? song.longData.editor.name : 'neznámo kdo'}
+        </div>
+        <div>
+          Vloženo:{' '}
+          {song.longData.insertedAt
+            ? song.longData.insertedAt.toFormat('dd. MM. yyyy')
+            : 'před 20. 5. 2019'}
+        </div>
+        <div>Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}</div>
+        <div css={{ fontSize: 13, marginTop: 20 }}>
+          Klikněte kdekoli pro zavření
+        </div>
+      </div>
+    </button>
+  )
+}
+
 export default function SongMenu({
-  slug,
+  song,
   transposition,
   setTransposition,
   setSpotifyVisible,
   showSpotify,
 }: {
-  slug: string
+  song: SongWithData
   transposition: number
   setTransposition: (v: number) => void
   setSpotifyVisible: (v: boolean | ((v: boolean) => boolean)) => void
   showSpotify: boolean
 }) {
+  const { slug } = song
   const [open, setOpen] = useState(false)
   useEffect(() => {
     if (transposition >= 12) setTransposition(transposition - 12)
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
+  const [info, setInfo] = useState(false)
 
   return (
     <MenuWrap>
@@ -73,15 +124,20 @@ export default function SongMenu({
                 {transposition}
               </div>
             ) : null}
-            <MenuLink to={`/edit/${slug}`}>
-              <EditButton />
-            </MenuLink>
-            <MenuLink to={`/pdf/${slug}`}>PDF</MenuLink>
             <MenuButton onClick={() => setTransposition(transposition + 1)}>
               +1
             </MenuButton>
             <MenuButton onClick={() => setTransposition(transposition - 1)}>
               -1
+            </MenuButton>
+            <MenuLink to={`/edit/${slug}`}>
+              <EditButton />
+            </MenuLink>
+            <MenuLink to={`/pdf/${slug}`}>
+              <span css={{ fontSize: '0.8em' }}>PDF</span>
+            </MenuLink>
+            <MenuButton onClick={() => setInfo(o => !o)}>
+              <InfoButton />
             </MenuButton>
             {showSpotify ? (
               <MenuButton
@@ -98,6 +154,7 @@ export default function SongMenu({
           <Burger />
         </MenuButton>
       </MenuList>
+      {info && <Info song={song} close={() => setInfo(false)} />}
     </MenuWrap>
   )
 }

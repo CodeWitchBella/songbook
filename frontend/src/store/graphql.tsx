@@ -45,6 +45,26 @@ export function graphqlFetch<V = any>({
   return p
 }
 
+export type User = {
+  name: string
+  picture: {
+    url: string
+    width: number
+    height: number
+  }
+}
+
+const userFragment = `
+  fragment user on User {
+    name
+    picture {
+      url
+      width
+      height
+    }
+  }
+`
+
 const fullSong = `
   fragment fullSong on SongRecord {
     id
@@ -60,8 +80,13 @@ const fullSong = `
       paragraphSpace
       titleSpace
       spotify
+      editor {
+        ...user
+      }
+      insertedAt
     }
   }
+  ${userFragment}
 `
 type FullSong = {
   id: string
@@ -77,6 +102,8 @@ type FullSong = {
     paragraphSpace: number | null
     titleSpace: number | null
     spotify: string | null
+    editor: User | null
+    insertedAt: DateTime | null
   }
 }
 
@@ -84,28 +111,16 @@ function mapLastModified(s: any) {
   return {
     ...s,
     lastModified: DateTime.fromISO(s.lastModified),
+    longData: s.longData
+      ? {
+          ...s.longData,
+          insertedAt: s.longData.insertedAt
+            ? DateTime.fromISO(s.longData.insertedAt)
+            : null,
+        }
+      : s.longData,
   }
 }
-
-export type Viewer = {
-  name: string
-  picture: {
-    url: string
-    width: number
-    height: number
-  }
-}
-
-const viewerFragment = `
-  fragment viewer on User {
-    name
-    picture {
-      url
-      width
-      height
-    }
-  }
-`
 
 export async function onLoadQuery(): Promise<{
   songs: {
@@ -113,7 +128,7 @@ export async function onLoadQuery(): Promise<{
     lastModified: DateTime
     slug: string
   }[]
-  viewer: null | Viewer
+  viewer: null | User
 }> {
   return graphqlFetch({
     query: `
@@ -124,10 +139,10 @@ export async function onLoadQuery(): Promise<{
           data { slug }
         }
         viewer {
-          ...viewer
+          ...user
         }
       }
-      ${viewerFragment}
+      ${userFragment}
     `,
   }).then(v => ({
     songs: v.data.songs.map(mapLastModified).map((v: any) => ({
@@ -228,7 +243,7 @@ export async function updateSong(
 export async function fbLogin(
   code: string,
   redirectUri: string,
-): Promise<Viewer> {
+): Promise<User> {
   return graphqlFetch({
     query: `
       mutation($code: String!, $redirectUri: String!) {
@@ -239,12 +254,12 @@ export async function fbLogin(
           }
           ... on LoginSuccess {
             user {
-              ...viewer
+              ...user
             }
           }
         }
       }
-      ${viewerFragment}
+      ${userFragment}
     `,
     variables: { code, redirectUri },
   }).then(v => {

@@ -10,7 +10,7 @@ import {
   downloadSongsByIds,
   onLoadQueryInitial,
   onLoadQuery,
-  Viewer,
+  User,
 } from './graphql'
 import useForceUpdate from 'components/use-force-update'
 import { DateTime } from 'luxon'
@@ -26,6 +26,8 @@ type LongData<DT = DateTime> = {
   paragraphSpace: number
   titleSpace: number
   spotify: string | null
+  editor: User | null
+  insertedAt: DT | null
 }
 
 type ShortData<DT = DateTime> = {
@@ -80,6 +82,8 @@ export function longDataDefaults(meta: {
   titleSpace: number | null
   spotify: string | null
   text: string
+  editor: User | null
+  insertedAt: DateTime | null
 }) {
   return {
     fontSize: d<number>(meta.fontSize, 1),
@@ -87,6 +91,8 @@ export function longDataDefaults(meta: {
     titleSpace: d<number>(meta.titleSpace, 1),
     spotify: meta.spotify,
     text: meta.text,
+    editor: meta.editor,
+    insertedAt: meta.insertedAt,
   }
 }
 
@@ -112,6 +118,7 @@ class Store {
       | { onChange: false; reason?: string }
       | { onChange: true; reason: string }),
   ) {
+    if (song.slug === 'V_lese-Pokac') console.log('setSong', song)
     const prev = this.songMapId.get(song.id)
     const v = {
       lastModified: song.lastModified,
@@ -178,6 +185,9 @@ class Store {
               ? {
                   ...song.longData,
                   lastModified: song.longData.lastModified.toISO(),
+                  insertedAt: song.longData.insertedAt
+                    ? song.longData.insertedAt.toISO()
+                    : null,
                 }
               : null,
           })),
@@ -198,7 +208,7 @@ class Store {
   isInitializing() {
     return this.initializing
   }
-  init({ setViewer }: { setViewer: (viewer: Viewer | null) => void }) {
+  init({ setViewer }: { setViewer: (viewer: User | null) => void }) {
     localForage
       .getItem<SongStore>(localForageKey)
       .then(cache => {
@@ -215,6 +225,9 @@ class Store {
                       lastModified: DateTime.fromISO(
                         song.longData.lastModified,
                       ),
+                      insertedAt: song.longData.insertedAt
+                        ? DateTime.fromISO(song.longData.insertedAt)
+                        : null,
                     }
                   : undefined,
                 shortData: song.shortData
@@ -378,8 +391,8 @@ class Store {
 
 const context = React.createContext(null as null | {
   store: Store
-  viewer: Viewer | null
-  setViewer: (v: Viewer | null) => void
+  viewer: User | null
+  setViewer: (v: User | null) => void
 })
 
 function useCachedState<T>(key: string, initial: T | null) {
@@ -395,7 +408,7 @@ function useCachedState<T>(key: string, initial: T | null) {
 
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const store = useMemo(() => new Store(), [])
-  const [viewer, setViewer] = useCachedState<Viewer>('viewer', null)
+  const [viewer, setViewer] = useCachedState<User>('viewer', null)
   useEffect(() => {
     store.init({ setViewer })
   }, [setViewer, store])

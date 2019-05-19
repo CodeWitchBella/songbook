@@ -46,13 +46,13 @@ function queryJoin(path: string, query: string) {
   return path + '?' + query
 }
 
-const SongSection = ({
+export default function SongSection({
   slug,
   enableMenu = false,
 }: {
   slug: string
   enableMenu?: boolean
-}) => {
+}) {
   const { song } = useSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   console.log(song)
@@ -87,7 +87,7 @@ const SongSection = ({
             </div>
             {enableMenu && (
               <SongMenu
-                slug={slug}
+                song={{ ...song, shortData, longData }}
                 setSpotifyVisible={setSpotifyVisible}
                 showSpotify={!!longData.spotify}
                 transposition={transposition}
@@ -113,4 +113,3 @@ const SongSection = ({
     </Route>
   )
 }
-export default SongSection
