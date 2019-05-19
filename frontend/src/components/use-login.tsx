@@ -1,5 +1,5 @@
 import { useViewer } from 'store/store'
-import { fbLogin } from 'store/graphql'
+import { fbLogin, logout } from 'store/graphql'
 
 function randomString(length: number) {
   let result = ''
@@ -70,6 +70,13 @@ export function useLogin() {
     },
     logout: (evt?: any) => {
       if (evt) evt.preventDefault()
+      logout()
+        .then(() => {
+          setViewer(null)
+        })
+        .catch(e => {
+          console.error(e)
+        })
     },
   }
 }

@@ -255,3 +255,15 @@ export async function fbLogin(
     return v.data.fbLogin.user
   })
 }
+
+export async function logout(): Promise<void> {
+  return graphqlFetch({
+    query: `mutation { logout }`,
+  }).then(v => {
+    if (!v.data.logout) {
+      console.log(v.data.logout)
+      throw new Error('Login failed')
+    }
+    return v.data.logout
+  })
+}

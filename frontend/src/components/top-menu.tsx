@@ -190,9 +190,7 @@ function MenuContent({
             >
               <RoundImage src={login.viewer.picture} />
             </div>
-            <MenuItem as="button" onClick={login.logout}>
-              Odhlásit se
-            </MenuItem>
+
             <MenuItem as={Link} to="/new">
               Přidat píseň
             </MenuItem>
@@ -212,6 +210,11 @@ function MenuContent({
         <MenuItem as="button" onClick={() => setSortByAuthor(!sortByAuthor)}>
           Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
         </MenuItem>
+        {login.viewer ? (
+          <MenuItem as="button" onClick={login.logout}>
+            Odhlásit se
+          </MenuItem>
+        ) : null}
       </ul>
     </div>
   )
