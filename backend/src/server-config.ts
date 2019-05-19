@@ -26,6 +26,8 @@ const typeDefs = gql`
     paragraphSpace: Float
     titleSpace: Float
     spotify: String
+
+    editor: User
   }
 
   type SongRecord {
@@ -167,6 +169,12 @@ const resolvers = {
       return null
     },
   },
+  Song: {
+    editor: async (src: any) => {
+      if (src.editor) return (await firestore.doc(src.editor).get()).data()
+      return null
+    },
+  },
   SongRecord: {
     data: (src: any) => src.data(),
     lastModified: (src: any) => src.updateTime.toDate().toISOString(),
@@ -178,7 +186,11 @@ const resolvers = {
     createSong: async (
       _: {},
       { input }: { input: { author: string; title: string } },
+      { req }: Context,
     ) => {
+      const viewer = await getViewer(req)
+      if (!viewer) throw new UserInputError('Must be logged in')
+
       const { title, author } = input
       const slug = `${sanitizeSongId(title)}-${sanitizeSongId(author)}`
       const existing = await songBySlug(slug)
@@ -190,6 +202,7 @@ const resolvers = {
         author,
         slug,
         text: '',
+        editor: viewer.viewer.id,
       })
       return await doc.get()
     },
