@@ -17,6 +17,8 @@ import { DateTime } from 'luxon'
 import { PickExcept } from '@codewitchbella/ts-utils'
 import { newSong } from './fetchers'
 
+const settingsStorage = localForage.createInstance({ name: 'settings' })
+
 type LongData<DT = DateTime> = {
   lastModified: DT
   text: string
@@ -380,12 +382,23 @@ const context = React.createContext(null as null | {
   setViewer: (v: Viewer | null) => void
 })
 
+function useCachedState<T>(key: string, initial: T | null) {
+  const [v, setV] = useState<T | null>(initial)
+  useEffect(() => {
+    settingsStorage.getItem<T>(key).then(itm => setV(itm))
+  }, [key])
+  useEffect(() => {
+    settingsStorage.setItem<T | null>(key, v)
+  }, [key, v])
+  return [v, setV] as const
+}
+
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const store = useMemo(() => new Store(), [])
-  const [viewer, setViewer] = useState(null as null | Viewer)
+  const [viewer, setViewer] = useCachedState<Viewer>('viewer', null)
   useEffect(() => {
     store.init({ setViewer })
-  }, [store])
+  }, [setViewer, store])
   useEffect(() => {
     localForage.keys().then(keys =>
       keys.forEach(key => {
@@ -395,7 +408,11 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
   }, [])
   return (
     <context.Provider
-      value={useMemo(() => ({ store, viewer, setViewer }), [store, viewer])}
+      value={useMemo(() => ({ store, viewer, setViewer }), [
+        setViewer,
+        store,
+        viewer,
+      ])}
     >
       {children}
     </context.Provider>
