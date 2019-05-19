@@ -82,6 +82,7 @@ const typeDefs = gql`
     createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
     fbLogin(code: String!, redirectUri: String!): LoginPayload!
+    logout: String
   }
 `
 
@@ -115,6 +116,32 @@ function fromEntries(entries: [string, any][]) {
   return ret
 }
 
+async function getViewer(req: functions.https.Request) {
+  const cookies = req.get('cookie')
+  if (!cookies) return null
+  for (const cookie of cookies.split(';')) {
+    if (cookie.startsWith('__session=')) {
+      const token = cookie.replace('__session=', '').trim()
+      const session = firestore.doc('sessions/' + token)
+      const data = (await session.get()).data()
+      if (!data) return
+      return { viewer: firestore.doc(data.user), session }
+    }
+  }
+  return null
+}
+
+function setSessionCookie(
+  res: functions.Response,
+  value: string,
+  duration: Duration,
+) {
+  res.set(
+    'Set-Cookie',
+    `__session=${value}; Max-Age=${duration.as('seconds')}; HttpOnly; Path=/`,
+  )
+}
+
 type Context = { req: functions.https.Request; res: functions.Response }
 // A map of functions which return data for the schema.
 const resolvers = {
@@ -135,18 +162,8 @@ const resolvers = {
       return songs.filter(notNull)
     },
     viewer: async (_: {}, _2: {}, { req, res }: Context) => {
-      res.set('Set-Cookie', `__session2=abc; Max-Age=60; HttpOnly; Path=/`)
-      const cookies = req.get('cookie')
-      if (!cookies) return null
-      for (const cookie of cookies.split(';')) {
-        if (cookie.startsWith('__session=')) {
-          const token = cookie.replace('__session=', '').trim()
-          const session = firestore.doc('sessions/' + token)
-          const data = (await session.get()).data()
-          if (!data) return
-          return (await firestore.doc(data.user).get()).data()
-        }
-      }
+      const data = await getViewer(req)
+      if (data) return (await data.viewer.get()).data()
       return null
     },
   },
@@ -277,17 +294,21 @@ const resolvers = {
           .toISO(),
       })
 
-      res.set(
-        'Set-Cookie',
-        `__session=${sessionToken}; Max-Age=${sessionDuration.as(
-          'seconds',
-        )}; HttpOnly; Path=/`,
-      )
+      setSessionCookie(res, sessionToken, sessionDuration)
 
       return {
         __typename: 'LoginSuccess',
         user: (await user.get()).data(),
       }
+    },
+    logout: async (_: {}, _2: {}, { req, res }: Context) => {
+      const data = await getViewer(req)
+      // make it expire
+      setSessionCookie(res, '', Duration.fromObject({ second: 1 }))
+      if (data) {
+        await data.session.delete()
+      }
+      return 'Success!'
     },
   },
 }
