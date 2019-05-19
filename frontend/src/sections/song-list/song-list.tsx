@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, PropsWithChildren } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList, SongWithShortData, hasShortData } from 'store/store'
@@ -9,18 +9,9 @@ import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
 
 const TheSearch = styled.div`
-  display: flex;
   font-size: 20px;
-  margin-top: 20px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  form {
-    position: fixed;
-    width: 100vw;
-    flex-grow: 1;
-    max-width: 420px;
-  }
+  height: 70px;
+
   input {
     box-sizing: border-box;
     width: calc(100% - 4px);
@@ -60,6 +51,35 @@ function ClearButton({ onClick }: { onClick: () => void }) {
   )
 }
 
+function SearchContainer({ children }: PropsWithChildren<{}>) {
+  return (
+    <div
+      css={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 60,
+        background: 'white',
+        boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
+      }}
+    >
+      <div
+        css={{
+          position: 'relative',
+          width: 'calc(100% - 22px)',
+          maxWidth: 420,
+        }}
+      >
+        {children}
+        <button style={{ display: 'none' }} />
+      </div>
+    </div>
+  )
+}
+
 function Search({
   text,
   onChange,
@@ -74,7 +94,6 @@ function Search({
   const ref = useRef<HTMLInputElement>(null)
   return (
     <form
-      css={{ position: 'relative', width: 'calc(100% - 22px)' }}
       onSubmit={evt => {
         evt.preventDefault()
         const refc = ref.current
@@ -82,24 +101,31 @@ function Search({
         refc.blur()
       }}
     >
-      <div css={{ display: 'flex', padding: '0 4px' }}>
-        <div css={{ position: 'relative', flexGrow: 1 }}>
-          <input
-            ref={ref}
-            onChange={evt => {
-              onChange(evt.target.value)
-            }}
-            value={text}
-            placeholder="Vyhledávání"
+      <SearchContainer>
+        <div
+          css={{
+            position: 'relative',
+            display: 'flex',
+            padding: '0 4px',
+          }}
+        >
+          <div css={{ position: 'relative', flexGrow: 1 }}>
+            <input
+              ref={ref}
+              onChange={evt => {
+                onChange(evt.target.value)
+              }}
+              value={text}
+              placeholder="Vyhledávání"
+            />
+            <ClearButton onClick={() => onChange('')} />
+          </div>
+          <TopMenu
+            sortByAuthor={sortByAuthor}
+            setSortByAuthor={setSortByAuthor}
           />
-          <ClearButton onClick={() => onChange('')} />
         </div>
-        <TopMenu
-          sortByAuthor={sortByAuthor}
-          setSortByAuthor={setSortByAuthor}
-        />
-      </div>
-      <button style={{ display: 'none' }} />
+      </SearchContainer>
     </form>
   )
 }

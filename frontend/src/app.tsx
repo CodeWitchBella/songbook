@@ -47,11 +47,6 @@ export const InjectGlobal = () => (
           height: 100%;
         }
       }
-      #root {
-        @media not print {
-          overflow: auto;
-        }
-      }
     `}
   />
 )

@@ -1,9 +1,18 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import { useState, PropsWithChildren } from 'react'
+import {
+  useState,
+  PropsWithChildren,
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+} from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 import { useLogin } from './use-login'
+import { createInstance } from 'localforage'
+
+const imageCache = createInstance({ name: 'imagecache' })
 
 export default function TopMenu({
   sortByAuthor,
@@ -12,7 +21,12 @@ export default function TopMenu({
   sortByAuthor: boolean
   setSortByAuthor: (v: boolean) => void
 }) {
-  const [isOpen, setOpen] = useState(false)
+  const [{ isOpen, wasOpen }, setOpen] = useReducer(
+    (st: { isOpen: boolean; wasOpen: boolean }, action: null) => {
+      return { isOpen: !st.isOpen, wasOpen: true }
+    },
+    { isOpen: false, wasOpen: false },
+  )
   return (
     <div css={{ width: 40 }}>
       <button
@@ -28,12 +42,13 @@ export default function TopMenu({
           backgroundColor: 'white',
           position: 'relative',
         }}
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen(null)}
       >
         <Burger />
       </button>
-      {isOpen && (
+      {wasOpen && (
         <MenuContent
+          visible={isOpen}
           sortByAuthor={sortByAuthor}
           setSortByAuthor={setSortByAuthor}
         />
@@ -47,11 +62,12 @@ function MenuItem({
   as: As = 'button',
   to,
   onClick,
+  first,
 }: PropsWithChildren<
   | { as?: 'button'; to?: undefined; onClick: () => void }
   | { as: 'a'; to: string; onClick?: undefined }
   | { as: typeof Link; to: string; onClick?: undefined }
->) {
+> & { first?: boolean }) {
   return (
     <As
       onClick={onClick}
@@ -67,8 +83,11 @@ function MenuItem({
         lineHeight: '40px',
         padding: '0 20px',
         background: 'white',
-        marginTop: 5,
+        marginTop: first ? 0 : 5,
         cursor: 'pointer',
+        ':hover': {
+          textDecoration: 'underline',
+        },
       }}
       {...(As === 'a' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
     >
@@ -80,40 +99,120 @@ function MenuItem({
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
+function useImageCache(srcUrl: string) {
+  const [blob, setBlob] = useState<null | Blob>(null)
+
+  useEffect(() => {
+    imageCache
+      .getItem<Blob>(srcUrl)
+      .then(blob => {
+        if (blob) {
+          return blob
+        } else {
+          return fetch(srcUrl).then(r => r.blob())
+        }
+      })
+      .then(blob => setBlob(blob))
+      .catch(e => setBlob(null))
+  }, [srcUrl])
+
+  const [url, setUrl] = useState<string | null>(null)
+
+  useLayoutEffect(() => {
+    if (blob) {
+      const v = window.URL.createObjectURL(blob)
+      setUrl(v)
+      return () => window.URL.revokeObjectURL(v)
+    } else {
+      setUrl(null)
+      return undefined
+    }
+  }, [blob])
+
+  return url
+}
+
+function RoundImage({
+  src,
+}: {
+  src: { url: string; width: number; height: number }
+}) {
+  const cached = useImageCache(src.url)
+  const style = {
+    width: src.width,
+    height: src.height,
+    background: '#aaa',
+    borderRadius: Math.min(src.width, src.height) / 2,
+  }
+  if (!cached) return <div css={style} />
+  return <img src={cached} alt="" css={style} />
+}
+
 function MenuContent({
   sortByAuthor,
   setSortByAuthor,
+  visible,
 }: {
   sortByAuthor: boolean
   setSortByAuthor: (v: boolean) => void
+  visible: boolean
 }) {
   const login = useLogin()
   return (
-    <ul
+    <div
       css={{
-        all: 'unset',
         position: 'absolute',
-        right: 4,
-        top: 40,
+        right: 4 - 20,
+        top: 50,
+        padding: '0 20px 20px 20px',
+        overflow: 'hidden',
       }}
     >
-      {login.viewer ? null : (
-        <MenuItem as="button" onClick={login.onClick}>
-          Přihlásit se
+      <ul
+        css={{
+          all: 'unset',
+
+          background: 'white',
+          padding: 10,
+
+          boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
+          display: visible ? 'block' : 'none',
+        }}
+      >
+        {login.viewer ? (
+          <>
+            <div
+              css={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: 0, // top item
+              }}
+            >
+              <RoundImage src={login.viewer.picture} />
+            </div>
+            <MenuItem as="button" onClick={login.logout}>
+              Odhlásit se
+            </MenuItem>
+            <MenuItem as={Link} to="/new">
+              Přidat píseň
+            </MenuItem>
+          </>
+        ) : (
+          <MenuItem as="button" onClick={login.onClick} first>
+            Přihlásit se
+          </MenuItem>
+        )}
+
+        <MenuItem as="a" to={googleDoc}>
+          Návrhy
         </MenuItem>
-      )}
-      <MenuItem as={Link} to="/new">
-        Přidat píseň
-      </MenuItem>
-      <MenuItem as="a" to={googleDoc}>
-        Návrhy
-      </MenuItem>
-      <MenuItem as={Link} to="/changelog">
-        Seznam změn
-      </MenuItem>
-      <MenuItem as="button" onClick={() => setSortByAuthor(!sortByAuthor)}>
-        Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
-      </MenuItem>
-    </ul>
+        <MenuItem as={Link} to="/changelog">
+          Seznam změn
+        </MenuItem>
+        <MenuItem as="button" onClick={() => setSortByAuthor(!sortByAuthor)}>
+          Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
+        </MenuItem>
+      </ul>
+    </div>
   )
 }

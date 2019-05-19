@@ -91,8 +91,8 @@ export type Viewer = {
   name: string
   picture: {
     url: string
-    width: string
-    height: string
+    width: number
+    height: number
   }
 }
 

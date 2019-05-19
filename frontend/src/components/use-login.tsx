@@ -68,5 +68,8 @@ export function useLogin() {
         interval = setInterval(storageListener, 500)
       }
     },
+    logout: (evt?: any) => {
+      if (evt) evt.preventDefault()
+    },
   }
 }
