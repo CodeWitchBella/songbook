@@ -175,7 +175,6 @@ const resolvers = {
       if (src.editor) return (await firestore.doc(src.editor).get()).data()
       return null
     },
-    insertedAt: (src: any) => (src.insertedAt ? src.insertedAt.toISO() : null),
   },
   SongRecord: {
     data: (src: any) => src.data(),
