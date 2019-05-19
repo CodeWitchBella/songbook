@@ -202,7 +202,7 @@ const resolvers = {
         author,
         slug,
         text: '',
-        editor: viewer.viewer.id,
+        editor: 'users/' + viewer.viewer.id,
       })
       return await doc.get()
     },
