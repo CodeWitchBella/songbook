@@ -55,7 +55,6 @@ export default function SongSection({
 }) {
   const { song } = useAutoUpdatedSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
-  console.log(song)
   if (!song) return null
   console.log('song id:', song.id)
   const { longData, shortData } = song

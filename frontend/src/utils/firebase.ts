@@ -22,15 +22,11 @@ export function useAutoUpdatedSong(param: { slug: string } | { id: string }) {
   const setRLM = ret.song ? ret.song.setRemoteLastModified : null
   useEffect(() => {
     if (id && setRLM) {
-      const unsub = firestore.doc('songs/' + id).onSnapshot(snap => {
+      return firestore.doc('songs/' + id).onSnapshot(snap => {
         const data = snap.data()
         if (!data) return
         setRLM(DateTime.fromJSDate(data.lastModified.toDate()).setZone('utc'))
       })
-      return () => {
-        console.log('Unsubbing from songs/' + id)
-        return unsub()
-      }
     } else {
       return undefined
     }
