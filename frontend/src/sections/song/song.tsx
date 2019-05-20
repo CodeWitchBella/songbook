@@ -4,10 +4,10 @@ import React, { useState } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/parse-song'
 import styled from '@emotion/styled'
-import { useSong } from 'store/store'
 import SongMenu from 'components/song-look/song-menu'
 import { Route } from 'react-router-dom'
 import queryString from 'query-string'
+import { useAutoUpdatedSong } from 'utils/firebase'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -53,7 +53,7 @@ export default function SongSection({
   slug: string
   enableMenu?: boolean
 }) {
-  const { song } = useSong({ slug })
+  const { song } = useAutoUpdatedSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   console.log(song)
   if (!song) return null

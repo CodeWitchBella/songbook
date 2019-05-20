@@ -42,7 +42,11 @@ type SongBase<DT = DateTime> = {
   slug: string
 }
 
-type SongWithoutData = SongBase & { loading: boolean; reload: () => void }
+type SongWithoutData = SongBase & {
+  loading: boolean
+  reload: () => void
+  setRemoteLastModified: (time: DateTime) => void
+}
 export type Song = SongWithoutData & {
   longData: LongData | null
   shortData: ShortData | null
@@ -142,6 +146,15 @@ class Store {
         : null,
       loading: false,
       reload: () => this.downloadSongsByIds([song.id]),
+      // this ternary keeps reference
+      setRemoteLastModified: prev
+        ? prev.setRemoteLastModified
+        : (time: DateTime) => {
+            const currentValue = this.songMapId.get(song.id)
+            if (!currentValue || time > currentValue.lastModified) {
+              this.downloadSongsByIds([song.id])
+            }
+          },
     }
     this.songMapSlug.set(song.slug, v)
     this.songMapId.set(song.id, v)

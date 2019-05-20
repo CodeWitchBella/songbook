@@ -20,6 +20,7 @@
     "emotion": "^10.0.9",
     "eslint-plugin-emotion": "^10.0.7",
     "eslint-plugin-react-hooks": "^1.6.0",
+    "firebase": "^6.0.2",
     "http-proxy-middleware": "^0.19.1",
     "localforage": "^1.7.3",
     "luxon": "^1.13.2",
