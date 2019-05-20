@@ -6,6 +6,7 @@ import fetch from 'node-fetch'
 import { DateTime, Duration } from 'luxon'
 import * as functions from 'firebase-functions'
 import { notNull } from '@codewitchbella/ts-utils'
+import { FieldValue } from '@google-cloud/firestore'
 
 function sanitizeSongId(part: string) {
   return latinize(part)
@@ -39,7 +40,7 @@ const typeDefs = gql`
 
   type Query {
     hello: String
-    songs: [SongRecord!]!
+    songs(modifiedAfter: String): [SongRecord!]!
     songsBySlugs(slugs: [String!]!): [SongRecord!]!
     songsByIds(ids: [String!]!): [SongRecord!]!
     viewer: User
@@ -150,9 +151,24 @@ type Context = { req: functions.https.Request; res: functions.Response }
 const resolvers = {
   Query: {
     hello: () => 'world',
-    songs: async () => {
-      const docs = await firestore.collection('songs').listDocuments()
-      return firestore.getAll(...docs)
+    songs: async (
+      _: {},
+      { modifiedAfter }: { modifiedAfter: string | null },
+    ) => {
+      const docs = await (() => {
+        if (modifiedAfter) {
+          return firestore
+            .collection('songs')
+            .where(
+              'lastModified',
+              '>',
+              DateTime.fromISO(modifiedAfter).toJSDate(),
+            )
+            .get()
+        }
+        return firestore.collection('songs').get()
+      })()
+      return docs.docs
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
@@ -175,13 +191,27 @@ const resolvers = {
       if (src.editor) return (await firestore.doc(src.editor).get()).data()
       return null
     },
+    insertedAt: (src: any) =>
+      !src.insertedAt
+        ? null
+        : typeof src.insertedAt === 'string'
+        ? src.insertedAt
+        : DateTime.fromJSDate(src.insertedAt.toDate())
+            .setZone('utc')
+            .toISO(),
   },
   SongRecord: {
     data: (src: any) => src.data(),
-    lastModified: (src: any) =>
-      typeof src.lastModified === 'string'
-        ? src.lastModified
-        : src.updateTime.toDate().toISOString(),
+    lastModified: (src: any) => {
+      const data = src.data()
+      return DateTime.fromJSDate(
+        !!data.lastModified
+          ? data.lastModified.toDate()
+          : src.updateTime.toDate(),
+      )
+        .setZone('utc')
+        .toISO()
+    },
   },
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
@@ -207,8 +237,8 @@ const resolvers = {
         slug,
         text: '',
         editor: 'users/' + viewer.viewer.id,
-        insertedAt: DateTime.utc().toISO(),
-        lastModified: DateTime.utc().toISO(),
+        insertedAt: FieldValue.serverTimestamp(),
+        lastModified: FieldValue.serverTimestamp(),
       })
       return await doc.get()
     },
@@ -222,7 +252,7 @@ const resolvers = {
       await doc.set({
         ...prev.data(),
         ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
-        lastModified: DateTime.utc().toISO(),
+        lastModified: FieldValue.serverTimestamp(),
       })
       return doc.get()
     },
