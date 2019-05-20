@@ -24,7 +24,7 @@ export function useAutoUpdatedSong(param: { slug: string } | { id: string }) {
     if (id && setRLM) {
       return firestore.doc('songs/' + id).onSnapshot(snap => {
         const data = snap.data()
-        if (!data) return
+        if (!data || !data.lastModified) return
         setRLM(DateTime.fromJSDate(data.lastModified.toDate()).setZone('utc'))
       })
     } else {
