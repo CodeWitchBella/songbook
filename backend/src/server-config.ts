@@ -178,7 +178,10 @@ const resolvers = {
   },
   SongRecord: {
     data: (src: any) => src.data(),
-    lastModified: (src: any) => src.updateTime.toDate().toISOString(),
+    lastModified: (src: any) =>
+      typeof src.lastModified === 'string'
+        ? src.lastModified
+        : src.updateTime.toDate().toISOString(),
   },
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
@@ -205,6 +208,7 @@ const resolvers = {
         text: '',
         editor: 'users/' + viewer.viewer.id,
         insertedAt: DateTime.utc().toISO(),
+        lastModified: DateTime.utc().toISO(),
       })
       return await doc.get()
     },
@@ -218,6 +222,7 @@ const resolvers = {
       await doc.set({
         ...prev.data(),
         ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
+        lastModified: DateTime.utc().toISO(),
       })
       return doc.get()
     },
