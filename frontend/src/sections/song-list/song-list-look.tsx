@@ -101,6 +101,7 @@ const ListContainer = styled('div')<{ count: number }>`
     ${props => Math.ceil(props.count / 1)},
     auto
   );
+  padding-top: 10px;
 
   ${columns(2)}
   ${columns(3)}
@@ -185,7 +186,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
   if (big)
     return (
       <ListContainer count={list.length}>
-        {list.map((item, index) => indexToItem({ index }))}
+        {list.map((item, index) => indexToItem({ index: index + 1 }))}
       </ListContainer>
     )
 

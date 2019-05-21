@@ -12,6 +12,7 @@ const TheSearch = styled.div`
   font-size: 20px;
   height: 60px;
   display: block;
+  flex-shrink: 0;
 
   input {
     box-sizing: border-box;
@@ -61,6 +62,7 @@ function SearchContainer({ children }: PropsWithChildren<{}>) {
         height: 60,
         background: 'white',
         boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
+        zIndex: 1,
       }}
     >
       <div
