@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react'
-import { SearchTitle, SongItem, ListContainer } from './song-list-look'
+import { SongList, SongListItem } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList, { SearchableSong } from './alg'
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -17,37 +17,25 @@ const getWorker = (() => {
 
 type FilteredList = ReturnType<typeof getFilteredSongList>
 const filteredToComponents = (
-  sortByAuthor: boolean,
   showTitles: boolean,
   filtered: FilteredList,
-) => {
-  if (Array.isArray(filtered)) {
-    return filtered.map(s => (
-      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
-    ))
-  }
-
+  songItem: (id: string) => { text: string; slug: string } | null,
+): SongListItem[] => {
   return [
-    showTitles && filtered.byTitle.length > 0 ? (
-      <SearchTitle key="title">Podle názvu</SearchTitle>
-    ) : null,
-    ...filtered.byTitle.map(s => (
-      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
-    )),
+    showTitles && filtered.byTitle.length > 0
+      ? { header: 'Podle názvu' }
+      : null,
+    ...filtered.byTitle.map(songItem),
 
-    showTitles && filtered.byAuthor.length > 0 ? (
-      <SearchTitle key="author">Podle autora</SearchTitle>
-    ) : null,
-    ...filtered.byAuthor.map(s => (
-      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
-    )),
+    showTitles && filtered.byAuthor.length > 0
+      ? { header: 'Podle autora' }
+      : null,
+    ...filtered.byAuthor.map(songItem),
 
-    showTitles && filtered.byText.length > 0 ? (
-      <SearchTitle key="text">Text obsahuje</SearchTitle>
-    ) : null,
-    ...filtered.byText.map(s => (
-      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
-    )),
+    showTitles && filtered.byText.length > 0
+      ? { header: 'Text obsahuje' }
+      : null,
+    ...filtered.byText.map(songItem),
   ].filter(notNull)
 }
 
@@ -55,11 +43,23 @@ export default function FilteredList({
   search,
   songs,
   sortByAuthor,
+  getSongById,
 }: {
   search: string
   songs: SongType[]
   sortByAuthor: boolean
+  getSongById: (id: string) => SongType | null
 }) {
+  function songItem(id: string) {
+    const song = getSongById(id)
+    if (!song) return null
+    return {
+      text: sortByAuthor
+        ? `${song.author} - ${song.title}`
+        : `${song.title} - ${song.author}`,
+      slug: song.slug,
+    }
+  }
   const [list, setList] = useReducer(
     (
       _prevState,
@@ -70,14 +70,14 @@ export default function FilteredList({
       }: { showTitles: boolean; ids: FilteredList; tag: string },
     ) => {
       //console.log(`[${tag}] Setting list to`, { showTitles, ids })
-      return filteredToComponents(sortByAuthor, showTitles, ids)
+      return filteredToComponents(showTitles, ids, songItem)
     },
     null,
     (_arg: null) => {
       return filteredToComponents(
-        sortByAuthor,
         !!search,
         getFilteredSongList(songs, search),
+        songItem,
       )
     },
   )
@@ -139,5 +139,5 @@ export default function FilteredList({
     }
   }, [search, songs, worker])
 
-  return <ListContainer count={list.length}>{list}</ListContainer>
+  return <SongList list={list} />
 }

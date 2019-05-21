@@ -140,7 +140,18 @@ export function useSongList() {
       setSongs(store.readAll())
     })
   }, [initing, store])
-  return useMemo(() => ({ songs, initing, loading }), [songs, initing, loading])
+  return useMemo(
+    () => ({
+      songs,
+      initing,
+      loading,
+      getSongById: (id: string) => {
+        const song = store.readById(id)
+        return song ? song.item : null
+      },
+    }),
+    [songs, initing, loading, store],
+  )
 }
 
 function getSongFromStore(

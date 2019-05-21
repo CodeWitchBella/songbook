@@ -7,11 +7,11 @@ import { useSongList, SongType } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
-import { WithMethods } from 'store/generic-store'
 
 const TheSearch = styled.div`
   font-size: 20px;
-  height: 70px;
+  height: 60px;
+  display: block;
 
   input {
     box-sizing: border-box;
@@ -21,10 +21,6 @@ const TheSearch = styled.div`
     padding-left: 10px;
     border: 1px solid #222;
   }
-`
-
-const PageNav = styled.nav`
-  height: 100%;
 `
 
 function ClearButton({ onClick }: { onClick: () => void }) {
@@ -163,7 +159,7 @@ function Loader() {
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
-  const { songs: source, initing, loading } = useSongList()
+  const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
 
@@ -177,7 +173,7 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const [search, setSearch] = useQueryParam('q')
 
   return (
-    <PageNav>
+    <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
       <TheSearch>
         <Search
           sortByAuthor={sortByAuthor}
@@ -207,17 +203,20 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
           }}
         />
       </TheSearch>
-      {songs.length !== 0 ? (
-        <FilteredList
-          songs={songs}
-          search={search || ''}
-          sortByAuthor={sortByAuthor}
-        />
-      ) : initing || loading ? (
-        <Loader />
-      ) : null}
+      <div css={{ flexGrow: 1 }}>
+        {songs.length !== 0 ? (
+          <FilteredList
+            songs={songs}
+            search={search || ''}
+            sortByAuthor={sortByAuthor}
+            getSongById={getSongById}
+          />
+        ) : initing || loading ? (
+          <Loader />
+        ) : null}
+      </div>
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
-    </PageNav>
+    </div>
   )
 }
 export default SongList
