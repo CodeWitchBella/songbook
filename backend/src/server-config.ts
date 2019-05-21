@@ -45,6 +45,8 @@ const typeDefs = gql`
     songsBySlugs(slugs: [String!]!): [SongRecord!]!
     songsByIds(ids: [String!]!): [SongRecord!]!
     viewer: User
+    collections(modifiedAfter: String): [CollectionRecord!]!
+    collectionsByIds(ids: [String!]!): [CollectionRecord!]!
   }
 
   input CreateSongInput {
@@ -88,7 +90,7 @@ const typeDefs = gql`
     slug: String!
     name: String!
     owner: User!
-    songList: [Song!]!
+    songList: [SongRecord!]!
     insertedAt: String!
   }
 
@@ -172,6 +174,16 @@ function setSessionCookie(
   )
 }
 
+function whereModifiedAfter(path: string, modifiedAfter: string | null) {
+  const ref = firestore.collection(path)
+  if (modifiedAfter) {
+    return ref
+      .where('lastModified', '>', DateTime.fromISO(modifiedAfter).toJSDate())
+      .get()
+  }
+  return ref.get()
+}
+
 type Context = { req: functions.https.Request; res: functions.Response }
 // A map of functions which return data for the schema.
 const resolvers = {
@@ -181,24 +193,25 @@ const resolvers = {
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await (() => {
-        if (modifiedAfter) {
-          return firestore
-            .collection('songs')
-            .where(
-              'lastModified',
-              '>',
-              DateTime.fromISO(modifiedAfter).toJSDate(),
-            )
-            .get()
-        }
-        return firestore.collection('songs').get()
-      })()
+      const docs = await whereModifiedAfter('songs', modifiedAfter)
+      return docs.docs
+    },
+    collections: async (
+      _: {},
+      { modifiedAfter }: { modifiedAfter: string | null },
+    ) => {
+      const docs = await whereModifiedAfter('collections', modifiedAfter)
       return docs.docs
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
         ...ids.map(id => firestore.doc('songs/' + id)),
+      )
+      return songs.filter(snap => snap.exists)
+    },
+    collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
+      const songs = await firestore.getAll(
+        ...ids.map(id => firestore.doc('collections/' + id)),
       )
       return songs.filter(snap => snap.exists)
     },
@@ -256,6 +269,8 @@ const resolvers = {
       const owner = await firestore.doc(src.owner).get()
       return owner.data()
     },
+    songList: async (src: any) =>
+      firestore.getAll(...src.list.map((id: string) => firestore.doc(id))),
   },
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
@@ -338,7 +353,10 @@ const resolvers = {
       if (!songSnap.exists) throw new UserInputError('Song does not exist')
 
       await collectionRef.set(
-        { list: FieldValue.arrayUnion('songs/' + song) },
+        {
+          list: FieldValue.arrayUnion('songs/' + song),
+          lastModified: FieldValue.serverTimestamp(),
+        },
         { merge: true },
       )
       return 'Success!'
@@ -357,7 +375,10 @@ const resolvers = {
       if (!songSnap.exists) throw new UserInputError('Song does not exist')
 
       await collectionRef.set(
-        { list: FieldValue.arrayRemove('songs/' + song) },
+        {
+          list: FieldValue.arrayRemove('songs/' + song),
+          lastModified: FieldValue.serverTimestamp(),
+        },
         { merge: true },
       )
       return 'Success!'
