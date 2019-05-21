@@ -12,6 +12,7 @@ const Changelog = () => (
           <li>Zrychlení je přibližně řádové</li>
         </ul>
       </li>
+      <li>Profilový obrázek se nyní stáhne pouze jednou</li>
     </Entry>
     <Entry date="2019-05-20">
       <li>Živé zobrazení změn v detailu písně</li>
