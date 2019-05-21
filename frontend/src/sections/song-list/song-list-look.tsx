@@ -122,7 +122,6 @@ function useWindowWidth() {
     function onResize() {
       if (timer.current) clearTimeout(timer.current)
       timer.current = setTimeout(() => {
-        console.log('On resize', window.innerWidth)
         setWidth(window.innerWidth)
       }, 100)
     }
@@ -134,12 +133,17 @@ function useWindowWidth() {
 
 export function SongList({ list }: { list: SongListItem[] }) {
   const windowWidth = useWindowWidth()
-  console.log({ windowWidth })
+
   const big = windowWidth >= 800
   const key = useMemo(
     () => Math.random() + '' + list.length + '' + windowWidth,
     [list, windowWidth],
   )
+  const heightCache = useMemo(() => {
+    return new Map<string, number>()
+    // we want to bust the cache if windowWidth changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [windowWidth])
 
   const [measurer] = useState(() => {
     const div = document.createElement('div')
@@ -198,10 +202,14 @@ export function SongList({ list }: { list: SongListItem[] }) {
             const item = list[idx - 1]
             if (!item) return 0
             if ('header' in item) return 46
+            const cached = heightCache.get(item.text)
+            if (cached) return cached
 
             measurer.style.width = windowWidth + 'px'
             measurer.innerText = item.text
-            return measurer.clientHeight
+            const v = measurer.clientHeight
+            heightCache.set(item.text, v)
+            return v
           }}
         >
           {indexToItem}
