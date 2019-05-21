@@ -5,7 +5,7 @@ const storage = localForage.createInstance({ name: 'store' })
 
 type MinItem = { slug: string; id: string; lastModified: DateTime }
 
-type WithMethods<Item> = {
+export type WithMethods<Item> = {
   refresh: () => void
   setRemoteLastModified: (lm: DateTime) => void
   item: Item

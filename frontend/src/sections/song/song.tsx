@@ -57,8 +57,6 @@ export default function SongSection({
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   if (!song) return null
   console.log('song id:', song.id)
-  const { longData, shortData } = song
-  if (!longData || !shortData) return null
 
   return (
     <Route>
@@ -79,16 +77,16 @@ export default function SongSection({
               }}
             >
               <SongLook
-                song={{ shortData, longData }}
-                parsed={parser.parseSong(longData.text)}
+                song={song}
+                parsed={parser.parseSong(song.text)}
                 transposition={transposition}
               />
             </div>
             {enableMenu && (
               <SongMenu
-                song={{ ...song, shortData, longData }}
+                song={song}
                 setSpotifyVisible={setSpotifyVisible}
-                showSpotify={!!longData.spotify}
+                showSpotify={!!song.spotify}
                 transposition={transposition}
                 setTransposition={v =>
                   route.history.replace(
@@ -103,9 +101,7 @@ export default function SongSection({
                 }
               />
             )}
-            {spotifyVisible && longData.spotify && (
-              <Spotify link={longData.spotify} />
-            )}
+            {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
           </>
         )
       }}

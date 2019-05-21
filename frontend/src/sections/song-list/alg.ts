@@ -1,26 +1,30 @@
 import latinize from 'utils/latinize'
-import { Song } from 'store/store'
+
+export type SearchableSong = {
+  author: string
+  title: string
+  text: string
+  id: string
+}
 
 function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
-const searchSong = (text: string, field: 'author' | 'title' | 'text') => ({
-  shortData,
-  longData,
-}: Song) => {
+const searchSong = (text: string, field: 'author' | 'title' | 'text') => (
+  song: SearchableSong,
+) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => {
-      if (field === 'text')
-        return !!longData && toComparable(longData.text).includes(t)
-      return !!shortData && toComparable(shortData[field]).includes(t)
-    })
+    .every(t => toComparable(song[field]).includes(t))
 }
 
-export default function getFilteredSongList(songs: Song[], search: string) {
+export default function getFilteredSongList(
+  songs: SearchableSong[],
+  search: string,
+) {
   const used = new Set<string>()
   const byTitle = songs.filter(searchSong(search, 'title'))
   byTitle.forEach(s => {

@@ -1,7 +1,6 @@
-import getFilteredSongList from './alg'
-import { Song } from 'store/store'
+import getFilteredSongList, { SearchableSong } from './alg'
 
-let songs: Song[] = []
+let songs: SearchableSong[] = []
 let search = ''
 
 function onlyCallLast(f: (arg: string) => void) {

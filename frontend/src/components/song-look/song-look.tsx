@@ -6,12 +6,7 @@ import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { SongWithData } from 'store/store'
-
-type SongType = {
-  longData: SongWithData['longData']
-  shortData: SongWithData['shortData']
-}
+import { SongType } from 'store/store'
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -124,7 +119,7 @@ const Paragraph: React.SFC<{
   song: SongType
   transposition: number
 }> = ({ children, song, transposition }) => (
-  <div css={paragraph(song.longData.paragraphSpace)}>
+  <div css={paragraph(song.paragraphSpace)}>
     {children.map((c, i) => (
       <Line key={i} transposition={transposition}>
         {c}
@@ -203,15 +198,13 @@ export const SongPage = ({
       </BackButtonContainer>
     )}
     <SongHeader
-      titleSpace={song.longData.titleSpace}
-      author={song.shortData.author}
+      titleSpace={song.titleSpace}
+      author={song.author}
       title={
-        typeof number === 'number'
-          ? `${number}. ${song.shortData.title}`
-          : song.shortData.title
+        typeof number === 'number' ? `${number}. ${song.title}` : song.title
       }
     />
-    <div css={fontSize(song.longData.fontSize)}>
+    <div css={fontSize(song.fontSize)}>
       {pageData.map((p, i) => (
         <Paragraph song={song} key={i} transposition={transposition}>
           {p}
@@ -242,8 +235,8 @@ export const SongLook = ({
             ...song,
             title:
               parsed.length > 1
-                ? `${song.shortData.title} (${i + 1}/${parsed.length})`
-                : song.shortData.title,
+                ? `${song.title} (${i + 1}/${parsed.length})`
+                : song.title,
           }}
           noBack={noBack}
           transposition={transposition}

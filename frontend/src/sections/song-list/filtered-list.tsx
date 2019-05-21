@@ -1,10 +1,10 @@
 import React, { useEffect, useReducer } from 'react'
-import { Song } from 'store/store'
 import { SearchTitle, SongItem, ListContainer } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
-import getFilteredSongList from './alg'
+import getFilteredSongList, { SearchableSong } from './alg'
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import SearchWorker from 'workers-loader?inline&fallback=false!./worker'
+import { SongType } from 'store/store'
 
 const getWorker = (() => {
   let worker: null | SearchWorker = null
@@ -48,7 +48,7 @@ export default function FilteredList({
   songs,
 }: {
   search: string
-  songs: Song[]
+  songs: SongType[]
 }) {
   const [list, setList] = useReducer(
     (
@@ -98,22 +98,11 @@ export default function FilteredList({
     if (worker) {
       worker.postMessage({
         type: 'setSongs',
-        value: songs.map(song => ({
-          longData: song.longData
-            ? {
-                ...song.longData,
-                lastModified: song.longData.lastModified.toISO(),
-              }
-            : null,
-          shortData: song.shortData
-            ? {
-                ...song.shortData,
-                lastModified: song.shortData.lastModified.toISO(),
-              }
-            : null,
+        value: songs.map<SearchableSong>(song => ({
+          text: song.text,
+          author: song.author,
           id: song.id,
-          lastModified: song.lastModified.toISO(),
-          loading: song.loading,
+          title: song.title,
         })),
       })
     }

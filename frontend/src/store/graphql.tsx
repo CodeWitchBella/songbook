@@ -118,10 +118,9 @@ export async function onLoadQuery(
         viewer {
           ...user
         }
-        deletedSongs(deletedAfter: $modifiedAfter)
+        deletedSongs(deletedAfter: $deletedAfter) @skip(if: $skipDeleted)
       }
       ${songRecordFragment}
-      ${userFragment}
     `,
     variables: {
       modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,

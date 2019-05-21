@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps } from 'react-router-dom'
 import { PlayButton, Burger, EditButton, InfoButton } from './song-menu-icons'
-import { SongWithData } from 'store/store'
+import { SongType } from 'store/store'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -46,7 +46,7 @@ const MenuButton = (
 
 const MenuLink = (props: LinkProps) => <Link css={menuStyle} {...props} />
 
-function Info({ close, song }: { close: () => void; song: SongWithData }) {
+function Info({ close, song }: { close: () => void; song: SongType }) {
   return (
     <button
       type="button"
@@ -73,14 +73,11 @@ function Info({ close, song }: { close: () => void; song: SongWithData }) {
           fontSize: 18,
         }}
       >
-        <div>
-          Vložil/a:{' '}
-          {song.longData.editor ? song.longData.editor.name : 'neznámo kdo'}
-        </div>
+        <div>Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}</div>
         <div>
           Vloženo:{' '}
-          {song.longData.insertedAt
-            ? song.longData.insertedAt.toFormat('dd. MM. yyyy')
+          {song.insertedAt
+            ? song.insertedAt.toFormat('dd. MM. yyyy')
             : 'před 20. 5. 2019'}
         </div>
         <div>Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}</div>
@@ -99,7 +96,7 @@ export default function SongMenu({
   setSpotifyVisible,
   showSpotify,
 }: {
-  song: SongWithData
+  song: SongType
   transposition: number
   setTransposition: (v: number) => void
   setSpotifyVisible: (v: boolean | ((v: boolean) => boolean)) => void

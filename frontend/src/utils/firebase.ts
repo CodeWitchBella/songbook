@@ -18,8 +18,8 @@ const firestore = firebase.firestore()
 
 export function useAutoUpdatedSong(param: { slug: string } | { id: string }) {
   const ret = useSong(param)
-  const id = ret.song ? ret.song.item.id : null
-  const setRLM = ret.song ? ret.song.setRemoteLastModified : null
+  const id = ret.song ? ret.song.id : null
+  const setRLM = ret.methods ? ret.methods.setRemoteLastModified : null
   useEffect(() => {
     if (id && setRLM) {
       return firestore.doc('songs/' + id).onSnapshot(snap => {

@@ -155,7 +155,10 @@ export function useSong(param: { slug: string } | { id: string }) {
       setSong(getSongFromStore(store, param))
     })
   }, [param, song, store])
-  return useMemo(() => ({ song, initing }), [initing, song])
+  return useMemo(
+    () => ({ song: song ? song.item : null, initing, methods: song }),
+    [initing, song],
+  )
 }
 
 export function useNewSong() {

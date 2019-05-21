@@ -5,19 +5,16 @@ import { parseSong } from 'utils/parse-song'
 import { SongPage } from 'components/song-look/song-look'
 import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
-import { notNull } from '@codewitchbella/ts-utils'
 
 function Song({ slug, number }: { slug: string; number: number }) {
   const { song } = useSong({ slug })
   if (!song) return null
-  const { longData, shortData } = song
-  if (!longData || !shortData) return null
 
-  const parsed = parseSong(longData.text)
+  const parsed = parseSong(song.text)
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}
-      song={{ ...song, longData, shortData }}
+      song={song}
       number={number + 1}
       pageNumber={number /* FIXME */}
       key={i}
@@ -37,23 +34,17 @@ const Print = ({ tag }: { tag: string }) => {
       <TitlePage image={tagMeta.cover || undefined} />
       <main>
         {songList.map((song, i) => (
-          <Song slug={song.slug} number={i} key={song.id} />
+          <Song slug={song.item.slug} number={i} key={song.item.id} />
         ))}
       </main>
       <Contents
-        list={songList
-          .map(s =>
-            s.longData && s.shortData
-              ? {
-                  text: s.longData.text,
-                  author: s.shortData.author,
-                  title: s.shortData.title,
-                  id: s.id,
-                  metadata: s.longData,
-                }
-              : null,
-          )
-          .filter(notNull)}
+        list={songList.map(s => ({
+          text: s.item.text,
+          author: s.item.author,
+          title: s.item.title,
+          id: s.item.id,
+          metadata: s,
+        }))}
         left
       />
     </div>

@@ -3,10 +3,11 @@ import { jsx } from '@emotion/core'
 import { useMemo, useRef, PropsWithChildren } from 'react'
 import TopMenu from 'components/top-menu'
 import styled from '@emotion/styled'
-import { useSongList, SongWithShortData, hasShortData } from 'store/store'
+import { useSongList, SongType } from 'store/store'
 import FilteredList from './filtered-list'
 import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
+import { WithMethods } from 'store/generic-store'
 
 const TheSearch = styled.div`
   font-size: 20px;
@@ -131,15 +132,15 @@ function Search({
 }
 
 function compareSongs(sortByAuthor: boolean) {
-  return (a: SongWithShortData, b: SongWithShortData) => {
+  return (a: SongType, b: SongType) => {
     if (sortByAuthor) {
-      const ret = a.shortData.author.localeCompare(b.shortData.author)
+      const ret = a.author.localeCompare(b.author)
       if (ret !== 0) return ret
-      return a.shortData.title.localeCompare(b.shortData.title)
+      return a.title.localeCompare(b.title)
     } else {
-      const ret = a.shortData.title.localeCompare(b.shortData.title)
+      const ret = a.title.localeCompare(b.title)
       if (ret !== 0) return ret
-      return a.shortData.author.localeCompare(b.shortData.author)
+      return a.author.localeCompare(b.author)
     }
   }
 }
@@ -167,7 +168,7 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
   const sortByAuthor = sortByAuthorSrc === 'yes'
 
   const songs = useMemo(
-    () => source.filter(hasShortData).sort(compareSongs(sortByAuthor)),
+    () => source.map(s => s.item).sort(compareSongs(sortByAuthor)),
     [sortByAuthor, source],
   )
 

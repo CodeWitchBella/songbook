@@ -9,7 +9,7 @@ import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
-import { useSong, SongWithData, SongWithDataNoReload } from 'store/store'
+import { useSong, SongType } from 'store/store'
 import { DateTime } from 'luxon'
 import { updateSong } from 'store/graphql'
 
@@ -163,19 +163,19 @@ copy(content.innerText)
 
 class EditSong extends React.Component<
   {
-    song: SongWithData
+    song: SongType
     refetch: () => void
   },
   State
 > {
   state: State = {
-    author: this.props.song.shortData.author,
-    title: this.props.song.shortData.title,
-    textWithChords: this.props.song.longData.text,
-    spotify: this.props.song.longData.spotify || '',
-    fontSize: this.props.song.longData.fontSize.toFixed(2),
-    paragraphSpace: this.props.song.longData.paragraphSpace.toFixed(2),
-    titleSpace: this.props.song.longData.titleSpace.toFixed(2),
+    author: this.props.song.author,
+    title: this.props.song.title,
+    textWithChords: this.props.song.text,
+    spotify: this.props.song.spotify || '',
+    fontSize: this.props.song.fontSize.toFixed(2),
+    paragraphSpace: this.props.song.paragraphSpace.toFixed(2),
+    titleSpace: this.props.song.titleSpace.toFixed(2),
     advanced: false,
     preview: false,
     pdfPreview: false,
@@ -184,25 +184,22 @@ class EditSong extends React.Component<
 
   changeCounter: number = 0
 
-  result = (): SongWithDataNoReload => {
+  result = (): SongType => {
     const { author, title, textWithChords } = this.state
     return {
-      ...this.props.song,
-      shortData: {
-        author,
-        title,
-        lastModified: DateTime.utc(),
-      },
-      longData: {
-        lastModified: DateTime.utc(),
-        text: textWithChords,
-        fontSize: Number.parseFloat(this.state.fontSize),
-        paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
-        titleSpace: Number.parseFloat(this.state.titleSpace),
-        spotify: this.state.spotify || null,
-        editor: this.props.song.longData.editor,
-        insertedAt: this.props.song.longData.insertedAt,
-      },
+      author,
+      title,
+      lastModified: DateTime.utc(),
+      text: textWithChords,
+      fontSize: Number.parseFloat(this.state.fontSize),
+      paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
+      titleSpace: Number.parseFloat(this.state.titleSpace),
+      spotify: this.state.spotify || null,
+
+      editor: this.props.song.editor,
+      insertedAt: this.props.song.insertedAt,
+      id: this.props.song.id,
+      slug: this.props.song.slug,
     }
   }
 
@@ -219,13 +216,13 @@ class EditSong extends React.Component<
 
     const result = this.result()
     updateSong(this.props.song.id, {
-      author: result.shortData.author,
-      title: result.shortData.title,
-      text: result.longData.text,
-      fontSize: result.longData.fontSize,
-      paragraphSpace: result.longData.paragraphSpace,
-      titleSpace: result.longData.titleSpace,
-      spotify: result.longData.spotify || '',
+      author: result.author,
+      title: result.title,
+      text: result.text,
+      fontSize: result.fontSize,
+      paragraphSpace: result.paragraphSpace,
+      titleSpace: result.titleSpace,
+      spotify: result.spotify || '',
     })
       .then(() => this.props.refetch())
       .then(() => {
@@ -384,11 +381,8 @@ class EditSong extends React.Component<
   }
 }
 export default errorBoundary(({ slug }: { slug: string }) => {
-  const { song } = useSong({ slug })
-  if (!song) return <div>Píseň nenalezena</div>
-  const { longData, shortData } = song
-  if (!longData || !shortData) return <div>Načítám...</div>
-  return (
-    <EditSong song={{ ...song, longData, shortData }} refetch={song.reload} />
-  )
+  const { song, methods } = useSong({ slug })
+  if (!song || !methods) return <div>Píseň nenalezena</div>
+
+  return <EditSong song={song} refetch={methods.refresh} />
 })
