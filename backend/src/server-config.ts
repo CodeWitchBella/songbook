@@ -24,9 +24,9 @@ const typeDefs = gql`
     title: String!
     text: String!
 
-    fontSize: Float
-    paragraphSpace: Float
-    titleSpace: Float
+    fontSize: Float!
+    paragraphSpace: Float!
+    titleSpace: Float!
     spotify: String
 
     editor: User
@@ -42,6 +42,7 @@ const typeDefs = gql`
   type Query {
     hello: String
     songs(modifiedAfter: String): [SongRecord!]!
+    deletedSongs(deletedAfter: String!): [String!]!
     songsBySlugs(slugs: [String!]!): [SongRecord!]!
     songsByIds(ids: [String!]!): [SongRecord!]!
     viewer: User
@@ -196,6 +197,10 @@ const resolvers = {
       const docs = await whereModifiedAfter('songs', modifiedAfter)
       return docs.docs
     },
+    deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }) => {
+      const docs = await whereModifiedAfter('deletedSongs', deletedAfter)
+      return docs.docs.map(d => d.id)
+    },
     collections: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
@@ -238,6 +243,12 @@ const resolvers = {
         : DateTime.fromJSDate(src.insertedAt.toDate())
             .setZone('utc')
             .toISO(),
+    fontSize: (src: any) =>
+      typeof src.fontSize === 'number' ? src.fontSize : 0,
+    paragraphSpace: (src: any) =>
+      typeof src.paragraphSpace === 'number' ? src.paragraphSpace : 0,
+    titleSpace: (src: any) =>
+      typeof src.titleSpace === 'number' ? src.titleSpace : 0,
   },
   SongRecord: {
     data: (src: any) => src.data(),

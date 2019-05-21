@@ -6,20 +6,16 @@ import React, {
   useState,
 } from 'react'
 import localForage from 'localforage'
-import {
-  downloadSongsByIds,
-  onLoadQueryInitial,
-  onLoadQuery,
-  User,
-} from './graphql'
-import useForceUpdate from 'components/use-force-update'
+import { User, onLoadQuery } from './graphql'
 import { DateTime } from 'luxon'
-import { PickExcept } from '@codewitchbella/ts-utils'
 import { newSong } from './fetchers'
+import { GenericStore } from './generic-store'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
-type LongData<DT = DateTime> = {
+type Song<DT> = {
+  slug: string
+  id: string
   lastModified: DT
   text: string
   fontSize: number
@@ -28,417 +24,94 @@ type LongData<DT = DateTime> = {
   spotify: string | null
   editor: User | null
   insertedAt: DT | null
-}
-
-type ShortData<DT = DateTime> = {
-  lastModified: DT
   author: string
   title: string
 }
 
-type SongBase<DT = DateTime> = {
-  id: string
-  lastModified: DT
-  slug: string
-}
+export type SongType = Song<DateTime>
 
-type SongWithoutData = SongBase & {
-  loading: boolean
-  reload: () => void
-  setRemoteLastModified: (time: DateTime) => void
-}
-export type Song = SongWithoutData & {
-  longData: LongData | null
-  shortData: ShortData | null
-}
-export type SongWithShortData = SongWithoutData & {
-  shortData: ShortData
-  longData: LongData | null
-}
-export function hasShortData(song: Song): song is SongWithShortData {
-  return !!song.shortData
-}
-export type SongWithData = SongWithoutData & {
-  longData: LongData
-  shortData: ShortData
-}
-export type SongWithDataNoReload = SongBase & {
-  longData: LongData
-  shortData: ShortData
-}
-
-type SongStore = {
-  list: (SongBase<string> & {
-    longData: LongData<string> | null
-    shortData: ShortData<string> | null
-  })[]
-}
-
-const localForageKey = 'store2'
-
-function d<T>(v: T | null | undefined, f: T): T {
-  return v === null || v === undefined ? f : v
-}
-
-export function longDataDefaults(meta: {
-  fontSize: number | null
-  paragraphSpace: number | null
-  titleSpace: number | null
-  spotify: string | null
-  text: string
-  editor: User | null
-  insertedAt: DateTime | null
+function createStore({
+  setIniting,
+  setViewer,
+}: {
+  setIniting: (v: boolean) => void
+  setViewer: (viewer: User | null) => void
 }) {
-  return {
-    fontSize: d<number>(meta.fontSize, 1),
-    paragraphSpace: d<number>(meta.paragraphSpace, 1),
-    titleSpace: d<number>(meta.titleSpace, 1),
-    spotify: meta.spotify,
-    text: meta.text,
-    editor: meta.editor,
-    insertedAt: meta.insertedAt,
-  }
-}
-
-class Store {
-  private songMapSlug = new Map<string, Song>()
-  private songMapId = new Map<string, Song>()
-  private _setSong(
-    song: {
-      lastModified: DateTime
-      id: string
-      slug: string
-      shortData?: PickExcept<ShortData, 'lastModified'> & {
-        lastModified?: DateTime
-      }
-      longData?: PickExcept<LongData, 'lastModified'> & {
-        lastModified?: DateTime
+  return new GenericStore<SongType, Song<string>>({
+    cacheKey: 'songs',
+    serialize: item => {
+      return {
+        ...item,
+        lastModified: item.lastModified.toISO(),
+        insertedAt: item.insertedAt ? item.insertedAt.toISO() : null,
       }
     },
-    {
-      save = true,
-      ...args
-    }: { save?: boolean } & (
-      | { onChange: false; reason?: string }
-      | { onChange: true; reason: string }),
-  ) {
-    if (song.slug === 'V_lese-Pokac') console.log('setSong', song)
-    const prev = this.songMapId.get(song.id)
-    const v = {
-      lastModified: song.lastModified,
-      slug: song.slug,
-      id: song.id,
-      shortData: song.shortData
-        ? {
-            ...song.shortData,
-            lastModified: song.shortData.lastModified || song.lastModified,
-          }
-        : prev
-        ? prev.shortData
-        : null,
-      longData: song.longData
-        ? {
-            ...longDataDefaults(song.longData),
-            lastModified: song.longData.lastModified || song.lastModified,
-          }
-        : prev
-        ? prev.longData
-        : null,
-      loading: false,
-      reload: () => this.downloadSongsByIds([song.id]),
-      // this ternary keeps reference
-      setRemoteLastModified: prev
-        ? prev.setRemoteLastModified
-        : (time: DateTime) => {
-            const currentValue = this.songMapId.get(song.id)
-            if (!currentValue || time > currentValue.lastModified) {
-              this.downloadSongsByIds([song.id])
-            }
-          },
-    }
-    this.songMapSlug.set(song.slug, v)
-    this.songMapId.set(song.id, v)
-
-    if (args.onChange) this._triggerOnChange(args.reason)
-    if (save) this._cacheSongMap()
-  }
-  private _rmSong(id: string) {
-    const song = this.songMapId.get(id)
-    if (song) {
-      this.songMapId.delete(song.id)
-      this.songMapSlug.delete(song.slug)
-    }
-  }
-
-  caching = false
-  recache = false
-  // saves song map to local forage
-  private _cacheSongMap() {
-    if (this.caching) {
-      this.recache = true
-      return
-    }
-
-    this.caching = true
-    this.recache = false
-    new Promise(resolve => setTimeout(resolve, 1000))
-      .then(() =>
-        localForage.setItem<SongStore>(localForageKey, {
-          list: Array.from(this.songMapId.values()).map(song => ({
-            id: song.id,
-            slug: song.slug,
-            shortData: song.shortData
-              ? {
-                  ...song.shortData,
-                  lastModified: song.shortData.lastModified.toISO(),
-                }
-              : null,
-            lastModified: song.lastModified.toISO(),
-            longData: song.longData
-              ? {
-                  ...song.longData,
-                  lastModified: song.longData.lastModified.toISO(),
-                  insertedAt: song.longData.insertedAt
-                    ? song.longData.insertedAt.toISO()
-                    : null,
-                }
-              : null,
-          })),
-        }),
-      )
-      .catch(e => console.error(e))
-      .then(() => {
-        this.caching = false
-        if (this.recache) return this._cacheSongMap()
-      })
-  }
-
-  private initializing = false
-  private _initializingEnd() {
-    this.initializing = false
-    this._triggerOnChange('init end')
-  }
-  isInitializing() {
-    return this.initializing
-  }
-  init({ setViewer }: { setViewer: (viewer: User | null) => void }) {
-    localForage
-      .getItem<SongStore>(localForageKey)
-      .then(cache => {
-        if (cache) {
-          for (const song of cache.list) {
-            // do not save because we just loaded it
-            this._setSong(
-              {
-                ...song,
-                lastModified: DateTime.fromISO(song.lastModified),
-                longData: song.longData
-                  ? {
-                      ...song.longData,
-                      lastModified: DateTime.fromISO(
-                        song.longData.lastModified,
-                      ),
-                      insertedAt: song.longData.insertedAt
-                        ? DateTime.fromISO(song.longData.insertedAt)
-                        : null,
-                    }
-                  : undefined,
-                shortData: song.shortData
-                  ? {
-                      ...song.shortData,
-                      lastModified: DateTime.fromISO(
-                        song.shortData.lastModified,
-                      ),
-                    }
-                  : undefined,
-              },
-              { onChange: false, save: false },
-            )
-          }
-        }
-        this.initializing = true
-        this._triggerOnChange('Init start')
-        if (cache) return onLoadQuery()
-        return onLoadQueryInitial()
-      })
-      .then(({ songs: newSongs, viewer }) => {
-        setViewer(viewer)
-        let changed = false
-        for (const id of this.songMapId.keys()) {
-          if (!newSongs.some(s => s.id === id)) {
-            changed = true
-            this._rmSong(id)
-          }
-        }
-
-        for (const song of newSongs) {
-          const existing = this.songMapId.get(song.id)
-          if (!existing || !song.lastModified.equals(existing.lastModified)) {
-            changed = true
-            this._setSong(song, {
-              reason: 'new song',
-              onChange: false,
-              save: false,
-            })
-          }
-        }
-        if (changed) {
-          this._triggerOnChange('new songs')
-          this._cacheSongMap()
-        }
-      })
-      .then(() => this._update())
-      .then(() => this._initializingEnd())
-      .catch(e => {
-        this._initializingEnd()
-        console.error(e)
-      })
-  }
-
-  /*
-  // triggers song loading
-  private _downloadSongsBySlugs(slugs: string[]) {
-    const toLoad = slugs.filter(slug => {
-      const origSong = this.songMapSlug.get(slug)
-      if (!origSong || origSong.loading) return false
-      origSong.loading = true
-      return true
-    })
-
-    if (toLoad.length > 0)
-      downloadSongsBySlugs(toLoad)
-        .then(songs => {
-          for (const song of songs) {
-            this._setSong(
-              { ...song, longData: longDataDefaults(song.longData) },
-              {
-                onChange: true,
-                reason: 'song downloaded',
-              },
-            )
-          }
-          this._cacheSongMap()
-        })
-        .catch(e => console.error(e))
-  }
-  */
-
-  // triggers song loading
-  downloadSongsByIds(ids: string[]) {
-    const toLoad = ids.filter(id => {
-      const origSong = this.songMapId.get(id)
-      if (!origSong || origSong.loading) return false
-      origSong.loading = true
-      return true
-    })
-
-    if (toLoad.length > 0)
-      return downloadSongsByIds(toLoad)
-        .then(songs => {
-          for (const song of songs) {
-            this._setSong(
-              { ...song, longData: longDataDefaults(song.longData) },
-              {
-                onChange: true,
-                reason: 'song downloaded',
-              },
-            )
-          }
-          this._cacheSongMap()
-        })
-        .catch(e => {
-          console.error(e)
-        })
-    else return Promise.resolve()
-  }
-
-  // only updates songs it knows should be updated
-  private _update() {
-    const songs = Array.from(this.songMapId.values())
-    const songsToDownload = songs.filter(
-      song =>
-        !song.longData ||
-        !song.shortData ||
-        song.longData.lastModified < song.lastModified ||
-        song.shortData.lastModified < song.lastModified,
-    )
-
-    // download/update songs
-    return this.downloadSongsByIds(songsToDownload.map(s => s.id))
-  }
-
-  private _updateCounter = 0
-  get updateCounter() {
-    return this._updateCounter
-  }
-  private _triggerOnChange(reason: string) {
-    setImmediate(() => {
-      this._updateCounter += 1
-      this.handlers.forEach(h => {
-        if (this.handlers.includes(h)) h(reason)
-      })
-    })
-  }
-
-  listSongs() {
-    return Array.from(this.songMapId.values())
-  }
-
-  getSongBySlug(slug: string) {
-    return this.songMapSlug.get(slug)
-  }
-
-  getSongById(id: string) {
-    return this.songMapId.get(id)
-  }
-
-  handlers: ((reason: string) => void)[] = []
-  onChange(handler: (reason: string) => void) {
-    const v = (r: string) => handler(r)
-    this.handlers.push(v)
-    return () => {
-      this.handlers = this.handlers.filter(h => h !== v)
-    }
-  }
+    deserialize: item => {
+      return {
+        ...item,
+        lastModified: DateTime.fromISO(item.lastModified),
+        insertedAt: item.insertedAt ? DateTime.fromISO(item.insertedAt) : null,
+      }
+    },
+    loadIncremental: after =>
+      onLoadQuery(after).then(v => {
+        setViewer(v.viewer)
+        return { changed: v.songs, deleted: v.deletedSongs }
+      }),
+    loadInitial: () =>
+      onLoadQuery().then(v => {
+        setViewer(v.viewer)
+        return v.songs
+      }),
+    onLoadedFromCache: () => setIniting(false),
+  })
 }
 
 const context = React.createContext(null as null | {
-  store: Store
+  store: ReturnType<typeof createStore>
   viewer: User | null
   setViewer: (v: User | null) => void
+  initing: boolean
 })
 
 function useCachedState<T>(key: string, initial: T | null) {
-  const [v, setV] = useState<T | null>(initial)
+  const st = useState<T | null>(initial)
+  const [v, setV] = st
   useEffect(() => {
     settingsStorage.getItem<T>(key).then(itm => setV(itm))
-  }, [key])
+  }, [key, setV])
   useEffect(() => {
     settingsStorage.setItem<T | null>(key, v)
   }, [key, v])
-  return [v, setV] as const
+  return st
 }
 
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
-  const store = useMemo(() => new Store(), [])
+  const [initing, setIniting] = useState(true)
   const [viewer, setViewer] = useCachedState<User>('viewer', null)
-  useEffect(() => {
-    store.init({ setViewer })
-  }, [setViewer, store])
+  const store = useMemo(() => createStore({ setIniting, setViewer }), [
+    setViewer,
+  ])
+
+  // clear legacy song saving mechanism
   useEffect(() => {
     localForage.keys().then(keys =>
       keys.forEach(key => {
-        if (key !== localForageKey) localForage.removeItem(key)
+        localForage.removeItem(key)
       }),
     )
   }, [])
   return (
     <context.Provider
-      value={useMemo(() => ({ store, viewer, setViewer }), [
-        setViewer,
-        store,
-        viewer,
-      ])}
+      value={useMemo(
+        () => ({
+          store,
+          viewer,
+          setViewer,
+          initing,
+        }),
+        [store, viewer, setViewer, initing],
+      )}
     >
       {children}
     </context.Provider>
@@ -451,59 +124,45 @@ function useStoreContext() {
   return store
 }
 
-function useStore() {
-  return useStoreContext().store
+export function useSongList() {
+  const { store, initing } = useStoreContext()
+  const [songs, setSongs] = useState(() => store.readAll())
+  useEffect(() => {
+    setSongs(store.readAll())
+    return store.onChange(() => {
+      setSongs(store.readAll())
+    })
+  }, [initing, store])
+  return useMemo(() => ({ songs, initing }), [initing, songs])
 }
 
-export function useSongList() {
-  const store = useStore()
-  const initialUpdateCounter = useMemo(() => store.updateCounter, [store])
-  const [songs, setSongs] = useState(() => store.listSongs())
-  const [initing, setIniting] = useState(store.isInitializing())
-  useEffect(() => {
-    if (initing !== store.isInitializing()) {
-      setIniting(store.isInitializing())
-    }
-    if (initialUpdateCounter !== store.updateCounter) {
-      setSongs(store.listSongs())
-    }
-    return store.onChange(reason => {
-      setSongs(store.listSongs())
-      setIniting(store.isInitializing())
-    })
-  }, [initialUpdateCounter, initing, store])
-  return useMemo(() => ({ songs, initing }), [songs, initing])
+function getSongFromStore(
+  store: ReturnType<typeof useStoreContext>['store'],
+  param: { slug: string } | { id: string },
+) {
+  return 'slug' in param
+    ? store.readBySlug(param.slug)
+    : store.readById(param.id)
 }
 
 export function useSong(param: { slug: string } | { id: string }) {
-  const store = useStore()
-  const forceUpdate = useForceUpdate()
-  const song =
-    'slug' in param
-      ? store.getSongBySlug(param.slug)
-      : store.getSongById(param.id)
+  const { store, initing } = useStoreContext()
+  const [song, setSong] = useState(() => getSongFromStore(store, param))
 
   useEffect(() => {
-    if (
-      song !==
-      ('slug' in param
-        ? store.getSongBySlug(param.slug)
-        : store.getSongById(param.id))
-    )
-      forceUpdate()
-    return store.onChange(forceUpdate)
-  }, [forceUpdate, param, song, store])
-  return useMemo(() => ({ song, initing: store.isInitializing() }), [
-    song,
-    store,
-  ])
+    setSong(getSongFromStore(store, param))
+    return store.onChange(() => {
+      setSong(getSongFromStore(store, param))
+    })
+  }, [param, song, store])
+  return useMemo(() => ({ song, initing }), [initing, song])
 }
 
 export function useNewSong() {
-  const store = useStore()
+  const { store } = useStoreContext()
   return async ({ author, title }: { author: string; title: string }) => {
     const ret = await newSong({ author, title })
-    await store.downloadSongsByIds([ret.id])
+    await store.refresh()
     return ret
   }
 }

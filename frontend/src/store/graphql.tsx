@@ -65,16 +65,14 @@ const userFragment = `
   }
 `
 
-const fullSong = `
-  fragment fullSong on SongRecord {
+const songRecordFragment = `
+  fragment songRecord on SongRecord {
     id
     lastModified
-    data { slug }
-    shortData: data {
+    data {
+      slug
       author
       title
-    }
-    longData: data {
       text
       fontSize
       paragraphSpace
@@ -88,128 +86,62 @@ const fullSong = `
   }
   ${userFragment}
 `
-type FullSong = {
+type SongRecord = {
   id: string
   lastModified: DateTime
+
   slug: string
-  shortData: {
-    author: string
-    title: string
-  }
-  longData: {
-    text: string
-    fontSize: number | null
-    paragraphSpace: number | null
-    titleSpace: number | null
-    spotify: string | null
-    editor: User | null
-    insertedAt: DateTime | null
-  }
+  author: string
+  title: string
+  text: string
+  fontSize: number
+  paragraphSpace: number
+  titleSpace: number
+  spotify: string | null
+  editor: User | null
+  insertedAt: DateTime | null
 }
 
-function mapLastModified(s: any) {
-  return {
-    ...s,
-    lastModified: DateTime.fromISO(s.lastModified),
-    longData: s.longData
-      ? {
-          ...s.longData,
-          insertedAt: s.longData.insertedAt
-            ? DateTime.fromISO(s.longData.insertedAt)
-            : null,
-        }
-      : s.longData,
-  }
-}
-
-export async function onLoadQuery(): Promise<{
-  songs: {
-    id: string
-    lastModified: DateTime
-    slug: string
-  }[]
-  viewer: null | User
+export async function onLoadQuery(
+  modifiedAfter?: DateTime,
+): Promise<{
+  songs: SongRecord[]
+  viewer: User | null
+  deletedSongs: { id: string }[]
 }> {
   return graphqlFetch({
     query: `
-      {
-        songs {
-          id
-          lastModified
-          data { slug }
+      query($modifiedAfter: String, $deletedAfter: String!, $skipDeleted: Boolean!) {
+        songs(modifiedAfter: $modifiedAfter) {
+          ...songRecord
         }
         viewer {
           ...user
         }
+        deletedSongs(deletedAfter: $modifiedAfter)
       }
+      ${songRecordFragment}
       ${userFragment}
     `,
+    variables: {
+      modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
+      deletedAfter: modifiedAfter
+        ? modifiedAfter.toISO()
+        : DateTime.utc().toISO(),
+      skipDeleted: !modifiedAfter,
+    },
   }).then(v => ({
-    songs: v.data.songs.map(mapLastModified).map((v: any) => ({
-      id: v.id,
-      lastModified: v.lastModified,
-      slug: v.data.slug,
+    songs: v.data.songs.map((s: any) => ({
+      ...s.data,
+      id: s.id,
+      lastModified: DateTime.fromISO(s.lastModified),
+      insertedAt: s.data.insertedAt
+        ? DateTime.fromISO(s.data.insertedAt)
+        : null,
     })),
     viewer: v.data.viewer,
+    deletedSongs: (v.data.deletedSongs || []).map((id: string) => ({ id })),
   }))
-}
-
-function mapFullSong(data: any) {
-  const v = mapLastModified(data)
-  return {
-    id: v.id,
-    lastModified: v.lastModified,
-    longData: v.longData,
-    shortData: v.shortData,
-    slug: v.data.slug,
-  }
-}
-
-export async function onLoadQueryInitial(): Promise<{
-  songs: FullSong[]
-  viewer: null
-}> {
-  return graphqlFetch({
-    query: `
-      {
-        songs {
-          ...fullSong
-        }
-      }
-      ${fullSong}
-    `,
-  }).then(v => ({ songs: v.data.songs.map(mapFullSong), viewer: null }))
-}
-
-export async function downloadSongsBySlugs(
-  slugs: string[],
-): Promise<FullSong[]> {
-  return graphqlFetch({
-    query: `
-      query($slugs: [String!]!) {
-        songsBySlugs(slugs: $slugs) {
-          ...fullSong
-        }
-      }
-      ${fullSong}
-    `,
-    variables: { slugs },
-  }).then(v => v.data.songsBySlugs.map(mapFullSong))
-}
-
-export async function downloadSongsByIds(ids: string[]): Promise<FullSong[]> {
-  if (ids.some(id => !id)) throw new Error('Invalid ids')
-  return graphqlFetch({
-    query: `
-      query($ids: [String!]!) {
-        songsByIds(ids: $ids) {
-          ...fullSong
-        }
-      }
-      ${fullSong}
-    `,
-    variables: { ids },
-  }).then(v => v.data.songsByIds.map(mapFullSong))
 }
 
 export async function updateSong(
