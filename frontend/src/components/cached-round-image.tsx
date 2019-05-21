@@ -15,14 +15,21 @@ function useImageCache(srcUrl: string) {
         if (blob) {
           return blob
         } else {
-          return fetch(srcUrl).then(r => r.blob())
+          return fetch(srcUrl, { credentials: 'omit' }).then(r => r.blob())
         }
       })
       .then(blob => setBlob(blob))
-      .catch(e => setBlob(null))
+      .catch(e => {
+        console.error(e)
+        setBlob(null)
+      })
   }, [srcUrl])
 
   const [url, setUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (blob) imageCache.setItem(srcUrl, blob)
+  }, [blob, srcUrl])
 
   useLayoutEffect(() => {
     if (blob) {
