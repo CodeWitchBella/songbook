@@ -208,7 +208,11 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
         />
       </TheSearch>
       {songs.length !== 0 ? (
-        <FilteredList songs={songs} search={search || ''} />
+        <FilteredList
+          songs={songs}
+          search={search || ''}
+          sortByAuthor={sortByAuthor}
+        />
       ) : initing ? (
         <Loader />
       ) : null}

@@ -17,38 +17,48 @@ const getWorker = (() => {
 
 type FilteredList = ReturnType<typeof getFilteredSongList>
 const filteredToComponents = (
-  searchText: string,
+  sortByAuthor: boolean,
   showTitles: boolean,
   filtered: FilteredList,
 ) => {
   if (Array.isArray(filtered)) {
-    return filtered.map(s => <SongItem key={s} id={s} />)
+    return filtered.map(s => (
+      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
+    ))
   }
 
   return [
     showTitles && filtered.byTitle.length > 0 ? (
       <SearchTitle key="title">Podle názvu</SearchTitle>
     ) : null,
-    ...filtered.byTitle.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byTitle.map(s => (
+      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
+    )),
 
     showTitles && filtered.byAuthor.length > 0 ? (
       <SearchTitle key="author">Podle autora</SearchTitle>
     ) : null,
-    ...filtered.byAuthor.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byAuthor.map(s => (
+      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
+    )),
 
     showTitles && filtered.byText.length > 0 ? (
       <SearchTitle key="text">Text obsahuje</SearchTitle>
     ) : null,
-    ...filtered.byText.map(s => <SongItem key={s} id={s} />),
+    ...filtered.byText.map(s => (
+      <SongItem key={s} id={s} authorFirst={sortByAuthor} />
+    )),
   ].filter(notNull)
 }
 
 export default function FilteredList({
   search,
   songs,
+  sortByAuthor,
 }: {
   search: string
   songs: SongType[]
+  sortByAuthor: boolean
 }) {
   const [list, setList] = useReducer(
     (
@@ -60,12 +70,12 @@ export default function FilteredList({
       }: { showTitles: boolean; ids: FilteredList; tag: string },
     ) => {
       //console.log(`[${tag}] Setting list to`, { showTitles, ids })
-      return filteredToComponents(search, showTitles, ids)
+      return filteredToComponents(sortByAuthor, showTitles, ids)
     },
     null,
     (_arg: null) => {
       return filteredToComponents(
-        search,
+        sortByAuthor,
         !!search,
         getFilteredSongList(songs, search),
       )
