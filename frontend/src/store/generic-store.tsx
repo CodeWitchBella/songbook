@@ -20,6 +20,7 @@ type Config<Item extends MinItem, Serialized> = {
   deserialize: (item: Serialized) => Item
   cacheKey: string
   onLoadedFromCache?: () => void
+  onLoadingChange?: (v: boolean) => void
 }
 
 type Cache<Serialized> = { items: Serialized[] }
@@ -101,8 +102,9 @@ export class GenericStore<Item extends MinItem, Serialized> {
       this._scheduleRefresh.push(res)
     })
     this._scheduleRefresh.push()
-    if (!this._refreshing) {
+    if (!this._refreshing && !this._initing) {
       this._refreshing = true
+      if (this._config.onLoadingChange) this._config.onLoadingChange(true)
       const onDone = this._scheduleRefresh
       this._scheduleRefresh = []
 
@@ -122,6 +124,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
         .then(() => {
           onDone.forEach(f => f())
           this._refreshing = false
+          if (this._config.onLoadingChange) this._config.onLoadingChange(false)
           if (this._scheduleRefresh.length > 0) this.refresh()
         })
     }

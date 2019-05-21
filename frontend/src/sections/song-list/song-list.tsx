@@ -163,7 +163,7 @@ function Loader() {
 }
 
 const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
-  const { songs: source, initing } = useSongList()
+  const { songs: source, initing, loading } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
 
@@ -213,7 +213,7 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
           search={search || ''}
           sortByAuthor={sortByAuthor}
         />
-      ) : initing ? (
+      ) : initing || loading ? (
         <Loader />
       ) : null}
       {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}

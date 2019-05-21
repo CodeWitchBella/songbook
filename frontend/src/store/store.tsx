@@ -33,8 +33,10 @@ export type SongType = Song<DateTime>
 function createStore({
   setIniting,
   setViewer,
+  setLoading,
 }: {
   setIniting: (v: boolean) => void
+  setLoading: (v: boolean) => void
   setViewer: (viewer: User | null) => void
 }) {
   return new GenericStore<SongType, Song<string>>({
@@ -64,6 +66,7 @@ function createStore({
         return v.songs
       }),
     onLoadedFromCache: () => setIniting(false),
+    onLoadingChange: v => setLoading(v),
   })
 }
 
@@ -72,6 +75,7 @@ const context = React.createContext(null as null | {
   viewer: User | null
   setViewer: (v: User | null) => void
   initing: boolean
+  loading: boolean
 })
 
 function useCachedState<T>(key: string, initial: T | null) {
@@ -88,10 +92,12 @@ function useCachedState<T>(key: string, initial: T | null) {
 
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const [initing, setIniting] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [viewer, setViewer] = useCachedState<User>('viewer', null)
-  const store = useMemo(() => createStore({ setIniting, setViewer }), [
-    setViewer,
-  ])
+  const store = useMemo(
+    () => createStore({ setIniting, setLoading, setViewer }),
+    [setViewer],
+  )
 
   // clear legacy song saving mechanism
   useEffect(() => {
@@ -109,8 +115,9 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
           viewer,
           setViewer,
           initing,
+          loading,
         }),
-        [store, viewer, setViewer, initing],
+        [store, viewer, setViewer, initing, loading],
       )}
     >
       {children}
@@ -125,7 +132,7 @@ function useStoreContext() {
 }
 
 export function useSongList() {
-  const { store, initing } = useStoreContext()
+  const { store, initing, loading } = useStoreContext()
   const [songs, setSongs] = useState(() => store.readAll())
   useEffect(() => {
     setSongs(store.readAll())
@@ -133,7 +140,7 @@ export function useSongList() {
       setSongs(store.readAll())
     })
   }, [initing, store])
-  return useMemo(() => ({ songs, initing }), [initing, songs])
+  return useMemo(() => ({ songs, initing, loading }), [songs, initing, loading])
 }
 
 function getSongFromStore(
