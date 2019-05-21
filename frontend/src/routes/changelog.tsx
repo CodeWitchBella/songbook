@@ -4,6 +4,15 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-05-21">
+      <li>
+        Znovu přepsán kód pro aktualizaci písní
+        <ul>
+          <li>Nyní opravdu stahuje pouze změněné písně</li>
+          <li>Zrychlení je přibližně řádové</li>
+        </ul>
+      </li>
+    </Entry>
     <Entry date="2019-05-20">
       <li>Živé zobrazení změn v detailu písně</li>
     </Entry>
