@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { useContext, useState } from 'react'
-import { Paragraph, Line, parseSong } from 'utils/parse-song'
+import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
 import {
   Document,
   Page,
@@ -246,7 +246,7 @@ function SongPage({
 }
 
 export default function PDFRender({ song }: Props) {
-  const pages = parseSong(song.text)
+  const pages = parseSong('my', song.text)
   const [numPages, setNumPages] = useState(0)
 
   const [footer] = useQueryParam('footer')

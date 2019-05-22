@@ -4,7 +4,7 @@ import React, { useRef, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
-import * as parser from 'utils/parse-song'
+import * as parser from 'utils/song-parser/song-parser'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
@@ -370,7 +370,7 @@ class EditSong extends React.Component<
             ) : (
               <SongLook
                 song={this.result()}
-                parsed={parser.parseSong(this.state.textWithChords)}
+                parsed={parser.parseSong('my', this.state.textWithChords)}
                 noBack
               />
             )}

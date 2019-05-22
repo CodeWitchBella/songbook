@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
 import React, { PropsWithChildren } from 'react'
-import * as parser from 'utils/parse-song'
+import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'

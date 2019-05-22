@@ -1,7 +1,7 @@
 import React from 'react'
 import Contents from 'sections/contents/contents'
 import TitlePage from 'sections/title-page/title-page'
-import { parseSong } from 'utils/parse-song'
+import { parseSong } from 'utils/song-parser/song-parser'
 import { SongPage } from 'components/song-look/song-look'
 import { useSongList, useSong } from 'store/store'
 import { useTag } from 'store/fetchers'
@@ -10,7 +10,7 @@ function Song({ slug, number }: { slug: string; number: number }) {
   const { song } = useSong({ slug })
   if (!song) return null
 
-  const parsed = parseSong(song.text)
+  const parsed = parseSong('my', song.text)
   const content = parsed.map((page, i) => (
     <SongPage
       pageData={page}

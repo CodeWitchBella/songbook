@@ -1,11 +1,8 @@
-export type Line = {
-  content: { ch: string; text: string }[]
-  tag: string | null
-}
+import { Line, Paragraph } from './song-parser'
+
 function parseLine(
   line_: string,
   pCounter: number,
-  { convertTags }: { convertTags: boolean },
 ): Line & { pCounter: number } {
   let line = line_.trim()
   const content: { ch: string; text: string }[] = []
@@ -25,7 +22,7 @@ function parseLine(
     }
     line = line.trim()
   } else if (rmatch) {
-    tag = `R${rmatch[1]}${convertTags ? '.' : ':'}`
+    tag = `R${rmatch[1]}.`
     line = line.replace(rreg, '').trim()
   }
 
@@ -71,11 +68,9 @@ function verseToText(tag: string, pCounter: number) {
   return `${pCounter}. = ${tag.substring(2)}.`
 }
 
-export type Paragraph = Line[]
 function parseParagraph(
   p: string,
   pCounterInit: number,
-  { convertTags }: { convertTags: boolean },
 ): { p: Paragraph; pCounter: number } {
   let pCounter = pCounterInit
   return {
@@ -83,13 +78,11 @@ function parseParagraph(
       .trim()
       .split('\n')
       .map(l => {
-        const { content, tag, pCounter: n } = parseLine(l, pCounter, {
-          convertTags,
-        })
+        const { content, tag, pCounter: n } = parseLine(l, pCounter)
         pCounter = n
         return {
           content,
-          tag: isVerse(tag) && convertTags ? verseToText(tag, pCounter) : tag,
+          tag: isVerse(tag) ? verseToText(tag, pCounter) : tag,
         }
       }),
     pCounter,
@@ -99,7 +92,6 @@ function parseParagraph(
 function parsePage(
   song: string,
   pCounterInit: number,
-  { convertTags }: { convertTags: boolean },
 ): { page: Paragraph[]; pCounter: number } {
   let pCounter = pCounterInit
   return {
@@ -107,7 +99,7 @@ function parsePage(
       .trim()
       .split(/\n\n+/)
       .map(l => {
-        const ret = parseParagraph(l, pCounter, { convertTags })
+        const ret = parseParagraph(l, pCounter)
         pCounter = ret.pCounter
         return ret.p
       }),
@@ -115,16 +107,13 @@ function parsePage(
   }
 }
 
-export function parseSong(
-  song: string,
-  { convertTags = true }: { convertTags?: boolean } = {},
-): Paragraph[][] {
+export function parseSongMyFormat(song: string): Paragraph[][] {
   let pCounter = 0
   return song
     .trim()
     .split('--- page break ---')
     .map(page => {
-      const ret = parsePage(page, pCounter, { convertTags })
+      const ret = parsePage(page, pCounter)
       pCounter = ret.pCounter
       return ret.page
     })

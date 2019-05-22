@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core'
 import React, { useState } from 'react'
 import { SongLook } from 'components/song-look/song-look'
-import * as parser from 'utils/parse-song'
+import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
 import SongMenu from 'components/song-look/song-menu'
 import { Route } from 'react-router-dom'
@@ -78,7 +78,7 @@ export default function SongSection({
             >
               <SongLook
                 song={song}
-                parsed={parser.parseSong(song.text)}
+                parsed={parser.parseSong('my', song.text)}
                 transposition={transposition}
               />
             </div>
