@@ -175,12 +175,20 @@ export function SongList({ list }: { list: SongListItem[] }) {
     index: number
     style?: React.CSSProperties
   }) {
-    if (index === 0) return <div style={style} />
+    if (index === 0) return <div style={style} key={0} />
     const item = list[index - 1]
     if (!item) return null
-    if ('header' in item) return <SongItem style={style} header={item.header} />
+    if ('header' in item)
+      return <SongItem style={style} header={item.header} key={index} />
 
-    return <SongItem style={style} slug={item.slug} text={item.text} />
+    return (
+      <SongItem
+        style={style}
+        slug={item.slug}
+        text={item.text}
+        key={item.slug}
+      />
+    )
   }
 
   if (big)
