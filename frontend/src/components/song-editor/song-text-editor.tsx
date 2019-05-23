@@ -17,7 +17,7 @@ function setup() {
         [/^R[0-9]:/, 'label'],
         [/\[[^\]]+\]/, 'chord'],
         [/--- page break ---/, 'page-break'],
-        [/S:/, 'label'],
+        [/^[RS]:/, 'label'],
       ],
     },
   })
