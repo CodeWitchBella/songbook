@@ -12,6 +12,7 @@ import { errorBoundary } from 'containers/error-boundary'
 import { useSong, SongType } from 'store/store'
 import { DateTime } from 'luxon'
 import { updateSong } from 'store/graphql'
+import { SongTextEditor } from 'components/song-editor/song-text-editor'
 
 const Form = styled.form`
   display: flex;
@@ -320,8 +321,8 @@ class EditSong extends React.Component<
                 />
               </>
             )}
-            <Textarea
-              value={this.state.textWithChords}
+            <SongTextEditor
+              initialValue={this.state.textWithChords}
               onChange={this.textWithChordsChange}
             />
 
