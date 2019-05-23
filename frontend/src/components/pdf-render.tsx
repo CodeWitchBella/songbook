@@ -288,26 +288,30 @@ export default function PDFRender({ song }: Props) {
       }}
     >
       <BlobProvider document={doc}>
-        {({ url }) => (
-          <ReactPDFDocument
-            file={url}
-            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-            renderMode="svg"
-          >
-            <div css={{ display: 'flex', justifyContent: 'center' }}>
-              {Array.from(new Array(numPages), (el, index) => (
-                <div
-                  css={{ width: `${100 / Math.sqrt(2)}vh`, margin: '0 10px' }}
-                >
-                  <ReactPDFPage
-                    key={`page_${index + 1}`}
-                    pageNumber={index + 1}
-                  />
-                </div>
-              ))}
-            </div>
-          </ReactPDFDocument>
-        )}
+        {({ url }) =>
+          !url ? (
+            <div>Generuji PDF...</div>
+          ) : (
+            <ReactPDFDocument
+              file={url}
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+              renderMode="svg"
+            >
+              <div css={{ display: 'flex', justifyContent: 'center' }}>
+                {Array.from(new Array(numPages), (el, index) => (
+                  <div
+                    css={{ width: `${100 / Math.sqrt(2)}vh`, margin: '0 10px' }}
+                  >
+                    <ReactPDFPage
+                      key={`page_${index + 1}`}
+                      pageNumber={index + 1}
+                    />
+                  </div>
+                ))}
+              </div>
+            </ReactPDFDocument>
+          )
+        }
       </BlobProvider>
     </div>
   )
