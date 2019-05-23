@@ -7,7 +7,11 @@ export type Line = {
 
 export type Paragraph = Line[]
 
-export function parseSong(format: 'my', text: string) {
+export type SongPage = Paragraph[]
+
+export type ParsedSong = SongPage[]
+
+export function parseSong(format: 'my', text: string): ParsedSong {
   if (format === 'my') return parseSongMyFormat(text)
   throw new Error('Unknown format')
 }
