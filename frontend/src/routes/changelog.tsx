@@ -6,6 +6,10 @@ const Changelog = () => (
   <div>
     <Entry date="2019-05-23">
       <li>Vylepšen editor textu písní</li>
+      <li>
+        PDF náhled nyní zobrazuje pouze jednu stranu a umožňuje mezi nimi
+        přepínat
+      </li>
     </Entry>
     <Entry date="2019-05-21">
       <li>

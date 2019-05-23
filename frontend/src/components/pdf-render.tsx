@@ -249,19 +249,24 @@ function PlusMinus({
   onClick,
   children,
   hide,
-}: PropsWithChildren<{ onClick: () => void; hide: boolean }>) {
+  className,
+}: PropsWithChildren<{
+  onClick: () => void
+  hide: boolean
+  className?: string
+}>) {
   return (
     <button
       type="button"
       onClick={onClick}
+      className={className}
       css={{
         all: 'unset',
         border: '1px solid black',
-        width: 40,
-        height: 40,
+        width: '1.6em',
+        height: '1.6em',
         textAlign: 'center',
         opacity: hide ? 0 : 1,
-        margin: '0 10px',
       }}
     >
       {children}
@@ -277,36 +282,44 @@ function PDFDoc({ url }: { url: string }) {
       file={url}
       onLoadSuccess={({ numPages }) => setNumPages(numPages)}
       renderMode="svg"
-      css={{ position: 'relative' }}
     >
       <div css={{ display: 'flex', justifyContent: 'center' }}>
-        <div className="set-size">
+        <div className="set-size" css={{ position: 'relative' }}>
           <ReactPDFPage key={`page_${page}`} pageNumber={page} />
+          <div
+            css={{
+              position: 'absolute',
+              fontSize: `calc(10px + ${Math.sqrt(2)}vh)`,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              padding: '1em 0',
+              display: 'flex',
+              justifyContent: 'center',
+              [`@media (max-width: ${100 / Math.sqrt(2)}vh)`]: {
+                fontSize: 'calc(10px + 1vw)',
+              },
+            }}
+          >
+            <div>
+              <PlusMinus
+                onClick={() => setPage(p => (p - 1 > 0 ? p - 1 : p))}
+                hide={page === 1}
+                css={{ marginRight: 10 }}
+              >
+                {'<'}
+              </PlusMinus>
+              Strana {page}/{numPages}
+              <PlusMinus
+                onClick={() => setPage(p => (p + 1 <= numPages ? p + 1 : p))}
+                hide={page === numPages}
+                css={{ marginLeft: 10 }}
+              >
+                {'>'}
+              </PlusMinus>
+            </div>
+          </div>
         </div>
-      </div>
-      <div
-        css={{
-          position: 'absolute',
-          fontSize: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          top: 0,
-          padding: 10,
-        }}
-      >
-        <PlusMinus
-          onClick={() => setPage(p => (p - 1 > 0 ? p - 1 : p))}
-          hide={page === 1}
-        >
-          {'<'}
-        </PlusMinus>
-        Strana {page}/{numPages}
-        <PlusMinus
-          onClick={() => setPage(p => (p + 1 <= numPages ? p + 1 : p))}
-          hide={page === numPages}
-        >
-          {'>'}
-        </PlusMinus>
       </div>
     </ReactPDFDocument>
   )
