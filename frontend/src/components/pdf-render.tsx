@@ -245,9 +245,26 @@ function SongPage({
   )
 }
 
+function PDFDoc({ url }: { url: string }) {
+  const [numPages, setNumPages] = useState(0)
+  const [page, setPage] = useState(1)
+  return (
+    <ReactPDFDocument
+      file={url}
+      onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+      renderMode="svg"
+    >
+      <div css={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="set-size">
+          <ReactPDFPage key={`page_${page}`} pageNumber={page} />
+        </div>
+      </div>
+    </ReactPDFDocument>
+  )
+}
+
 export default function PDFRender({ song }: Props) {
   const pages = parseSong('my', song.text)
-  const [numPages, setNumPages] = useState(0)
 
   const [footer] = useQueryParam('footer')
 
@@ -272,12 +289,19 @@ export default function PDFRender({ song }: Props) {
     </Document>
   )
 
+  const sqrt2 = Math.sqrt(2)
   return (
     <div
       css={{
+        '.react-pdf__Page__svg, .set-size': {
+          height: 'var(--a-fit-height, 100vh) !important',
+          width: `var(--a-fit-width, ${100 / sqrt2}vh) !important`,
+          [`@media (max-width: ${100 / sqrt2}vh)`]: {
+            width: `var(--a-fit-width, 100vw) !important`,
+            height: `var(--a-fit-height, calc(100vw * ${sqrt2})) !important`,
+          },
+        },
         '.react-pdf__Page__svg': {
-          height: '100vh !important',
-          width: `${100 / Math.sqrt(2)}vh !important`,
           margin: '0 auto',
           border: '1px solid black',
         },
@@ -289,28 +313,7 @@ export default function PDFRender({ song }: Props) {
     >
       <BlobProvider document={doc}>
         {({ url }) =>
-          !url ? (
-            <div>Generuji PDF...</div>
-          ) : (
-            <ReactPDFDocument
-              file={url}
-              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-              renderMode="svg"
-            >
-              <div css={{ display: 'flex', justifyContent: 'center' }}>
-                {Array.from(new Array(numPages), (el, index) => (
-                  <div
-                    css={{ width: `${100 / Math.sqrt(2)}vh`, margin: '0 10px' }}
-                  >
-                    <ReactPDFPage
-                      key={`page_${index + 1}`}
-                      pageNumber={index + 1}
-                    />
-                  </div>
-                ))}
-              </div>
-            </ReactPDFDocument>
-          )
+          !url ? <div>Generuji PDF...</div> : <PDFDoc url={url} />
         }
       </BlobProvider>
     </div>
