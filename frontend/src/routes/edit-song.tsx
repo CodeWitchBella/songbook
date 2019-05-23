@@ -155,6 +155,7 @@ type State = {
   advanced: boolean
   preview: boolean
   pdfPreview: boolean
+  simpleEditor: boolean
   saveStatus: SaveStatus
 }
 
@@ -199,6 +200,7 @@ class EditSong extends React.Component<
     advanced: false,
     preview: false,
     pdfPreview: false,
+    simpleEditor: window.screen.width < 980,
     saveStatus: 'NO_CHANGES',
   }
 
@@ -277,6 +279,8 @@ class EditSong extends React.Component<
   spotifyChange = (val: string) => this.change({ spotify: val })
 
   advancedChange = (value: boolean) => this.setState({ advanced: value })
+  simpleEditorChange = (value: boolean) =>
+    this.setState({ simpleEditor: value })
   previewChange = (value: boolean) => this.setState({ preview: value })
   pdfPreviewChange = (value: boolean) => this.setState({ pdfPreview: value })
 
@@ -317,6 +321,11 @@ class EditSong extends React.Component<
               )}
             </InputLine>
             <Checkbox
+              label="Zjednodušený editor (vhodné pro mobily)"
+              checked={this.state.simpleEditor}
+              onChange={this.simpleEditorChange}
+            />
+            <Checkbox
               label="Pokročilá nastavení"
               checked={this.state.advanced}
               onChange={this.advancedChange}
@@ -340,10 +349,17 @@ class EditSong extends React.Component<
                 />
               </>
             )}
-            <SongTextEditor
-              initialValue={this.state.textWithChords}
-              onChange={this.textWithChordsChange}
-            />
+            {this.state.simpleEditor ? (
+              <Textarea
+                value={this.state.textWithChords}
+                onChange={this.textWithChordsChange}
+              />
+            ) : (
+              <SongTextEditor
+                initialValue={this.state.textWithChords}
+                onChange={this.textWithChordsChange}
+              />
+            )}
 
             {this.state.saveStatus === 'FAILED' && <button>Uložit</button>}
             <i>{translateStatus(this.state.saveStatus)}</i>

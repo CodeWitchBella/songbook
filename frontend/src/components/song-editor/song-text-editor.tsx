@@ -89,6 +89,11 @@ export function SongTextEditor(props: {
       language: 'song',
       minimap: { enabled: false },
       scrollBeyondLastLine: false,
+      lineNumbers: 'off',
+      glyphMargin: false,
+      folding: false,
+      lineDecorationsWidth: 5,
+      lineNumbersMinChars: 0,
     })
     setEditor(editor)
 
