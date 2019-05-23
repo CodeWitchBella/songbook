@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, PropsWithChildren } from 'react'
 import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
 import {
   Document,
@@ -245,6 +245,30 @@ function SongPage({
   )
 }
 
+function PlusMinus({
+  onClick,
+  children,
+  hide,
+}: PropsWithChildren<{ onClick: () => void; hide: boolean }>) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      css={{
+        all: 'unset',
+        border: '1px solid black',
+        width: 40,
+        height: 40,
+        textAlign: 'center',
+        opacity: hide ? 0 : 1,
+        margin: '0 10px',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
 function PDFDoc({ url }: { url: string }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
@@ -253,11 +277,36 @@ function PDFDoc({ url }: { url: string }) {
       file={url}
       onLoadSuccess={({ numPages }) => setNumPages(numPages)}
       renderMode="svg"
+      css={{ position: 'relative' }}
     >
       <div css={{ display: 'flex', justifyContent: 'center' }}>
         <div className="set-size">
           <ReactPDFPage key={`page_${page}`} pageNumber={page} />
         </div>
+      </div>
+      <div
+        css={{
+          position: 'absolute',
+          fontSize: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          top: 0,
+          padding: 10,
+        }}
+      >
+        <PlusMinus
+          onClick={() => setPage(p => (p - 1 > 0 ? p - 1 : p))}
+          hide={page === 1}
+        >
+          {'<'}
+        </PlusMinus>
+        Strana {page}/{numPages}
+        <PlusMinus
+          onClick={() => setPage(p => (p + 1 <= numPages ? p + 1 : p))}
+          hide={page === numPages}
+        >
+          {'>'}
+        </PlusMinus>
       </div>
     </ReactPDFDocument>
   )

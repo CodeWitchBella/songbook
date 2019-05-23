@@ -197,8 +197,8 @@ class EditSong extends React.Component<
     paragraphSpace: this.props.song.paragraphSpace.toFixed(2),
     titleSpace: this.props.song.titleSpace.toFixed(2),
     advanced: false,
-    preview: true,
-    pdfPreview: true,
+    preview: false,
+    pdfPreview: false,
     saveStatus: 'NO_CHANGES',
   }
 
