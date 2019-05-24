@@ -59,6 +59,9 @@ const CollectionList = () => {
       </h2>
 
       <div>
+        <div>
+          <Link to="/">Všechny písně</Link>
+        </div>
         {list.map(({ item: collection }) => (
           <div key={collection.id}>
             <Link to={`/collections/${collection.slug}`}>
