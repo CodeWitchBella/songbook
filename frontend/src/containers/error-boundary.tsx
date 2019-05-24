@@ -33,7 +33,11 @@ export default class ErrorBoundary extends Component<{
           errorBoundary: 'general',
         },
       })
-    this.setState({ hasError: true })
+    if (!this.unmounted) this.setState({ hasError: true })
+  }
+  unmounted = false
+  componentDidMount() {
+    this.unmounted = true
   }
 
   render() {

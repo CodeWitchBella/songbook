@@ -5,7 +5,8 @@ import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 import { useCollectionList } from 'store/store'
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
+import { DateTime } from 'luxon'
 
 function BackButtonImpl({
   children,
@@ -38,9 +39,19 @@ function BackButtonImpl({
 }
 const BackButton = withRouter(BackButtonImpl)
 
+let lastRefreshThisRefresh: DateTime | null = null
+
 const CollectionList = () => {
-  const { list } = useCollectionList()
-  console.log(list)
+  const { list, refresh } = useCollectionList()
+  useEffect(() => {
+    if (
+      !lastRefreshThisRefresh ||
+      lastRefreshThisRefresh.plus({ hours: 1 }) < DateTime.utc()
+    ) {
+      lastRefreshThisRefresh = DateTime.utc()
+      refresh()
+    }
+  }, [refresh])
   return (
     <div css={{ height: '100%', fontSize: 20, padding: 10 }}>
       <h2>
@@ -48,8 +59,14 @@ const CollectionList = () => {
       </h2>
 
       <div>
-        {list.map(item => (
-          <Link to={`/collections/${item.item.slug}`}>{item.item.slug}</Link>
+        {list.map(({ item: collection }) => (
+          <div key={collection.id}>
+            <Link to={`/collections/${collection.slug}`}>
+              {(collection.slug.includes('/')
+                ? (collection.owner.handle || collection.owner.name) + ' > '
+                : '') + collection.name}
+            </Link>
+          </div>
         ))}
       </div>
       <InstallButtonLook />

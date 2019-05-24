@@ -6,12 +6,10 @@ import styled from '@emotion/styled'
 import { useSongList } from 'store/store'
 import { SongType } from 'store/store-song'
 import FilteredList from './filtered-list'
-import { Print } from './song-list-look'
 import useRouter, { useQueryParam } from 'components/use-router'
 
 const TheSearch = styled.div`
   font-size: 20px;
-  height: 60px;
   display: block;
   flex-shrink: 0;
 
@@ -61,7 +59,6 @@ function SearchContainer({ children }: PropsWithChildren<{}>) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: 60,
         background: 'white',
         boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
         zIndex: 1,
@@ -86,49 +83,56 @@ function Search({
   onChange,
   sortByAuthor,
   setSortByAuthor,
-}: {
+  children,
+}: PropsWithChildren<{
   text: string
   onChange: (v: string) => void
   sortByAuthor: boolean
   setSortByAuthor: (v: boolean) => void
-}) {
+}>) {
   const ref = useRef<HTMLInputElement>(null)
   return (
-    <form
-      onSubmit={evt => {
-        evt.preventDefault()
-        const refc = ref.current
-        if (!refc) return
-        refc.blur()
-      }}
-    >
-      <SearchContainer>
-        <div
-          css={{
-            position: 'relative',
-            display: 'flex',
-            padding: '0 4px',
-          }}
-        >
-          <div css={{ position: 'relative', flexGrow: 1 }}>
-            <input
-              aria-label="Vyhledávání"
-              ref={ref}
-              onChange={evt => {
-                onChange(evt.target.value)
-              }}
-              value={text}
-              placeholder="Vyhledávání"
+    <>
+      <form
+        onSubmit={evt => {
+          evt.preventDefault()
+          const refc = ref.current
+          if (!refc) return
+          refc.blur()
+        }}
+      >
+        <SearchContainer>
+          {children}
+          <div
+            css={{
+              position: 'relative',
+              display: 'flex',
+              padding: '0 4px',
+              margin: '10px 0',
+            }}
+          >
+            <div css={{ position: 'relative', flexGrow: 1 }}>
+              <input
+                aria-label="Vyhledávání"
+                ref={ref}
+                onChange={evt => {
+                  onChange(evt.target.value)
+                }}
+                value={text}
+                placeholder="Vyhledávání"
+              />
+              <ClearButton onClick={() => onChange('')} />
+            </div>
+            <TopMenu
+              sortByAuthor={sortByAuthor}
+              setSortByAuthor={setSortByAuthor}
             />
-            <ClearButton onClick={() => onChange('')} />
           </div>
-          <TopMenu
-            sortByAuthor={sortByAuthor}
-            setSortByAuthor={setSortByAuthor}
-          />
-        </div>
-      </SearchContainer>
-    </form>
+        </SearchContainer>
+      </form>
+      <div>{children}</div>
+      <div css={{ height: 60 }} />
+    </>
   )
 }
 
@@ -163,14 +167,29 @@ function Loader() {
   )
 }
 
-const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
+const SongList = ({
+  filter,
+  showPrint,
+  header,
+}: {
+  filter?: (id: string) => boolean
+  showPrint?: boolean
+  header?: string
+}) => {
   const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
 
   const songs = useMemo(
-    () => source.map(s => s.item).sort(compareSongs(sortByAuthor)),
-    [sortByAuthor, source],
+    () =>
+      source
+        .map(s => s.item)
+        .filter(song => {
+          if (filter) return filter(song.id)
+          return true
+        })
+        .sort(compareSongs(sortByAuthor)),
+    [filter, sortByAuthor, source],
   )
 
   const router = useRouter()
@@ -206,7 +225,13 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
               }
             }
           }}
-        />
+        >
+          {header ? (
+            <div css={{ textAlign: 'center', padding: '5px 0 0 0' }}>
+              {header}
+            </div>
+          ) : null}
+        </Search>
       </TheSearch>
       <div css={{ flexGrow: 1 }}>
         {songs.length !== 0 ? (
@@ -220,7 +245,6 @@ const SongList = ({ tag, showPrint }: { tag: string; showPrint?: boolean }) => {
           <Loader />
         ) : null}
       </div>
-      {showPrint && <Print to={`/print/${tag}`}>Print all</Print>}
     </div>
   )
 }

@@ -8,6 +8,10 @@ const CollectionList = React.lazy(() =>
   import(/* webpackChunkName: "r-home" */ './collection-list'),
 )
 
+const Collection = React.lazy(() =>
+  import(/* webpackChunkName: "r-home" */ './collection'),
+)
+
 const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
 const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
@@ -15,8 +19,6 @@ const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
 const Print = React.lazy(() =>
   import(/* webpackChunkName: "r-print" */ './print'),
 )
-
-const Tag = React.lazy(() => import(/* webpackChunkName: "r-tag" */ './tag'))
 
 const CreateSong = React.lazy(() =>
   import(/* webpackChunkName: "r-create-song" */ './create-song'),
@@ -49,6 +51,17 @@ export default class Routes extends React.Component {
           <CollectionList />
         </Route>
         <Route
+          path="/collections/:slug/:slug2?"
+          render={({ match }) => (
+            <Collection
+              slug={
+                match.params.slug +
+                (match.params.slug2 ? '/' + match.params.slug2 : '')
+              }
+            />
+          )}
+        />
+        <Route
           path="/song/:slug"
           exact
           render={({ match }) => <Song slug={match.params.slug} />}
@@ -68,11 +81,6 @@ export default class Routes extends React.Component {
           path="/print/:tag"
           exact
           render={({ match }) => <Print tag={match.params.tag} />}
-        />
-        <Route
-          path="/tag/:tag"
-          exact
-          render={({ match }) => <Tag tag={match.params.tag} />}
         />
         <Route path="/changelog" exact render={() => <Changelog />} />
         <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />

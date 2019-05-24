@@ -8,7 +8,7 @@ import { InstallButtonLook } from 'components/install'
 const Home = () => (
   <div css={{ height: '100%' }}>
     <SaveScroll />
-    <SongList tag="all" />
+    <SongList />
     <InstallButtonLook />
   </div>
 )

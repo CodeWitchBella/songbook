@@ -47,6 +47,7 @@ export function graphqlFetch<V = any>({
 
 export type User = {
   name: string
+  handle?: string | null
   picture: {
     url: string
     width: number

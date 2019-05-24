@@ -125,6 +125,7 @@ function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {
         const song = store.readById(id)
         return song ? song.item : null
       },
+      refresh: () => store.refresh(),
     }),
     [list, store],
   )
@@ -132,6 +133,25 @@ function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {
 
 export function useCollectionList() {
   return useGenericStore(useStoreContext().collections)
+}
+
+export function useCollection({ slug }: { slug: string }) {
+  const { collections: store } = useStoreContext()
+  const [value, setValue] = useState(() => store.readBySlug(slug))
+  useEffect(() => {
+    setValue(store.readBySlug(slug))
+    return store.onChange(() => {
+      setValue(store.readBySlug(slug))
+    })
+  }, [slug, store])
+  console.log({ value, slug })
+  return useMemo(
+    () => ({
+      collection: value ? value.item : null,
+      methods: value,
+    }),
+    [value],
+  )
 }
 
 function getSongFromStore(
