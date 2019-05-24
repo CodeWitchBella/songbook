@@ -131,7 +131,6 @@ export default function FilteredList({
         tag: 'short-circuit',
       })
     } else if (worker) {
-      console.log('Posting search to SW', JSON.stringify(search))
       worker.postMessage({ type: 'setSearch', value: search })
     } else {
       const filtered = getFilteredSongList(songs, search)

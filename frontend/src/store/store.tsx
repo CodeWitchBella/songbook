@@ -144,7 +144,6 @@ export function useCollection({ slug }: { slug: string }) {
       setValue(store.readBySlug(slug))
     })
   }, [slug, store])
-  console.log({ value, slug })
   return useMemo(
     () => ({
       collection: value ? value.item : null,

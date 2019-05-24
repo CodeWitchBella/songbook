@@ -53,7 +53,6 @@ export function useQueryParam(param: string): [string | null, Setter] {
 
   useEffect(() => {
     return router.history.listen(location => {
-      console.log(location)
       const value = new URLSearchParams(location.search).get(param) || ''
       if (scheduled.current.includes(value)) {
         scheduled.current.splice(scheduled.current.indexOf(value), 1)
