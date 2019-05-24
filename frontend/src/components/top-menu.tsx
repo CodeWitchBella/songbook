@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 import { useLogin } from './use-login'
 import { CachedRoundImage } from './cached-round-image'
+import { useHistoryChange } from './use-router'
 
 export default function TopMenu({
   sortByAuthor,
@@ -101,6 +102,7 @@ function MenuContent({
   setSortByAuthor: (v: boolean) => void
   visible: boolean
 }) {
+  const history = useHistoryChange()
   const login = useLogin()
   return (
     <div
@@ -144,11 +146,14 @@ function MenuContent({
             Přihlásit se
           </MenuItem>
         )}
-        {/*
-        <MenuItem as={Link} to="/collections">
+        <MenuItem
+          as="button"
+          onClick={() => {
+            history.push('/collections', { canGoBack: true })
+          }}
+        >
           Kolekce písní
         </MenuItem>
-        */}
         <MenuItem as="a" to={googleDoc}>
           Návrhy
         </MenuItem>

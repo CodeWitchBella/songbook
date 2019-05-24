@@ -3,7 +3,7 @@ import localForage from 'localforage'
 
 const storage = localForage.createInstance({ name: 'store' })
 
-type MinItem = { slug: string; id: string; lastModified: DateTime }
+export type MinItem = { slug: string; id: string; lastModified: DateTime }
 
 export type WithMethods<Item> = {
   refresh: () => void

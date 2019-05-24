@@ -4,16 +4,20 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from 'react'
 import localForage from 'localforage'
 import { newSong } from './fetchers'
 import { createSongStore } from './store-song'
 import { User } from './graphql'
+import { createCollectionStore } from './store-collections'
+import { GenericStore, MinItem } from './generic-store'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
 const context = React.createContext(null as null | {
   store: ReturnType<typeof createSongStore>
+  collections: ReturnType<typeof createCollectionStore>
   viewer: User | null
   setViewer: (v: User | null) => void
   initing: boolean
@@ -32,14 +36,23 @@ function useCachedState<T>(key: string, initial: T | null) {
   return st
 }
 
+function useStable<T>(gen: () => T) {
+  const ref = useRef<T | null>(null)
+  if (ref.current === null) {
+    ref.current = gen()
+  }
+  return ref.current!
+}
+
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const [initing, setIniting] = useState(true)
   const [loading, setLoading] = useState(true)
   const [viewer, setViewer] = useCachedState<User>('viewer', null)
-  const store = useMemo(
-    () => createSongStore({ setIniting, setLoading, setViewer }),
-    [setViewer],
+  const store = useStable(() =>
+    createSongStore({ setIniting, setLoading, setViewer }),
   )
+
+  const collections = useStable(() => createCollectionStore())
 
   // clear legacy song saving mechanism
   useEffect(() => {
@@ -58,8 +71,9 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
           setViewer,
           initing,
           loading,
+          collections,
         }),
-        [store, viewer, setViewer, initing, loading],
+        [store, viewer, setViewer, initing, loading, collections],
       )}
     >
       {children}
@@ -94,6 +108,30 @@ export function useSongList() {
     }),
     [songs, initing, loading, store],
   )
+}
+
+function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {
+  const [list, setList] = useState(() => store.readAll())
+  useEffect(() => {
+    setList(store.readAll())
+    return store.onChange(() => {
+      setList(store.readAll())
+    })
+  }, [store])
+  return useMemo(
+    () => ({
+      list,
+      getById: (id: string) => {
+        const song = store.readById(id)
+        return song ? song.item : null
+      },
+    }),
+    [list, store],
+  )
+}
+
+export function useCollectionList() {
+  return useGenericStore(useStoreContext().collections)
 }
 
 function getSongFromStore(
