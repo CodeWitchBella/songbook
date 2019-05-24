@@ -291,11 +291,9 @@ const resolvers = {
       return owner.data()
     },
     songList: async (src: any) => {
-      return src.songList.length < 1
+      return src.list.length < 1
         ? []
-        : firestore.getAll(
-            ...src.songList.map((id: string) => firestore.doc(id)),
-          )
+        : firestore.getAll(...src.list.map((id: string) => firestore.doc(id)))
     },
   },
   LoginPayload: {
@@ -365,7 +363,7 @@ const resolvers = {
         global,
         slug,
         deleted: false,
-        songList: [],
+        list: [],
       })
       return doc.get()
     },
