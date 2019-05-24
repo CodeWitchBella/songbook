@@ -291,7 +291,7 @@ const resolvers = {
       return owner.data()
     },
     songList: async (src: any) =>
-      firestore.getAll(...src.list.map((id: string) => firestore.doc(id))),
+      firestore.getAll(...src.songList.map((id: string) => firestore.doc(id))),
   },
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
