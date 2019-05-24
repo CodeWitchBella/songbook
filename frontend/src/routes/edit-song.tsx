@@ -9,10 +9,10 @@ import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
 import { errorBoundary } from 'containers/error-boundary'
-import { useSong, SongType } from 'store/store'
+import { useSong } from 'store/store'
 import { DateTime } from 'luxon'
-import { updateSong } from 'store/graphql'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
+import { SongType, updateSong } from 'store/store-song'
 
 const Form = styled.form`
   display: flex;

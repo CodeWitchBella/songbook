@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps } from 'react-router-dom'
 import { PlayButton, Burger, EditButton, InfoButton } from './song-menu-icons'
-import { SongType } from 'store/store'
+import { SongType } from 'store/store-song'
 
 const MenuWrap = styled.div({
   display: 'flex',

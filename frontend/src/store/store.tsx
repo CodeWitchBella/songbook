@@ -6,72 +6,14 @@ import React, {
   useState,
 } from 'react'
 import localForage from 'localforage'
-import { User, onLoadQuery } from './graphql'
-import { DateTime } from 'luxon'
 import { newSong } from './fetchers'
-import { GenericStore } from './generic-store'
+import { createSongStore } from './store-song'
+import { User } from './graphql'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
-type Song<DT> = {
-  slug: string
-  id: string
-  lastModified: DT
-  text: string
-  fontSize: number
-  paragraphSpace: number
-  titleSpace: number
-  spotify: string | null
-  editor: User | null
-  insertedAt: DT | null
-  author: string
-  title: string
-}
-
-export type SongType = Song<DateTime>
-
-function createStore({
-  setIniting,
-  setViewer,
-  setLoading,
-}: {
-  setIniting: (v: boolean) => void
-  setLoading: (v: boolean) => void
-  setViewer: (viewer: User | null) => void
-}) {
-  return new GenericStore<SongType, Song<string>>({
-    cacheKey: 'songs',
-    serialize: item => {
-      return {
-        ...item,
-        lastModified: item.lastModified.toISO(),
-        insertedAt: item.insertedAt ? item.insertedAt.toISO() : null,
-      }
-    },
-    deserialize: item => {
-      return {
-        ...item,
-        lastModified: DateTime.fromISO(item.lastModified),
-        insertedAt: item.insertedAt ? DateTime.fromISO(item.insertedAt) : null,
-      }
-    },
-    loadIncremental: after =>
-      onLoadQuery(after).then(v => {
-        setViewer(v.viewer)
-        return { changed: v.songs, deleted: v.deletedSongs }
-      }),
-    loadInitial: () =>
-      onLoadQuery().then(v => {
-        setViewer(v.viewer)
-        return v.songs
-      }),
-    onLoadedFromCache: () => setIniting(false),
-    onLoadingChange: v => setLoading(v),
-  })
-}
-
 const context = React.createContext(null as null | {
-  store: ReturnType<typeof createStore>
+  store: ReturnType<typeof createSongStore>
   viewer: User | null
   setViewer: (v: User | null) => void
   initing: boolean
@@ -95,7 +37,7 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(true)
   const [viewer, setViewer] = useCachedState<User>('viewer', null)
   const store = useMemo(
-    () => createStore({ setIniting, setLoading, setViewer }),
+    () => createSongStore({ setIniting, setLoading, setViewer }),
     [setViewer],
   )
 

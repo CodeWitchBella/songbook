@@ -144,7 +144,11 @@ function MenuContent({
             Přihlásit se
           </MenuItem>
         )}
-
+        {/*
+        <MenuItem as={Link} to="/collections">
+          Kolekce písní
+        </MenuItem>
+        */}
         <MenuItem as="a" to={googleDoc}>
           Návrhy
         </MenuItem>

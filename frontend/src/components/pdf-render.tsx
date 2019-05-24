@@ -12,7 +12,6 @@ import {
 } from '@react-pdf/renderer'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
-import { SongType } from 'store/store'
 import { useQueryParam } from './use-router'
 import { notNull } from '@codewitchbella/ts-utils'
 import {
@@ -21,6 +20,7 @@ import {
   Page as ReactPDFPage,
 } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
+import { SongType } from 'store/store-song'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version

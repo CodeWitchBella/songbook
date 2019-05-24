@@ -4,6 +4,10 @@ import NotFound from './not-found'
 import PrivacyPolicy from './privacy-policy'
 import { getGraphqlUrl } from 'store/graphql'
 
+const CollectionList = React.lazy(() =>
+  import(/* webpackChunkName: "r-home" */ './collection-list'),
+)
+
 const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
 const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
@@ -40,6 +44,9 @@ export default class Routes extends React.Component {
       <Switch>
         <Route path="/" exact>
           <Home />
+        </Route>
+        <Route path="/collections" exact>
+          <CollectionList />
         </Route>
         <Route
           path="/song/:slug"

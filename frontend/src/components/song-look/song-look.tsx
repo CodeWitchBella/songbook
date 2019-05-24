@@ -6,7 +6,7 @@ import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { SongType } from 'store/store'
+import { SongType } from 'store/store-song'
 
 const line = (hasChords: boolean) =>
   hasChords
