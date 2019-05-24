@@ -39,6 +39,10 @@ const typeDefs = gql`
     lastModified: String!
   }
 
+  type Deleted {
+    id: String!
+  }
+
   type Query {
     hello: String
     songs(modifiedAfter: String): [SongRecord!]!
@@ -46,7 +50,7 @@ const typeDefs = gql`
     songsBySlugs(slugs: [String!]!): [SongRecord!]!
     songsByIds(ids: [String!]!): [SongRecord!]!
     viewer: User
-    collections(modifiedAfter: String): [CollectionRecord!]!
+    collections(modifiedAfter: String): [DeletableCollectionRecord!]!
     collectionsByIds(ids: [String!]!): [CollectionRecord!]!
   }
 
@@ -100,6 +104,8 @@ const typeDefs = gql`
     id: String!
     lastModified: String!
   }
+
+  union DeletableCollectionRecord = CollectionRecord | Deleted
 
   type Mutation {
     createSong(input: CreateSongInput!): SongRecord
@@ -182,7 +188,7 @@ function whereModifiedAfter(path: string, modifiedAfter: string | null) {
       .where('lastModified', '>', DateTime.fromISO(modifiedAfter).toJSDate())
       .get()
   }
-  return ref.get()
+  return ref.where('deleted', '==', false).get()
 }
 
 type Context = { req: functions.https.Request; res: functions.Response }
@@ -271,6 +277,10 @@ const resolvers = {
         .toISO()
     },
   },
+  DeletableCollectionRecord: {
+    __resolveType: (src: any) =>
+      src.data().deleted ? 'Deleted' : 'CollectionRecord',
+  },
   Collection: {
     insertedAt: (src: any) =>
       DateTime.fromJSDate(src.insertedAt.toDate())
@@ -304,7 +314,10 @@ const resolvers = {
           .filter(doc => !doc.get('global'))
           .map(doc =>
             doc.ref.set(
-              { slug: slugify(handle) + '/' + slugify(doc.get('name')) },
+              {
+                slug: slugify(handle) + '/' + slugify(doc.get('name')),
+                lastModified: FieldValue.serverTimestamp(),
+              },
               { merge: true },
             ),
           ),
@@ -346,6 +359,7 @@ const resolvers = {
         lastModified: FieldValue.serverTimestamp(),
         global,
         slug,
+        deleted: false,
         songList: [],
       })
       return doc.get()
