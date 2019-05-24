@@ -27,6 +27,7 @@ const TheSearch = styled.div`
 function ClearButton({ onClick }: { onClick: () => void }) {
   return (
     <button
+      aria-label="Vyčistit vyhledávání"
       css={{
         all: 'unset',
         position: 'absolute',
@@ -110,6 +111,7 @@ function Search({
         >
           <div css={{ position: 'relative', flexGrow: 1 }}>
             <input
+              aria-label="Vyhledávání"
               ref={ref}
               onChange={evt => {
                 onChange(evt.target.value)

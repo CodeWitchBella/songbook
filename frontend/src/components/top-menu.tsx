@@ -22,6 +22,7 @@ export default function TopMenu({
   return (
     <div css={{ width: 40 }}>
       <button
+        aria-label="Hlavní menu"
         css={{
           all: 'unset',
           boxSizing: 'border-box',
