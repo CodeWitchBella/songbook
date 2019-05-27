@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import SongList from 'sections/song-list/song-list'
-import { SaveScroll } from 'components/scroll'
 import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
@@ -32,7 +31,6 @@ const Collection = ({ slug }: { slug: string }) => {
   console.log('Collection id:', collection.id)
   return (
     <div css={{ height: '100%' }}>
-      <SaveScroll />
       <SongList
         filter={id => set.has(id)}
         header={

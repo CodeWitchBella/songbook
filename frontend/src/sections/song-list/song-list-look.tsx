@@ -113,6 +113,8 @@ const ListContainer = styled('div')<{ count: number }>`
 
   grid-auto-flow: column;
   justify-content: center;
+  box-sizing: border-box;
+  overflow-y: scroll;
 `
 
 function useWindowWidth() {
@@ -145,6 +147,47 @@ export function SongList({ list }: { list: SongListItem[] }) {
     // we want to bust the cache if windowWidth changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowWidth])
+  const smInnerScrollRef = useRef<HTMLDivElement>(null)
+  const bigScrollRef = useRef<HTMLDivElement>()
+
+  const { location } = useRouter()
+
+  useLayoutEffect(() => {
+    return () => {
+      /* eslint-disable react-hooks/exhaustive-deps */
+      try {
+        if (
+          typeof sessionStorage !== 'undefined' &&
+          typeof document !== 'undefined'
+        ) {
+          if (window.innerWidth >= 800) {
+            if (bigScrollRef.current) {
+              sessionStorage.setItem(
+                `scroll:${location.key}`,
+                `${bigScrollRef.current.scrollTop}`,
+              )
+            }
+          } else {
+            if (smInnerScrollRef.current) {
+              sessionStorage.setItem(
+                `scroll:${location.key}`,
+                `${smInnerScrollRef.current.parentElement!.scrollTop}`,
+              )
+            }
+          }
+        }
+      } catch (e) {}
+      /* eslint-enable react-hooks/exhaustive-deps */
+    }
+  }, [location.key])
+
+  useEffect(() => {
+    const bckp = window.document.body.style.overflow
+    window.document.body.style.overflow = 'hidden'
+    return () => {
+      window.document.body.style.overflow = bckp
+    }
+  }, [])
 
   const [measurer] = useState(() => {
     const div = document.createElement('div')
@@ -191,17 +234,36 @@ export function SongList({ list }: { list: SongListItem[] }) {
     )
   }
 
+  const initialScroll = useRef(
+    Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || '0'),
+  )
+
   if (big)
     return (
-      <ListContainer count={list.length}>
-        {list.map((item, index) => indexToItem({ index: index + 1 }))}
-      </ListContainer>
+      <AutoSizer>
+        {({ width, height }) => (
+          <ListContainer
+            count={list.length}
+            style={{ width, height }}
+            ref={r => {
+              if (r) {
+                bigScrollRef.current = r
+                r.scrollTo(0, initialScroll.current)
+              }
+            }}
+          >
+            {list.map((item, index) => indexToItem({ index: index + 1 }))}
+          </ListContainer>
+        )}
+      </AutoSizer>
     )
 
   return (
     <AutoSizer>
       {({ width, height }) => (
         <VariableSizeList
+          innerRef={smInnerScrollRef}
+          initialScrollOffset={initialScroll.current}
           key={key}
           width={windowWidth}
           height={height}
