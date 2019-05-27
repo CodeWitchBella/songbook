@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 const enableLocalhostBackend = false
 const url =
   window.location.hostname === 'localhost' && enableLocalhostBackend
