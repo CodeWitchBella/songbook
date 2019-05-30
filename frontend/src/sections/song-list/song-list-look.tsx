@@ -114,7 +114,6 @@ const ListContainer = styled('div')<{ count: number }>`
   grid-auto-flow: column;
   justify-content: center;
   box-sizing: border-box;
-  overflow-y: scroll;
 `
 
 function useWindowWidth() {
@@ -242,18 +241,26 @@ export function SongList({ list }: { list: SongListItem[] }) {
     return (
       <AutoSizer>
         {({ width, height }) => (
-          <ListContainer
-            count={list.length}
-            style={{ width, height }}
-            ref={r => {
-              if (r) {
-                bigScrollRef.current = r
-                r.scrollTo(0, initialScroll.current)
-              }
+          <div
+            css={{
+              width,
+              height,
+              overflowY: 'auto',
+              boxSizing: 'border-box',
             }}
           >
-            {list.map((item, index) => indexToItem({ index: index + 1 }))}
-          </ListContainer>
+            <ListContainer
+              count={list.length}
+              ref={r => {
+                if (r) {
+                  bigScrollRef.current = r
+                  r.scrollTo(0, initialScroll.current)
+                }
+              }}
+            >
+              {list.map((item, index) => indexToItem({ index: index + 1 }))}
+            </ListContainer>
+          </div>
         )}
       </AutoSizer>
     )
