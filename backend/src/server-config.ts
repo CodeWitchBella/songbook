@@ -250,11 +250,11 @@ const resolvers = {
             .setZone('utc')
             .toISO(),
     fontSize: (src: any) =>
-      typeof src.fontSize === 'number' ? src.fontSize : 0,
+      typeof src.fontSize === 'number' ? src.fontSize : 1,
     paragraphSpace: (src: any) =>
-      typeof src.paragraphSpace === 'number' ? src.paragraphSpace : 0,
+      typeof src.paragraphSpace === 'number' ? src.paragraphSpace : 1,
     titleSpace: (src: any) =>
-      typeof src.titleSpace === 'number' ? src.titleSpace : 0,
+      typeof src.titleSpace === 'number' ? src.titleSpace : 1,
   },
   SongRecord: {
     data: (src: any) => src.data(),
