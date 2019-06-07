@@ -41,7 +41,7 @@ function resetLayout(
 ) {
   const model = editor.getModel()
   if (model && el) {
-    const height = model.getLineCount() * 19
+    const height = model.getLineCount() * 19 + 30
     if (el.style.height !== height + 'px') {
       el.style.height = height + 'px'
       editor.layout({
