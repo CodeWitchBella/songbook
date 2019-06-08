@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core'
-import React, { useRef, PropsWithChildren } from 'react'
+import React, { useRef, PropsWithChildren, useReducer } from 'react'
 import styled from '@emotion/styled'
 import Input from 'components/input'
 import { SongLook } from 'components/song-look/song-look'
@@ -182,62 +182,64 @@ Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+s
 copy(content.innerText)
 `.trim()
 
-class EditSong extends React.Component<
-  {
-    song: SongType
-    refetch: () => void
-  },
-  State
-> {
-  state: State = {
-    author: this.props.song.author,
-    title: this.props.song.title,
-    textWithChords: this.props.song.text,
-    spotify: this.props.song.spotify || '',
-    fontSize: this.props.song.fontSize.toFixed(2),
-    paragraphSpace: this.props.song.paragraphSpace.toFixed(2),
-    titleSpace: this.props.song.titleSpace.toFixed(2),
+const getResult = (propsSong: SongType, theState: State): SongType => {
+  const { author, title, textWithChords } = theState
+  return {
+    author,
+    title,
+    lastModified: DateTime.utc(),
+    text: textWithChords,
+    fontSize: Number.parseFloat(theState.fontSize),
+    paragraphSpace: Number.parseFloat(theState.paragraphSpace),
+    titleSpace: Number.parseFloat(theState.titleSpace),
+    spotify: theState.spotify || null,
+
+    editor: propsSong.editor,
+    insertedAt: propsSong.insertedAt,
+    id: propsSong.id,
+    slug: propsSong.slug,
+  }
+}
+
+function EditSong(props: { song: SongType; refetch: () => void }) {
+  const initialState: State = {
+    author: props.song.author,
+    title: props.song.title,
+    textWithChords: props.song.text,
+    spotify: props.song.spotify || '',
+    fontSize: props.song.fontSize.toFixed(2),
+    paragraphSpace: props.song.paragraphSpace.toFixed(2),
+    titleSpace: props.song.titleSpace.toFixed(2),
     advanced: false,
     preview: false,
     pdfPreview: false,
     simpleEditor: window.screen.width < 980,
     saveStatus: 'NO_CHANGES',
   }
+  const latestState = useRef<State>(initialState)
+  const [state, setState] = useReducer(
+    (state: State, patch: Partial<State>) => {
+      latestState.current = { ...state, ...patch }
+      return latestState.current
+    },
+    initialState,
+  )
 
-  changeCounter: number = 0
+  const changeCounterRef = useRef(0)
 
-  result = (): SongType => {
-    const { author, title, textWithChords } = this.state
-    return {
-      author,
-      title,
-      lastModified: DateTime.utc(),
-      text: textWithChords,
-      fontSize: Number.parseFloat(this.state.fontSize),
-      paragraphSpace: Number.parseFloat(this.state.paragraphSpace),
-      titleSpace: Number.parseFloat(this.state.titleSpace),
-      spotify: this.state.spotify || null,
-
-      editor: this.props.song.editor,
-      insertedAt: this.props.song.insertedAt,
-      id: this.props.song.id,
-      slug: this.props.song.slug,
-    }
-  }
-
-  submit = (evt?: React.FormEvent<HTMLFormElement>) => {
+  const submit = (evt?: React.FormEvent<HTMLFormElement>) => {
     if (evt) evt.preventDefault()
-    const { author, title, saveStatus } = this.state
-    console.log('submit before check', this.state)
+    const { author, title, saveStatus } = state
+    console.log('submit before check', state)
     if (!author || !title || saveStatus === 'SAVING') return
-    console.log('submit', this.state)
-    this.setState({ saveStatus: 'SAVING' })
-    this.saveTimeout = null
+    console.log('submit', state)
+    setState({ saveStatus: 'SAVING' })
+    saveTimeoutRef.current = null
 
-    const version = this.changeCounter
+    const version = changeCounterRef.current
 
-    const result = this.result()
-    updateSong(this.props.song.id, {
+    const result = getResult(props.song, latestState.current)
+    updateSong(props.song.id, {
       author: result.author,
       title: result.title,
       text: result.text,
@@ -246,175 +248,168 @@ class EditSong extends React.Component<
       titleSpace: result.titleSpace,
       spotify: result.spotify || '',
     })
-      .then(() => this.props.refetch())
+      .then(() => props.refetch())
       .then(() => {
-        if (version === this.changeCounter) {
-          this.setState({ saveStatus: 'SAVED' })
+        if (version === changeCounterRef.current) {
+          setState({ saveStatus: 'SAVED' })
         } else {
-          this.change({})
+          change({})
         }
       })
       .catch(e => {
         console.error(e)
-        this.setState({ saveStatus: 'FAILED' })
+        setState({ saveStatus: 'FAILED' })
       })
   }
 
-  saveTimeout: any = null
+  const saveTimeoutRef = useRef<any>(null)
 
-  change = (val: Partial<State>) => {
-    this.changeCounter += 1
-    if (this.saveTimeout) clearTimeout(this.saveTimeout)
-    this.saveTimeout = setTimeout(this.submit, 500)
-    this.setState(Object.assign({ saveStatus: 'UNSAVED' }, val as any))
+  const change = (val: Partial<State>) => {
+    changeCounterRef.current += 1
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(submit, 500)
+    setState(Object.assign({ saveStatus: 'UNSAVED' }, val as any))
   }
 
-  authorChange = (val: string) => this.change({ author: val })
-  titleChange = (val: string) => this.change({ title: val })
-  textWithChordsChange = (val: string) => this.change({ textWithChords: val })
+  const authorChange = (val: string) => change({ author: val })
+  const titleChange = (val: string) => change({ title: val })
+  const textWithChordsChange = (val: string) => change({ textWithChords: val })
 
-  fontSizeChange = (val: string) => this.change({ fontSize: val })
-  paragraphSpaceChange = (val: string) => this.change({ paragraphSpace: val })
-  titleSpaceChange = (val: string) => this.change({ titleSpace: val })
-  spotifyChange = (val: string) => this.change({ spotify: val })
+  const fontSizeChange = (val: string) => change({ fontSize: val })
+  const paragraphSpaceChange = (val: string) => change({ paragraphSpace: val })
+  const titleSpaceChange = (val: string) => change({ titleSpace: val })
+  const spotifyChange = (val: string) => change({ spotify: val })
 
-  advancedChange = (value: boolean) => this.setState({ advanced: value })
-  simpleEditorChange = (value: boolean) =>
-    this.setState({ simpleEditor: value })
-  previewChange = (value: boolean) => this.setState({ preview: value })
-  pdfPreviewChange = (value: boolean) => this.setState({ pdfPreview: value })
+  const advancedChange = (value: boolean) => setState({ advanced: value })
+  const simpleEditorChange = (value: boolean) =>
+    setState({ simpleEditor: value })
+  const previewChange = (value: boolean) => setState({ preview: value })
+  const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value })
 
-  render() {
-    return (
-      <Columns number={this.state.preview ? 2 : 1}>
-        <div>
-          <Form onSubmit={this.submit}>
-            <InputLine>
-              <Input
-                label="Autor"
-                value={this.state.author}
-                onChange={this.authorChange}
-              />
-              <Input
-                label="Jméno songu"
-                value={this.state.title}
-                onChange={this.titleChange}
-              />
-            </InputLine>
+  return (
+    <Columns number={state.preview ? 2 : 1}>
+      <div>
+        <Form onSubmit={submit}>
+          <InputLine>
+            <Input label="Autor" value={state.author} onChange={authorChange} />
             <Input
-              label="Spotify odkaz"
-              value={this.state.spotify}
-              onChange={this.spotifyChange}
+              label="Jméno songu"
+              value={state.title}
+              onChange={titleChange}
             />
-            <InputLine>
+          </InputLine>
+          <Input
+            label="Spotify odkaz"
+            value={state.spotify}
+            onChange={spotifyChange}
+          />
+          <InputLine>
+            <Checkbox
+              label="Náhled"
+              checked={state.preview}
+              onChange={previewChange}
+            />
+            {state.preview && (
               <Checkbox
-                label="Náhled"
-                checked={this.state.preview}
-                onChange={this.previewChange}
-              />
-              {this.state.preview && (
-                <Checkbox
-                  label="PDF"
-                  checked={this.state.pdfPreview}
-                  onChange={this.pdfPreviewChange}
-                />
-              )}
-            </InputLine>
-            <Checkbox
-              label="Zjednodušený editor (vhodné pro mobily)"
-              checked={this.state.simpleEditor}
-              onChange={this.simpleEditorChange}
-            />
-            <Checkbox
-              label="Pokročilá nastavení"
-              checked={this.state.advanced}
-              onChange={this.advancedChange}
-            />
-            {this.state.advanced && (
-              <>
-                <Input
-                  label="Velikost písma"
-                  value={this.state.fontSize || '1.00'}
-                  onChange={this.fontSizeChange}
-                />
-                <Input
-                  label="Místo mezi odstavci"
-                  value={this.state.paragraphSpace || '1.00'}
-                  onChange={this.paragraphSpaceChange}
-                />
-                <Input
-                  label="Místo pod nadpisem"
-                  value={this.state.titleSpace || '1.00'}
-                  onChange={this.titleSpaceChange}
-                />
-              </>
-            )}
-            {this.state.simpleEditor ? (
-              <Textarea
-                value={this.state.textWithChords}
-                onChange={this.textWithChordsChange}
-              />
-            ) : (
-              <SongTextEditor
-                initialValue={this.state.textWithChords}
-                onChange={this.textWithChordsChange}
+                label="PDF"
+                checked={state.pdfPreview}
+                onChange={pdfPreviewChange}
               />
             )}
+          </InputLine>
+          <Checkbox
+            label="Zjednodušený editor (vhodné pro mobily)"
+            checked={state.simpleEditor}
+            onChange={simpleEditorChange}
+          />
+          <Checkbox
+            label="Pokročilá nastavení"
+            checked={state.advanced}
+            onChange={advancedChange}
+          />
+          {state.advanced && (
+            <>
+              <Input
+                label="Velikost písma"
+                value={state.fontSize || '1.00'}
+                onChange={fontSizeChange}
+              />
+              <Input
+                label="Místo mezi odstavci"
+                value={state.paragraphSpace || '1.00'}
+                onChange={paragraphSpaceChange}
+              />
+              <Input
+                label="Místo pod nadpisem"
+                value={state.titleSpace || '1.00'}
+                onChange={titleSpaceChange}
+              />
+            </>
+          )}
+          {state.simpleEditor ? (
+            <Textarea
+              value={state.textWithChords}
+              onChange={textWithChordsChange}
+            />
+          ) : (
+            <SongTextEditor
+              initialValue={state.textWithChords}
+              onChange={textWithChordsChange}
+            />
+          )}
 
-            {this.state.saveStatus === 'FAILED' && <button>Uložit</button>}
-            <i>{translateStatus(this.state.saveStatus)}</i>
-          </Form>
-          <Help>
-            <h3>Jak se tahle věc ovládá?</h3>
-            <p>
-              Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
-              vyplnění údajů o songu.
-            </p>
-            <p>
-              Pod tím je pole na vyplnění songu. Do něj píšete text písně a
-              pokud chcete začít psát akord tak ho napíšete do hranatých závorek
-              [A].
-            </p>
-            <p>
-              Změny se automaticky ukládají, nebo je můžete uložit ručně
-              kliknutím na tlačítko uložit. Současný stav je:{' '}
-              <i>{translateStatus(this.state.saveStatus, true)}</i>
-            </p>
-            <p>
-              Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
-              sloka stejná jako jiná sloka tak stačí napsat <b>S:2</b>. Pro
-              označení refrénu se používá <b>R:</b> nebo alternativně, pokud je
-              refrénů víc <b>R1:</b>, <b>R2:</b> atd
-            </p>
-            <p>
-              Pokud potřebujete udělat oddělovač stran tak napište{' '}
-              <b>---&nbsp;page&nbsp;break&nbsp;---</b>
-            </p>
-            <p>Hodně štěstí a díky za pomoc</p>
-          </Help>
-          <Help title="cheaty">
-            Script pro extrakci textu z{' '}
-            <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
-            <br />
-            <Code text={nakytarushonzou} />
-          </Help>
-        </div>
-        {this.state.preview && (
-          <IFrameSizer>
-            {this.state.pdfPreview ? (
-              <PDF song={this.result()} />
-            ) : (
-              <SongLook
-                song={this.result()}
-                parsed={parser.parseSong('my', this.state.textWithChords)}
-                noBack
-              />
-            )}
-          </IFrameSizer>
-        )}
-      </Columns>
-    )
-  }
+          {state.saveStatus === 'FAILED' && <button>Uložit</button>}
+          <i>{translateStatus(state.saveStatus)}</i>
+        </Form>
+        <Help>
+          <h3>Jak se tahle věc ovládá?</h3>
+          <p>
+            Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
+            vyplnění údajů o songu.
+          </p>
+          <p>
+            Pod tím je pole na vyplnění songu. Do něj píšete text písně a pokud
+            chcete začít psát akord tak ho napíšete do hranatých závorek [A].
+          </p>
+          <p>
+            Změny se automaticky ukládají, nebo je můžete uložit ručně kliknutím
+            na tlačítko uložit. Současný stav je:{' '}
+            <i>{translateStatus(state.saveStatus, true)}</i>
+          </p>
+          <p>
+            Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
+            sloka stejná jako jiná sloka tak stačí napsat <b>S:2</b>. Pro
+            označení refrénu se používá <b>R:</b> nebo alternativně, pokud je
+            refrénů víc <b>R1:</b>, <b>R2:</b> atd
+          </p>
+          <p>
+            Pokud potřebujete udělat oddělovač stran tak napište{' '}
+            <b>---&nbsp;page&nbsp;break&nbsp;---</b>
+          </p>
+          <p>Hodně štěstí a díky za pomoc</p>
+        </Help>
+        <Help title="cheaty">
+          Script pro extrakci textu z{' '}
+          <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
+          <br />
+          <Code text={nakytarushonzou} />
+        </Help>
+      </div>
+      {state.preview && (
+        <IFrameSizer>
+          {state.pdfPreview ? (
+            <PDF song={getResult(props.song, state)} />
+          ) : (
+            <SongLook
+              song={getResult(props.song, state)}
+              parsed={parser.parseSong('my', state.textWithChords)}
+              noBack
+            />
+          )}
+        </IFrameSizer>
+      )}
+    </Columns>
+  )
 }
 export default errorBoundary(({ slug }: { slug: string }) => {
   const { song, methods } = useSong({ slug })
