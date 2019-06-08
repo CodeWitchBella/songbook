@@ -29,6 +29,9 @@ const typeDefs = gql`
     titleSpace: Float!
     spotify: String
 
+    extraSearchable: String
+    extraNonSearchable: String
+
     editor: User
     insertedAt: String
   }
@@ -69,6 +72,9 @@ const typeDefs = gql`
     paragraphSpace: Float
     titleSpace: Float
     spotify: String
+
+    extraSearchable: String
+    extraNonSearchable: String
   }
 
   type LoginSuccess {
