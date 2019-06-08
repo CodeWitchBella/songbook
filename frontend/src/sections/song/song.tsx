@@ -64,7 +64,7 @@ export default function SongSection({
         const query = queryString.parse(route.location.search)
         const tr = query.transposition
         const transposition = Number.parseInt(
-          `${Array.isArray(tr) ? tr[0] : tr}` || '0',
+          `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
           10,
         )
         return (
