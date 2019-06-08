@@ -4,6 +4,15 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-06-09">
+      <li>
+        Nyní je možné k písni uložit extra informace
+        <ul>
+          <li>Jsou rozděleny na vyhledatelné a nevyhledatelné</li>
+          <li>Vyhledatelné jdou použít jako klíčová slova v seznamu písní</li>
+        </ul>
+      </li>
+    </Entry>
     <Entry date="2019-05-24">
       <li>Znovupřidány kolekce písní</li>
     </Entry>
