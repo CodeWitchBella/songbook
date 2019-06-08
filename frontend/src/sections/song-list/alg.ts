@@ -4,21 +4,23 @@ export type SearchableSong = {
   author: string
   title: string
   text: string
+  extraSearchable: string | null
   id: string
 }
 
 function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
-const searchSong = (text: string, field: 'author' | 'title' | 'text') => (
-  song: SearchableSong,
-) => {
+const searchSong = (
+  text: string,
+  field: 'author' | 'title' | 'text' | 'extraSearchable',
+) => (song: SearchableSong) => {
   if (!text) return true
   return toComparable(text)
     .split(' ')
     .map(t => t.trim())
     .filter(t => t)
-    .every(t => toComparable(song[field]).includes(t))
+    .every(t => toComparable(song[field] || '').includes(t))
 }
 
 export default function getFilteredSongList(
@@ -42,9 +44,16 @@ export default function getFilteredSongList(
     ? songs.filter(searchSong(search, 'text')).filter(s => !used.has(s.id))
     : []
 
+  const byExtra = search
+    ? songs
+        .filter(searchSong(search, 'extraSearchable'))
+        .filter(s => !used.has(s.id))
+    : []
+
   return {
     byTitle: byTitle.map(s => s.id),
     byAuthor: byAuthor.map(s => s.id),
     byText: byText.map(s => s.id),
+    byExtra: byExtra.map(s => s.id),
   }
 }

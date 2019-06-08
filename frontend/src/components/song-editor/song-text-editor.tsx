@@ -22,6 +22,10 @@ function setup() {
     },
   })
 
+  monaco.languages.setMonarchTokensProvider('none', {
+    tokenizer: {},
+  })
+
   // Define a new theme that contains only rules that match this language
   monaco.editor.defineTheme('song-theme', {
     base: 'vs',
@@ -73,6 +77,7 @@ function useEditorFitContent(
 export function SongTextEditor(props: {
   initialValue: string
   onChange: (v: string) => void
+  language: 'song' | 'none'
 }) {
   useEffect(setup)
   const element = useRef<HTMLDivElement>(null)
@@ -86,7 +91,7 @@ export function SongTextEditor(props: {
     const editor = monaco.editor.create(element.current!, {
       theme: 'song-theme',
       value: initialValue.current,
-      language: 'song',
+      language: props.language,
       minimap: { enabled: false },
       scrollBeyondLastLine: false,
       lineNumbers: 'off',
@@ -100,7 +105,7 @@ export function SongTextEditor(props: {
     return () => {
       editor.dispose()
     }
-  }, [])
+  }, [props.language])
 
   const onChange = props.onChange
   useEffect(() => {

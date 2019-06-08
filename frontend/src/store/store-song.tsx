@@ -15,6 +15,8 @@ const songRecordFragment = `
       paragraphSpace
       titleSpace
       spotify
+      extraSearchable
+      extraNonSearchable
       editor {
         ...user
       }
@@ -35,6 +37,8 @@ type SongRecord = {
   paragraphSpace: number
   titleSpace: number
   spotify: string | null
+  extraSearchable: string | null
+  extraNonSearchable: string | null
   editor: User | null
   insertedAt: DateTime | null
 }
@@ -90,6 +94,8 @@ export async function updateSong(
     fontSize?: number
     paragraphSpace?: number
     titleSpace?: number
+    extraSearchable?: string
+    extraNonSearchable?: string
     spotify?: string
   },
 ) {
@@ -121,6 +127,8 @@ type Song<DT> = {
   insertedAt: DT | null
   author: string
   title: string
+  extraSearchable: string | null
+  extraNonSearchable: string | null
 }
 
 export type SongType = Song<DateTime>

@@ -156,6 +156,8 @@ type State = {
   preview: boolean
   pdfPreview: boolean
   simpleEditor: boolean
+  extraSearchable: string | null
+  extraNonSearchable: string | null
   saveStatus: SaveStatus
 }
 
@@ -194,6 +196,9 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
     titleSpace: Number.parseFloat(theState.titleSpace),
     spotify: theState.spotify || null,
 
+    extraSearchable: theState.extraSearchable,
+    extraNonSearchable: theState.extraNonSearchable,
+
     editor: propsSong.editor,
     insertedAt: propsSong.insertedAt,
     id: propsSong.id,
@@ -207,6 +212,8 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     title: props.song.title,
     textWithChords: props.song.text,
     spotify: props.song.spotify || '',
+    extraSearchable: props.song.extraSearchable,
+    extraNonSearchable: props.song.extraNonSearchable,
     fontSize: props.song.fontSize.toFixed(2),
     paragraphSpace: props.song.paragraphSpace.toFixed(2),
     titleSpace: props.song.titleSpace.toFixed(2),
@@ -247,6 +254,8 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       paragraphSpace: result.paragraphSpace,
       titleSpace: result.titleSpace,
       spotify: result.spotify || '',
+      extraSearchable: result.extraSearchable || '',
+      extraNonSearchable: result.extraNonSearchable || '',
     })
       .then(() => props.refetch())
       .then(() => {
@@ -279,12 +288,31 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   const paragraphSpaceChange = (val: string) => change({ paragraphSpace: val })
   const titleSpaceChange = (val: string) => change({ titleSpace: val })
   const spotifyChange = (val: string) => change({ spotify: val })
+  const extraSearchableChange = (val: string) =>
+    change({ extraSearchable: val })
+  const extraNonSearchableChange = (val: string) =>
+    change({ extraNonSearchable: val })
 
   const advancedChange = (value: boolean) => setState({ advanced: value })
   const simpleEditorChange = (value: boolean) =>
     setState({ simpleEditor: value })
   const previewChange = (value: boolean) => setState({ preview: value })
   const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value })
+
+  const editor = (
+    lang: 'song' | 'none',
+    value: string,
+    onChange: (v: string) => void,
+  ) =>
+    state.simpleEditor ? (
+      <Textarea value={value} onChange={onChange} />
+    ) : (
+      <SongTextEditor
+        initialValue={value}
+        onChange={onChange}
+        language={lang}
+      />
+    )
 
   return (
     <Columns number={state.preview ? 2 : 1}>
@@ -346,17 +374,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
               />
             </>
           )}
-          {state.simpleEditor ? (
-            <Textarea
-              value={state.textWithChords}
-              onChange={textWithChordsChange}
-            />
-          ) : (
-            <SongTextEditor
-              initialValue={state.textWithChords}
-              onChange={textWithChordsChange}
-            />
-          )}
+          {editor('song', state.textWithChords, textWithChordsChange)}
 
           {state.saveStatus === 'FAILED' && <button>Uložit</button>}
           <i>{translateStatus(state.saveStatus)}</i>
@@ -393,6 +411,19 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
           <br />
           <Code text={nakytarushonzou} />
+        </Help>
+        <Help title="Extra info o této písni">
+          <h3>Vyhledatelná</h3>
+          Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také dalo
+          použít při vyhledávání
+          {editor('none', state.extraSearchable || '', extraSearchableChange)}
+          <h3>NE-Vyhledatelná</h3>
+          Např: odkaz na ultimate guitar
+          {editor(
+            'none',
+            state.extraNonSearchable || '',
+            extraNonSearchableChange,
+          )}
         </Help>
       </div>
       {state.preview && (

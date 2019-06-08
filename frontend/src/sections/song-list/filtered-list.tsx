@@ -36,6 +36,10 @@ const filteredToComponents = (
       ? { header: 'Text obsahuje' }
       : null,
     ...filtered.byText.map(songItem),
+    showTitles && filtered.byExtra.length > 0
+      ? { header: 'Další související písně' }
+      : null,
+    ...filtered.byExtra.map(songItem),
   ].filter(notNull)
 }
 
@@ -112,6 +116,7 @@ export default function FilteredList({
           text: song.text,
           author: song.author,
           id: song.id,
+          extraSearchable: song.extraSearchable,
           title: song.title,
         })),
       })
@@ -127,6 +132,7 @@ export default function FilteredList({
           byTitle: songs.map(s => s.id),
           byAuthor: [],
           byText: [],
+          byExtra: [],
         },
         tag: 'short-circuit',
       })
