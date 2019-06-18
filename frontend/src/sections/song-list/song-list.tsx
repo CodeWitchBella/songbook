@@ -1,12 +1,13 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import { useMemo, useRef, PropsWithChildren } from 'react'
-import TopMenu from 'components/top-menu'
+import TopMenu, { TopMenuItem } from 'components/top-menu'
 import styled from '@emotion/styled'
 import { useSongList } from 'store/store'
 import { SongType } from 'store/store-song'
 import FilteredList from './filtered-list'
 import useRouter, { useQueryParam } from 'components/use-router'
+import { DownloadPDF } from 'components/pdf'
 
 const TheSearch = styled.div`
   font-size: 20px;
@@ -81,14 +82,12 @@ function SearchContainer({ children }: PropsWithChildren<{}>) {
 function Search({
   text,
   onChange,
-  sortByAuthor,
-  setSortByAuthor,
   children,
+  topMenu,
 }: PropsWithChildren<{
   text: string
   onChange: (v: string) => void
-  sortByAuthor: boolean
-  setSortByAuthor: (v: boolean) => void
+  topMenu: JSX.Element
 }>) {
   const ref = useRef<HTMLInputElement>(null)
   return (
@@ -123,10 +122,7 @@ function Search({
               />
               <ClearButton onClick={() => onChange('')} />
             </div>
-            <TopMenu
-              sortByAuthor={sortByAuthor}
-              setSortByAuthor={setSortByAuthor}
-            />
+            {topMenu}
           </div>
         </SearchContainer>
       </form>
@@ -200,11 +196,6 @@ const SongList = ({
     <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
       <TheSearch>
         <Search
-          sortByAuthor={sortByAuthor}
-          setSortByAuthor={(v: boolean) => {
-            console.log('Setting to ' + (v ? 'yes' : null))
-            setSortByAuthor(v ? 'yes' : null)
-          }}
           text={search || ''}
           onChange={v => {
             const { state } = router.location
@@ -225,6 +216,23 @@ const SongList = ({
               }
             }
           }}
+          topMenu={
+            <TopMenu>
+              <TopMenuItem
+                as="button"
+                onClick={() => setSortByAuthor(sortByAuthor ? null : 'yes')}
+              >
+                Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
+              </TopMenuItem>
+              <DownloadPDF list={songs}>
+                {(text, onClick) => (
+                  <TopMenuItem as="button" onClick={onClick}>
+                    {text}
+                  </TopMenuItem>
+                )}
+              </DownloadPDF>
+            </TopMenu>
+          }
         >
           {header ? (
             <div css={{ textAlign: 'center', padding: '5px 0 0 0' }}>

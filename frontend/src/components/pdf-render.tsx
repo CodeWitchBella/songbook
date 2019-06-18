@@ -1,6 +1,11 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { useContext, useState, PropsWithChildren } from 'react'
+import React, {
+  useContext,
+  useState,
+  PropsWithChildren,
+  useEffect,
+} from 'react'
 import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
 import {
   Document,
@@ -10,6 +15,7 @@ import {
   View,
   BlobProvider,
 } from '@react-pdf/renderer'
+import { saveAs } from 'file-saver'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
 import { useQueryParam } from './use-router'
@@ -28,6 +34,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 type Props = {
   song: SongType
+}
+
+export type PDFRenderMultipleSongsProps = {
+  list: SongType[]
 }
 
 const settingsCtx = React.createContext(null as null | {
@@ -379,5 +389,62 @@ export default function PDFRender({ song }: Props) {
         }
       </BlobProvider>
     </div>
+  )
+}
+
+function Save({ blob, onDone }: { blob: Blob; onDone: () => void }) {
+  useEffect(() => {
+    saveAs(blob, 'zpevnik.pdf')
+    onDone()
+  }, [blob, onDone])
+  return null
+}
+
+export function PDFDownload({
+  list,
+  onDone,
+}: PDFRenderMultipleSongsProps & { onDone: () => void }) {
+  const songPages = list
+    .map(song => ({
+      ...song,
+      pages: parseSong('my', song.text),
+    }))
+    .reduce(
+      (prev, cur) => {
+        for (const page of cur.pages) {
+          prev.push({ ...cur, page })
+        }
+        return prev
+      },
+      [] as (SongType & { page: Line[][] })[],
+    )
+
+  const size = 6
+  const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
+
+  const [footer] = useQueryParam('footer')
+  const doc = (
+    <Document>
+      {songPages.map((song, i) => (
+        <settingsCtx.Provider
+          value={{ ...song, em, percent: em / 2.54 }}
+          key={i}
+        >
+          <SongPage
+            page={song.page}
+            size={size}
+            left={i % 2 === 0}
+            title={song.title}
+            author={song.author}
+            footer={footer || ''}
+          />
+        </settingsCtx.Provider>
+      ))}
+    </Document>
+  )
+  return (
+    <BlobProvider document={doc}>
+      {({ blob }) => (!blob ? null : <Save blob={blob} onDone={onDone} />)}
+    </BlobProvider>
   )
 }

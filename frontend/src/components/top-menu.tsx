@@ -7,13 +7,7 @@ import { useLogin } from './use-login'
 import { CachedRoundImage } from './cached-round-image'
 import { useHistoryChange } from './use-router'
 
-export default function TopMenu({
-  sortByAuthor,
-  setSortByAuthor,
-}: {
-  sortByAuthor: boolean
-  setSortByAuthor: (v: boolean) => void
-}) {
+export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
     (st: { isOpen: boolean; wasOpen: boolean }, _action: null) => {
       return { isOpen: !st.isOpen, wasOpen: true }
@@ -40,18 +34,12 @@ export default function TopMenu({
       >
         <Burger />
       </button>
-      {wasOpen && (
-        <MenuContent
-          visible={isOpen}
-          sortByAuthor={sortByAuthor}
-          setSortByAuthor={setSortByAuthor}
-        />
-      )}
+      {wasOpen && <MenuContent visible={isOpen}>{children}</MenuContent>}
     </div>
   )
 }
 
-function MenuItem({
+export function TopMenuItem({
   children,
   as: As = 'button',
   to,
@@ -94,14 +82,11 @@ const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
 function MenuContent({
-  sortByAuthor,
-  setSortByAuthor,
   visible,
-}: {
-  sortByAuthor: boolean
-  setSortByAuthor: (v: boolean) => void
+  children,
+}: PropsWithChildren<{
   visible: boolean
-}) {
+}>) {
   const history = useHistoryChange()
   const login = useLogin()
   return (
@@ -137,36 +122,34 @@ function MenuContent({
               <CachedRoundImage src={login.viewer.picture} />
             </div>
 
-            <MenuItem as={Link} to="/new">
+            <TopMenuItem as={Link} to="/new">
               Přidat píseň
-            </MenuItem>
+            </TopMenuItem>
           </>
         ) : (
-          <MenuItem as="button" onClick={login.onClick} first>
+          <TopMenuItem as="button" onClick={login.onClick} first>
             Přihlásit se
-          </MenuItem>
+          </TopMenuItem>
         )}
-        <MenuItem
+        <TopMenuItem
           as="button"
           onClick={() => {
             history.push('/collections', { canGoBack: true })
           }}
         >
           Kolekce písní
-        </MenuItem>
-        <MenuItem as="a" to={googleDoc}>
+        </TopMenuItem>
+        <TopMenuItem as="a" to={googleDoc}>
           Návrhy
-        </MenuItem>
-        <MenuItem as={Link} to="/changelog">
+        </TopMenuItem>
+        <TopMenuItem as={Link} to="/changelog">
           Seznam změn
-        </MenuItem>
-        <MenuItem as="button" onClick={() => setSortByAuthor(!sortByAuthor)}>
-          Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
-        </MenuItem>
+        </TopMenuItem>
+        {children}
         {login.viewer ? (
-          <MenuItem as="button" onClick={login.logout}>
+          <TopMenuItem as="button" onClick={login.logout}>
             Odhlásit se
-          </MenuItem>
+          </TopMenuItem>
         ) : null}
       </ul>
     </div>
