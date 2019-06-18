@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from 'react'
 import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
-import {
+import ReactPDF, {
   Document,
   Page,
   Text,
@@ -69,6 +69,8 @@ Font.register({
     },
   ],
 })
+// disable hyphenation
+Font.registerHyphenationCallback(w => [w] as any)
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
   text.trim() +
@@ -189,6 +191,49 @@ function SongHeader({ title, author }: { title: string; author: string }) {
   )
 }
 
+function ThePage({
+  children,
+  left,
+  size,
+  style,
+}: PropsWithChildren<{
+  left: boolean
+  size: number
+  style?: ReactPDF.Style | ReactPDF.Style[]
+}>) {
+  const { em, percent } = useSettings()
+  return (
+    <Page
+      wrap={false}
+      style={{
+        fontFamily: 'Cantarell',
+        fontSize: em,
+        fontWeight: 'normal',
+      }}
+      size={`A${size}`}
+    >
+      <View
+        style={[
+          style,
+          {
+            height: '100%',
+            paddingTop: pageValues.margin.top * percent,
+            paddingBottom: pageValues.margin.bottom * percent,
+            paddingRight: left
+              ? pageValues.margin.inner * percent
+              : pageValues.margin.outer * percent,
+            paddingLeft: left
+              ? pageValues.margin.outer * percent
+              : pageValues.margin.inner * percent,
+          },
+        ]}
+      >
+        {children}
+      </View>
+    </Page>
+  )
+}
+
 function SongPage({
   page,
   size,
@@ -204,54 +249,33 @@ function SongPage({
   author: string
   footer: string
 }) {
-  const { em, percent, fontSize } = useSettings()
+  const { em, fontSize } = useSettings()
   return (
-    <Page
-      style={{
-        fontFamily: 'Cantarell',
-        fontSize: em,
-        fontWeight: 'normal',
-      }}
-      size={`A${size}`}
-    >
+    <ThePage left={left} size={size}>
       <View
         style={{
+          position: 'relative',
           height: '100%',
-          paddingTop: pageValues.margin.top * percent,
-          paddingBottom: pageValues.margin.bottom * percent,
-          paddingRight: left
-            ? pageValues.margin.inner * percent
-            : pageValues.margin.outer * percent,
-          paddingLeft: left
-            ? pageValues.margin.outer * percent
-            : pageValues.margin.inner * percent,
+          fontSize: fontSize * em,
         }}
       >
-        <View
-          style={{
-            position: 'relative',
-            height: '100%',
-            fontSize: fontSize * em,
-          }}
-        >
-          <SongHeader title={title} author={author} />
-          {page.map((paragraph, i2) => (
-            <ParagraphC p={paragraph} key={i2} />
-          ))}
-          {left ? null : (
-            <Text
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                textAlign: 'center',
-              }}
-            >
-              {footer}
-            </Text>
-          )}
-        </View>
+        <SongHeader title={title} author={author} />
+        {page.map((paragraph, i2) => (
+          <ParagraphC p={paragraph} key={i2} />
+        ))}
+        {left ? null : (
+          <Text
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              textAlign: 'center',
+            }}
+          >
+            {footer}
+          </Text>
+        )}
       </View>
-    </Page>
+    </ThePage>
   )
 }
 
@@ -439,27 +463,69 @@ export function PDFDownload({
 
   const doc = (
     <Document>
-      <Page>
-        <Text>Titulní strana</Text>
-      </Page>
-      {songPages.map((song, i) => (
-        <settingsCtx.Provider
-          value={{ ...song, em, percent: em / 2.54 }}
-          key={i}
+      <settingsCtx.Provider
+        value={{
+          em,
+          percent: em / 2.54,
+          fontSize: 1,
+          paragraphSpace: 1,
+          titleSpace: 1,
+        }}
+      >
+        <ThePage size={size} left={false}>
+          <Text>Titulní strana</Text>
+        </ThePage>
+        {songPages.map((song, i) => (
+          <settingsCtx.Provider
+            value={{ ...song, em, percent: em / 2.54 }}
+            key={i}
+          >
+            <SongPage
+              page={song.page}
+              size={size}
+              left={i % 2 === 0}
+              title={song.counter + '. ' + song.title}
+              author={song.author}
+              footer={footer || ''}
+            />
+          </settingsCtx.Provider>
+        ))}
+        <ThePage
+          size={size}
+          left={true}
+          style={{
+            flexDirection: 'column',
+            flexWrap: 'wrap',
+          }}
         >
-          <SongPage
-            page={song.page}
-            size={size}
-            left={i % 2 === 0}
-            title={song.counter + '. ' + song.title}
-            author={song.author}
-            footer={footer || ''}
-          />
-        </settingsCtx.Provider>
-      ))}
-      <Page>
-        <Text>Obsah</Text>
-      </Page>
+          <View
+            style={{
+              maxHeight: '100%',
+              flexDirection: 'column',
+              flexWrap: 'wrap',
+              paddingTop: 2.65 * em,
+              paddingRight: -0.2 * em,
+              paddingBottom: 1 * em,
+            }}
+          >
+            <View style={{ height: (6.7 - 2.65) * em, width: 0 }} />
+            {list.map((song, i) => (
+              <View
+                key={i}
+                style={{
+                  maxWidth: '50%',
+                  paddingBottom: 0.1 * em,
+                  paddingRight: 0.2 * em,
+                }}
+              >
+                <Text style={{ fontSize: 0.8 * em }}>
+                  {i + 1}. {song.title} {`(${song.author})`}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </ThePage>
+      </settingsCtx.Provider>
     </Document>
   )
   return (
