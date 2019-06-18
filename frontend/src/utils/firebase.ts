@@ -15,6 +15,7 @@ firebase.initializeApp({
 })
 
 const firestore = firebase.firestore()
+;(window as any).firestore = firestore
 
 export function useAutoUpdatedSong(param: { slug: string } | { id: string }) {
   const ret = useSong(param)
