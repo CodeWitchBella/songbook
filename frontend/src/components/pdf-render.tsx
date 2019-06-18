@@ -14,6 +14,7 @@ import ReactPDF, {
   Font,
   View,
   BlobProvider,
+  Image,
 } from '@react-pdf/renderer'
 import { saveAs } from 'file-saver'
 import Cantarell from 'webfonts/cantarell-regular.woff'
@@ -27,6 +28,7 @@ import {
 } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
+import image from './cross.png'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -424,11 +426,41 @@ function Save({ blob, onDone }: { blob: Blob; onDone: () => void }) {
   return null
 }
 
+function TitlePage({ size }: { size: number }) {
+  const { em } = useSettings()
+  return (
+    <ThePage size={size} left={false}>
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 30 * em,
+        }}
+      >
+        <Image src={image} style={{ width: 15 * em }} />
+      </View>
+      <View
+        style={{
+          flexGrow: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <View style={{ paddingBottom: 1.5 * em }}>
+          <Text style={{ fontSize: 3 * em }}>Rituální zpěvy</Text>
+        </View>
+        <View>
+          <Text style={{ fontSize: 2 * em }}>Deadpine 2019</Text>
+        </View>
+      </View>
+    </ThePage>
+  )
+}
+
 export function PDFDownload({
   list,
   onDone,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
-  const [footer] = useQueryParam('footer')
   const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
   const delayedPages = [] as (typeof songPages)
   let songCounter = 0
@@ -472,9 +504,7 @@ export function PDFDownload({
           titleSpace: 1,
         }}
       >
-        <ThePage size={size} left={false}>
-          <Text>Titulní strana</Text>
-        </ThePage>
+        <TitlePage size={size} />
         {songPages.map((song, i) => (
           <settingsCtx.Provider
             value={{ ...song, em, percent: em / 2.54 }}
@@ -486,7 +516,7 @@ export function PDFDownload({
               left={i % 2 === 0}
               title={song.counter + '. ' + song.title}
               author={song.author}
-              footer={footer || ''}
+              footer="Deadpine 2019"
             />
           </settingsCtx.Provider>
         ))}
