@@ -11,6 +11,7 @@ const Changelog = () => (
           <li>Dvojstrany se generují tak aby obě stránky byly vedle sebe</li>
         </ul>
       </li>
+      <li>Opraven PDF export písní obsahujících podtržítkové akordy</li>
     </Entry>
     <Entry date="2019-06-09">
       <li>

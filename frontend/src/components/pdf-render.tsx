@@ -95,14 +95,14 @@ function ChordLine({ l }: { l: Line }) {
           <View style={{ width: 0 }} key={i}>
             <View style={{ width: 100 * percent }}>
               <Text>
-                <Text
-                  style={{
-                    opacity: 0,
-                    ...lineStyle,
-                  }}
-                >
+                <Text style={{ opacity: 0, ...lineStyle }}>
                   {l.content.slice(0, i).map((t, i2) => (
-                    <Text key={i2}>{t.text}</Text>
+                    <Text key={i2}>
+                      {t.text}
+                      {t.ch && t.ch.startsWith('_')
+                        ? t.ch.replace('_', '')
+                        : ''}
+                    </Text>
                   ))}
                 </Text>
                 <Text style={{ fontWeight: 'bold' }}>
