@@ -4,6 +4,9 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-06-18">
+      <li>Přidána možnost stáhnout celou kolekci jako PDF</li>
+    </Entry>
     <Entry date="2019-06-09">
       <li>
         Nyní je možné k písni uložit extra informace
