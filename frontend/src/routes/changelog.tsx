@@ -12,6 +12,7 @@ const Changelog = () => (
         </ul>
       </li>
       <li>Opraven PDF export písní obsahujících podtržítkové akordy</li>
+      <li>Opraven export písní s přenastavenou velikostí písma</li>
     </Entry>
     <Entry date="2019-06-09">
       <li>

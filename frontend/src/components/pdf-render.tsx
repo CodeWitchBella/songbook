@@ -87,9 +87,11 @@ const lineStyle = {
 }
 
 function ChordLine({ l }: { l: Line }) {
-  const { em, percent } = useSettings()
+  const { em, percent, fontSize } = useSettings()
   return (
-    <View style={{ width: 0, height: 2.3 * em, flexDirection: 'row' }}>
+    <View
+      style={{ width: 0, height: fontSize * 2.3 * em, flexDirection: 'row' }}
+    >
       {l.content
         .map((cur, i) => (
           <View style={{ width: 0 }} key={i}>
@@ -119,13 +121,13 @@ function ChordLine({ l }: { l: Line }) {
 }
 
 function LineC({ l }: { l: Line }) {
-  const { em } = useSettings()
+  const { em, fontSize } = useSettings()
   return (
     <View
       style={{
         flexDirection: 'row',
         alignItems: 'flex-end',
-        height: hasChord(l) ? 2.3 * em : 'auto',
+        height: hasChord(l) ? fontSize * 2.3 * em : 'auto',
       }}
     >
       {l.tag ? <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text> : null}
@@ -271,6 +273,7 @@ function SongPage({
               position: 'absolute',
               bottom: 0,
               textAlign: 'center',
+              fontSize: em,
             }}
           >
             {footer}
