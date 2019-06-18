@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, Suspense, useEffect } from 'react'
 import { PDFRenderMultipleSongsProps } from './pdf-render'
 
 const PDF = React.lazy(() =>
@@ -14,6 +14,16 @@ const PDFDownload = React.lazy(() =>
   ),
 )
 
+function useDelayed<T>(v: T): T {
+  const [state, setState] = useState(v)
+  useEffect(() => {
+    setImmediate(() => {
+      setState(v)
+    })
+  }, [v])
+  return state
+}
+
 export function DownloadPDF({
   children,
   ...props
@@ -26,8 +36,8 @@ export function DownloadPDF({
   const onDone = useCallback(() => setStatus('generated'), [])
 
   return (
-    <>
-      {status === 'generating' ? (
+    <Suspense fallback={children('Načítám generátor...', () => {})}>
+      {useDelayed(status) === 'generating' ? (
         <PDFDownload {...props} onDone={onDone} />
       ) : null}
       {children(
@@ -39,10 +49,10 @@ export function DownloadPDF({
           ? 'Nastala chyba'
           : 'Hotovo!',
         () => {
-          if (status !== 'idle' && status !== 'error') return
+          if (status === 'generating') return
           setStatus('generating')
         },
       )}
-    </>
+    </Suspense>
   )
 }
