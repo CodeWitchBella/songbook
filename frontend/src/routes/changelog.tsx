@@ -5,7 +5,12 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-06-18">
-      <li>Přidána možnost stáhnout celou kolekci jako PDF</li>
+      <li>
+        Přidána možnost stáhnout celou kolekci jako PDF
+        <ul>
+          <li>Dvojstrany se generují tak aby obě stránky byly vedle sebe</li>
+        </ul>
+      </li>
     </Entry>
     <Entry date="2019-06-09">
       <li>

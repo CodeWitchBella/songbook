@@ -404,27 +404,44 @@ export function PDFDownload({
   list,
   onDone,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
-  const songPages = list
-    .map(song => ({
-      ...song,
-      pages: parseSong('my', song.text),
-    }))
-    .reduce(
-      (prev, cur) => {
-        for (const page of cur.pages) {
-          prev.push({ ...cur, page })
-        }
-        return prev
-      },
-      [] as (SongType & { page: Line[][] })[],
-    )
+  const [footer] = useQueryParam('footer')
+  const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
+  const delayedPages = [] as (typeof songPages)
+  let songCounter = 0
+  for (const song of list) {
+    songCounter += 1
+    const pages = parseSong('my', song.text)
+    let pageCounter = 0
+    const thisSongPages = [] as (typeof songPages)
+    for (const page of pages) {
+      pageCounter += 1
+      thisSongPages.push({
+        ...song,
+        page,
+        counter: songCounter,
+        title:
+          pages.length > 1
+            ? `${song.title} (${pageCounter}/${pages.length})`
+            : song.title,
+      })
+    }
+    if (thisSongPages.length === 2 && songPages.length % 2 === 1) {
+      delayedPages.push(...thisSongPages)
+    } else {
+      songPages.push(...thisSongPages)
+    }
+    if (songPages.length % 2 === 0) songPages.push(...delayedPages.splice(0))
+  }
+  songPages.push(...delayedPages.splice(0))
 
   const size = 6
   const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
 
-  const [footer] = useQueryParam('footer')
   const doc = (
     <Document>
+      <Page>
+        <Text>Titulní strana</Text>
+      </Page>
       {songPages.map((song, i) => (
         <settingsCtx.Provider
           value={{ ...song, em, percent: em / 2.54 }}
@@ -434,12 +451,15 @@ export function PDFDownload({
             page={song.page}
             size={size}
             left={i % 2 === 0}
-            title={song.title}
+            title={song.counter + '. ' + song.title}
             author={song.author}
             footer={footer || ''}
           />
         </settingsCtx.Provider>
       ))}
+      <Page>
+        <Text>Obsah</Text>
+      </Page>
     </Document>
   )
   return (
