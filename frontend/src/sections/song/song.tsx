@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
@@ -55,8 +55,14 @@ export default function SongSection({
 }) {
   const { song } = useAutoUpdatedSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
-  if (!song) return null
-  console.log('song id:', song.id)
+  const parsed = song ? parser.parseSong('my', song.text) : null
+
+  const pageCount = parsed && parsed.length
+  useEffect(() => {
+    if (song)
+      console.log('song id:', song.id, 'title:', song.title, `(${pageCount})`)
+  }, [pageCount, song])
+  if (!song || !parsed) return null
 
   return (
     <Route>
