@@ -426,15 +426,17 @@ function Save({
   blob,
   onDone,
   slug,
+  size,
 }: {
   blob: Blob
   onDone: () => void
   slug: string | null
+  size: number
 }) {
   useEffect(() => {
-    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}.pdf`)
+    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}-a${size}.pdf`)
     onDone()
-  }, [blob, onDone, slug])
+  }, [blob, onDone, size, slug])
   return null
 }
 
@@ -574,7 +576,9 @@ export function PDFDownload({
   return (
     <BlobProvider document={doc}>
       {({ blob }) =>
-        !blob ? null : <Save blob={blob} onDone={onDone} slug={slug} />
+        !blob ? null : (
+          <Save blob={blob} onDone={onDone} slug={slug} size={size} />
+        )
       }
     </BlobProvider>
   )
