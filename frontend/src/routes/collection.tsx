@@ -44,6 +44,7 @@ const Collection = ({ slug }: { slug: string }) => {
             ? (collection.owner.handle || collection.owner.name) + ' > '
             : '') + collection.name
         }
+        slug={collection.slug}
       />
       <InstallButtonLook />
     </div>

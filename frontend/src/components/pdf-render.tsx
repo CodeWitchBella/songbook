@@ -40,6 +40,7 @@ type Props = {
 
 export type PDFRenderMultipleSongsProps = {
   list: SongType[]
+  slug: string | null
 }
 
 const settingsCtx = React.createContext(null as null | {
@@ -421,11 +422,19 @@ export default function PDFRender({ song }: Props) {
   )
 }
 
-function Save({ blob, onDone }: { blob: Blob; onDone: () => void }) {
+function Save({
+  blob,
+  onDone,
+  slug,
+}: {
+  blob: Blob
+  onDone: () => void
+  slug: string | null
+}) {
   useEffect(() => {
-    saveAs(blob, 'zpevnik.pdf')
+    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}.pdf`)
     onDone()
-  }, [blob, onDone])
+  }, [blob, onDone, slug])
   return null
 }
 
@@ -463,6 +472,7 @@ function TitlePage({ size }: { size: number }) {
 export function PDFDownload({
   list,
   onDone,
+  slug,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
   const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
   const delayedPages = [] as (typeof songPages)
@@ -563,7 +573,9 @@ export function PDFDownload({
   )
   return (
     <BlobProvider document={doc}>
-      {({ blob }) => (!blob ? null : <Save blob={blob} onDone={onDone} />)}
+      {({ blob }) =>
+        !blob ? null : <Save blob={blob} onDone={onDone} slug={slug} />
+      }
     </BlobProvider>
   )
 }

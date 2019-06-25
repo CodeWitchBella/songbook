@@ -6,7 +6,7 @@ import { InstallButtonLook } from 'components/install'
 
 const Home = () => (
   <div css={{ height: '100%' }}>
-    <SongList />
+    <SongList slug={null} />
     <InstallButtonLook />
   </div>
 )
