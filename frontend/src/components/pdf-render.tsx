@@ -29,6 +29,7 @@ import {
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
 import image from './cross.png'
+import { DateTime } from 'luxon'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -41,6 +42,7 @@ type Props = {
 export type PDFRenderMultipleSongsProps = {
   list: SongType[]
   slug: string | null
+  title: string
 }
 
 const settingsCtx = React.createContext(null as null | {
@@ -440,7 +442,7 @@ function Save({
   return null
 }
 
-function TitlePage({ size }: { size: number }) {
+function TitlePage({ size, title }: { size: number; title: string }) {
   const { em } = useSettings()
   return (
     <ThePage size={size} left={false}>
@@ -451,7 +453,7 @@ function TitlePage({ size }: { size: number }) {
           height: 30 * em,
         }}
       >
-        <Image src={image} style={{ width: 15 * em }} />
+        <Image src={image} style={{ width: 20 * em }} />
       </View>
       <View
         style={{
@@ -461,10 +463,12 @@ function TitlePage({ size }: { size: number }) {
         }}
       >
         <View style={{ paddingBottom: 1.5 * em }}>
-          <Text style={{ fontSize: 3 * em }}>Rituální zpěvy</Text>
+          <Text style={{ fontSize: 3 * em }}>{title}</Text>
         </View>
         <View>
-          <Text style={{ fontSize: 2 * em }}>Deadpine 2019</Text>
+          <Text style={{ fontSize: 2 * em }}>
+            {DateTime.local().toFormat('d. M. yyyy')}
+          </Text>
         </View>
       </View>
     </ThePage>
@@ -475,6 +479,7 @@ export function PDFDownload({
   list,
   onDone,
   slug,
+  title,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
   const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
   const delayedPages = [] as (typeof songPages)
@@ -519,7 +524,7 @@ export function PDFDownload({
           titleSpace: 1,
         }}
       >
-        <TitlePage size={size} />
+        <TitlePage size={size} title={title} />
         {songPages.map((song, i) => (
           <settingsCtx.Provider
             value={{ ...song, em, percent: em / 2.54 }}
@@ -531,7 +536,7 @@ export function PDFDownload({
               left={i % 2 === 0}
               title={song.counter + '. ' + song.title}
               author={song.author}
-              footer="Deadpine 2019"
+              footer="zpevnik.skorepova.info"
             />
           </settingsCtx.Provider>
         ))}

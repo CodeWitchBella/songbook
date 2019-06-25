@@ -168,11 +168,13 @@ const SongList = ({
   showPrint,
   header,
   slug,
+  title,
 }: {
   filter?: (id: string) => boolean
   showPrint?: boolean
   header?: string
   slug: string | null
+  title: string | null
 }) => {
   const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
@@ -226,7 +228,7 @@ const SongList = ({
               >
                 Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
               </TopMenuItem>
-              <DownloadPDF list={songs} slug={slug}>
+              <DownloadPDF list={songs} slug={slug} title={title || 'Zpěvník'}>
                 {(text, onClick) => (
                   <TopMenuItem as="button" onClick={onClick}>
                     {text}

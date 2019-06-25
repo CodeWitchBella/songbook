@@ -45,6 +45,7 @@ const Collection = ({ slug }: { slug: string }) => {
             : '') + collection.name
         }
         slug={collection.slug}
+        title={collection.name}
       />
       <InstallButtonLook />
     </div>
