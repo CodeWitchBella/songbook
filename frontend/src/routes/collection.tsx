@@ -6,7 +6,7 @@ import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
 import { useMemo } from 'react'
 
-const Collection = ({ slug }: { slug: string }) => {
+function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })
   const songList = collection ? collection.songList : []
   const set = useMemo(() => {
@@ -14,6 +14,12 @@ const Collection = ({ slug }: { slug: string }) => {
     for (const id of songList) v.add(id)
     return v
   }, [songList])
+  if (!collection) return null
+  return { set, ...collection }
+}
+
+const Collection = ({ slug }: { slug: string }) => {
+  const collection = useColectionWithSet(slug)
   if (!collection)
     return (
       <div
@@ -32,7 +38,7 @@ const Collection = ({ slug }: { slug: string }) => {
   return (
     <div css={{ height: '100%' }}>
       <SongList
-        filter={id => set.has(id)}
+        filter={id => collection.set.has(id)}
         header={
           (collection.slug.includes('/')
             ? (collection.owner.handle || collection.owner.name) + ' > '
