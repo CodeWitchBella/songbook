@@ -1,21 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import { useState, PropsWithChildren, useEffect } from 'react'
-import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
-import ReactPDF, {
-  Document,
-  Page,
-  Text,
-  Font,
-  View,
-  BlobProvider,
-  Image,
-} from '@react-pdf/renderer'
+import { Line, parseSong } from 'utils/song-parser/song-parser'
+import { Document, Text, Font, View, BlobProvider } from '@react-pdf/renderer'
 import { saveAs } from 'file-saver'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
 import { useQueryParam } from '../use-router'
-import { notNull } from '@codewitchbella/ts-utils'
 import {
   pdfjs,
   Document as ReactPDFDocument,
@@ -23,13 +14,10 @@ import {
 } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
-import image from './cross.png'
-import { DateTime } from 'luxon'
-import {
-  usePDFSettings,
-  PDFSettingsProvider,
-  PDFSettingsProviderMerge,
-} from './pdf-settings'
+import { PDFSettingsProvider, PDFSettingsProviderMerge } from './pdf-settings'
+import { PDFPage } from './pdf-page'
+import { PDFSongPage } from './pdf-song-page'
+import { PDFTitlePage } from './pdf-title-page'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -63,217 +51,6 @@ Font.register({
 })
 // disable hyphenation
 Font.registerHyphenationCallback(w => [w] as any)
-
-const nbsp = (text: string) =>
-  '\u00A0'.repeat(text.length - text.trimLeft().length) +
-  text.trim() +
-  '\u00A0'.repeat(text.length - text.trimRight().length)
-
-const hasChord = (l: Line) => l.content.some(el => !!el.ch)
-
-const lineStyle = {
-  verticalAlign: 'baseline',
-  alignItems: 'flex-end',
-  flexDirection: 'row',
-}
-
-function ChordLine({ l }: { l: Line }) {
-  const { em, percent, fontSize } = usePDFSettings()
-  return (
-    <View
-      style={{ width: 0, height: fontSize * 2.3 * em, flexDirection: 'row' }}
-    >
-      {l.content
-        .map((cur, i) => (
-          <View style={{ width: 0 }} key={i}>
-            <View style={{ width: 100 * percent }}>
-              <Text>
-                <Text style={{ opacity: 0, ...lineStyle }}>
-                  {l.content.slice(0, i).map((t, i2) => (
-                    <Text key={i2}>
-                      {t.text}
-                      {t.ch && t.ch.startsWith('_')
-                        ? t.ch.replace('_', '')
-                        : ''}
-                    </Text>
-                  ))}
-                </Text>
-                <Text style={{ fontWeight: 'bold' }}>
-                  {cur.ch.replace(/^_/, '')}
-                </Text>
-              </Text>
-            </View>
-          </View>
-        ))
-        .filter(notNull)}
-      <Text style={{ fontWeight: 'bold' }} />
-    </View>
-  )
-}
-
-function LineC({ l }: { l: Line }) {
-  const { em, fontSize } = usePDFSettings()
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        height: hasChord(l) ? fontSize * 2.3 * em : 'auto',
-      }}
-    >
-      {l.tag ? <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text> : null}
-      {hasChord(l) ? <ChordLine l={l} /> : null}
-
-      <Text style={lineStyle}>
-        {l.content
-          .map((c, i) => [
-            c.ch && c.ch.startsWith('_') ? (
-              <Text key={i * 2} style={{ opacity: 0 }}>
-                {c.ch.replace(/^_/, '')}
-              </Text>
-            ) : null,
-            c.text ? <Text key={i * 2 + 1}>{nbsp(c.text)}</Text> : null,
-          ])
-          .filter(notNull)}
-      </Text>
-    </View>
-  )
-}
-
-const ParagraphC = ({ p }: { p: Paragraph }) => {
-  const settings = usePDFSettings()
-  return (
-    <>
-      {p.map((line, i) => (
-        <LineC l={line} key={i} />
-      ))}
-      <View style={{ height: settings.paragraphSpace * settings.em }} />
-    </>
-  )
-}
-
-const pageValues = {
-  width: 105,
-  height: 148,
-
-  margin: {
-    top: (7.8 / 148) * 100,
-    bottom: (6 / 148) * 100,
-    outer: (12.4 / 105) * 100,
-    inner: (18.8 / 105) * 100,
-  },
-  innerRatio: (105 - 12.4 - 18.8) / (148 - 6 - 7.8),
-}
-
-const header = (titleSpace: number, em: number) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  fontWeight: 'bold',
-  justifyContent: 'space-between',
-  fontSize: 1.2 * em,
-  paddingBottom: titleSpace * 1.75 * em,
-  margin: 0,
-  marginTop: 0.75 * em,
-})
-
-function SongHeader({ title, author }: { title: string; author: string }) {
-  const { em, titleSpace } = usePDFSettings()
-  return (
-    <View style={header(titleSpace, em)}>
-      <Text>{title}</Text>
-      <Text>{author}</Text>
-    </View>
-  )
-}
-
-function ThePage({
-  children,
-  left,
-  size,
-  style,
-}: PropsWithChildren<{
-  left: boolean
-  size: number
-  style?: ReactPDF.Style | ReactPDF.Style[]
-}>) {
-  const { em, percent } = usePDFSettings()
-  return (
-    <Page
-      wrap={false}
-      style={{
-        fontFamily: 'Cantarell',
-        fontSize: em,
-        fontWeight: 'normal',
-      }}
-      size={`A${size}`}
-    >
-      <View
-        style={[
-          style,
-          {
-            height: '100%',
-            paddingTop: pageValues.margin.top * percent,
-            paddingBottom: pageValues.margin.bottom * percent,
-            paddingRight: left
-              ? pageValues.margin.inner * percent
-              : pageValues.margin.outer * percent,
-            paddingLeft: left
-              ? pageValues.margin.outer * percent
-              : pageValues.margin.inner * percent,
-          },
-        ]}
-      >
-        {children}
-      </View>
-    </Page>
-  )
-}
-
-function SongPage({
-  page,
-  size,
-  left,
-  title,
-  author,
-  footer,
-}: {
-  page: Line[][]
-  size: number
-  left: boolean
-  title: string
-  author: string
-  footer: string
-}) {
-  const { em, fontSize } = usePDFSettings()
-  return (
-    <ThePage left={left} size={size}>
-      <View
-        style={{
-          position: 'relative',
-          height: '100%',
-          fontSize: fontSize * em,
-        }}
-      >
-        <SongHeader title={title} author={author} />
-        {page.map((paragraph, i2) => (
-          <ParagraphC p={paragraph} key={i2} />
-        ))}
-        {left ? null : (
-          <Text
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              textAlign: 'center',
-              fontSize: em,
-            }}
-          >
-            {footer}
-          </Text>
-        )}
-      </View>
-    </ThePage>
-  )
-}
 
 function PlusMinus({
   onClick,
@@ -367,7 +144,7 @@ export default function PDFRender({ song }: Props) {
     <Document>
       <PDFSettingsProvider value={{ ...song, em }}>
         {pages.map((page, i) => (
-          <SongPage
+          <PDFSongPage
             key={i}
             page={page}
             size={size}
@@ -430,39 +207,6 @@ function Save({
   return null
 }
 
-function TitlePage({ size, title }: { size: number; title: string }) {
-  const { em } = usePDFSettings()
-  return (
-    <ThePage size={size} left={false}>
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: 30 * em,
-        }}
-      >
-        <Image src={image} style={{ width: 20 * em }} />
-      </View>
-      <View
-        style={{
-          flexGrow: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <View style={{ paddingBottom: 1.5 * em }}>
-          <Text style={{ fontSize: 3 * em }}>{title}</Text>
-        </View>
-        <View>
-          <Text style={{ fontSize: 2 * em }}>
-            {DateTime.local().toFormat('d. M. yyyy')}
-          </Text>
-        </View>
-      </View>
-    </ThePage>
-  )
-}
-
 export function PDFDownload({
   list,
   onDone,
@@ -511,10 +255,10 @@ export function PDFDownload({
           titleSpace: 1,
         }}
       >
-        <TitlePage size={size} title={title} />
+        <PDFTitlePage size={size} title={title} />
         {songPages.map((song, i) => (
           <PDFSettingsProviderMerge value={song} key={i}>
-            <SongPage
+            <PDFSongPage
               page={song.page}
               size={size}
               left={i % 2 === 0}
@@ -524,7 +268,7 @@ export function PDFDownload({
             />
           </PDFSettingsProviderMerge>
         ))}
-        <ThePage
+        <PDFPage
           size={size}
           left={true}
           style={{
@@ -558,7 +302,7 @@ export function PDFDownload({
               </View>
             ))}
           </View>
-        </ThePage>
+        </PDFPage>
       </PDFSettingsProvider>
     </Document>
   )
