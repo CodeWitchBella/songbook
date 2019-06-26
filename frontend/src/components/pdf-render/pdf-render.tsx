@@ -17,6 +17,7 @@ import { SongType } from 'store/store-song'
 import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
+import { PDFToc } from './pdf-toc'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -263,6 +264,7 @@ export function PDFDownload({
             />
           </PDFSettingsProvider>
         ))}
+        <PDFToc list={list} />
       </PDFSettingsProvider>
     </Document>
   )
