@@ -116,14 +116,12 @@ function SongHeader({ title, author }: { title: string; author: string }) {
 
 export function PDFSongPage({
   page,
-  size,
   left,
   title,
   author,
   footer,
 }: {
   page: Line[][]
-  size: number
   left: boolean
   title: string
   author: string
@@ -131,7 +129,7 @@ export function PDFSongPage({
 }) {
   const { em, fontSize } = usePDFSettings()
   return (
-    <PDFPage left={left} size={size}>
+    <PDFPage left={left}>
       <View
         style={{
           position: 'relative',

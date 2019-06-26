@@ -5,10 +5,10 @@ import { DateTime } from 'luxon'
 import { PDFPage } from './pdf-page'
 import image from './cross.png'
 
-export function PDFTitlePage({ size, title }: { size: number; title: string }) {
+export function PDFTitlePage({ title }: { title: string }) {
   const { em } = usePDFSettings()
   return (
-    <PDFPage size={size} left={false}>
+    <PDFPage left={false}>
       <View
         style={{
           alignItems: 'center',

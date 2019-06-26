@@ -2,7 +2,7 @@
 import { jsx } from '@emotion/core'
 import { useState, PropsWithChildren, useEffect } from 'react'
 import { Line, parseSong } from 'utils/song-parser/song-parser'
-import { Document, Text, Font, View, BlobProvider } from '@react-pdf/renderer'
+import { Document, Font, BlobProvider } from '@react-pdf/renderer'
 import { saveAs } from 'file-saver'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
@@ -14,8 +14,7 @@ import {
 } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
-import { PDFSettingsProvider, PDFSettingsProviderMerge } from './pdf-settings'
-import { PDFPage } from './pdf-page'
+import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
 
@@ -146,7 +145,6 @@ export default function PDFRender({ song }: Props) {
           <PDFSongPage
             key={i}
             page={page}
-            size={pageSize}
             left={i % 2 === 0}
             title={song.title}
             author={song.author}
@@ -253,18 +251,17 @@ export function PDFDownload({
           pageSize: pageSize,
         }}
       >
-        <PDFTitlePage size={pageSize} title={title} />
+        <PDFTitlePage title={title} />
         {songPages.map((song, i) => (
-          <PDFSettingsProviderMerge value={song} key={i}>
+          <PDFSettingsProvider value={song} key={i}>
             <PDFSongPage
               page={song.page}
-              size={pageSize}
               left={i % 2 === 0}
               title={song.counter + '. ' + song.title}
               author={song.author}
               footer="zpevnik.skorepova.info"
             />
-          </PDFSettingsProviderMerge>
+          </PDFSettingsProvider>
         ))}
       </PDFSettingsProvider>
     </Document>
