@@ -108,7 +108,7 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
             <View
               style={{
                 borderBottomWidth: 0.1,
-                borderStyle: 'solid',
+                borderStyle: 'dashed',
                 borderColor: 'gray',
               }}
             />
