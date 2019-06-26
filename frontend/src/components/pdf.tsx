@@ -1,17 +1,19 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { useState, useCallback, Suspense, useEffect } from 'react'
-import { PDFRenderMultipleSongsProps } from './pdf-render'
+import { PDFRenderMultipleSongsProps } from './pdf-render/pdf-render'
 
 const PDF = React.lazy(() =>
-  import(/* webpackChunkName: "components_pdf-render" */ './pdf-render'),
+  import(
+    /* webpackChunkName: "components_pdf-render" */ './pdf-render/pdf-render'
+  ),
 )
 export default PDF
 
 const PDFDownload = React.lazy(() =>
-  import(/* webpackChunkName: "components_pdf-render" */ './pdf-render').then(
-    v => ({ default: v.PDFDownload }),
-  ),
+  import(
+    /* webpackChunkName: "components_pdf-render" */ './pdf-render/pdf-render'
+  ).then(v => ({ default: v.PDFDownload })),
 )
 
 function useDelayed<T>(v: T): T {

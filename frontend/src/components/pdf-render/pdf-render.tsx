@@ -1,11 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, {
-  useContext,
-  useState,
-  PropsWithChildren,
-  useEffect,
-} from 'react'
+import { useState, PropsWithChildren, useEffect } from 'react'
 import { Paragraph, Line, parseSong } from 'utils/song-parser/song-parser'
 import ReactPDF, {
   Document,
@@ -19,7 +14,7 @@ import ReactPDF, {
 import { saveAs } from 'file-saver'
 import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
-import { useQueryParam } from './use-router'
+import { useQueryParam } from '../use-router'
 import { notNull } from '@codewitchbella/ts-utils'
 import {
   pdfjs,
@@ -30,6 +25,11 @@ import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
 import image from './cross.png'
 import { DateTime } from 'luxon'
+import {
+  usePDFSettings,
+  PDFSettingsProvider,
+  PDFSettingsProviderMerge,
+} from './pdf-settings'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -43,19 +43,6 @@ export type PDFRenderMultipleSongsProps = {
   list: SongType[]
   slug: string | null
   title: string
-}
-
-const settingsCtx = React.createContext(null as null | {
-  em: number
-  fontSize: number
-  paragraphSpace: number
-  titleSpace: number
-  percent: number
-})
-function useSettings() {
-  const ret = useContext(settingsCtx)
-  if (!ret) throw new Error('Unknown em')
-  return ret
 }
 
 Font.register({
@@ -76,6 +63,7 @@ Font.register({
 })
 // disable hyphenation
 Font.registerHyphenationCallback(w => [w] as any)
+
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
   text.trim() +
@@ -90,7 +78,7 @@ const lineStyle = {
 }
 
 function ChordLine({ l }: { l: Line }) {
-  const { em, percent, fontSize } = useSettings()
+  const { em, percent, fontSize } = usePDFSettings()
   return (
     <View
       style={{ width: 0, height: fontSize * 2.3 * em, flexDirection: 'row' }}
@@ -124,7 +112,7 @@ function ChordLine({ l }: { l: Line }) {
 }
 
 function LineC({ l }: { l: Line }) {
-  const { em, fontSize } = useSettings()
+  const { em, fontSize } = usePDFSettings()
   return (
     <View
       style={{
@@ -153,7 +141,7 @@ function LineC({ l }: { l: Line }) {
 }
 
 const ParagraphC = ({ p }: { p: Paragraph }) => {
-  const settings = useSettings()
+  const settings = usePDFSettings()
   return (
     <>
       {p.map((line, i) => (
@@ -189,7 +177,7 @@ const header = (titleSpace: number, em: number) => ({
 })
 
 function SongHeader({ title, author }: { title: string; author: string }) {
-  const { em, titleSpace } = useSettings()
+  const { em, titleSpace } = usePDFSettings()
   return (
     <View style={header(titleSpace, em)}>
       <Text>{title}</Text>
@@ -208,7 +196,7 @@ function ThePage({
   size: number
   style?: ReactPDF.Style | ReactPDF.Style[]
 }>) {
-  const { em, percent } = useSettings()
+  const { em, percent } = usePDFSettings()
   return (
     <Page
       wrap={false}
@@ -256,7 +244,7 @@ function SongPage({
   author: string
   footer: string
 }) {
-  const { em, fontSize } = useSettings()
+  const { em, fontSize } = usePDFSettings()
   return (
     <ThePage left={left} size={size}>
       <View
@@ -377,7 +365,7 @@ export default function PDFRender({ song }: Props) {
 
   const doc = (
     <Document>
-      <settingsCtx.Provider value={{ ...song, em, percent: em / 2.54 }}>
+      <PDFSettingsProvider value={{ ...song, em }}>
         {pages.map((page, i) => (
           <SongPage
             key={i}
@@ -389,7 +377,7 @@ export default function PDFRender({ song }: Props) {
             footer={footer || ''}
           />
         ))}
-      </settingsCtx.Provider>
+      </PDFSettingsProvider>
     </Document>
   )
 
@@ -443,7 +431,7 @@ function Save({
 }
 
 function TitlePage({ size, title }: { size: number; title: string }) {
-  const { em } = useSettings()
+  const { em } = usePDFSettings()
   return (
     <ThePage size={size} left={false}>
       <View
@@ -515,10 +503,9 @@ export function PDFDownload({
 
   const doc = (
     <Document>
-      <settingsCtx.Provider
+      <PDFSettingsProvider
         value={{
           em,
-          percent: em / 2.54,
           fontSize: 1,
           paragraphSpace: 1,
           titleSpace: 1,
@@ -526,10 +513,7 @@ export function PDFDownload({
       >
         <TitlePage size={size} title={title} />
         {songPages.map((song, i) => (
-          <settingsCtx.Provider
-            value={{ ...song, em, percent: em / 2.54 }}
-            key={i}
-          >
+          <PDFSettingsProviderMerge value={song} key={i}>
             <SongPage
               page={song.page}
               size={size}
@@ -538,7 +522,7 @@ export function PDFDownload({
               author={song.author}
               footer="zpevnik.skorepova.info"
             />
-          </settingsCtx.Provider>
+          </PDFSettingsProviderMerge>
         ))}
         <ThePage
           size={size}
@@ -575,7 +559,7 @@ export function PDFDownload({
             ))}
           </View>
         </ThePage>
-      </settingsCtx.Provider>
+      </PDFSettingsProvider>
     </Document>
   )
   return (
