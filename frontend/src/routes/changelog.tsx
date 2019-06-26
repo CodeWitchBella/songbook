@@ -4,6 +4,15 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-06-26">
+      <li>
+        Umožněno generování A4 PDF pro tisk A6 zpěvníků (po rozstříhnutí
+        vzniknou 2 A6 zpěvníky)
+        <ul>
+          <li>Pokud ho chceš vygenerovat tak za url přidej ?booklet</li>
+        </ul>
+      </li>
+    </Entry>
     <Entry date="2019-06-18">
       <li>
         Přidána možnost stáhnout celou kolekci jako PDF

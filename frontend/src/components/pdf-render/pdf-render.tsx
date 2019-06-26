@@ -18,6 +18,7 @@ import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
 import { PDFToc } from './pdf-toc'
+import { PDFBooklet } from './pdf-page'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
   pdfjs.version
@@ -191,17 +192,15 @@ function Save({
   blob,
   onDone,
   slug,
-  size,
 }: {
   blob: Blob
   onDone: () => void
   slug: string | null
-  size: number
 }) {
   useEffect(() => {
-    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}-a${size}.pdf`)
+    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}.pdf`)
     onDone()
-  }, [blob, onDone, size, slug])
+  }, [blob, onDone, slug])
   return null
 }
 
@@ -214,6 +213,9 @@ export function PDFDownload({
   const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
   const delayedPages = [] as (typeof songPages)
   let songCounter = 0
+  const [bookletV] = useQueryParam('booklet')
+  const booklet = bookletV !== null
+
   for (const song of list) {
     songCounter += 1
     const pages = parseSong('my', song.text)
@@ -268,7 +270,7 @@ export function PDFDownload({
           pageSize: pageSize,
         }}
       >
-        {pages}
+        {booklet ? <PDFBooklet pages={pages} /> : pages}
       </PDFSettingsProvider>
     </Document>
   )
@@ -276,7 +278,13 @@ export function PDFDownload({
     <BlobProvider document={doc}>
       {({ blob }) =>
         !blob ? null : (
-          <Save blob={blob} onDone={onDone} slug={slug} size={pageSize} />
+          <Save
+            blob={blob}
+            onDone={onDone}
+            slug={
+              slug + (booklet ? `-booklet-a${pageSize - 2}` : `-a${pageSize}`)
+            }
+          />
         )
       }
     </BlobProvider>
