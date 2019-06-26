@@ -18,14 +18,12 @@ const pageValues = {
 export function PDFPage({
   children,
   left,
-  size,
   style,
 }: PropsWithChildren<{
   left: boolean
-  size: number
   style?: ReactPDF.Style | ReactPDF.Style[]
 }>) {
-  const { em, percent } = usePDFSettings()
+  const { em, percent, pageSize } = usePDFSettings()
   return (
     <Page
       wrap={false}
@@ -34,7 +32,7 @@ export function PDFPage({
         fontSize: em,
         fontWeight: 'normal',
       }}
-      size={`A${size}`}
+      size={`A${pageSize}`}
     >
       <View
         style={[

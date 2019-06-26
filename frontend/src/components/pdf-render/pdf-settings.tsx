@@ -1,22 +1,24 @@
 import React, { useContext, useMemo, PropsWithChildren } from 'react'
 
 type Ctx = {
-  em: number
   fontSize: number
   paragraphSpace: number
   titleSpace: number
+  pageSize: number
 }
 const settingsCtx = React.createContext(null as null | Ctx)
 export function usePDFSettings() {
   const ctx = useContext(settingsCtx)
 
   const noCtx = ctx === null
-  const { em, fontSize, paragraphSpace, titleSpace } = ctx || {
-    em: 0,
+  const { fontSize, paragraphSpace, titleSpace, pageSize } = ctx || {
     fontSize: 0,
     paragraphSpace: 0,
     titleSpace: 0,
+    pageSize: 6,
   }
+
+  const em = 7.2 * Math.sqrt(2) ** (6 - pageSize)
 
   const ret = useMemo(
     () =>
@@ -28,8 +30,9 @@ export function usePDFSettings() {
             paragraphSpace,
             titleSpace,
             percent: em / 2.54,
+            pageSize,
           },
-    [em, fontSize, noCtx, paragraphSpace, titleSpace],
+    [em, fontSize, noCtx, pageSize, paragraphSpace, titleSpace],
   )
   if (!ret) throw new Error('Unknown em')
   return ret

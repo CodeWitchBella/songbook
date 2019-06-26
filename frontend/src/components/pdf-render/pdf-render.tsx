@@ -137,17 +137,16 @@ export default function PDFRender({ song }: Props) {
 
   const [footer] = useQueryParam('footer')
 
-  const size = 6
-  const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
+  const pageSize = 6
 
   const doc = (
     <Document>
-      <PDFSettingsProvider value={{ ...song, em }}>
+      <PDFSettingsProvider value={{ ...song, pageSize: pageSize }}>
         {pages.map((page, i) => (
           <PDFSongPage
             key={i}
             page={page}
-            size={size}
+            size={pageSize}
             left={i % 2 === 0}
             title={song.title}
             author={song.author}
@@ -242,25 +241,24 @@ export function PDFDownload({
   }
   songPages.push(...delayedPages.splice(0))
 
-  const size = 6
-  const em = 7.2 * Math.sqrt(2) ** (6 - size) /* 2.54 mm */
+  const pageSize = 6
 
   const doc = (
     <Document>
       <PDFSettingsProvider
         value={{
-          em,
           fontSize: 1,
           paragraphSpace: 1,
           titleSpace: 1,
+          pageSize: pageSize,
         }}
       >
-        <PDFTitlePage size={size} title={title} />
+        <PDFTitlePage size={pageSize} title={title} />
         {songPages.map((song, i) => (
           <PDFSettingsProviderMerge value={song} key={i}>
             <PDFSongPage
               page={song.page}
-              size={size}
+              size={pageSize}
               left={i % 2 === 0}
               title={song.counter + '. ' + song.title}
               author={song.author}
@@ -268,41 +266,6 @@ export function PDFDownload({
             />
           </PDFSettingsProviderMerge>
         ))}
-        <PDFPage
-          size={size}
-          left={true}
-          style={{
-            flexDirection: 'column',
-            flexWrap: 'wrap',
-          }}
-        >
-          <View
-            style={{
-              maxHeight: '100%',
-              flexDirection: 'column',
-              flexWrap: 'wrap',
-              paddingTop: 2.65 * em,
-              paddingRight: -0.2 * em,
-              paddingBottom: 1 * em,
-            }}
-          >
-            <View style={{ height: (6.7 - 2.65) * em, width: 0 }} />
-            {list.map((song, i) => (
-              <View
-                key={i}
-                style={{
-                  maxWidth: '50%',
-                  paddingBottom: 0.1 * em,
-                  paddingRight: 0.2 * em,
-                }}
-              >
-                <Text style={{ fontSize: 0.8 * em }}>
-                  {i + 1}. {song.title} {`(${song.author})`}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </PDFPage>
       </PDFSettingsProvider>
     </Document>
   )
@@ -310,7 +273,7 @@ export function PDFDownload({
     <BlobProvider document={doc}>
       {({ blob }) =>
         !blob ? null : (
-          <Save blob={blob} onDone={onDone} slug={slug} size={size} />
+          <Save blob={blob} onDone={onDone} slug={slug} size={pageSize} />
         )
       }
     </BlobProvider>
