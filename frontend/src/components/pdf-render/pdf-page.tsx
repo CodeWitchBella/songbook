@@ -1,19 +1,29 @@
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
-import ReactPDF, { Page, View } from '@react-pdf/renderer'
+import ReactPDF, { View } from '@react-pdf/renderer'
 
-const pageValues = {
-  width: 105,
-  height: 148,
-
-  margin: {
-    top: (7.8 / 148) * 100,
-    bottom: (6 / 148) * 100,
-    outer: (12.4 / 105) * 100,
-    inner: (18.8 / 105) * 100,
-  },
-  innerRatio: (105 - 12.4 - 18.8) / (148 - 6 - 7.8),
+const margin = {
+  top: (7.8 / 148) * 100,
+  bottom: (6 / 148) * 100,
+  outer: (12.4 / 105) * 100,
+  inner: (18.8 / 105) * 100,
 }
+
+function DefaultPage({ children }: PropsWithChildren<{}>) {
+  return (
+    <ReactPDF.Page
+      wrap={false}
+      size={`A${usePDFSettings().pageSize}`}
+      style={{ transform: [{ scale: 2 }] }}
+    >
+      {children}
+    </ReactPDF.Page>
+  )
+}
+
+const pageContext = React.createContext({
+  Page: DefaultPage,
+})
 
 export function PDFPage({
   children,
@@ -23,35 +33,56 @@ export function PDFPage({
   left: boolean
   style?: ReactPDF.Style | ReactPDF.Style[]
 }>) {
-  const { em, percent, pageSize } = usePDFSettings()
+  const { vw, vh, em } = usePDFSettings()
+  const { Page } = useContext(pageContext)
+
   return (
-    <Page
-      wrap={false}
-      style={{
-        fontFamily: 'Cantarell',
-        fontSize: em,
-        fontWeight: 'normal',
-      }}
-      size={`A${pageSize}`}
-    >
+    <Page>
       <View
         style={[
           style,
           {
+            fontFamily: 'Cantarell',
+            fontSize: em,
+            fontWeight: 'normal',
             height: '100%',
-            paddingTop: pageValues.margin.top * percent,
-            paddingBottom: pageValues.margin.bottom * percent,
-            paddingRight: left
-              ? pageValues.margin.inner * percent
-              : pageValues.margin.outer * percent,
-            paddingLeft: left
-              ? pageValues.margin.outer * percent
-              : pageValues.margin.inner * percent,
+            paddingTop: margin.top * vh,
+            paddingBottom: margin.bottom * vh,
+            paddingRight: left ? margin.inner * vw : margin.outer * vw,
+            paddingLeft: left ? margin.outer * vw : margin.inner * vw,
           },
         ]}
       >
         {children}
       </View>
     </Page>
+  )
+}
+
+function NoopPage({ children }: PropsWithChildren<{}>) {
+  return <View style={{ width: '50vw', height: '100vh' }}>{children}</View>
+}
+
+export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
+  const pagesCp = [...pages]
+  const realPages: JSX.Element[][] = []
+  while (pagesCp.length > 0) {
+    realPages.push(pagesCp.splice(0, 2))
+  }
+
+  const { pageSize } = usePDFSettings()
+
+  return (
+    <pageContext.Provider value={{ Page: NoopPage }}>
+      {realPages.map((page, i) => (
+        <ReactPDF.Page
+          key={i}
+          size={`A${pageSize + 1}`}
+          orientation="landscape"
+        >
+          <View style={{ flexDirection: 'row' }}>{page}</View>
+        </ReactPDF.Page>
+      ))}
+    </pageContext.Provider>
   )
 }

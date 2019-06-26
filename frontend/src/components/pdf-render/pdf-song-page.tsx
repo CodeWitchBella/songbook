@@ -19,7 +19,7 @@ const lineStyle = {
 }
 
 function ChordLine({ l }: { l: Line }) {
-  const { em, percent, fontSize } = usePDFSettings()
+  const { em, vw, fontSize } = usePDFSettings()
   return (
     <View
       style={{ width: 0, height: fontSize * 2.3 * em, flexDirection: 'row' }}
@@ -27,7 +27,7 @@ function ChordLine({ l }: { l: Line }) {
       {l.content
         .map((cur, i) => (
           <View style={{ width: 0 }} key={i}>
-            <View style={{ width: 100 * percent }}>
+            <View style={{ width: 100 * vw }}>
               <Text>
                 <Text style={{ opacity: 0, ...lineStyle }}>
                   {l.content.slice(0, i).map((t, i2) => (

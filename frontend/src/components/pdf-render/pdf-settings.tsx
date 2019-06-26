@@ -8,7 +8,8 @@ type CtxIn = {
 }
 type Ctx = CtxIn & {
   em: number
-  percent: number
+  vw: number
+  vh: number
 }
 const settingsCtx = React.createContext(null as null | Ctx)
 export function usePDFSettings() {
@@ -16,6 +17,19 @@ export function usePDFSettings() {
   if (!ret) throw new Error('No context provider')
   return ret
 }
+
+const aSizes = [
+  [841, 1189],
+  [594, 841],
+  [420, 594],
+  [297, 420],
+  [210, 297],
+  [148, 210],
+  [105, 148],
+  [74, 105],
+  [52, 74],
+  [37, 52],
+]
 
 export function PDFSettingsProvider(
   props: PropsWithChildren<{ value: Partial<CtxIn> }>,
@@ -35,7 +49,8 @@ export function PDFSettingsProvider(
           titleSpace,
           pageSize,
           em,
-          percent: em / 2.54,
+          vw: (aSizes[pageSize][0] / 100) * 2.8346438836889, // mm to pt
+          vh: (aSizes[pageSize][1] / 100) * 2.8346438836889, // mm to pt
         }),
         [em, fontSize, pageSize, paragraphSpace, titleSpace],
       )}

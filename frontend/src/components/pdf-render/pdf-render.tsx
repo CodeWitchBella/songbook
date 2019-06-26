@@ -242,6 +242,22 @@ export function PDFDownload({
 
   const pageSize = 6
 
+  const pages = [
+    <PDFTitlePage title={title} key="title" />,
+    ...songPages.map((song, i) => (
+      <PDFSettingsProvider value={song} key={i}>
+        <PDFSongPage
+          page={song.page}
+          left={i % 2 === 0}
+          title={song.counter + '. ' + song.title}
+          author={song.author}
+          footer="zpevnik.skorepova.info"
+        />
+      </PDFSettingsProvider>
+    )),
+    <PDFToc list={list} key="toc" />,
+  ]
+
   const doc = (
     <Document>
       <PDFSettingsProvider
@@ -252,19 +268,7 @@ export function PDFDownload({
           pageSize: pageSize,
         }}
       >
-        <PDFTitlePage title={title} />
-        {songPages.map((song, i) => (
-          <PDFSettingsProvider value={song} key={i}>
-            <PDFSongPage
-              page={song.page}
-              left={i % 2 === 0}
-              title={song.counter + '. ' + song.title}
-              author={song.author}
-              footer="zpevnik.skorepova.info"
-            />
-          </PDFSettingsProvider>
-        ))}
-        <PDFToc list={list} />
+        {pages}
       </PDFSettingsProvider>
     </Document>
   )
