@@ -242,6 +242,18 @@ export function PDFDownload({
   }
   songPages.push(...delayedPages.splice(0))
 
+  const idToCounter = new Map<string, number>()
+  let counter = 0
+  for (const page of songPages) {
+    counter++
+    if (idToCounter.has(page.id)) {
+      page.counter = idToCounter.get(page.id)!
+    } else {
+      page.counter = counter
+      idToCounter.set(page.id, counter)
+    }
+  }
+
   const pageSize = 6
 
   const pages = [
@@ -257,7 +269,7 @@ export function PDFDownload({
         />
       </PDFSettingsProvider>
     )),
-    <PDFToc list={list} key="toc" />,
+    <PDFToc list={list} idToCounter={idToCounter} key="toc" />,
   ]
 
   const doc = (

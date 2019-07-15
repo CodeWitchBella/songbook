@@ -6,6 +6,7 @@ const Changelog = () => (
   <div>
     <Entry date="2019-07-15">
       <li>Zjednodušeny URL adresy jednotlivých písní</li>
+      <li>Upraveno číslování písní pro vícestranné písně</li>
     </Entry>
     <Entry date="2019-06-26">
       <li>

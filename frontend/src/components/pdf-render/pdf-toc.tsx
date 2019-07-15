@@ -5,8 +5,10 @@ import { usePDFSettings } from './pdf-settings'
 
 export function PDFToc({
   list,
+  idToCounter = new Map(),
 }: {
-  list: { title: string; author: string }[]
+  list: { title: string; author: string; id: string }[]
+  idToCounter?: Map<string, number>
 }) {
   const { em } = usePDFSettings()
   return (
@@ -38,7 +40,8 @@ export function PDFToc({
             }}
           >
             <Text style={{ fontSize: 0.8 * em }}>
-              {i + 1}. {song.title} {`(${song.author})`}
+              {idToCounter.get(song.id) || i + 1}. {song.title}{' '}
+              {`(${song.author})`}
             </Text>
           </View>
         ))}
