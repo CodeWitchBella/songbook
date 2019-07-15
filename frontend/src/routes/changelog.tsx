@@ -4,6 +4,9 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-07-15">
+      <li>Zjednodušeny URL adresy jednotlivých písní</li>
+    </Entry>
     <Entry date="2019-06-26">
       <li>
         Umožněno generování A4 PDF pro tisk A6 zpěvníků (po rozstříhnutí
