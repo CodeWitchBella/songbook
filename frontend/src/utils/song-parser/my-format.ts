@@ -5,7 +5,7 @@ function parseLine(
   pCounter: number,
 ): Line & { pCounter: number } {
   let line = line_.trim()
-  const content: { ch: string; text: string }[] = []
+  const content: Line['content'] = []
   let tag: string | null = null
 
   let first = true
@@ -52,7 +52,14 @@ function parseLine(
       idx = idx < 0 ? line.length : idx
       const text = line.substring(0, idx)
       line = line.substring(idx + 1)
-      content.push({ text, ch })
+
+      if (ch.startsWith('*')) {
+        if (ch.length > 1)
+          content.push({ text: ch.substring(1), ch: '', bold: true })
+        content.push({ text: text, ch: '' })
+      } else {
+        content.push({ text, ch })
+      }
     }
   }
   return { content, tag, pCounter: pCounter + (isVerse(tag) ? 1 : 0) }

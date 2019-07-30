@@ -91,6 +91,7 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
 }) => {
   const parsed = children
   const hasChords = parsed.content.some(p => !!p.ch)
+
   return (
     <div css={line(hasChords)}>
       {parsed.tag && (
@@ -99,23 +100,26 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
           &nbsp;
         </b>
       )}
-      {parsed.content.map((l, i, list) => (
-        <span key={i}>
-          {l.ch && l.ch.startsWith('_') ? (
-            <Chord sp transposition={transposition}>
-              {l.ch.substring(1)}
-            </Chord>
-          ) : (
-            <Chord
-              sp={i === list.length - 1 && l.text.trim() === ''}
-              transposition={transposition}
-            >
-              {l.ch}
-            </Chord>
-          )}
-          {l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')}
-        </span>
-      ))}
+      {parsed.content.map((l, i, list) => {
+        const text = l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')
+        return (
+          <span key={i}>
+            {l.ch && l.ch.startsWith('_') ? (
+              <Chord sp transposition={transposition}>
+                {l.ch.substring(1)}
+              </Chord>
+            ) : (
+              <Chord
+                sp={i === list.length - 1 && l.text.trim() === ''}
+                transposition={transposition}
+              >
+                {l.ch}
+              </Chord>
+            )}
+            {l.bold ? <span css={{ fontWeight: 'bold' }}>{text}</span> : text}
+          </span>
+        )
+      })}
       <br />
     </div>
   )

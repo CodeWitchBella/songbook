@@ -1,7 +1,7 @@
 import { parseSongMyFormat } from './my-format'
 
 export type Line = {
-  content: { ch: string; text: string }[]
+  content: { ch: string; text: string; bold?: boolean }[]
   tag: string | null
 }
 

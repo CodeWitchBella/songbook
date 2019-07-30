@@ -404,6 +404,13 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             Pokud potřebujete udělat oddělovač stran tak napište{' '}
             <b>---&nbsp;page&nbsp;break&nbsp;---</b>
           </p>
+          <p>
+            Tučný text (například pro označení speciálních sekcí) se píše takto:
+            [*tučný text]
+          </p>
+          <p>
+            Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]
+          </p>
           <p>Hodně štěstí a díky za pomoc</p>
         </Help>
         <Help title="cheaty">

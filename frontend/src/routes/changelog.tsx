@@ -6,6 +6,7 @@ const Changelog = () => (
   <div>
     <Entry date="2019-07-15">
       <li>Opravena transpozice více akordů značce</li>
+      <li>Přidána možnost tučného textu</li>
     </Entry>
     <Entry date="2019-07-15">
       <li>Zjednodušeny URL adresy jednotlivých písní</li>

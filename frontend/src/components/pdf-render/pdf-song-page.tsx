@@ -73,7 +73,14 @@ function LineC({ l }: { l: Line }) {
                 {c.ch.replace(/^_/, '')}
               </Text>
             ) : null,
-            c.text ? <Text key={i * 2 + 1}>{nbsp(c.text)}</Text> : null,
+            c.text ? (
+              <Text
+                style={c.bold ? { fontWeight: 'bold' } : {}}
+                key={i * 2 + 1}
+              >
+                {nbsp(c.text)}
+              </Text>
+            ) : null,
           ])
           .filter(notNull)}
       </Text>
