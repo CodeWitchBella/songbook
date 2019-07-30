@@ -91,6 +91,20 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
 }) => {
   const parsed = children
   const hasChords = parsed.content.some(p => !!p.ch)
+  const hasText = parsed.content.some(p => !!p.text)
+
+  if (!hasText) {
+    return (
+      <div css={line(false)}>
+        {parsed.tag && <b>{parsed.tag}&nbsp;</b>}
+        {parsed.content.map((l, i) => (
+          <span key={i} css={{ fontWeight: 'bold' }}>
+            {l.ch}
+          </span>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div css={line(hasChords)}>

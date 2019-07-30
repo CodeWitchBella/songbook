@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import { Line, Paragraph } from 'utils/song-parser/song-parser'
 import { usePDFSettings } from './pdf-settings'
 import { PDFPage } from './pdf-page'
@@ -52,16 +52,42 @@ function ChordLine({ l }: { l: Line }) {
   )
 }
 
-function LineC({ l }: { l: Line }) {
+function LineWrap({
+  children,
+  hasChord,
+}: PropsWithChildren<{ hasChord: boolean }>) {
   const { em, fontSize } = usePDFSettings()
   return (
     <View
       style={{
         flexDirection: 'row',
         alignItems: 'flex-end',
-        height: hasChord(l) ? fontSize * 2.3 * em : 'auto',
+        height: hasChord ? fontSize * 2.3 * em : 'auto',
       }}
     >
+      {children}
+    </View>
+  )
+}
+
+function LineC({ l }: { l: Line }) {
+  const hasText = l.content.some(c => !!c.text)
+  if (!hasText) {
+    return (
+      <LineWrap hasChord={false}>
+        {l.tag ? (
+          <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text>
+        ) : null}
+        {l.content.map((c, i) => (
+          <Text style={{ fontWeight: 'bold' }} key={i}>
+            {c.ch}
+          </Text>
+        ))}
+      </LineWrap>
+    )
+  }
+  return (
+    <LineWrap hasChord={hasChord(l)}>
       {l.tag ? <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text> : null}
       {hasChord(l) ? <ChordLine l={l} /> : null}
 
@@ -84,7 +110,7 @@ function LineC({ l }: { l: Line }) {
           ])
           .filter(notNull)}
       </Text>
-    </View>
+    </LineWrap>
   )
 }
 
