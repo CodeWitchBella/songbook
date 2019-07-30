@@ -24,7 +24,15 @@ const line = (hasChords: boolean) =>
         vertical-align: baseline;
       `
 
-const Chord = ({ children, sp }: PropsWithChildren<{ sp?: boolean }>) => (
+const Chord = ({
+  children,
+  sp,
+  transposition,
+}: {
+  sp?: boolean
+  children: string
+  transposition: number
+}) => (
   <span
     css={css`
       position: ${sp ? 'relative' : 'absolute'};
@@ -34,7 +42,7 @@ const Chord = ({ children, sp }: PropsWithChildren<{ sp?: boolean }>) => (
       width: 100vw;
     `}
   >
-    {children}
+    {transposeChords(children, transposition)}
   </span>
 )
 
@@ -72,7 +80,7 @@ function transposeChord(chord: string, transposition: number) {
 
 function transposeChords(tags: string, transposition: number) {
   return tags
-    .split(/ \+/)
+    .split(/[ +]+/)
     .map(t => transposeChord(t, transposition))
     .join(' ')
 }
@@ -94,12 +102,15 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
       {parsed.content.map((l, i, list) => (
         <span key={i}>
           {l.ch && l.ch.startsWith('_') ? (
-            <Chord sp>
-              {transposeChords(l.ch.substring(1), transposition)}
+            <Chord sp transposition={transposition}>
+              {l.ch.substring(1)}
             </Chord>
           ) : (
-            <Chord sp={i === list.length - 1 && l.text.trim() === ''}>
-              {transposeChords(l.ch, transposition)}
+            <Chord
+              sp={i === list.length - 1 && l.text.trim() === ''}
+              transposition={transposition}
+            >
+              {l.ch}
             </Chord>
           )}
           {l.text.replace(/ $/, '\u00a0').replace(/^ /, '\u00a0')}
