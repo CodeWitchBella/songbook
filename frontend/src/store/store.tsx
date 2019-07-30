@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
   useRef,
+  useCallback,
 } from 'react'
 import localForage from 'localforage'
 import { newSong } from './fetchers'
@@ -108,6 +109,14 @@ export function useSongList() {
     }),
     [songs, initing, loading, store],
   )
+}
+
+export function useGetRandomSong() {
+  const { store } = useStoreContext()
+  return useCallback(() => {
+    const songs = store.readAll()
+    return songs[Math.floor(Math.random() * songs.length)]
+  }, [store])
 }
 
 function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {

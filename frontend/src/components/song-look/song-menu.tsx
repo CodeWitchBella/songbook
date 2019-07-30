@@ -3,8 +3,16 @@ import { jsx, Interpolation } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps } from 'react-router-dom'
-import { PlayButton, Burger, EditButton, InfoButton } from './song-menu-icons'
+import {
+  PlayButton,
+  Burger,
+  EditButton,
+  InfoButton,
+  RandomButton,
+} from './song-menu-icons'
 import { SongType } from 'store/store-song'
+import { useRouterUnsafe } from 'components/use-router'
+import { useSongList, useGetRandomSong } from 'store/store'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -109,6 +117,8 @@ export default function SongMenu({
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
   const [info, setInfo] = useState(false)
+  const routerUnsafe = useRouterUnsafe()
+  const getRandomSong = useGetRandomSong()
 
   return (
     <MenuWrap>
@@ -145,6 +155,14 @@ export default function SongMenu({
                 <PlayButton />
               </MenuButton>
             ) : null}
+            <MenuButton
+              onClick={() => {
+                const song = getRandomSong()
+                routerUnsafe.history.push('/song/' + song.item.slug)
+              }}
+            >
+              <RandomButton />
+            </MenuButton>
           </>
         ) : null}
         <MenuButton onClick={() => setOpen(o => !o)}>
