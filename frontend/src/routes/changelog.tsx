@@ -9,6 +9,7 @@ const Changelog = () => (
       <li>Přidána možnost tučného textu</li>
       <li>Pokud řádek obsahuje pouze akordy tak pod ním nedělám mezeru</li>
       <li>Tlačítko pro zobrazení náhodné písně</li>
+      <li>Oprava duplikujících se položek při vyhledávání</li>
     </Entry>
     <Entry date="2019-07-15">
       <li>Zjednodušeny URL adresy jednotlivých písní</li>

@@ -43,6 +43,9 @@ export default function getFilteredSongList(
   const byText = search
     ? songs.filter(searchSong(search, 'text')).filter(s => !used.has(s.id))
     : []
+  byText.forEach(s => {
+    used.add(s.id)
+  })
 
   const byExtra = search
     ? songs
