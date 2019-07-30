@@ -5,7 +5,7 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2019-07-30">
-      <li>Opravena transpozice více akordů značce</li>
+      <li>Opravena transpozice více akordů v jedné značce</li>
       <li>Přidána možnost tučného textu</li>
       <li>Pokud řádek obsahuje pouze akordy tak pod ním nedělám mezeru</li>
       <li>Tlačítko pro zobrazení náhodné písně</li>
