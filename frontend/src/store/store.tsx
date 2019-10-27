@@ -13,6 +13,8 @@ import { createSongStore } from './store-song'
 import { User } from './graphql'
 import { createCollectionStore } from './store-collections'
 import { GenericStore, MinItem } from './generic-store'
+import Random from './mersenne-twister-19937'
+import { DateTime } from 'luxon'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
@@ -113,10 +115,34 @@ export function useSongList() {
 
 export function useGetRandomSong() {
   const { store } = useStoreContext()
-  return useCallback(() => {
-    const songs = store.readAll()
-    return songs[Math.floor(Math.random() * songs.length)]
-  }, [store])
+  return useCallback(
+    (currentSongId: string) => {
+      const nowReal = DateTime.utc()
+      const now = nowReal.get('hour') < 3 ? nowReal.minus({ day: 1 }) : nowReal
+      const random = new Random(
+        now.get('day') + 100 * (now.get('month') + 100 * now.get('year')),
+      )
+      const songs = store.readAll()
+      const withRandom = songs.map(song => ({ song, number: random.random() }))
+      const curRandom = withRandom.find(s => s.song.item.id === currentSongId)
+      if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
+      const next = withRandom.reduce(
+        (cur, t) => {
+          if (t.number < curRandom.number) return cur
+          if (t.song.item.id === currentSongId) return cur
+          if (!cur) return t
+          return cur.number < t.number ? cur : t
+        },
+        null as null | typeof withRandom[0],
+      )
+      if (next) return next.song
+      return withRandom.reduce(
+        (a, b) => (a === null ? b : a.number < b.number ? a : b),
+        null as null | typeof withRandom[0],
+      )!.song
+    },
+    [store],
+  )
 }
 
 function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {

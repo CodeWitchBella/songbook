@@ -157,8 +157,8 @@ export default function SongMenu({
             ) : null}
             <MenuButton
               onClick={() => {
-                const song = getRandomSong()
-                routerUnsafe.history.push('/song/' + song.item.slug)
+                const nextSong = getRandomSong(song.id)
+                routerUnsafe.history.push('/song/' + nextSong.item.slug)
               }}
             >
               <RandomButton />

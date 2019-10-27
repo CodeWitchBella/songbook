@@ -4,6 +4,16 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2019-10-27">
+      <li>
+        Nové chování náhodného tlačítka
+        <ul>
+          <li>Nyní je konzistentní mezi zařízeními</li>
+          <li>V seznamu se neopakují písně</li>
+          <li>Seznam se mění jednou denně</li>
+        </ul>
+      </li>
+    </Entry>
     <Entry date="2019-07-30">
       <li>Opravena transpozice více akordů v jedné značce</li>
       <li>Přidána možnost tučného textu</li>
