@@ -22,24 +22,22 @@ const SpotifyWrap = styled.div`
   pointer-events: none;
 `
 
-class Spotify extends React.Component<{ link: string }, { visible: boolean }> {
-  render() {
-    const parts = this.props.link.split('/')
-    return (
-      <SpotifyWrap>
-        <IFrame
-          src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
-            parts[parts.length - 1]
-          }`}
-          height="80"
-          frameBorder="0"
-          allowtransparency="true"
-          allow="encrypted-media"
-          css={{ pointerEvents: 'all' }}
-        />
-      </SpotifyWrap>
-    )
-  }
+function Spotify({ link }: { link: string }) {
+  const parts = link.split('/')
+  return (
+    <SpotifyWrap>
+      <IFrame
+        src={`https://open.spotify.com/embed/${parts[parts.length - 2]}/${
+          parts[parts.length - 1]
+        }`}
+        height="80"
+        frameBorder="0"
+        allowtransparency="true"
+        allow="encrypted-media"
+        css={{ pointerEvents: 'all' }}
+      />
+    </SpotifyWrap>
+  )
 }
 
 function queryJoin(path: string, query: string) {
