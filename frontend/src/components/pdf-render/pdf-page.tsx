@@ -11,11 +11,7 @@ const margin = {
 
 function DefaultPage({ children }: PropsWithChildren<{}>) {
   return (
-    <ReactPDF.Page
-      wrap={false}
-      size={`A${usePDFSettings().pageSize}`}
-      style={{ transform: [{ scale: 2 }] }}
-    >
+    <ReactPDF.Page wrap={false} size={`A${usePDFSettings().pageSize}`}>
       {children}
     </ReactPDF.Page>
   )
@@ -40,7 +36,7 @@ export function PDFPage({
     <Page>
       <View
         style={[
-          style,
+          style as any,
           {
             fontFamily: 'Cantarell',
             fontSize: em,
@@ -69,7 +65,7 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
   const pagesCp = [...pages]
   const realPages: (readonly [
     readonly [JSX.Element, JSX.Element],
-    readonly [JSX.Element, JSX.Element]
+    readonly [JSX.Element, JSX.Element],
   ])[] = []
   while (pagesCp.length > 0) {
     const a = [

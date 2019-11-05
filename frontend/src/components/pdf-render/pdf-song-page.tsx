@@ -16,7 +16,7 @@ const lineStyle = {
   verticalAlign: 'baseline',
   alignItems: 'flex-end',
   flexDirection: 'row',
-}
+} as const
 
 function ChordLine({ l }: { l: Line }) {
   const { em, vw, fontSize } = usePDFSettings()
@@ -126,16 +126,17 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
   )
 }
 
-const header = (titleSpace: number, em: number) => ({
-  display: 'flex',
-  flexDirection: 'row',
-  fontWeight: 'bold',
-  justifyContent: 'space-between',
-  fontSize: 1.2 * em,
-  paddingBottom: titleSpace * 1.75 * em,
-  margin: 0,
-  marginTop: 0.75 * em,
-})
+const header = (titleSpace: number, em: number) =>
+  ({
+    display: 'flex',
+    flexDirection: 'row',
+    fontWeight: 'bold',
+    justifyContent: 'space-between',
+    fontSize: 1.2 * em,
+    paddingBottom: titleSpace * 1.75 * em,
+    margin: 0,
+    marginTop: 0.75 * em,
+  } as const)
 
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em, titleSpace } = usePDFSettings()
