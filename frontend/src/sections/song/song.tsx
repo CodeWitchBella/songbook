@@ -5,9 +5,10 @@ import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
 import SongMenu from 'components/song-look/song-menu'
-import { Route } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import queryString from 'query-string'
 import { useAutoUpdatedSong } from 'utils/firebase'
+import { useNavigate } from 'utils/use-navigate'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -62,55 +63,52 @@ export default function SongSection({
     if (song)
       console.log('song id:', song.id, 'title:', song.title, `(${pageCount})`)
   }, [pageCount, song])
+  const location = useLocation()
+  const navigate = useNavigate()
   if (!song || !parsed) return null
 
+  const query = queryString.parse(location.search)
+  const tr = query.transposition
+  const transposition = Number.parseInt(
+    `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
+    10,
+  )
   return (
-    <Route>
-      {route => {
-        const query = queryString.parse(route.location.search)
-        const tr = query.transposition
-        const transposition = Number.parseInt(
-          `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
-          10,
-        )
-        return (
-          <>
-            <div
-              css={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
-            >
-              <SongLook
-                song={song}
-                parsed={parser.parseSong('my', song.text)}
-                transposition={transposition}
-              />
-            </div>
-            {enableMenu && (
-              <SongMenu
-                song={song}
-                setSpotifyVisible={setSpotifyVisible}
-                showSpotify={!!song.spotify}
-                transposition={transposition}
-                setTransposition={v =>
-                  route.history.replace(
-                    queryJoin(
-                      route.location.pathname,
-                      queryString.stringify({
-                        ...query,
-                        transposition: v || undefined,
-                      }),
-                    ),
-                  )
-                }
-              />
-            )}
-            {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
-          </>
-        )
-      }}
-    </Route>
+    <>
+      <div
+        css={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+      >
+        <SongLook
+          song={song}
+          parsed={parser.parseSong('my', song.text)}
+          transposition={transposition}
+        />
+      </div>
+      {enableMenu && (
+        <SongMenu
+          song={song}
+          setSpotifyVisible={setSpotifyVisible}
+          showSpotify={!!song.spotify}
+          transposition={transposition}
+          setTransposition={v =>
+            navigate(
+              queryJoin(
+                location.pathname,
+                queryString.stringify({
+                  ...query,
+                  transposition: v || undefined,
+                }),
+              ),
+              { replace: true },
+            )
+          }
+        />
+      )}
+      {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
+    </>
   )
 }
