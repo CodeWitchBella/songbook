@@ -24,6 +24,9 @@ export default class ErrorBoundary extends Component<{
 }> {
   state = { hasError: false }
 
+  getDerivedStateFromError() {
+    return { hasError: true }
+  }
   componentDidCatch(error: Error, info: any) {
     console.error({ error, info })
     if (Raven)
@@ -33,11 +36,6 @@ export default class ErrorBoundary extends Component<{
           errorBoundary: 'general',
         },
       })
-    if (!this.unmounted) this.setState({ hasError: true })
-  }
-  unmounted = false
-  componentDidMount() {
-    this.unmounted = true
   }
 
   render() {
