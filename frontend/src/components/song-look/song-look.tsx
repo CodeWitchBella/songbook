@@ -194,7 +194,8 @@ function BackButtonImpl({
       }}
       type="button"
       onClick={() => {
-        if (location.state && location.state.canGoBack) history.goBack()
+        if (location.state && (location.state as any).canGoBack)
+          history.goBack()
         else history.push('/')
       }}
     >

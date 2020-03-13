@@ -1,5 +1,5 @@
 import { useViewer } from 'store/store'
-import { fbLogin, logout } from 'store/graphql'
+import { fbLogin, logout, login, register } from 'store/graphql'
 
 function randomString(length: number) {
   let result = ''
@@ -32,41 +32,25 @@ export function useLogin() {
 
   return {
     viewer,
-    onClick: (evt?: any) => {
-      if (evt) evt.preventDefault()
-      const state = randomString(20)
-      localStorage.removeItem('auth')
-      const child = window.open(
-        createUrl(state),
-        'login_window',
-        'dialog=yes,width=450,height=550', //,toolbar=no,menubar=no,dependent,resizable=no,modal,titlebar=false
-      )
-      let interval: ReturnType<typeof setInterval> | null = null
-      function unregister() {
-        window.removeEventListener('storage', storageListener)
-        window.removeEventListener('focus', storageListener)
-        if (interval !== null) clearInterval(interval)
-      }
-      function storageListener() {
-        const itm = localStorage.getItem('auth')
-        console.log(evt, itm)
-        if (itm) {
-          const params = new URLSearchParams(JSON.parse(itm).search)
-          if (params.get('state') !== state) return
-          unregister()
-          const code = params.get('code')
-          if (!code) return
-          fbLogin(code, redirectUri)
-            .then(viewer => setViewer(viewer))
-            .catch(e => console.error(e))
+    login: (email: string, password: string) => {
+      return login(email, password).then(viewer => {
+        if (viewer.type === 'success') {
+          setViewer(viewer.user)
+          return null
+        } else {
+          return viewer.message
         }
-      }
-
-      if (child) {
-        window.addEventListener('focus', storageListener)
-        window.addEventListener('storage', storageListener)
-        interval = setInterval(storageListener, 500)
-      }
+      })
+    },
+    register: (email: string, password: string, name: string) => {
+      return register(email, password, name).then(viewer => {
+        if (viewer.type === 'success') {
+          setViewer(viewer.user)
+          return null
+        } else {
+          return viewer.message
+        }
+      })
     },
     logout: (evt?: any) => {
       if (evt) evt.preventDefault()

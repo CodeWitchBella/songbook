@@ -95,6 +95,73 @@ export async function fbLogin(
   })
 }
 
+export async function login(
+  email: string,
+  password: string,
+): Promise<
+  { type: 'success'; user: User } | { type: 'error'; message: string }
+> {
+  return graphqlFetch({
+    query: `
+      mutation($password: String!, $email: String!) {
+        login(email: $email, password: $password) {
+          __typename
+          ... on LoginError {
+            message
+          }
+          ... on LoginSuccess {
+            user {
+              ...user
+            }
+          }
+        }
+      }
+      ${userFragment}
+    `,
+    variables: { email, password },
+  }).then(v => {
+    if (v.data.login.__typename !== 'LoginSuccess') {
+      console.log(v.data.login)
+      return { type: 'error', message: v.data.login.message }
+    }
+    return { type: 'success', user: v.data.login.user }
+  })
+}
+
+export async function register(
+  email: string,
+  password: string,
+  name: string,
+): Promise<
+  { type: 'success'; user: User } | { type: 'error'; message: string }
+> {
+  return graphqlFetch({
+    query: `
+      mutation($input: RegisterInput!) {
+        register(input: $input) {
+          __typename
+          ... on RegisterError {
+            message
+          }
+          ... on RegisterSuccess {
+            user {
+              ...user
+            }
+          }
+        }
+      }
+      ${userFragment}
+    `,
+    variables: { input: { email, password, name } },
+  }).then(v => {
+    if (v.data.register.__typename !== 'RegisterSuccess') {
+      console.log(v.data.register)
+      return { type: 'error', message: v.data.register.message }
+    }
+    return { type: 'success', user: v.data.register.user }
+  })
+}
+
 export async function logout(): Promise<void> {
   return graphqlFetch({
     query: `mutation { logout }`,

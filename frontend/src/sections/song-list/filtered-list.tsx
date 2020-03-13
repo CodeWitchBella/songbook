@@ -66,7 +66,7 @@ export default function FilteredList({
   }
   const [list, setList] = useReducer(
     (
-      _prevState,
+      _prevState: any,
       {
         showTitles,
         ids,

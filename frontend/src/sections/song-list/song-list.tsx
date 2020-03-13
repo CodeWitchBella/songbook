@@ -92,25 +92,25 @@ function Search({
   const ref = useRef<HTMLInputElement>(null)
   return (
     <>
-      <form
-        onSubmit={evt => {
-          evt.preventDefault()
-          const refc = ref.current
-          if (!refc) return
-          refc.blur()
-        }}
-      >
-        <SearchContainer>
-          {children}
-          <div
-            css={{
-              position: 'relative',
-              display: 'flex',
-              padding: '0 4px',
-              margin: '10px 0',
-            }}
-          >
-            <div css={{ position: 'relative', flexGrow: 1 }}>
+      <SearchContainer>
+        {children}
+        <div
+          css={{
+            position: 'relative',
+            display: 'flex',
+            padding: '0 4px',
+            margin: '10px 0',
+          }}
+        >
+          <div css={{ position: 'relative', flexGrow: 1 }}>
+            <form
+              onSubmit={evt => {
+                evt.preventDefault()
+                const refc = ref.current
+                if (!refc) return
+                refc.blur()
+              }}
+            >
               <input
                 aria-label="Vyhledávání"
                 ref={ref}
@@ -120,12 +120,12 @@ function Search({
                 value={text}
                 placeholder="Vyhledávání"
               />
-              <ClearButton onClick={() => onChange('')} />
-            </div>
-            {topMenu}
+            </form>
+            <ClearButton onClick={() => onChange('')} />
           </div>
-        </SearchContainer>
-      </form>
+          {topMenu}
+        </div>
+      </SearchContainer>
       <div>{children}</div>
       <div css={{ height: 60 }} />
     </>
@@ -203,7 +203,11 @@ const SongList = ({
           text={search || ''}
           onChange={v => {
             const { state } = router.location
-            if (typeof state === 'object' && state && state.goBackOnClear) {
+            if (
+              typeof state === 'object' &&
+              state &&
+              (state as any).goBackOnClear
+            ) {
               if (v) {
                 setSearch(v, { push: false })
               } else {
