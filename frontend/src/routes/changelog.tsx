@@ -4,6 +4,12 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2020-03-13">
+      <li>
+        Pátek třináctého! Přihlašování přes facebook nahrazeno přihlašováním
+        pomocí emailu a hesla
+      </li>
+    </Entry>
     <Entry date="2019-10-27">
       <li>
         Nové chování náhodného tlačítka
