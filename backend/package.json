@@ -17,6 +17,7 @@
     "@google-cloud/firestore": "^2.2.4",
     "apollo-server": "^2.6.9",
     "apollo-server-cloud-functions": "^2.6.9",
+    "bcryptjs": "^2.4.3",
     "firebase-admin": "~8.2.0",
     "firebase-functions": "^3.1.0",
     "graphql": "^14.4.2",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@babel/core": "^7.5.4",
     "@babel/preset-typescript": "^7.3.3",
+    "@types/bcryptjs": "^2.4.2",
     "@types/graphql": "^14.2.2",
     "@types/latinize": "^0.2.15",
     "@types/luxon": "^1.15.2",

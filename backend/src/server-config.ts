@@ -7,6 +7,7 @@ import { DateTime, Duration } from 'luxon'
 import * as functions from 'firebase-functions'
 import { notNull } from '@codewitchbella/ts-utils'
 import { FieldValue } from '@google-cloud/firestore'
+import * as bcrypt from 'bcryptjs'
 
 function slugify(part: string) {
   return latinize(part)
@@ -85,6 +86,14 @@ const typeDefs = gql`
   }
   union LoginPayload = LoginSuccess | LoginError
 
+  type RegisterSuccess {
+    user: User!
+  }
+  type RegisterError {
+    message: String!
+  }
+  union RegisterPayload = RegisterSuccess | RegisterError
+
   type UserPicture {
     url: String!
     width: Int!
@@ -113,10 +122,18 @@ const typeDefs = gql`
 
   union DeletableCollectionRecord = CollectionRecord | Deleted
 
+  input RegisterInput {
+    name: String!
+    email: String!
+    password: String!
+  }
+
   type Mutation {
     createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
     fbLogin(code: String!, redirectUri: String!): LoginPayload!
+    login(email: String!, password: String!): LoginPayload!
+    register(input: RegisterInput!): RegisterPayload!
     logout: String
     setHandle(handle: String!): String
     createCollection(name: String!, global: Boolean): CollectionRecord
@@ -195,6 +212,29 @@ function whereModifiedAfter(path: string, modifiedAfter: string | null) {
       .get()
   }
   return ref.where('deleted', '==', false).get()
+}
+
+export const comparePassword = (password: string, hash: string) => {
+  return new Promise<boolean>((resolve, reject) => {
+    bcrypt.compare(password, hash, (err, res) => {
+      if (err) reject(err)
+      else resolve(res)
+    })
+  })
+}
+
+export const hashPassword = (password: string): Promise<string> => {
+  return new Promise((res, rej) =>
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) rej(err)
+      else {
+        bcrypt.hash(password, salt, (err2, hash) => {
+          if (err2) rej(err2)
+          else res(hash)
+        })
+      }
+    }),
+  )
 }
 
 type Context = { req: functions.https.Request; res: functions.Response }
@@ -457,6 +497,64 @@ const resolvers = {
       )
       return doc.get()
     },
+    async login(
+      _: {},
+      { email, password }: { email: string; password: string },
+      { res }: Context,
+    ) {
+      const user = await firestore
+        .collection('users')
+        .where('email', '==', email)
+        .limit(1)
+        .get()
+      const doc = user.docs[0]
+
+      const passwordHash = doc.get('passwordHash')
+      if (!passwordHash) {
+        doc.ref.set({ passwordHash: hashPassword(password) }, { merge: true })
+      } else {
+        if (!(await comparePassword(password, passwordHash))) {
+          return { __typename: 'LoginError', message: 'Chybné heslo' }
+        }
+      }
+
+      await createSession(res, doc.id)
+
+      return {
+        __typename: 'LoginSuccess',
+        user: await doc.data(),
+      }
+    },
+    async register(
+      _: {},
+      { input }: { input: { name: string; email: string; password: string } },
+      { res }: Context,
+    ) {
+      if (!input.name || !input.email || !input.password)
+        return {
+          __typename: 'RegisterError',
+          message: 'Všechna pole jsou povinná',
+        }
+      const user = await firestore
+        .collection('users')
+        .where('email', '==', input.email)
+        .limit(1)
+        .get()
+      if (user.docs.length > 0)
+        return { __typename: 'RegisterError', message: 'Email je již použit' }
+      const id = await randomID(30)
+      const doc = firestore.doc('users/' + id)
+      await doc.set({
+        name: input.name,
+        passwordHash: await hashPassword(input.password),
+        email: input.email,
+      })
+      await createSession(res, id)
+      return {
+        __typename: 'RegisterSuccess',
+        user: (await doc.get()).data(),
+      }
+    },
     async fbLogin(
       _: {},
       { code, redirectUri }: { code: string; redirectUri: string },
@@ -476,15 +574,17 @@ const resolvers = {
               code: number
               fbtrace_id: string
             }
-          } = await (await fetch(
-        'https://graph.facebook.com/v3.3/oauth/access_token?' +
-          new URLSearchParams({
-            client_id: '331272811153847',
-            redirect_uri: redirectUri,
-            client_secret: secrets.fb_secret,
-            code,
-          }).toString(),
-      )).json()
+          } = await (
+        await fetch(
+          'https://graph.facebook.com/v3.3/oauth/access_token?' +
+            new URLSearchParams({
+              client_id: '331272811153847',
+              redirect_uri: redirectUri,
+              client_secret: secrets.fb_secret,
+              code,
+            }).toString(),
+        )
+      ).json()
       if ('error' in token) {
         return { __typename: 'LoginError', message: token.error.message }
       }
@@ -493,13 +593,15 @@ const resolvers = {
         id: string
         name: string
         email: string
-      } = await (await fetch(
-        'https://graph.facebook.com/v3.3/me?' +
-          new URLSearchParams({
-            fields: 'id,name,email',
-            access_token: token.access_token,
-          }).toString(),
-      )).json()
+      } = await (
+        await fetch(
+          'https://graph.facebook.com/v3.3/me?' +
+            new URLSearchParams({
+              fields: 'id,name,email',
+              access_token: token.access_token,
+            }).toString(),
+        )
+      ).json()
       const picture: {
         data: {
           height: number
@@ -507,14 +609,16 @@ const resolvers = {
           url: string
           width: number
         }
-      } = await (await fetch(
-        'https://graph.facebook.com/v3.3/me/picture?' +
-          new URLSearchParams({
-            type: 'large',
-            access_token: token.access_token,
-            redirect: '0',
-          }).toString(),
-      )).json()
+      } = await (
+        await fetch(
+          'https://graph.facebook.com/v3.3/me/picture?' +
+            new URLSearchParams({
+              type: 'large',
+              access_token: token.access_token,
+              redirect: '0',
+            }).toString(),
+        )
+      ).json()
 
       const user = firestore.doc('users/' + basicInfo.id)
       await user.set(
@@ -531,18 +635,7 @@ const resolvers = {
         { merge: true },
       )
 
-      const sessionToken = await randomID(30)
-      const session = firestore.doc('sessions/' + sessionToken)
-      const sessionDuration = Duration.fromObject({ months: 2 })
-      await session.set({
-        user: 'users/' + basicInfo.id,
-        token: sessionToken,
-        expires: DateTime.utc()
-          .plus(sessionDuration)
-          .toISO(),
-      })
-
-      setSessionCookie(res, sessionToken, sessionDuration)
+      await createSession(res, basicInfo.id)
 
       return {
         __typename: 'LoginSuccess',
@@ -559,6 +652,21 @@ const resolvers = {
       return 'Success!'
     },
   },
+}
+
+async function createSession(res: Context['res'], id: string) {
+  const sessionToken = await randomID(30)
+  const session = firestore.doc('sessions/' + sessionToken)
+  const sessionDuration = Duration.fromObject({ months: 2 })
+  await session.set({
+    user: 'users/' + id,
+    token: sessionToken,
+    expires: DateTime.utc()
+      .plus(sessionDuration)
+      .toISO(),
+  })
+
+  setSessionCookie(res, sessionToken, sessionDuration)
 }
 
 export default {
