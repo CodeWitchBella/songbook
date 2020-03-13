@@ -508,6 +508,12 @@ const resolvers = {
         .limit(1)
         .get()
       const doc = user.docs[0]
+      if (!doc) {
+        return {
+          __typename: 'LoginError',
+          message: 'Uživatel s daným emailem nenalezen',
+        }
+      }
 
       const passwordHash = doc.get('passwordHash')
       if (!passwordHash) {
