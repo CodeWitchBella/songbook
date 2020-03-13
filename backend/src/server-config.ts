@@ -102,7 +102,7 @@ const typeDefs = gql`
 
   type User {
     name: String!
-    picture: UserPicture!
+    picture: UserPicture
     handle: String
   }
 
@@ -511,7 +511,10 @@ const resolvers = {
 
       const passwordHash = doc.get('passwordHash')
       if (!passwordHash) {
-        doc.ref.set({ passwordHash: hashPassword(password) }, { merge: true })
+        doc.ref.set(
+          { passwordHash: await hashPassword(password) },
+          { merge: true },
+        )
       } else {
         if (!(await comparePassword(password, passwordHash))) {
           return { __typename: 'LoginError', message: 'Chybné heslo' }
