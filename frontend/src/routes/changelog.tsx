@@ -4,6 +4,12 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2020-03-17">
+      <li>
+        Zablokování zhasínání pokud je otevřena píseň. Funguje pouze v chrome a
+        pouze dočasně, neboť používá experimentální funkci.
+      </li>
+    </Entry>
     <Entry date="2020-03-13">
       <li>
         Pátek třináctého! Přihlašování přes facebook nahrazeno přihlašováním
