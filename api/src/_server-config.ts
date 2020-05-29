@@ -321,6 +321,9 @@ const resolvers = {
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
   },
+  RegisterPayload: {
+    __resolveType: (src: any) => src.__typename,
+  },
   Mutation: {
     setHandle: async (
       _: {},
