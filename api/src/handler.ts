@@ -4,7 +4,7 @@ import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
 admin.initializeApp()
 
-const server = new ApolloServer({ ...config, context: src => src })
+const server = new ApolloServer({ ...config, context: (src) => src })
 
 const handler = server.createHandler({
   cors: {

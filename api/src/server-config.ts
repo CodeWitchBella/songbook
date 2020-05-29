@@ -250,7 +250,7 @@ const resolvers = {
     },
     deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }) => {
       const docs = await whereModifiedAfter('deletedSongs', deletedAfter)
-      return docs.docs.map(d => d.id)
+      return docs.docs.map((d) => d.id)
     },
     collections: async (
       _: {},
@@ -261,15 +261,15 @@ const resolvers = {
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
-        ...ids.map(id => firestore.doc('songs/' + id)),
+        ...ids.map((id) => firestore.doc('songs/' + id)),
       )
-      return songs.filter(snap => snap.exists)
+      return songs.filter((snap) => snap.exists)
     },
     collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
-        ...ids.map(id => firestore.doc('collections/' + id)),
+        ...ids.map((id) => firestore.doc('collections/' + id)),
       )
-      return songs.filter(snap => snap.exists)
+      return songs.filter((snap) => snap.exists)
     },
     songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
       const songs = await Promise.all(slugs.map(songBySlug))
@@ -291,9 +291,7 @@ const resolvers = {
         ? null
         : typeof src.insertedAt === 'string'
         ? src.insertedAt
-        : DateTime.fromJSDate(src.insertedAt.toDate())
-            .setZone('utc')
-            .toISO(),
+        : DateTime.fromJSDate(src.insertedAt.toDate()).setZone('utc').toISO(),
     fontSize: (src: any) =>
       typeof src.fontSize === 'number' ? src.fontSize : 1,
     paragraphSpace: (src: any) =>
@@ -328,9 +326,7 @@ const resolvers = {
   },
   Collection: {
     insertedAt: (src: any) =>
-      DateTime.fromJSDate(src.insertedAt.toDate())
-        .setZone('utc')
-        .toISO(),
+      DateTime.fromJSDate(src.insertedAt.toDate()).setZone('utc').toISO(),
     owner: async (src: any) => {
       const owner = await firestore.doc(src.owner).get()
       return owner.data()
@@ -359,8 +355,8 @@ const resolvers = {
         .get()
       await Promise.all(
         collections.docs
-          .filter(doc => !doc.get('global'))
-          .map(doc =>
+          .filter((doc) => !doc.get('global'))
+          .map((doc) =>
             doc.ref.set(
               {
                 slug: slugify(handle) + '/' + slugify(doc.get('name')),
@@ -582,9 +578,7 @@ async function createSession(res: Context['res'], id: string) {
   await session.set({
     user: 'users/' + id,
     token: sessionToken,
-    expires: DateTime.utc()
-      .plus(sessionDuration)
-      .toISO(),
+    expires: DateTime.utc().plus(sessionDuration).toISO(),
   })
 
   setSessionCookie(res, sessionToken, sessionDuration)
