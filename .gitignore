@@ -24,3 +24,5 @@ frontend/bundle
 /frontend/src/queries-types.ts
 /backend/src/songs/*.automerge
 *.cache
+.now
+.env
