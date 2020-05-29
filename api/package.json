@@ -13,25 +13,22 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@codewitchbella/ts-utils": "^0.1.14",
-    "@google-cloud/firestore": "^2.2.4",
+    "@codewitchbella/ts-utils": "^0.1.18",
+    "@google-cloud/firestore": "^3.8.1",
     "@now/node": "^1.6.1",
-    "apollo-server": "^2.6.9",
+    "apollo-server": "^2.14.1",
     "apollo-server-micro": "^2.14.1",
     "bcryptjs": "^2.4.3",
     "graphql": "^14.4.2",
-    "graphql-tools": "^4.0.5",
-    "latinize": "^0.4.0",
-    "luxon": "^1.17.1",
-    "node-fetch": "^2.6.0"
+    "graphql-tools": "^6.0.3",
+    "latinize": "^0.4.1",
+    "luxon": "^1.24.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
-    "@types/graphql": "^14.2.2",
     "@types/latinize": "^0.2.15",
-    "@types/luxon": "^1.15.2",
-    "@types/node-fetch": "^2.3.7",
-    "typescript": "^3.5.3"
+    "@types/luxon": "^1.24.0",
+    "typescript": "^3.9.3"
   },
   "private": true
 }

@@ -2,12 +2,11 @@ import { gql, UserInputError } from 'apollo-server'
 import { firestore } from './_firestore'
 import latinize from 'latinize'
 import crypto from 'crypto'
-import fetch from 'node-fetch'
 import { DateTime, Duration } from 'luxon'
-import * as functions from 'firebase-functions'
 import { notNull } from '@codewitchbella/ts-utils'
 import { FieldValue } from '@google-cloud/firestore'
 import * as bcrypt from 'bcryptjs'
+import { MyContext } from './_context'
 
 function slugify(part: string) {
   return latinize(part)
@@ -171,36 +170,19 @@ function fromEntries(entries: [string, any][]) {
   return ret
 }
 
-async function getViewer(req: functions.https.Request) {
-  const cookies = req.get('cookie')
-  if (!cookies) return null
-  for (const cookie of cookies.split(';')) {
-    if (cookie.startsWith('__session=')) {
-      const token = cookie.replace('__session=', '').trim()
-      const session = firestore.doc('sessions/' + token)
-      const data = (await session.get()).data()
-      if (!data) return
-      return { viewer: firestore.doc(data.user), session }
-    }
-  }
-  return null
+async function getViewer(context: MyContext) {
+  const token = (context.sessionCookie || '').trim()
+  if (!token) return
+  const session = firestore.doc('sessions/' + token)
+  const data = (await session.get()).data()
+  if (!data) return
+  return { viewer: firestore.doc(data.user), session }
 }
 
-async function getViewerCheck(req: functions.https.Request) {
-  const viewer = await getViewer(req)
+async function getViewerCheck(context: MyContext) {
+  const viewer = await getViewer(context)
   if (!viewer) throw new UserInputError('Not logged in')
   return viewer
-}
-
-function setSessionCookie(
-  res: functions.Response,
-  value: string,
-  duration: Duration,
-) {
-  res.set(
-    'Set-Cookie',
-    `__session=${value}; Max-Age=${duration.as('seconds')}; HttpOnly; Path=/`,
-  )
 }
 
 function whereModifiedAfter(path: string, modifiedAfter: string | null) {
@@ -236,7 +218,6 @@ export const hashPassword = (password: string): Promise<string> => {
   )
 }
 
-type Context = { req: functions.https.Request; res: functions.Response }
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
@@ -275,8 +256,8 @@ const resolvers = {
       const songs = await Promise.all(slugs.map(songBySlug))
       return songs.filter(notNull)
     },
-    viewer: async (_: {}, _2: {}, { req }: Context) => {
-      const data = await getViewer(req)
+    viewer: async (_: {}, _2: {}, context: MyContext) => {
+      const data = await getViewer(context)
       if (data) return (await data.viewer.get()).data()
       return null
     },
@@ -344,9 +325,9 @@ const resolvers = {
     setHandle: async (
       _: {},
       { handle }: { handle: string },
-      { req }: Context,
+      context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(req)
+      const { viewer } = await getViewerCheck(context)
 
       await viewer.set({ handle }, { merge: true })
       const collections = await firestore
@@ -374,9 +355,9 @@ const resolvers = {
         name: requestedName,
         global = false,
       }: { name: string; global: boolean },
-      { req }: Context,
+      context: MyContext,
     ) => {
-      const vsrc = await getViewerCheck(req)
+      const vsrc = await getViewerCheck(context)
       const viewer = await vsrc.viewer.get()
       if (global && !viewer.get('admin'))
         throw new UserInputError('Only admin can create global songbooks')
@@ -411,9 +392,9 @@ const resolvers = {
     addToCollection: async (
       _: {},
       { song, collection }: { song: string; collection: string },
-      { req }: Context,
+      context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(req)
+      const { viewer } = await getViewerCheck(context)
       const collectionRef = firestore.doc('collections/' + collection)
       const collectionSnap = await collectionRef.get()
       if (collectionSnap.get('owner') !== 'users/' + viewer.id)
@@ -433,9 +414,9 @@ const resolvers = {
     removeFromCollection: async (
       _: {},
       { song, collection }: { song: string; collection: string },
-      { req }: Context,
+      context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(req)
+      const { viewer } = await getViewerCheck(context)
       const collectionRef = firestore.doc('collections/' + collection)
       const collectionSnap = await collectionRef.get()
       if (collectionSnap.get('owner') !== 'users/' + viewer.id)
@@ -455,9 +436,9 @@ const resolvers = {
     createSong: async (
       _: {},
       { input }: { input: { author: string; title: string } },
-      { req }: Context,
+      context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(req)
+      const { viewer } = await getViewerCheck(context)
 
       const { title, author } = input
       const slug = slugify(`${title}-${author}`)
@@ -495,7 +476,7 @@ const resolvers = {
     async login(
       _: {},
       { email, password }: { email: string; password: string },
-      { res }: Context,
+      context: MyContext,
     ) {
       const user = await firestore
         .collection('users')
@@ -522,7 +503,7 @@ const resolvers = {
         }
       }
 
-      await createSession(res, doc.id)
+      await createSession(context, doc.id)
 
       return {
         __typename: 'LoginSuccess',
@@ -532,7 +513,7 @@ const resolvers = {
     async register(
       _: {},
       { input }: { input: { name: string; email: string; password: string } },
-      { res }: Context,
+      context: MyContext,
     ) {
       if (!input.name || !input.email || !input.password)
         return {
@@ -553,16 +534,16 @@ const resolvers = {
         passwordHash: await hashPassword(input.password),
         email: input.email,
       })
-      await createSession(res, id)
+      await createSession(context, id)
       return {
         __typename: 'RegisterSuccess',
         user: (await doc.get()).data(),
       }
     },
-    logout: async (_: {}, _2: {}, { req, res }: Context) => {
-      const data = await getViewer(req)
+    logout: async (_: {}, _2: {}, context: MyContext) => {
+      const data = await getViewer(context)
       // make it expire
-      setSessionCookie(res, '', Duration.fromObject({ second: 1 }))
+      context.setSessionCookie('', Duration.fromObject({ second: 1 }))
       if (data) {
         await data.session.delete()
       }
@@ -571,7 +552,7 @@ const resolvers = {
   },
 }
 
-async function createSession(res: Context['res'], id: string) {
+async function createSession(context: MyContext, id: string) {
   const sessionToken = await randomID(30)
   const session = firestore.doc('sessions/' + sessionToken)
   const sessionDuration = Duration.fromObject({ months: 2 })
@@ -581,7 +562,7 @@ async function createSession(res: Context['res'], id: string) {
     expires: DateTime.utc().plus(sessionDuration).toISO(),
   })
 
-  setSessionCookie(res, sessionToken, sessionDuration)
+  context.setSessionCookie(sessionToken, sessionDuration)
 }
 
 export default {
