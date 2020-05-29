@@ -131,7 +131,6 @@ const typeDefs = gql`
   type Mutation {
     createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
-    fbLogin(code: String!, redirectUri: String!): LoginPayload!
     login(email: String!, password: String!): LoginPayload!
     register(input: RegisterInput!): RegisterPayload!
     logout: String
@@ -562,93 +561,6 @@ const resolvers = {
       return {
         __typename: 'RegisterSuccess',
         user: (await doc.get()).data(),
-      }
-    },
-    async fbLogin(
-      _: {},
-      { code, redirectUri }: { code: string; redirectUri: string },
-      { res }: Context,
-    ) {
-      const secrets = process.env.SECRETS as any
-      const token:
-        | {
-            access_token: string
-            token_type: 'bearer'
-            expires_in: number
-          }
-        | {
-            error: {
-              message: string
-              type: string
-              code: number
-              fbtrace_id: string
-            }
-          } = await (
-        await fetch(
-          'https://graph.facebook.com/v3.3/oauth/access_token?' +
-            new URLSearchParams({
-              client_id: '331272811153847',
-              redirect_uri: redirectUri,
-              client_secret: secrets.fb_secret,
-              code,
-            }).toString(),
-        )
-      ).json()
-      if ('error' in token) {
-        return { __typename: 'LoginError', message: token.error.message }
-      }
-      const tokenExpiration = DateTime.utc().plus({ seconds: token.expires_in })
-      const basicInfo: {
-        id: string
-        name: string
-        email: string
-      } = await (
-        await fetch(
-          'https://graph.facebook.com/v3.3/me?' +
-            new URLSearchParams({
-              fields: 'id,name,email',
-              access_token: token.access_token,
-            }).toString(),
-        )
-      ).json()
-      const picture: {
-        data: {
-          height: number
-          is_silhouette: boolean
-          url: string
-          width: number
-        }
-      } = await (
-        await fetch(
-          'https://graph.facebook.com/v3.3/me/picture?' +
-            new URLSearchParams({
-              type: 'large',
-              access_token: token.access_token,
-              redirect: '0',
-            }).toString(),
-        )
-      ).json()
-
-      const user = firestore.doc('users/' + basicInfo.id)
-      await user.set(
-        {
-          fbId: basicInfo.id,
-          name: basicInfo.name,
-          email: basicInfo.email,
-          picture: picture.data,
-          fbToken: {
-            token: token.access_token,
-            expires: tokenExpiration.toISO(),
-          },
-        },
-        { merge: true },
-      )
-
-      await createSession(res, basicInfo.id)
-
-      return {
-        __typename: 'LoginSuccess',
-        user: (await user.get()).data(),
       }
     },
     logout: async (_: {}, _2: {}, { req, res }: Context) => {
