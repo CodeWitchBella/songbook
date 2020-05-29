@@ -1,5 +1,5 @@
 import { gql, UserInputError } from 'apollo-server'
-import { firestore } from './firestore'
+import { firestore } from './_firestore'
 import latinize from 'latinize'
 import crypto from 'crypto'
 import fetch from 'node-fetch'

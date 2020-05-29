@@ -1,5 +1,5 @@
 import { ApolloServer } from 'apollo-server'
-import config from './server-config'
+import config from './_server-config'
 
 const server = new ApolloServer(config)
 server.listen(3000)
