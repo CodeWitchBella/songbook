@@ -1,4 +1,4 @@
-import { Duration } from 'luxon'
+import type { Duration } from 'luxon'
 
 export type MyContext = {
   sessionCookie?: string

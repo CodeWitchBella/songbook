@@ -4,11 +4,12 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
-    "rootDir": "src",
+    "rootDir": ".",
     "esModuleInterop": true,
     "sourceMap": true,
     "strict": true,
     "target": "es2017",
+    "importsNotUsedAsValues": "error",
     "noEmit": true
   },
   "include": ["src", "./*.ts"]

@@ -1,30 +1,16 @@
 import { ApolloServer } from 'apollo-server'
 import config from './_server-config'
-import { MyContext } from './_context'
+import type { MyContext } from './_context'
 import type { Request, Response } from 'express'
+import { createSetSessionCookieHeader, parseSessionCookie } from './_cookie'
 
 const server = new ApolloServer({
   ...config,
   context: ({ res, req }: { req: Request; res: Response }): MyContext => {
-    function getSessionCookie() {
-      const cookies = req.get('cookie')
-      if (!cookies) return null
-      for (const cookie of cookies.split(';')) {
-        if (cookie.startsWith('__session=')) {
-          return cookie.replace('__session=', '').trim()
-        }
-      }
-      return null
-    }
     return {
-      sessionCookie: getSessionCookie() || undefined,
+      sessionCookie: parseSessionCookie(req.get('cookie')),
       setSessionCookie(cookie, duration) {
-        res.set(
-          'Set-Cookie',
-          `__session=${cookie}; Max-Age=${duration.as(
-            'seconds',
-          )}; HttpOnly; Path=/`,
-        )
+        res.set(...createSetSessionCookieHeader(cookie, duration))
       },
     }
   },

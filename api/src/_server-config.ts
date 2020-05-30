@@ -6,7 +6,7 @@ import { DateTime, Duration } from 'luxon'
 import { notNull } from '@codewitchbella/ts-utils'
 import { FieldValue } from '@google-cloud/firestore'
 import * as bcrypt from 'bcryptjs'
-import { MyContext } from './_context'
+import type { MyContext } from './_context'
 
 function slugify(part: string) {
   return latinize(part)
