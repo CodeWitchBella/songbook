@@ -2,7 +2,7 @@ const enableLocalhostBackend = false
 const url =
   window.location.hostname === 'localhost' && enableLocalhostBackend
     ? 'http://localhost:8080/graphql'
-    : 'https://europe-west1-songbook-240720.cloudfunctions.net/graphql'
+    : '/api/graphql'
 
 export function getGraphqlUrl() {
   return url
@@ -86,7 +86,7 @@ export async function fbLogin(
       ${userFragment}
     `,
     variables: { code, redirectUri },
-  }).then(v => {
+  }).then((v) => {
     if (v.data.fbLogin.__typename !== 'LoginSuccess') {
       console.log(v.data.fbLogin)
       throw new Error('Login failed')
@@ -119,7 +119,7 @@ export async function login(
       ${userFragment}
     `,
     variables: { email, password },
-  }).then(v => {
+  }).then((v) => {
     if (v.data.login.__typename !== 'LoginSuccess') {
       console.log(v.data.login)
       return { type: 'error', message: v.data.login.message }
@@ -153,7 +153,7 @@ export async function register(
       ${userFragment}
     `,
     variables: { input: { email, password, name } },
-  }).then(v => {
+  }).then((v) => {
     if (v.data.register.__typename !== 'RegisterSuccess') {
       console.log(v.data.register)
       return { type: 'error', message: v.data.register.message }
@@ -165,7 +165,7 @@ export async function register(
 export async function logout(): Promise<void> {
   return graphqlFetch({
     query: `mutation { logout }`,
-  }).then(v => {
+  }).then((v) => {
     if (!v.data.logout) {
       console.log(v.data.logout)
       throw new Error('Login failed')
