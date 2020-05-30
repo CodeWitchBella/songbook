@@ -97,10 +97,11 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
 }
 
 function correctOrigin(origin: string, deploymentUrl?: string) {
-  if (origin === 'https://kucharka.skorepova.info') return true
+  if (origin === 'https://zpevnik.skorepova.info') return true
+  if (origin === 'https://songbook.now.sh') return true
   if (origin === 'http://localhost:3000') return true
   if (deploymentUrl && origin === 'https://' + deploymentUrl) return true
-  if (/^https:\/\/cookbook(-[a-z-]+)?\.codewitchbella\.now\.sh$/.exec(origin))
+  if (/^https:\/\/songbook(-[a-z-]+)?\.codewitchbella\.now\.sh$/.exec(origin))
     return true
   return false
 }
