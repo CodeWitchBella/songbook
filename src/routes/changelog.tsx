@@ -4,6 +4,14 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2020-05-30">
+      <li>
+        Přesunuto k jinému poskytovateli. Nuda, já vím. Ale update nutný jinak
+        by přestalo fungovat načítání změn v seznamu písní. Taky mi to trochu
+        usnadní vydávání nových verzí, ale to bylo docela jednoduché i předtím,
+        takže opět nuda.
+      </li>
+    </Entry>
     <Entry date="2020-03-17">
       <li>
         Zablokování zhasínání pokud je otevřena píseň. Funguje pouze v chrome a
