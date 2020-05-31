@@ -54,7 +54,7 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
   }
   const originConfig = {
     currentOrigin: getFirst(event.headers.currentOrigin) || '',
-    deploymentUrl: getFirst(event.headers['x-now-deployment-url']),
+    deploymentUrl: process.env.VERCEL_URL,
   }
   if (event.httpMethod !== 'GET' && !correctcurrentOrigin(originConfig)) {
     return respondError(
