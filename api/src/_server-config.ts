@@ -137,6 +137,7 @@ const typeDefs = gql`
     createCollection(name: String!, global: Boolean): CollectionRecord
     addToCollection(collection: String!, song: String!): String
     removeFromCollection(collection: String!, song: String!): String
+    setUpdateTimeToNowAll: String
   }
 `
 
@@ -325,6 +326,20 @@ const resolvers = {
     __resolveType: (src: any) => src.__typename,
   },
   Mutation: {
+    setUpdateTimeToNowAll: async (_: {}, _2: {}, context: MyContext) => {
+      const user = await getViewer(context)
+      const viewer = await user?.viewer.get()
+      if (!viewer?.data()?.admin) return JSON.stringify(viewer?.data())
+
+      const songs = await firestore.collection('songs').get()
+      for (const song of songs.docs) {
+        song.ref.set(
+          { lastModified: FieldValue.serverTimestamp() },
+          { merge: true },
+        )
+      }
+      return 'done'
+    },
     setHandle: async (
       _: {},
       { handle }: { handle: string },
@@ -460,10 +475,7 @@ const resolvers = {
       })
       return await doc.get()
     },
-    updateSong: async (
-      _: {},
-      { id, input: input }: { input: any; id: string },
-    ) => {
+    updateSong: async (_: {}, { id, input }: { input: any; id: string }) => {
       const doc = firestore.doc('songs/' + id)
       const prev = await doc.get()
       if (!prev.exists) throw new Error('Song does not exist')
