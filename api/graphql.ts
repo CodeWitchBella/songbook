@@ -43,9 +43,6 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
 
   const gql = server.createHandler()
 
-  const url = getFirst(event.headers['x-now-deployment-url'])
-  const origin = getFirst(event.headers.origin) || ''
-
   function respondError(code: number, body: string) {
     callback(null, {
       statusCode: code,
@@ -55,8 +52,18 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
       },
     })
   }
-  if (event.httpMethod !== 'GET' && !correctOrigin(origin, url)) {
-    return respondError(403, 'Forbidden, wrong origin. Got: ' + origin)
+  const originConfig = {
+    currentOrigin: getFirst(event.headers.currentOrigin) || '',
+    deploymentUrl: getFirst(event.headers['x-now-deployment-url']),
+  }
+  if (event.httpMethod !== 'GET' && !correctcurrentOrigin(originConfig)) {
+    return respondError(
+      403,
+      'Forbidden, wrong currentOrigin. Got: ' +
+        originConfig.currentOrigin +
+        '\nExpected one of:\n' +
+        allowedOrigins(originConfig),
+    )
   }
   try {
     if (
@@ -96,12 +103,34 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
   }
 }
 
-function correctOrigin(origin: string, deploymentUrl?: string) {
-  if (origin === 'https://zpevnik.skorepova.info') return true
-  if (origin === 'https://songbook.now.sh') return true
-  if (origin === 'http://localhost:3000') return true
-  if (deploymentUrl && origin === 'https://' + deploymentUrl) return true
-  if (/^https:\/\/songbook(-[a-z-]+)?\.codewitchbella\.now\.sh$/.exec(origin))
+function allowedOrigins({ deploymentUrl }: { deploymentUrl?: string }) {
+  let ret = `https://zpevnik.skorepova.info
+  https://songbook.now.sh
+  http://localhost:3000
+  https://songbook.codewitchbella.now.sh
+  https://songbook-*.codewitchbella.now.sh`.replace(/\n +/g, '\n')
+  if (deploymentUrl) {
+    ret += `\nhttps://${deploymentUrl}`
+  }
+  return ret
+}
+
+function correctcurrentOrigin({
+  currentOrigin,
+  deploymentUrl,
+}: {
+  currentOrigin: string
+  deploymentUrl?: string
+}) {
+  if (currentOrigin === 'https://zpevnik.skorepova.info') return true
+  if (currentOrigin === 'https://songbook.now.sh') return true
+  if (currentOrigin === 'http://localhost:3000') return true
+  if (deploymentUrl && currentOrigin === 'https://' + deploymentUrl) return true
+  if (
+    /^https:\/\/songbook(-[a-z-]+)?\.codewitchbella\.now\.sh$/.exec(
+      currentOrigin,
+    )
+  )
     return true
   return false
 }
