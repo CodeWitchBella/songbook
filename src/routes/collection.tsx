@@ -1,10 +1,12 @@
 /** @jsx jsx */
+/** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import SongList from 'sections/song-list/song-list'
 import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
 import { useMemo } from 'react'
+import { BackButton, BackArrow } from 'components/back-button'
 
 function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })
@@ -40,9 +42,14 @@ const Collection = ({ slug }: { slug: string }) => {
       <SongList
         filter={(id) => collection.set.has(id)}
         header={
-          (collection.slug.includes('/')
-            ? (collection.owner.handle || collection.owner.name) + ' > '
-            : '') + collection.name
+          <>
+            <BackButton to="/collections" css={{ fontSize: 'inherit' }}>
+              <BackArrow />
+            </BackButton>
+            {(collection.slug.includes('/')
+              ? (collection.owner.handle || collection.owner.name) + ' > '
+              : '') + collection.name}
+          </>
         }
         slug={collection.slug}
         title={collection.name}

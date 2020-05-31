@@ -9,6 +9,7 @@ import { SongType } from 'store/store-song'
 import FilteredList from './filtered-list'
 import useRouter, { useQueryParam } from 'components/use-router'
 import { DownloadPDF } from 'components/pdf'
+import { BackButton } from 'components/back-button'
 
 const TheSearch = styled.div`
   font-size: 20px;
@@ -173,7 +174,7 @@ const SongList = ({
 }: {
   filter?: (id: string) => boolean
   showPrint?: boolean
-  header?: string
+  header?: string | JSX.Element
   slug: string | null
   title: string | null
 }) => {
