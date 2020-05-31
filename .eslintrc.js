@@ -1,6 +1,6 @@
 module.exports = {
-  extends: 'eslint-config-react-app',
-  plugins: ['emotion', 'react-hooks'],
+  extends: ['eslint-config-react-app', 'prettier', 'prettier/react'],
+  plugins: ['emotion', 'react-hooks', 'prettier'],
   parser: '@typescript-eslint/parser',
   rules: {
     'no-unused-vars': 0,
@@ -11,5 +11,6 @@ module.exports = {
     'no-loop-func': 0,
     'react-hooks/exhaustive-deps': 'error',
     'import/no-webpack-loader-syntax': 0,
+    'prettier/prettier': 'error',
   },
 }
