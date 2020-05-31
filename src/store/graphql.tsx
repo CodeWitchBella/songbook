@@ -66,37 +66,6 @@ export const userFragment = `
   }
 `
 
-export async function fbLogin(
-  code: string,
-  redirectUri: string,
-): Promise<User> {
-  return graphqlFetch({
-    query: `
-      mutation($code: String!, $redirectUri: String!) {
-        fbLogin(code: $code, redirectUri: $redirectUri) {
-          __typename
-          ... on LoginError {
-            message
-          }
-          ... on LoginSuccess {
-            user {
-              ...user
-            }
-          }
-        }
-      }
-      ${userFragment}
-    `,
-    variables: { code, redirectUri },
-  }).then((v) => {
-    if (v.data.fbLogin.__typename !== 'LoginSuccess') {
-      console.log(v.data.fbLogin)
-      throw new Error('Login failed')
-    }
-    return v.data.fbLogin.user
-  })
-}
-
 export async function login(
   email: string,
   password: string,

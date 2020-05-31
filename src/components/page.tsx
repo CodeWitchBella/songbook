@@ -1,5 +1,6 @@
-import React, { PropsWithChildren } from 'react'
-import { css } from 'emotion'
+/** @jsx jsx */
+import { css, jsx } from '@emotion/core'
+import { PropsWithChildren } from 'react'
 import * as page from 'utils/page'
 import { usePrintPreview } from 'containers/print-preview'
 
@@ -13,9 +14,7 @@ const sizer = () => css`
   }
 `
 
-const width = `calc(${page.width} - ${page.margin.inner} - ${
-  page.margin.outer
-})`
+const width = `calc(${page.width} - ${page.margin.inner} - ${page.margin.outer})`
 const height = `calc(
     ${page.height} - ${page.margin.top} - ${page.margin.bottom} - 1px
   )`
@@ -78,9 +77,9 @@ export default function Page({
 }: PropsWithChildren<{ left?: boolean }>) {
   const print = usePrintPreview()
   return (
-    <section className={sizer()}>
-      <div className={marginDisplay(print)}>
-        <div className={songClass(!!left, print)}>{children}</div>
+    <section css={sizer()}>
+      <div css={marginDisplay(print)}>
+        <div css={songClass(!!left, print)}>{children}</div>
       </div>
     </section>
   )

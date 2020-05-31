@@ -13,7 +13,7 @@ import {
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
 import { useRouterUnsafe } from 'components/use-router'
-import { useSongList, useGetRandomSong } from 'store/store'
+import { useGetRandomSong } from 'store/store'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -144,13 +144,13 @@ export default function SongMenu({
             <MenuLink to={`/pdf/${slug}`}>
               <span css={{ fontSize: '0.8em' }}>PDF</span>
             </MenuLink>
-            <MenuButton onClick={() => setInfo(o => !o)}>
+            <MenuButton onClick={() => setInfo((o) => !o)}>
               <InfoButton />
             </MenuButton>
             {showSpotify ? (
               <MenuButton
                 onClick={() => {
-                  setSpotifyVisible(v => !v)
+                  setSpotifyVisible((v) => !v)
                 }}
               >
                 <PlayButton />
@@ -166,7 +166,7 @@ export default function SongMenu({
             </MenuButton>
           </>
         ) : null}
-        <MenuButton onClick={() => setOpen(o => !o)}>
+        <MenuButton onClick={() => setOpen((o) => !o)}>
           <Burger />
         </MenuButton>
       </MenuList>

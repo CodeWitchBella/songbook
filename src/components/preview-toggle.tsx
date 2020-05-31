@@ -1,6 +1,6 @@
-import React from 'react'
+/** @jsx jsx */
+import { css, jsx } from '@emotion/core'
 import { usePrintPreviewToggle } from 'containers/print-preview'
-import { css } from 'emotion'
 
 const toggleContainer = css`
   @media not print {
@@ -60,9 +60,9 @@ const previewToggle = css`
 export default function PreviewToggle() {
   const [value, toggle] = usePrintPreviewToggle()
   return (
-    <label className={toggleContainer}>
+    <label css={toggleContainer}>
       <span>Print preview:</span>
-      <span className={previewToggle}>
+      <span css={previewToggle}>
         <input type="checkbox" checked={value} onChange={toggle} />
         <span />
       </span>

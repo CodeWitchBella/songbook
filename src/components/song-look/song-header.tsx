@@ -1,5 +1,5 @@
-import React from 'react'
-import { css } from 'emotion'
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
 
 const header = (titleSpace: number | null) => css`
   display: flex;
@@ -23,7 +23,7 @@ const SongHeader = ({
   author: string
   titleSpace: number | null
 }) => (
-  <h2 className={header(titleSpace)}>
+  <h2 css={header(titleSpace)}>
     <div>{title}</div>
     <div>{author}</div>
   </h2>

@@ -1,11 +1,10 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { Suspense } from 'react'
-import { cache } from 'emotion'
 import Routes from 'routes/routes'
 import { PrintPreviewProvider } from 'containers/print-preview'
 import { InstallProvider } from 'components/install'
-import { CacheProvider, css, Global } from '@emotion/core'
+import { css, Global } from '@emotion/core'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
@@ -54,19 +53,17 @@ export const InjectGlobal = () => (
 export default () => (
   <React.Fragment>
     <OutlineHandler />
-    <CacheProvider value={cache}>
-      <StoreProvider>
-        <InstallProvider>
-          <PrintPreviewProvider>
-            <Suspense fallback={<div>Načítám...</div>}>
-              <ErrorBoundary>
-                <Routes />
-                <ServiceWorkerUpdated />
-              </ErrorBoundary>
-            </Suspense>
-          </PrintPreviewProvider>
-        </InstallProvider>
-      </StoreProvider>
-    </CacheProvider>
+    <StoreProvider>
+      <InstallProvider>
+        <PrintPreviewProvider>
+          <Suspense fallback={<div>Načítám...</div>}>
+            <ErrorBoundary>
+              <Routes />
+              <ServiceWorkerUpdated />
+            </ErrorBoundary>
+          </Suspense>
+        </PrintPreviewProvider>
+      </InstallProvider>
+    </StoreProvider>
   </React.Fragment>
 )

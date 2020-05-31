@@ -1,5 +1,4 @@
 /** @jsx jsx */
-/** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
 import { SongLook } from 'components/song-look/song-look'
@@ -73,7 +72,7 @@ export default function SongSection({
     10,
   )
   return (
-    <>
+    <React.Fragment>
       <div
         css={{
           display: 'flex',
@@ -93,7 +92,7 @@ export default function SongSection({
           setSpotifyVisible={setSpotifyVisible}
           showSpotify={!!song.spotify}
           transposition={transposition}
-          setTransposition={v =>
+          setTransposition={(v) =>
             navigate(
               queryJoin(
                 location.pathname,
@@ -108,6 +107,6 @@ export default function SongSection({
         />
       )}
       {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
-    </>
+    </React.Fragment>
   )
 }

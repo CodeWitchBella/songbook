@@ -5,7 +5,6 @@ import { PropsWithChildren, useReducer, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 import { useLogin } from './use-login'
-import { CachedRoundImage } from './cached-round-image'
 import { useHistoryChange } from './use-router'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
@@ -164,7 +163,7 @@ function MenuContent({
           </>
         ) : view === 'login' ? (
           <form
-            onSubmit={evt => {
+            onSubmit={(evt) => {
               evt.preventDefault()
               evt.persist()
               const data = new FormData(evt.currentTarget)
@@ -176,11 +175,11 @@ function MenuContent({
               }
               login
                 .login(email, password)
-                .then(result => {
+                .then((result) => {
                   setStatus(result || '')
                   if (!result) setView('base')
                 })
-                .catch(e => {
+                .catch((e) => {
                   console.error(e)
                   setStatus('Něco se pokazilo')
                 })
@@ -208,7 +207,7 @@ function MenuContent({
             </TopMenuItem>
             <TopMenuItem
               as="button"
-              onClick={evt => {
+              onClick={(evt) => {
                 evt.preventDefault()
                 setView('base')
                 setStatus('')
@@ -219,7 +218,7 @@ function MenuContent({
           </form>
         ) : (
           <form
-            onSubmit={evt => {
+            onSubmit={(evt) => {
               evt.preventDefault()
               evt.persist()
               const data = new FormData(evt.currentTarget)
@@ -241,11 +240,11 @@ function MenuContent({
               }
               login
                 .register(email, password, name)
-                .then(result => {
+                .then((result) => {
                   setStatus(result || '')
                   if (!result) setView('base')
                 })
-                .catch(e => {
+                .catch((e) => {
                   console.error(e)
                   setStatus('Něco se pokazilo')
                 })
@@ -278,7 +277,7 @@ function MenuContent({
             </TopMenuItem>
             <TopMenuItem
               as="button"
-              onClick={evt => {
+              onClick={(evt) => {
                 evt.preventDefault()
                 setView('base')
                 setStatus('')

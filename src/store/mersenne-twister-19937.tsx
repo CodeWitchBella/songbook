@@ -131,6 +131,7 @@ export default class MersenneTwister {
       if (j >= key_length) j = 0
     }
     for (k = this.N - 1; k; k--) {
+      // eslint-disable-next-line no-redeclare
       var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
       this.mt[i] =
         (this.mt[i] ^
@@ -158,6 +159,7 @@ export default class MersenneTwister {
       /* generate N words at one time */
       var kk
 
+      // eslint-disable-next-line eqeqeq
       if (this.mti == this.N + 1)
         /* if init_genrand() has not been called, */
         this.init_genrand(5489) /* a default initial seed is used */
