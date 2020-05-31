@@ -70,7 +70,7 @@ export async function onLoadQuery(
         : DateTime.utc().toISO(),
       skipDeleted: !modifiedAfter,
     },
-  }).then(v => ({
+  }).then((v) => ({
     songs: v.data.songs.map((s: any) => ({
       ...s.data,
       id: s.id,
@@ -109,7 +109,7 @@ export async function updateSong(
     
     `,
     variables: { id, input },
-  }).then(v => {
+  }).then((v) => {
     if (!v.data.updateSong) throw new Error('updateSong failed')
   })
 }
@@ -144,31 +144,31 @@ export function createSongStore({
 }) {
   return new GenericStore<SongType, Song<string>>({
     cacheKey: 'songs',
-    serialize: item => {
+    serialize: (item) => {
       return {
         ...item,
         lastModified: item.lastModified.toISO(),
         insertedAt: item.insertedAt ? item.insertedAt.toISO() : null,
       }
     },
-    deserialize: item => {
+    deserialize: (item) => {
       return {
         ...item,
         lastModified: DateTime.fromISO(item.lastModified),
         insertedAt: item.insertedAt ? DateTime.fromISO(item.insertedAt) : null,
       }
     },
-    loadIncremental: after =>
-      onLoadQuery(after).then(v => {
+    loadIncremental: (after) =>
+      onLoadQuery(after).then((v) => {
         setViewer(v.viewer)
         return { changed: v.songs, deleted: v.deletedSongs }
       }),
     loadInitial: () =>
-      onLoadQuery().then(v => {
+      onLoadQuery().then((v) => {
         setViewer(v.viewer)
         return v.songs
       }),
     onLoadedFromCache: () => setIniting(false),
-    onLoadingChange: v => setLoading(v),
+    onLoadingChange: (v) => setLoading(v),
   })
 }

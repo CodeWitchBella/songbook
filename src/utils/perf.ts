@@ -13,7 +13,7 @@ export const printMeasure = () => {
   console.table(
     performance
       .getEntriesByType('measure')
-      .map(entry => ({
+      .map((entry) => ({
         name: entry.name,
         duration: entry.duration.toFixed(3) + 'ms',
       }))

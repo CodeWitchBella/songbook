@@ -10,7 +10,7 @@ const nbsp = (text: string) =>
   text.trim() +
   '\u00A0'.repeat(text.length - text.trimRight().length)
 
-const hasChord = (l: Line) => l.content.some(el => !!el.ch)
+const hasChord = (l: Line) => l.content.some((el) => !!el.ch)
 
 const lineStyle = {
   verticalAlign: 'baseline',
@@ -71,7 +71,7 @@ function LineWrap({
 }
 
 function LineC({ l }: { l: Line }) {
-  const hasText = l.content.some(c => !!c.text)
+  const hasText = l.content.some((c) => !!c.text)
   if (!hasText) {
     return (
       <LineWrap hasChord={false}>

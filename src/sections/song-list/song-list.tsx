@@ -105,7 +105,7 @@ function Search({
         >
           <div css={{ position: 'relative', flexGrow: 1 }}>
             <form
-              onSubmit={evt => {
+              onSubmit={(evt) => {
                 evt.preventDefault()
                 const refc = ref.current
                 if (!refc) return
@@ -115,7 +115,7 @@ function Search({
               <input
                 aria-label="Vyhledávání"
                 ref={ref}
-                onChange={evt => {
+                onChange={(evt) => {
                   onChange(evt.target.value)
                 }}
                 value={text}
@@ -184,8 +184,8 @@ const SongList = ({
   const songs = useMemo(
     () =>
       source
-        .map(s => s.item)
-        .filter(song => {
+        .map((s) => s.item)
+        .filter((song) => {
           if (filter) return filter(song.id)
           return true
         })
@@ -202,7 +202,7 @@ const SongList = ({
       <TheSearch>
         <Search
           text={search || ''}
-          onChange={v => {
+          onChange={(v) => {
             const { state } = router.location
             if (
               typeof state === 'object' &&

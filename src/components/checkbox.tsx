@@ -14,7 +14,7 @@ const Checkbox = ({
     <input
       type="checkbox"
       checked={checked}
-      onChange={evt => {
+      onChange={(evt) => {
         onChange(evt.target.checked)
       }}
     />

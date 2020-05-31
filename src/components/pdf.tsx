@@ -13,7 +13,7 @@ export default PDF
 const PDFDownload = React.lazy(() =>
   import(
     /* webpackChunkName: "components_pdf-render" */ './pdf-render/pdf-render'
-  ).then(v => ({ default: v.PDFDownload })),
+  ).then((v) => ({ default: v.PDFDownload })),
 )
 
 function useDelayed<T>(v: T): T {

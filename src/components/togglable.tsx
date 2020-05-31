@@ -9,7 +9,7 @@ export default class Togglable extends React.Component<
 > {
   state = {
     toggled: this.props.defaultState,
-    toggle: () => this.setState(s => ({ toggled: !s.toggled })),
+    toggle: () => this.setState((s) => ({ toggled: !s.toggled })),
   }
   render() {
     return this.props.children(this.state)

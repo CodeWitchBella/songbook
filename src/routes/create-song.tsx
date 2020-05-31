@@ -44,7 +44,7 @@ function CreateSong() {
         console.log('result', slug)
         window.location.pathname = `/edit/${slug}`
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e)
         setDisabled(false)
       })

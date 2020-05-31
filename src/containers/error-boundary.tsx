@@ -49,7 +49,7 @@ export default class ErrorBoundary extends Component<{
 
 export const errorBoundary = <T extends {}>(
   Component: React.ComponentType<T>,
-): React.FC<T> => props => {
+): React.FC<T> => (props) => {
   return (
     <ErrorBoundary>
       <Component {...props} />

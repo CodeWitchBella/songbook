@@ -56,7 +56,7 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   return (
     <a
       href={href}
-      onClick={evt => {
+      onClick={(evt) => {
         evt.preventDefault()
         history.push(href, { canGoBack: true })
       }}
@@ -98,7 +98,7 @@ const ListContainer = styled('div')<{ count: number }>`
   display: grid;
   grid-template-columns: repeat(1, 100%);
   grid-template-rows: repeat(
-    ${props => Math.ceil(props.count / 1)},
+    ${(props) => Math.ceil(props.count / 1)},
     auto
   );
   padding-top: 10px;
@@ -251,7 +251,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
           >
             <ListContainer
               count={list.length}
-              ref={r => {
+              ref={(r) => {
                 if (r) {
                   bigScrollRef.current = r
                   r.scrollTo(0, initialScroll.current)
@@ -275,7 +275,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
           width={windowWidth}
           height={height}
           itemCount={list.length + 1}
-          itemSize={idx => {
+          itemSize={(idx) => {
             if (idx === 0) return 10
             const item = list[idx - 1]
             if (!item) return 0

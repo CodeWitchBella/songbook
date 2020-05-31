@@ -84,7 +84,7 @@ function parseParagraph(
     p: p
       .trim()
       .split('\n')
-      .map(l => {
+      .map((l) => {
         const { content, tag, pCounter: n } = parseLine(l, pCounter)
         pCounter = n
         return {
@@ -105,7 +105,7 @@ function parsePage(
     page: song
       .trim()
       .split(/\n\n+/)
-      .map(l => {
+      .map((l) => {
         const ret = parseParagraph(l, pCounter)
         pCounter = ret.pCounter
         return ret.p
@@ -119,7 +119,7 @@ export function parseSongMyFormat(song: string): Paragraph[][] {
   return song
     .trim()
     .split('--- page break ---')
-    .map(page => {
+    .map((page) => {
       const ret = parsePage(page, pCounter)
       pCounter = ret.pCounter
       return ret.page

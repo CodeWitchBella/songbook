@@ -52,7 +52,7 @@ const notes = [
   ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'B', 'H'],
 ]
 
-const iterableNotes = notes.map(list => ({
+const iterableNotes = notes.map((list) => ({
   list,
   iterable: list
     .map((note, idx) => ({ note, idx }))
@@ -82,7 +82,7 @@ function transposeChord(chord: string, transposition: number) {
 function transposeChords(tags: string, transposition: number) {
   return tags
     .split(/[ +]+/)
-    .map(t => transposeChord(t, transposition))
+    .map((t) => transposeChord(t, transposition))
     .join(' ')
 }
 
@@ -91,8 +91,8 @@ const Line: React.SFC<{ children: parser.Line; transposition: number }> = ({
   transposition,
 }) => {
   const parsed = children
-  const hasChords = parsed.content.some(p => !!p.ch)
-  const hasText = parsed.content.some(p => !!p.text)
+  const hasChords = parsed.content.some((p) => !!p.ch)
+  const hasText = parsed.content.some((p) => !!p.text)
 
   if (!hasText) {
     return (

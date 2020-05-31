@@ -22,7 +22,7 @@ const Input = ({
         color: 'black',
         padding: '3px 7px',
       }}
-      onChange={evt => {
+      onChange={(evt) => {
         evt.preventDefault()
         onChange(evt.target.value)
       }}
@@ -49,7 +49,7 @@ export const LargeInput = ({
       css={{ fontSize: 24, border: '2px solid', padding: 10 }}
       type={type}
       value={value}
-      onChange={evt => {
+      onChange={(evt) => {
         evt.preventDefault()
         onChange(evt.target.value)
       }}

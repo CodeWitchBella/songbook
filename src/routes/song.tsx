@@ -21,7 +21,7 @@ function useWakeLock() {
       )
       const handleVisibilityChange = () => {
         if (wakeLock !== null && document.visibilityState === 'visible') {
-          wakeLock.then(lock => lock.release())
+          wakeLock.then((lock) => lock.release())
           wakeLock = (navigator as any).wakeLock.request('screen')
         }
       }
@@ -32,7 +32,7 @@ function useWakeLock() {
       return () => {
         document.removeEventListener('visibilitychange', handleVisibilityChange)
         document.removeEventListener('fullscreenchange', handleVisibilityChange)
-        wakeLock?.then(lock => lock.release())
+        wakeLock?.then((lock) => lock.release())
         wakeLock = null
       }
     }

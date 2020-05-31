@@ -54,7 +54,7 @@ async function collectionQuery(
     variables: {
       modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
     },
-  }).then(v => {
+  }).then((v) => {
     const deleted = v.data.collections
       .filter((c: any) => c.__typename === 'Deleted')
       .map((c: any) => ({ id: c.id }))
@@ -76,23 +76,23 @@ export type CollectionType = CollectionRecord<DateTime>
 export function createCollectionStore() {
   return new GenericStore<CollectionType, CollectionRecord<string>>({
     cacheKey: 'collections',
-    serialize: item => {
+    serialize: (item) => {
       return {
         ...item,
         lastModified: item.lastModified.toISO(),
         insertedAt: item.insertedAt.toISO(),
       }
     },
-    deserialize: item => {
+    deserialize: (item) => {
       return {
         ...item,
         lastModified: DateTime.fromISO(item.lastModified),
         insertedAt: DateTime.fromISO(item.insertedAt),
       }
     },
-    loadIncremental: after => collectionQuery(after),
+    loadIncremental: (after) => collectionQuery(after),
     loadInitial: () =>
-      collectionQuery().then(v => {
+      collectionQuery().then((v) => {
         return v.changed
       }),
   })

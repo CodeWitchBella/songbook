@@ -112,7 +112,7 @@ export default function FilteredList({
     if (worker) {
       worker.postMessage({
         type: 'setSongs',
-        value: songs.map<SearchableSong>(song => ({
+        value: songs.map<SearchableSong>((song) => ({
           text: song.text,
           author: song.author,
           id: song.id,
@@ -129,7 +129,7 @@ export default function FilteredList({
       setList({
         showTitles: false,
         ids: {
-          byTitle: songs.map(s => s.id),
+          byTitle: songs.map((s) => s.id),
           byAuthor: [],
           byText: [],
           byExtra: [],

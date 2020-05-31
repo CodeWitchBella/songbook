@@ -6,8 +6,8 @@ import * as globals from './globals-helper'
 
 export const window = globals.window_
 export function requestAnimationFrame(arg: FrameRequestCallback) {
-  const raf = globals.requestAnimationFrame_ || (a => setTimeout(a, 0))
-  raf(a => {
+  const raf = globals.requestAnimationFrame_ || ((a) => setTimeout(a, 0))
+  raf((a) => {
     try {
       arg(a)
     } catch (e) {

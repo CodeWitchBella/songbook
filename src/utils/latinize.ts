@@ -21,6 +21,6 @@ const charMap: { [key: string]: string } = {
 export default function latinize(text: string) {
   return text
     .split('')
-    .map(ch => charMap[ch] || ch)
+    .map((ch) => charMap[ch] || ch)
     .join('')
 }

@@ -21,7 +21,7 @@ export const usePrintPreview = () => useContext(context).value
 
 export const usePrintPreviewToggle = () => {
   const ctx = useContext(context)
-  const toggle = useCallback(() => ctx.set(v => !v), [ctx])
+  const toggle = useCallback(() => ctx.set((v) => !v), [ctx])
   return useMemo(() => [ctx.value, toggle] as [boolean, () => void], [
     ctx.value,
     toggle,

@@ -37,7 +37,7 @@ const ChangelogEntry: React.SFC<{ date: string }> = ({ date, children }) => (
   <Entry>
     <H2>
       {(() => {
-        const parts = date.split('-').map(n => Number.parseInt(n, 10))
+        const parts = date.split('-').map((n) => Number.parseInt(n, 10))
         return `${parts[2]}. ${months[parts[1] - 1]} ${parts[0]}`
       })()}
     </H2>

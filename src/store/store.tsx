@@ -18,20 +18,22 @@ import { DateTime } from 'luxon'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
-const context = React.createContext(null as null | {
-  store: ReturnType<typeof createSongStore>
-  collections: ReturnType<typeof createCollectionStore>
-  viewer: User | null
-  setViewer: (v: User | null) => void
-  initing: boolean
-  loading: boolean
-})
+const context = React.createContext(
+  null as null | {
+    store: ReturnType<typeof createSongStore>
+    collections: ReturnType<typeof createCollectionStore>
+    viewer: User | null
+    setViewer: (v: User | null) => void
+    initing: boolean
+    loading: boolean
+  },
+)
 
 function useCachedState<T>(key: string, initial: T | null) {
   const st = useState<T | null>(initial)
   const [v, setV] = st
   useEffect(() => {
-    settingsStorage.getItem<T>(key).then(itm => setV(itm))
+    settingsStorage.getItem<T>(key).then((itm) => setV(itm))
   }, [key, setV])
   useEffect(() => {
     settingsStorage.setItem<T | null>(key, v)
@@ -59,8 +61,8 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
 
   // clear legacy song saving mechanism
   useEffect(() => {
-    localForage.keys().then(keys =>
-      keys.forEach(key => {
+    localForage.keys().then((keys) =>
+      keys.forEach((key) => {
         localForage.removeItem(key)
       }),
     )
@@ -123,18 +125,18 @@ export function useGetRandomSong() {
         now.get('day') + 100 * (now.get('month') + 100 * now.get('year')),
       )
       const songs = store.readAll()
-      const withRandom = songs.map(song => ({ song, number: random.random() }))
-      const curRandom = withRandom.find(s => s.song.item.id === currentSongId)
+      const withRandom = songs.map((song) => ({
+        song,
+        number: random.random(),
+      }))
+      const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
-      const next = withRandom.reduce(
-        (cur, t) => {
-          if (t.number < curRandom.number) return cur
-          if (t.song.item.id === currentSongId) return cur
-          if (!cur) return t
-          return cur.number < t.number ? cur : t
-        },
-        null as null | typeof withRandom[0],
-      )
+      const next = withRandom.reduce((cur, t) => {
+        if (t.number < curRandom.number) return cur
+        if (t.song.item.id === currentSongId) return cur
+        if (!cur) return t
+        return cur.number < t.number ? cur : t
+      }, null as null | typeof withRandom[0])
       if (next) return next.song
       return withRandom.reduce(
         (a, b) => (a === null ? b : a.number < b.number ? a : b),

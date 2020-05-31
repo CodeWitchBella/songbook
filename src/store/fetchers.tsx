@@ -11,7 +11,7 @@ export function newSong(song: {
       }
     `,
     variables: { input: { author: song.author, title: song.title } },
-  }).then(v => {
+  }).then((v) => {
     if (v && v.data && v.data.createSong)
       return { slug: v.data.createSong.data.slug, id: v.data.createSong.id }
     throw new Error('New song failed')

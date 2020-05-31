@@ -18,9 +18,9 @@ const searchSong = (
   if (!text) return true
   return toComparable(text)
     .split(' ')
-    .map(t => t.trim())
-    .filter(t => t)
-    .every(t => toComparable(song[field] || '').includes(t))
+    .map((t) => t.trim())
+    .filter((t) => t)
+    .every((t) => toComparable(song[field] || '').includes(t))
 }
 
 export default function getFilteredSongList(
@@ -29,34 +29,34 @@ export default function getFilteredSongList(
 ) {
   const used = new Set<string>()
   const byTitle = songs.filter(searchSong(search, 'title'))
-  byTitle.forEach(s => {
+  byTitle.forEach((s) => {
     used.add(s.id)
   })
 
   const byAuthor = search
-    ? songs.filter(searchSong(search, 'author')).filter(s => !used.has(s.id))
+    ? songs.filter(searchSong(search, 'author')).filter((s) => !used.has(s.id))
     : []
-  byAuthor.forEach(s => {
+  byAuthor.forEach((s) => {
     used.add(s.id)
   })
 
   const byText = search
-    ? songs.filter(searchSong(search, 'text')).filter(s => !used.has(s.id))
+    ? songs.filter(searchSong(search, 'text')).filter((s) => !used.has(s.id))
     : []
-  byText.forEach(s => {
+  byText.forEach((s) => {
     used.add(s.id)
   })
 
   const byExtra = search
     ? songs
         .filter(searchSong(search, 'extraSearchable'))
-        .filter(s => !used.has(s.id))
+        .filter((s) => !used.has(s.id))
     : []
 
   return {
-    byTitle: byTitle.map(s => s.id),
-    byAuthor: byAuthor.map(s => s.id),
-    byText: byText.map(s => s.id),
-    byExtra: byExtra.map(s => s.id),
+    byTitle: byTitle.map((s) => s.id),
+    byAuthor: byAuthor.map((s) => s.id),
+    byText: byText.map((s) => s.id),
+    byExtra: byExtra.map((s) => s.id),
   }
 }

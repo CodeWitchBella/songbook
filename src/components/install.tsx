@@ -67,7 +67,7 @@ const InstallContainer = styled.div`
 
 export const InstallButtonLook = () => (
   <InstallButton>
-    {install => (
+    {(install) => (
       <>
         <div css={{ height: 150 }} />
         <InstallContainer>

@@ -38,7 +38,7 @@ const Print = ({ tag }: { tag: string }) => {
         ))}
       </main>
       <Contents
-        list={songList.map(s => ({
+        list={songList.map((s) => ({
           text: s.item.text,
           author: s.item.author,
           title: s.item.title,

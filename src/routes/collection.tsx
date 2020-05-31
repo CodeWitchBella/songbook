@@ -38,7 +38,7 @@ const Collection = ({ slug }: { slug: string }) => {
   return (
     <div css={{ height: '100%' }}>
       <SongList
-        filter={id => collection.set.has(id)}
+        filter={(id) => collection.set.has(id)}
         header={
           (collection.slug.includes('/')
             ? (collection.owner.handle || collection.owner.name) + ' > '

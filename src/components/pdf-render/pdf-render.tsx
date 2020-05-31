@@ -20,9 +20,7 @@ import { PDFTitlePage } from './pdf-title-page'
 import { PDFToc } from './pdf-toc'
 import { PDFBooklet } from './pdf-page'
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${
-  pdfjs.version
-}/pdf.worker.js`
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
 type Props = {
   song: SongType
@@ -51,7 +49,7 @@ Font.register({
   ],
 })
 // disable hyphenation
-Font.registerHyphenationCallback(w => [w] as any)
+Font.registerHyphenationCallback((w) => [w] as any)
 
 function PlusMinus({
   onClick,
@@ -111,7 +109,7 @@ function PDFDoc({ url }: { url: string }) {
           >
             <div>
               <PlusMinus
-                onClick={() => setPage(p => (p - 1 > 0 ? p - 1 : p))}
+                onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
                 hide={page === 1}
                 css={{ marginRight: 10 }}
               >
@@ -119,7 +117,7 @@ function PDFDoc({ url }: { url: string }) {
               </PlusMinus>
               Strana {page}/{numPages}
               <PlusMinus
-                onClick={() => setPage(p => (p + 1 <= numPages ? p + 1 : p))}
+                onClick={() => setPage((p) => (p + 1 <= numPages ? p + 1 : p))}
                 hide={page === numPages}
                 css={{ marginLeft: 10 }}
               >
@@ -211,7 +209,7 @@ export function PDFDownload({
   title,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
   const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
-  const delayedPages = [] as (typeof songPages)
+  const delayedPages = [] as typeof songPages
   let songCounter = 0
   const [bookletV] = useQueryParam('booklet')
   const booklet = bookletV !== null
@@ -220,7 +218,7 @@ export function PDFDownload({
     songCounter += 1
     const pages = parseSong('my', song.text)
     let pageCounter = 0
-    const thisSongPages = [] as (typeof songPages)
+    const thisSongPages = [] as typeof songPages
     for (const page of pages) {
       pageCounter += 1
       thisSongPages.push({

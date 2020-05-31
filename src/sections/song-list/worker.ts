@@ -36,7 +36,7 @@ const recalculate = onlyCallLast((origin: string) => {
   })
 })
 
-onmessage = function(evt) {
+onmessage = function (evt) {
   const { type, value } = evt.data
   const { origin } = evt
   if (type === 'setSongs') {

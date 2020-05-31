@@ -114,12 +114,7 @@ export function SongTextEditor(props: {
     const unsub = editor.onDidChangeModelContent(() => {
       if (timeout) clearTimeout(timeout)
       timeout = setTimeout(() => {
-        onChange(
-          editor
-            .getModel()!
-            .getLinesContent()
-            .join('\n'),
-        )
+        onChange(editor.getModel()!.getLinesContent().join('\n'))
       }, 250)
     })
     return () => {

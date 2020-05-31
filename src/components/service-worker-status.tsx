@@ -18,7 +18,7 @@ export const ServiceWorkerStatusProvider: React.FC<{
 
   useEffect(() => {
     register({
-      onUpdate: wb => setUpdated(wb),
+      onUpdate: (wb) => setUpdated(wb),
     })
   }, [register])
   return <context.Provider value={providedValue}>{children}</context.Provider>

@@ -43,7 +43,7 @@ const Textarea = ({
 }) => (
   <TextAreaC
     value={value}
-    onChange={evt => {
+    onChange={(evt) => {
       evt.preventDefault()
       onChange(evt.target.value)
     }}
@@ -266,7 +266,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           change({})
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.error(e)
         setState({ saveStatus: 'FAILED' })
       })

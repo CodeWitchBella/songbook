@@ -14,7 +14,9 @@ const currentHost = 'zpevnik.skorepova.info'
 function unregister() {
   return navigator.serviceWorker
     .getRegistrations()
-    .then(registrations => Promise.all(registrations.map(r => r.unregister)))
+    .then((registrations) =>
+      Promise.all(registrations.map((r) => r.unregister)),
+    )
 }
 
 let displayInstructions = false
