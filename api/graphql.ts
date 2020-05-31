@@ -53,13 +53,13 @@ export const handler: APIGatewayProxyHandler = (event, context, callback) => {
     })
   }
   const originConfig = {
-    currentOrigin: getFirst(event.headers.currentOrigin) || '',
+    currentOrigin: getFirst(event.headers.origin) || '',
     deploymentUrl: process.env.VERCEL_URL,
   }
-  if (event.httpMethod !== 'GET' && !correctcurrentOrigin(originConfig)) {
+  if (event.httpMethod !== 'GET' && !correctOrigin(originConfig)) {
     return respondError(
       403,
-      'Forbidden, wrong currentOrigin. Got: ' +
+      'Forbidden, wrong origin. Got: ' +
         originConfig.currentOrigin +
         '\nExpected one of:\n' +
         allowedOrigins(originConfig),
@@ -115,7 +115,7 @@ function allowedOrigins({ deploymentUrl }: { deploymentUrl?: string }) {
   return ret
 }
 
-function correctcurrentOrigin({
+function correctOrigin({
   currentOrigin,
   deploymentUrl,
 }: {
