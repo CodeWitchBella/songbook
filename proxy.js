@@ -17,6 +17,13 @@ const target = 'https://zpevnik.skorepova.info'
     .on('proxyReq', (proxyReq, req, res, options) => {
       const origin = req.headers['origin']
       proxyReq.setHeader('Origin', target)
+
+      const oldWriteHead = res.writeHead
+      res.writeHead = function (statusCode, headers) {
+        res.removeHeader('strict-transport-security')
+        oldWriteHead.call(this, statusCode, headers)
+      }
+
       if (
         origin &&
         (origin.startsWith('https://localhost') ||
