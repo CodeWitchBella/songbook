@@ -1,8 +1,10 @@
 const enableLocalhostBackend = false
 const url =
-  window.location.hostname === 'localhost' && enableLocalhostBackend
+  window.location.hostname !== 'localhost'
+    ? '/api/graphql'
+    : enableLocalhostBackend
     ? 'http://localhost:8080/graphql'
-    : '/api/graphql'
+    : 'https://localhost:8000/api/graphql'
 
 export function getGraphqlUrl() {
   return url

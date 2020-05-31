@@ -1,4 +1,5 @@
 /** @jsx jsx */
+/** @jsxFrag React.Fragment */
 import { jsx, css } from '@emotion/core'
 import React, { PropsWithChildren } from 'react'
 import * as parser from 'utils/song-parser/song-parser'

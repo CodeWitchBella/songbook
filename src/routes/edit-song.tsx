@@ -1,4 +1,5 @@
 /** @jsx jsx */
+/** @jsxFrag React.Fragment */
 import { jsx, css } from '@emotion/core'
 import React, { useRef, PropsWithChildren, useReducer } from 'react'
 import styled from '@emotion/styled'

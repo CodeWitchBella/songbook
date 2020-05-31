@@ -42,7 +42,24 @@ function parseGuitarChord(
   ]
 }
 
-const interData = Object.entries({
+const sourceData: {
+  [key: string]: {
+    equivalentWith: string[]
+    variants: {
+      major: string
+      minor: string
+      sixth: string
+      seventh: string
+      ninth: string
+      minor6: string
+      minor7: string
+      maj7: string
+      dim: string
+      plus: string
+      sus: string
+    }
+  }
+} = {
   Ab: {
     equivalentWith: ['G#'],
     variants: {
@@ -235,7 +252,9 @@ const interData = Object.entries({
       sus: '3100xx',
     },
   },
-}).map(([major, definition]) => ({
+}
+
+const interData = Object.entries(sourceData).map(([major, definition]) => ({
   major,
   equivalentWith: definition.equivalentWith,
   variants: Object.entries(definition.variants).map(([name, guitar]) => ({
@@ -244,10 +263,10 @@ const interData = Object.entries({
   })),
 }))
 
-const czechData = interData.map(chord => ({
+const czechData = interData.map((chord) => ({
   ...chord,
   major: chord.major === 'B' ? 'H' : chord.major === 'Bb' ? 'B' : chord.major,
-  equivalentWith: chord.equivalentWith.map(name =>
+  equivalentWith: chord.equivalentWith.map((name) =>
     name === 'B#' ? 'H#' : name,
   ),
 }))

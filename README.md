@@ -2,8 +2,23 @@
 
 https://zpevnik.skorepova.info/
 
-## Vývoj backendu
+## How to develop frontend
 
-`cd backend`
+```
+npm start
+node proxy.js
+```
 
-Následně zároveň spustit `npm run build-watch` a `npm run start`
+## How to develop backend
+
+```
+yarn global add now
+now login
+# you might need to link using `now`, you can cancel deploy once it creates .now folder
+now env pull
+now dev
+```
+
+## How to deploy
+
+just push to master

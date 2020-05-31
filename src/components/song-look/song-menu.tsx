@@ -1,4 +1,5 @@
 /** @jsx jsx */
+/** @jsxFrag React.Fragment */
 import { jsx, Interpolation } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
