@@ -5,7 +5,7 @@ import SongList from 'sections/song-list/song-list'
 import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { BackButton, BackArrow } from 'components/back-button'
 
 function useColectionWithSet(slug: string) {
@@ -22,6 +22,8 @@ function useColectionWithSet(slug: string) {
 
 const Collection = ({ slug }: { slug: string }) => {
   const collection = useColectionWithSet(slug)
+  const set = collection?.set
+  const filter = useCallback((id) => (set && set?.has(id)) || false, [set])
   if (!collection)
     return (
       <div
@@ -40,7 +42,7 @@ const Collection = ({ slug }: { slug: string }) => {
   return (
     <div css={{ height: '100%' }}>
       <SongList
-        filter={(id) => collection.set.has(id)}
+        filter={filter}
         header={
           <>
             <BackButton to="/collections" css={{ fontSize: 'inherit' }}>
