@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router'
 import NotFound from './not-found'
 import PrivacyPolicy from './privacy-policy'
 import { getGraphqlUrl } from 'store/graphql'
+import InstalledHome from './installed-home'
 
 const CollectionList = React.lazy(() =>
   import(/* webpackChunkName: "r-home" */ './collection-list'),
@@ -55,6 +56,9 @@ export default function Routes() {
     <Switch>
       <Route path="/" exact>
         <Home />
+      </Route>
+      <Route path="/installed-home" exact>
+        <InstalledHome />
       </Route>
       <Route path="/login" exact>
         <Login />

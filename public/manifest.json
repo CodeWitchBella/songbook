@@ -33,7 +33,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/",
+  "start_url": "/installed-home",
   "scope": "/",
   "display": "standalone",
   "background_color": "#FFCE19",
