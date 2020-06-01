@@ -27,7 +27,15 @@ export function BackButton({
         const canGoBack = location.state && (location.state as any).canGoBack
         if (canGoBack)
           history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
-        else history.push(to)
+        else {
+          const location = history.location
+          history.replace(to)
+          history.push(
+            location.pathname + location.search + location.hash,
+            location.state,
+          )
+          history.go(-1)
+        }
       }}
     >
       {children}
