@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 import React from 'react'
-import { PrimaryButton } from 'components/button'
+import { PrimaryButton, ListButton } from 'components/button'
 import { useHistory } from 'react-router'
 
 export default function Home() {
@@ -14,6 +14,7 @@ export default function Home() {
       >
         Všechny písně
       </PrimaryButton>
+      <ListButton to="/collections">Kolekce písní</ListButton>
     </View>
   )
 }
