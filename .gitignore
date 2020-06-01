@@ -1,5 +1,6 @@
 *.log
 /data/*
+build
 builds/*
 review/*
 cache/*
