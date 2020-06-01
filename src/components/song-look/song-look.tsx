@@ -1,13 +1,13 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx, css } from '@emotion/core'
-import React, { PropsWithChildren } from 'react'
+import React from 'react'
 import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
 import SongHeader from 'components/song-look/song-header'
 import Page from 'components/page'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { SongType } from 'store/store-song'
+import { BackButton } from 'components/back-button'
 
 const line = (hasChords: boolean) =>
   hasChords
@@ -174,38 +174,6 @@ const BackButtonContainer = styled.div`
     display: none;
   }
 `
-
-function BackButtonImpl({
-  children,
-  location,
-  history,
-}: PropsWithChildren<RouteComponentProps<any>>) {
-  return (
-    <button
-      css={{
-        all: 'unset',
-        display: 'block',
-        color: 'darkblue',
-        marginRight: '10px',
-        textDecoration: 'underline',
-        ':hover': {
-          fontWeight: 'bold',
-          textDecoration: 'none',
-        },
-      }}
-      type="button"
-      onClick={() => {
-        if (location.state && (location.state as any).canGoBack)
-          history.goBack()
-        else history.push('/')
-      }}
-    >
-      {children}
-    </button>
-  )
-}
-
-const BackButton = withRouter(BackButtonImpl)
 
 export const SongPage = ({
   song,

@@ -9,7 +9,7 @@ import { SongType } from 'store/store-song'
 import FilteredList from './filtered-list'
 import useRouter, { useQueryParam } from 'components/use-router'
 import { DownloadPDF } from 'components/pdf'
-import { BackButton } from 'components/back-button'
+import { BackButton, BackArrow } from 'components/back-button'
 
 const TheSearch = styled.div`
   font-size: 20px;
@@ -102,8 +102,18 @@ function Search({
             display: 'flex',
             padding: '0 4px',
             margin: '10px 0',
+            alignItems: 'stretch',
           }}
         >
+          <BackButton
+            style={{
+              alignItems: 'center',
+              flexDirection: 'row',
+              display: 'flex',
+            }}
+          >
+            <BackArrow />
+          </BackButton>
           <div css={{ position: 'relative', flexGrow: 1 }}>
             <form
               onSubmit={(evt) => {

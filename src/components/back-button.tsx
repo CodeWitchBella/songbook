@@ -2,39 +2,35 @@
 import { jsx, keyframes } from '@emotion/core'
 import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
+import { BasicButton } from 'components/button'
+import { StyleProp, TextStyle } from 'react-native'
 
 export function BackButton({
   children,
   to = '/',
-  className,
-}: PropsWithChildren<{ to?: string; className?: string }>) {
+  style,
+}: PropsWithChildren<{ to?: string; style?: StyleProp<TextStyle> }>) {
   const history = useHistory()
   const location = useLocation()
   return (
-    <button
-      css={{
-        all: 'unset',
-        display: 'inline-block',
-        color: 'darkblue',
-        marginRight: '10px',
-        textDecoration: 'underline',
-        ':hover': {
-          fontWeight: 'bold',
-          textDecoration: 'none',
+    <BasicButton
+      style={[
+        {
+          color: 'darkblue',
+          marginRight: '10px',
+          textDecorationLine: 'underline',
         },
-        fontSize: 25,
-        cursor: 'pointer',
-      }}
-      className={className}
-      type="button"
-      onClick={() => {
+        style,
+      ]}
+      hoverStyle={{ textDecorationLine: 'none', fontWeight: 'bold' }}
+      onPress={() => {
         if (location.state && (location.state as any).canGoBack)
           history.goBack()
         else history.push(to)
       }}
     >
       {children}
-    </button>
+    </BasicButton>
   )
 }
 

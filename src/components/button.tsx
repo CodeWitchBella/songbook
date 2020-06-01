@@ -6,13 +6,14 @@ import {
   StyleProp,
   TextStyle,
 } from 'react-native'
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useRef, useEffect } from 'react'
 import Hoverable from './interactive/hoverable'
 
 type ButtonProps = PropsWithChildren<{
   disabled?: boolean
   onPress?: (event: GestureResponderEvent) => void
   style?: StyleProp<TextStyle>
+  hoverStyle?: StyleProp<TextStyle>
 }>
 
 export function BasicButton({
@@ -20,17 +21,25 @@ export function BasicButton({
   disabled,
   onPress,
   style,
+  hoverStyle = { textDecorationLine: 'underline' },
 }: ButtonProps) {
+  const text = useRef<Text>(null)
+  useEffect(() => {
+    text.current?.setNativeProps({ style: { cursor: 'pointer' } })
+  }, [])
   return (
     <Hoverable>
       {(hover) => (
-        <TouchableOpacity disabled={disabled} onPress={onPress}>
-          <Text
-            style={[
-              { textDecorationLine: hover ? 'underline' : 'none' },
-              style,
-            ]}
-          >
+        <TouchableOpacity
+          disabled={disabled}
+          onPress={onPress}
+          style={{
+            alignItems: 'stretch',
+            flexDirection: 'row',
+            display: 'flex',
+          }}
+        >
+          <Text ref={text} style={[hover ? hoverStyle : null, style]}>
             {children}
           </Text>
         </TouchableOpacity>

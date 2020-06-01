@@ -45,9 +45,6 @@ const Collection = ({ slug }: { slug: string }) => {
         filter={filter}
         header={
           <>
-            <BackButton to="/collections" css={{ fontSize: 'inherit' }}>
-              <BackArrow />
-            </BackButton>
             {(collection.slug.includes('/')
               ? (collection.owner.handle || collection.owner.name) + ' > '
               : '') + collection.name}
