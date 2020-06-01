@@ -167,13 +167,11 @@ function Loader() {
 
 const SongList = ({
   filter,
-  showPrint,
   header,
   slug,
   title,
 }: {
   filter?: (id: string) => boolean
-  showPrint?: boolean
   header?: string | JSX.Element
   slug: string | null
   title: string | null
