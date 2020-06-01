@@ -5,7 +5,6 @@ import { PropsWithChildren, useReducer, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 import { useLogin } from './use-login'
-import { useHistoryChange } from './use-router'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -78,16 +77,12 @@ export function TopMenuItem({
   )
 }
 
-const googleDoc =
-  'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
-
 function MenuContent({
   visible,
   children,
 }: PropsWithChildren<{
   visible: boolean
 }>) {
-  const history = useHistoryChange()
   const login = useLogin()
   const [view, setView] = useState<'base' | 'login' | 'register'>('base')
   const [status, setStatus] = useState('')
@@ -113,54 +108,7 @@ function MenuContent({
         }}
       >
         {view === 'base' ? (
-          <>
-            {login.viewer ? (
-              <>
-                <div
-                  css={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    marginTop: 0, // top item
-                  }}
-                >
-                  {login.viewer.name}
-                </div>
-
-                <TopMenuItem as={Link} to="/new">
-                  Přidat píseň
-                </TopMenuItem>
-              </>
-            ) : (
-              <>
-                <TopMenuItem as="button" onClick={() => setView('login')} first>
-                  Přihlásit se
-                </TopMenuItem>
-                <TopMenuItem as="button" onClick={() => setView('register')}>
-                  Vytvořit účet
-                </TopMenuItem>
-              </>
-            )}
-            <TopMenuItem
-              as="button"
-              onClick={() => {
-                history.push('/collections', { canGoBack: true })
-              }}
-            >
-              Kolekce písní
-            </TopMenuItem>
-            <TopMenuItem as="a" to={googleDoc}>
-              Návrhy
-            </TopMenuItem>
-            <TopMenuItem as={Link} to="/changelog">
-              Seznam změn
-            </TopMenuItem>
-            {children}
-            {login.viewer ? (
-              <TopMenuItem as="button" onClick={login.logout}>
-                Odhlásit se
-              </TopMenuItem>
-            ) : null}
-          </>
+          <>{children}</>
         ) : view === 'login' ? (
           <form
             onSubmit={(evt) => {

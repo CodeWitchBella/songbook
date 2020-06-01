@@ -108,7 +108,6 @@ function Search({
         >
           <BackButton
             style={{
-              alignItems: 'center',
               flexDirection: 'row',
               display: 'flex',
             }}
@@ -246,6 +245,7 @@ const SongList = ({
               <TopMenuItem
                 as="button"
                 onClick={() => setSortByAuthor(sortByAuthor ? null : 'yes')}
+                first
               >
                 Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
               </TopMenuItem>

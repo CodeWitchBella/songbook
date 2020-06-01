@@ -44,13 +44,21 @@ export function BasicButton({
               ? rest.onPress
               : 'to' in rest
               ? () => {
-                  history.push(rest.to, { canGoBack: true })
+                  if (
+                    rest.to.startsWith('http://') ||
+                    rest.to.startsWith('https://')
+                  ) {
+                    window.open(rest.to, '_blank', 'noopener,noreferrer')
+                  } else {
+                    history.push(rest.to, { canGoBack: true })
+                  }
                 }
               : undefined
           }
           style={{
             alignItems: 'stretch',
-            flexDirection: 'row',
+            flexDirection: 'column',
+            justifyContent: 'center',
             display: 'flex',
           }}
         >
