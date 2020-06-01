@@ -10,6 +10,7 @@ import FilteredList from './filtered-list'
 import useRouter, { useQueryParam } from 'components/use-router'
 import { DownloadPDF } from 'components/pdf'
 import { BackButton, BackArrow } from 'components/back-button'
+import { useLocation } from 'react-router'
 
 const TheSearch = styled.div`
   font-size: 20px;
@@ -205,6 +206,7 @@ const SongList = ({
   const router = useRouter()
 
   const [search, setSearch] = useQueryParam('q')
+  const location = useLocation()
 
   return (
     <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
@@ -227,7 +229,12 @@ const SongList = ({
               if (v) {
                 setSearch(v, {
                   push: true,
-                  state: { goBackOnClear: true },
+                  state: {
+                    goBackOnClear: true,
+                    canGoBack: (location.state as any)?.canGoBack
+                      ? 2
+                      : undefined,
+                  },
                 })
               } else {
                 setSearch(null)

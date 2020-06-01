@@ -24,8 +24,9 @@ export function BackButton({
       ]}
       hoverStyle={{ textDecorationLine: 'none', fontWeight: 'bold' }}
       onPress={() => {
-        if (location.state && (location.state as any).canGoBack)
-          history.goBack()
+        const canGoBack = location.state && (location.state as any).canGoBack
+        if (canGoBack)
+          history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
         else history.push(to)
       }}
     >
