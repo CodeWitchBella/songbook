@@ -8,7 +8,6 @@ import { css, Global } from '@emotion/core'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
-import ServiceWorkerUpdated from 'components/service-worker-updated'
 
 import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
 import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'

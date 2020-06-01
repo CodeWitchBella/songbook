@@ -14,7 +14,8 @@ import { css } from '@emotion/core'
 import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { useRefreshIfUpdated } from 'components/service-worker-status'
+import { BasicButton } from 'components/button'
+
 const a = css`
   color: black;
   text-decoration: none;
@@ -52,20 +53,21 @@ export const Print = styled(Link)`
 `
 
 function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
-  const { history } = useRouter()
   const href = `/song/${id}`
-  const refreshIfUpdated = useRefreshIfUpdated()
   return (
-    <a
-      href={href}
-      onClick={(evt) => {
-        evt.preventDefault()
-        history.push(href, { canGoBack: true })
-        refreshIfUpdated()
+    <BasicButton
+      style={{
+        color: 'black',
+        textDecorationLine: 'none',
+        padding: 10,
+        fontSize: 20,
+        fontFamily: 'Cantarell',
       }}
+      hoverStyle={{ textDecorationLine: 'underline' }}
+      to={href}
     >
       {children}
-    </a>
+    </BasicButton>
   )
 }
 
