@@ -3,7 +3,7 @@
 import { jsx } from '@emotion/core'
 import React from 'react'
 import styled from '@emotion/styled'
-import Button from './button'
+import { PrimaryButton } from './button'
 
 type State = { install?: (() => void) | null }
 const Ctx = React.createContext({} as State)
@@ -71,7 +71,9 @@ export const InstallButtonLook = () => (
       <>
         <div css={{ height: 150 }} />
         <InstallContainer>
-          <Button onPress={install}>Nainstalovat jako appku</Button>
+          <PrimaryButton onPress={install}>
+            Nainstalovat jako appku
+          </PrimaryButton>
         </InstallContainer>
       </>
     )}

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
-import Button from 'components/button'
+import { PrimaryButton } from 'components/button'
 import { useNewSong } from 'store/store'
 
 const FormWrap = styled.div({
@@ -55,7 +55,7 @@ function CreateSong() {
       <Form onSubmit={submit}>
         <LargeInput label="Autor písně" value={author} onChange={setAuthor} />
         <LargeInput label="Jméno písně" value={title} onChange={setTitle} />
-        <Button disabled={disabled}>Vytvořit</Button>
+        <PrimaryButton disabled={disabled}>Vytvořit</PrimaryButton>
       </Form>
     </FormWrap>
   )
