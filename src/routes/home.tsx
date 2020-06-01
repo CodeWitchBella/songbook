@@ -27,13 +27,7 @@ export default function Home() {
           maxWidth: 300,
         }}
       >
-        <PrimaryButton
-          onPress={() => {
-            history.push('/all-songs', { canGoBack: true })
-          }}
-        >
-          Všechny písně
-        </PrimaryButton>
+        <PrimaryButton to="/all-songs">Všechny písně</PrimaryButton>
         <Gap height={22} />
         {login.viewer ? (
           <>

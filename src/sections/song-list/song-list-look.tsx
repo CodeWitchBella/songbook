@@ -14,6 +14,7 @@ import { css } from '@emotion/core'
 import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { useRefreshIfUpdated } from 'components/service-worker-status'
 const a = css`
   color: black;
   text-decoration: none;
@@ -53,12 +54,14 @@ export const Print = styled(Link)`
 function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   const { history } = useRouter()
   const href = `/song/${id}`
+  const refreshIfUpdated = useRefreshIfUpdated()
   return (
     <a
       href={href}
       onClick={(evt) => {
         evt.preventDefault()
         history.push(href, { canGoBack: true })
+        refreshIfUpdated()
       }}
     >
       {children}

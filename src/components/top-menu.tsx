@@ -2,7 +2,6 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import { PropsWithChildren, useReducer } from 'react'
-import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
@@ -46,13 +45,11 @@ export function TopMenuItem({
 }: PropsWithChildren<
   | { as?: 'button'; to?: undefined; onClick: (evt: React.MouseEvent) => void }
   | { as: 'a'; to: string; onClick?: undefined }
-  | { as: typeof Link; to: string; onClick?: undefined }
 > & { first?: boolean }) {
   return (
     <As
       onClick={onClick}
       href={As === 'a' ? to : undefined}
-      to={As === 'a' ? (undefined as any) : to}
       css={{
         all: 'unset',
         boxSizing: 'border-box',

@@ -4,6 +4,7 @@ import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/button'
 import { StyleProp, TextStyle } from 'react-native'
+import { useRefreshIfUpdated } from './service-worker-status'
 
 export function BackButton({
   children,
@@ -12,6 +13,7 @@ export function BackButton({
 }: PropsWithChildren<{ to?: string; style?: StyleProp<TextStyle> }>) {
   const history = useHistory()
   const location = useLocation()
+  const refreshIfUpdated = useRefreshIfUpdated()
   return (
     <BasicButton
       style={[
@@ -36,6 +38,7 @@ export function BackButton({
           )
           history.go(-1)
         }
+        refreshIfUpdated()
       }}
     >
       {children}
