@@ -14,7 +14,11 @@ export default function Home() {
   const login = useLogin()
   return (
     <View
-      style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100%',
+      }}
     >
       <View
         style={{
