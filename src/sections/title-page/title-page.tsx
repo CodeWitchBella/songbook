@@ -1,7 +1,7 @@
 import React from 'react'
 import Page from 'components/page'
 import styled from '@emotion/styled'
-import defaultImage from './image.png'
+import defaultImage from './image-lfs.png'
 
 const ImageContainer = styled.div`
   flex-grow: 1;
