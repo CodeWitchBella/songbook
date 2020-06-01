@@ -71,7 +71,7 @@ export const InstallButtonLook = () => (
       <>
         <div css={{ height: 150 }} />
         <InstallContainer>
-          <Button onClick={install}>Nainstalovat jako appku</Button>
+          <Button onPress={install}>Nainstalovat jako appku</Button>
         </InstallContainer>
       </>
     )}

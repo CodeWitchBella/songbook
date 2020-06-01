@@ -1,13 +1,27 @@
 {
-  "extends": "./tsconfig-src",
+  "extends": "./tsconfig-src.json",
   "compilerOptions": {
-    "skipLibCheck": false,
-    "allowSyntheticDefaultImports": true,
+    "target": "es2020",
+    "module": "es2020",
+    "lib": ["es2020"],
+    "types": ["node"],
+    "jsx": "preserve",
+    "noEmit": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "./src",
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
+    "allowJs": false,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "baseUrl": "./src"
+    "isolatedModules": true
+  },
+  "include": ["src/**/*"],
+  "typeAcquisition": {
+    "enable": false
   }
 }

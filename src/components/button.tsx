@@ -1,13 +1,45 @@
-import styled from '@emotion/styled'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  GestureResponderEvent,
+} from 'react-native'
+import React, { PropsWithChildren } from 'react'
+import Hoverable from './interactive/hoverable'
 
-const Button = styled.button`
-  border: 2px solid black;
-  background: white;
-  padding: 20px;
-  font-size: 20px;
-  border-radius: 30px;
-  :hover {
-    text-decoration: underline;
-  }
-`
-export default Button
+export default function Button({
+  children,
+  disabled,
+  onPress,
+}: PropsWithChildren<{
+  disabled?: boolean
+  onPress?: (event: GestureResponderEvent) => void
+}>) {
+  return (
+    <Hoverable>
+      {(hover) => (
+        <TouchableOpacity disabled={disabled} onPress={onPress}>
+          <View
+            style={{
+              borderWidth: 2,
+              borderColor: 'black',
+              borderStyle: 'solid',
+              backgroundColor: 'white',
+              padding: 20,
+              borderRadius: 30,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                textDecorationLine: hover ? 'underline' : 'none',
+              }}
+            >
+              {children}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+    </Hoverable>
+  )
+}

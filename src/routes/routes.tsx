@@ -16,6 +16,8 @@ const AllSongs = React.lazy(() =>
   import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
 )
 
+const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
+
 const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
 
 const Print = React.lazy(() =>
@@ -46,6 +48,9 @@ export default function Routes() {
   return (
     <Switch>
       <Route path="/" exact>
+        <Home />
+      </Route>
+      <Route path="/all-songs" exact>
         <AllSongs />
       </Route>
       <Route path="/collections" exact>
