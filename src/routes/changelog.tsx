@@ -7,6 +7,7 @@ const Changelog = () => (
     <Entry date="2020-06-01">
       <li>Nová domovská obrazovka</li>
       <li>Méně otravné aktualizace</li>
+      <li>Datum poslední aktualizace</li>
     </Entry>
     <Entry date="2020-05-31">
       <li>Přidáno tlačítko zpět do výpisu písní v kolekci</li>
