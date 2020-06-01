@@ -1,10 +1,9 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import { PropsWithChildren, useReducer, useState } from 'react'
+import { PropsWithChildren, useReducer } from 'react'
 import { Link } from 'react-router-dom'
 import { Burger } from './song-look/song-menu-icons'
-import { useLogin } from './use-login'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -83,9 +82,6 @@ function MenuContent({
 }: PropsWithChildren<{
   visible: boolean
 }>) {
-  const login = useLogin()
-  const [view, setView] = useState<'base' | 'login' | 'register'>('base')
-  const [status, setStatus] = useState('')
   return (
     <div
       css={{
@@ -107,79 +103,7 @@ function MenuContent({
           display: visible ? 'block' : 'none',
         }}
       >
-        {view === 'base' ? (
-          <>{children}</>
-        ) : view === 'login' ? null : (
-          <form
-            onSubmit={(evt) => {
-              evt.preventDefault()
-              evt.persist()
-              const data = new FormData(evt.currentTarget)
-              setStatus('loading')
-              const email = data.get('email') as string
-              const password = data.get('password') as string
-              const name = data.get('name') as string
-              if (!email) {
-                setStatus('Email nesmí být prázdný')
-              }
-              if (!(email + '').includes('@')) {
-                setStatus('Neplatný email')
-              }
-              if ((password + '').length < 6) {
-                setStatus('Heslo musí mít aspoň 6 znaků')
-              }
-              if ((name + '').length < 4) {
-                setStatus('Jméno musí mít aspoň 4 znaky')
-              }
-              login
-                .register(email, password, name)
-                .then((result) => {
-                  setStatus(result || '')
-                  if (!result) setView('base')
-                })
-                .catch((e) => {
-                  console.error(e)
-                  setStatus('Něco se pokazilo')
-                })
-            }}
-          >
-            <div>{status !== 'loading' && status}</div>
-            <label>
-              Zobrazované jméno
-              <input type="text" name="name" disabled={status === 'loading'} />
-            </label>
-            <label>
-              Email
-              <input
-                type="email"
-                name="email"
-                disabled={status === 'loading'}
-              />
-            </label>
-            <label>
-              Heslo
-              <input
-                type="password"
-                name="password"
-                disabled={status === 'loading'}
-              />
-            </label>
-
-            <TopMenuItem as="button" onClick={() => {}}>
-              Vytvořit účet
-            </TopMenuItem>
-            <TopMenuItem
-              as="button"
-              onClick={(evt) => {
-                evt.preventDefault()
-                setView('base')
-                setStatus('')
-              }}
-            >
-              Zrušit
-            </TopMenuItem>
-          </form>
-        )}
+        {children}
       </ul>
     </div>
   )

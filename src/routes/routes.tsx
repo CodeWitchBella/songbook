@@ -39,6 +39,9 @@ const PDF = React.lazy(() => import(/* webpackChunkName: "r-pdf" */ './pdf'))
 const Login = React.lazy(() =>
   import(/* webpackChunkName: "r-login" */ './login'),
 )
+const Register = React.lazy(() =>
+  import(/* webpackChunkName: "r-register" */ './register'),
+)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -55,6 +58,9 @@ export default function Routes() {
       </Route>
       <Route path="/login" exact>
         <Login />
+      </Route>
+      <Route path="/register" exact>
+        <Register />
       </Route>
       <Route path="/all-songs" exact>
         <AllSongs />

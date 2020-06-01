@@ -1,29 +1,43 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import { useLogin } from 'components/use-login'
-import { PrimaryButton } from 'components/button'
 import { useState } from 'react'
+import { useLogin } from 'components/use-login'
 import { useHistory } from 'react-router'
+import { PrimaryButton } from 'components/button'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
 
-export default function Login() {
+export default function Register() {
   const login = useLogin()
   const [status, setStatus] = useState('')
   const history = useHistory()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
 
   const submit = (evt: { preventDefault(): void }) => {
     evt.preventDefault()
     setStatus('loading')
     if (!email) {
       setStatus('Email nesmí být prázdný')
+      return
+    }
+    if (!(email + '').includes('@')) {
+      setStatus('Neplatný email')
+      return
+    }
+    if ((password + '').length < 6) {
+      setStatus('Heslo musí mít aspoň 6 znaků')
+      return
+    }
+    if ((name + '').length < 4) {
+      setStatus('Jméno musí mít aspoň 4 znaky')
+      return
     }
     login
-      .login(email, password)
+      .register(email, password, name)
       .then((result) => {
         setStatus(result || '')
         if (!result) history.push('/', { canGoBack: true })
@@ -33,6 +47,7 @@ export default function Login() {
         setStatus('Něco se pokazilo')
       })
   }
+
   return (
     <form
       onSubmit={submit}
@@ -42,13 +57,21 @@ export default function Login() {
         <BackButton>
           <BackArrow />
         </BackButton>
-        Přihlášení
+        Vytvořit účet
       </h2>
       {login.viewer ? (
         <LoginDone viewer={login.viewer} logout={login.logout} />
       ) : (
         <>
           <div>{status !== 'loading' && status}</div>
+          <LargeInput
+            label="Zobrazované jméno"
+            type="text"
+            name="name"
+            disabled={status === 'loading'}
+            value={name}
+            onChange={setName}
+          />
           <LargeInput
             label="Email"
             value={email}
@@ -65,8 +88,9 @@ export default function Login() {
             type="password"
             name="password"
           />
+
           <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-            Přihlásit se
+            Vytvořit účet
           </PrimaryButton>
           <button style={{ display: 'none' }} />
         </>
