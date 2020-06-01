@@ -6,7 +6,6 @@ import { errorBoundary } from 'containers/error-boundary'
 import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
 import { useMemo, useCallback } from 'react'
-import { BackButton, BackArrow } from 'components/back-button'
 
 function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })

@@ -2,9 +2,13 @@
   "extends": "./tsconfig-src.json",
   "compilerOptions": {
     "target": "es2020",
-    "module": "es2020",
-    "lib": ["es2020"],
-    "types": ["node"],
+    "module": "esnext",
+    "lib": [
+      "es2020"
+    ],
+    "types": [
+      "node"
+    ],
     "jsx": "preserve",
     "noEmit": true,
     "strict": true,
@@ -20,7 +24,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "typeAcquisition": {
     "enable": false
   }
