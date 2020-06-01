@@ -12,7 +12,9 @@ const Collection = React.lazy(() =>
   import(/* webpackChunkName: "r-home" */ './collection'),
 )
 
-const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
+const AllSongs = React.lazy(() =>
+  import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
+)
 
 const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
 
@@ -40,59 +42,57 @@ function AbsoluteRedirect({ to }: { to: string }) {
   return null
 }
 
-export default class Routes extends React.Component {
-  render() {
-    return (
-      <Switch>
-        <Route path="/" exact>
-          <Home />
-        </Route>
-        <Route path="/collections" exact>
-          <CollectionList />
-        </Route>
-        <Route
-          path="/collections/:slug/:slug2?"
-          render={({ match }) => (
-            <Collection
-              slug={
-                match.params.slug +
-                (match.params.slug2 ? '/' + match.params.slug2 : '')
-              }
-            />
-          )}
-        />
-        <Route
-          path="/song/:slug"
-          exact
-          render={({ match }) => <Song slug={match.params.slug} />}
-        />
-        <Route path="/new" exact render={() => <CreateSong />} />
-        <Route
-          path="/edit/:slug"
-          exact
-          render={({ match }) => <EditSong slug={match.params.slug} />}
-        />
-        <Route
-          path="/pdf/:slug"
-          exact
-          render={({ match }) => <PDF slug={match.params.slug} />}
-        />
-        <Route
-          path="/print/:tag"
-          exact
-          render={({ match }) => <Print tag={match.params.tag} />}
-        />
-        <Route path="/changelog" exact render={() => <Changelog />} />
-        <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
-        <Route
-          path="/graphql"
-          exact
-          render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
-        />
-        <Route>
-          <NotFound />
-        </Route>
-      </Switch>
-    )
-  }
+export default function Routes() {
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <AllSongs />
+      </Route>
+      <Route path="/collections" exact>
+        <CollectionList />
+      </Route>
+      <Route
+        path="/collections/:slug/:slug2?"
+        render={({ match }) => (
+          <Collection
+            slug={
+              match.params.slug +
+              (match.params.slug2 ? '/' + match.params.slug2 : '')
+            }
+          />
+        )}
+      />
+      <Route
+        path="/song/:slug"
+        exact
+        render={({ match }) => <Song slug={match.params.slug} />}
+      />
+      <Route path="/new" exact render={() => <CreateSong />} />
+      <Route
+        path="/edit/:slug"
+        exact
+        render={({ match }) => <EditSong slug={match.params.slug} />}
+      />
+      <Route
+        path="/pdf/:slug"
+        exact
+        render={({ match }) => <PDF slug={match.params.slug} />}
+      />
+      <Route
+        path="/print/:tag"
+        exact
+        render={({ match }) => <Print tag={match.params.tag} />}
+      />
+      <Route path="/changelog" exact render={() => <Changelog />} />
+      <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
+      <Route
+        path="/graphql"
+        exact
+        render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
+      />
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  )
 }
