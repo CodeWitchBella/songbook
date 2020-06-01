@@ -3,14 +3,14 @@
 import { jsx } from '@emotion/core'
 import { View, Text } from 'react-native'
 import { PrimaryButton, ListButton } from 'components/button'
-import { useHistory } from 'react-router'
 import { useLogin } from 'components/use-login'
+import { buildData } from 'build-data'
+import { DateTime } from 'luxon'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
 export default function Home() {
-  const history = useHistory()
   const login = useLogin()
   return (
     <View
@@ -25,6 +25,8 @@ export default function Home() {
           flexDirection: 'column',
           alignItems: 'stretch',
           maxWidth: 300,
+          paddingTop: 20,
+          paddingBottom: 40,
         }}
       >
         <PrimaryButton to="/all-songs">Všechny písně</PrimaryButton>
@@ -59,8 +61,21 @@ export default function Home() {
         <ListButton to="/changelog">Seznam změn</ListButton>
         <Gap />
       </View>
+      {buildData.commitTime ? (
+        <View style={{ bottom: 10, right: 10, position: 'absolute' }}>
+          <Text style={{ fontSize: 15 }}>
+            Verze: {format(buildData.commitTime)}
+          </Text>
+        </View>
+      ) : null}
     </View>
   )
+}
+
+function format(date: string) {
+  let dt = DateTime.fromISO(date)
+  if (!dt.isValid) dt = DateTime.local()
+  return dt.setZone(DateTime.local().zone).toFormat('d. M. yyyy HH:mm:ss')
 }
 
 function Gap({ height = 10 }: { height?: number }) {
