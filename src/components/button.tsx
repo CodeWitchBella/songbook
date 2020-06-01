@@ -40,7 +40,9 @@ export function BasicButton({
         <TouchableOpacity
           disabled={disabled}
           onPress={
-            'onPress' in rest
+            disabled
+              ? undefined
+              : 'onPress' in rest
               ? rest.onPress
               : 'to' in rest
               ? () => {

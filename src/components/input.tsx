@@ -37,11 +37,15 @@ export const LargeInput = ({
   value,
   onChange,
   type = 'text',
+  disabled,
+  name,
 }: {
   label: string
   value: string
   onChange: (v: string) => any
   type?: string
+  disabled?: boolean
+  name?: string
 }) => (
   <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
     <div>{label}</div>
@@ -53,6 +57,8 @@ export const LargeInput = ({
         evt.preventDefault()
         onChange(evt.target.value)
       }}
+      disabled={disabled}
+      name={name}
     />
   </label>
 )

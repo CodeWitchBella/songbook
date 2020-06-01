@@ -12,5 +12,6 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'error',
     'import/no-webpack-loader-syntax': 0,
     'prettier/prettier': 'error',
+    'jsx-a11y/accessible-emoji': 0,
   },
 }

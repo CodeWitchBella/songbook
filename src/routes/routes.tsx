@@ -36,6 +36,9 @@ const Changelog = React.lazy(() =>
   import(/* webpackChunkName: "r-changelog" */ './changelog'),
 )
 const PDF = React.lazy(() => import(/* webpackChunkName: "r-pdf" */ './pdf'))
+const Login = React.lazy(() =>
+  import(/* webpackChunkName: "r-login" */ './login'),
+)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -49,6 +52,9 @@ export default function Routes() {
     <Switch>
       <Route path="/" exact>
         <Home />
+      </Route>
+      <Route path="/login" exact>
+        <Login />
       </Route>
       <Route path="/all-songs" exact>
         <AllSongs />
