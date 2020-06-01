@@ -17,7 +17,7 @@ function okHost() {
 }
 
 function getFirestore() {
-  if (!okHost) {
+  if (!okHost()) {
     console.info('Live song updates are not available on this origin')
     return null
   }
