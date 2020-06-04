@@ -2,7 +2,6 @@
 import { jsx } from '@emotion/core'
 import React, { Suspense } from 'react'
 import Routes from 'routes/routes'
-import { PrintPreviewProvider } from 'containers/print-preview'
 import { InstallProvider } from 'components/install'
 import { css, Global } from '@emotion/core'
 import OutlineHandler from 'utils/outline-handler'
@@ -54,13 +53,11 @@ export default () => (
     <OutlineHandler />
     <StoreProvider>
       <InstallProvider>
-        <PrintPreviewProvider>
-          <Suspense fallback={<div>Načítám...</div>}>
-            <ErrorBoundary>
-              <Routes />
-            </ErrorBoundary>
-          </Suspense>
-        </PrintPreviewProvider>
+        <Suspense fallback={<div>Načítám...</div>}>
+          <ErrorBoundary>
+            <Routes />
+          </ErrorBoundary>
+        </Suspense>
       </InstallProvider>
     </StoreProvider>
   </React.Fragment>
