@@ -21,10 +21,6 @@ const Home = React.lazy(() => import(/* webpackChunkName: "r-home" */ './home'))
 
 const Song = React.lazy(() => import(/* webpackChunkName: "r-song" */ './song'))
 
-const Print = React.lazy(() =>
-  import(/* webpackChunkName: "r-print" */ './print'),
-)
-
 const CreateSong = React.lazy(() =>
   import(/* webpackChunkName: "r-create-song" */ './create-song'),
 )
@@ -98,11 +94,6 @@ export default function Routes() {
         path="/pdf/:slug"
         exact
         render={({ match }) => <PDF slug={match.params.slug} />}
-      />
-      <Route
-        path="/print/:tag"
-        exact
-        render={({ match }) => <Print tag={match.params.tag} />}
       />
       <Route path="/changelog" exact render={() => <Changelog />} />
       <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
