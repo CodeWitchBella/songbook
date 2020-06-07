@@ -5,6 +5,11 @@ import { errorBoundary } from 'containers/error-boundary'
 const Changelog = () => (
   <div>
     <Entry date="2020-06-01">
+      <li>Opraveno probliknutí chybové stránky po updatu</li>
+      <li>Opraveno editování čísel v editoru písní</li>
+      <li>Přidán kód pro kopírování písní z akordy.kytary.cz</li>
+    </Entry>
+    <Entry date="2020-06-01">
       <li>Nová domovská obrazovka</li>
       <li>Méně otravné aktualizace</li>
       <li>Datum poslední aktualizace</li>
