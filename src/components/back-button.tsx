@@ -4,7 +4,7 @@ import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/button'
 import { StyleProp, TextStyle } from 'react-native'
-import { useRefreshIfUpdated } from './service-worker-status'
+import { useUpdateAfterNavigate } from './service-worker-status'
 
 export function BackButton({
   children,
@@ -13,7 +13,7 @@ export function BackButton({
 }: PropsWithChildren<{ to?: string; style?: StyleProp<TextStyle> }>) {
   const history = useHistory()
   const location = useLocation()
-  const refreshIfUpdated = useRefreshIfUpdated()
+  const updateAfterNavigate = useUpdateAfterNavigate()
   return (
     <BasicButton
       style={[
@@ -27,9 +27,10 @@ export function BackButton({
       hoverStyle={{ textDecorationLine: 'none', fontWeight: 'bold' }}
       onPress={() => {
         const canGoBack = location.state && (location.state as any).canGoBack
-        if (canGoBack)
+        updateAfterNavigate()
+        if (canGoBack) {
           history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
-        else {
+        } else {
           const location = history.location
           history.replace(to)
           history.push(
@@ -38,7 +39,6 @@ export function BackButton({
           )
           history.go(-1)
         }
-        refreshIfUpdated()
       }}
     >
       {children}

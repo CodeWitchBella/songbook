@@ -8,7 +8,7 @@ import {
 import React, { PropsWithChildren, useRef, useEffect } from 'react'
 import Hoverable from './interactive/hoverable'
 import { useHistory } from 'react-router'
-import { useRefreshIfUpdated } from './service-worker-status'
+import { useUpdateAfterNavigate } from './service-worker-status'
 
 type ButtonProps = PropsWithChildren<
   {
@@ -35,7 +35,7 @@ export function BasicButton({
     text.current?.setNativeProps({ style: { cursor: 'pointer' } })
   }, [])
   const history = useHistory()
-  const refreshIfUpdated = useRefreshIfUpdated()
+  const updateAfterNavigate = useUpdateAfterNavigate()
   return (
     <Hoverable>
       {(hover) => (
@@ -54,8 +54,8 @@ export function BasicButton({
                   ) {
                     window.open(rest.to, '_blank', 'noopener,noreferrer')
                   } else {
+                    updateAfterNavigate()
                     history.push(rest.to, { canGoBack: true })
-                    refreshIfUpdated()
                   }
                 }
               : undefined

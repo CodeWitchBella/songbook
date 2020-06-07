@@ -3,7 +3,7 @@ import * as serviceWorker from './serviceWorker'
 import ReactDOM from 'react-dom'
 import React from 'react'
 import ErrorBoundary from 'containers/error-boundary'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import Loadable from 'react-loadable'
 import App, { InjectGlobal } from './app'
 import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
@@ -56,11 +56,11 @@ if (!displayInstructions) {
       <React.Fragment>
         <InjectGlobal />
         <ErrorBoundary>
-          <ServiceWorkerStatusProvider register={serviceWorker.register}>
-            <Router>
+          <BrowserRouter>
+            <ServiceWorkerStatusProvider register={serviceWorker.register}>
               <App />
-            </Router>
-          </ServiceWorkerStatusProvider>
+            </ServiceWorkerStatusProvider>
+          </BrowserRouter>
         </ErrorBoundary>
       </React.Fragment>,
       app,

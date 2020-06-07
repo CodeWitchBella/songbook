@@ -1,66 +1,56 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-  useCallback,
-} from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { ServiceWorkerRegisterConfig } from 'serviceWorker'
 import { Workbox } from 'workbox-window'
+import { useLocation } from 'react-router'
 
 const context = React.createContext({
-  updated: null as null | Workbox,
-  hideUpdated: () => {},
-})
-const refContext = React.createContext({
-  updated: { current: null as null | Workbox },
+  updateAfterNavigate: () => {},
 })
 
 export const ServiceWorkerStatusProvider: React.FC<{
   register: (config?: ServiceWorkerRegisterConfig) => void
 }> = ({ children, register }) => {
-  const [updated, setUpdated] = useState(null as null | Workbox)
-  const updatedRef = useRef(updated)
-  const providedValue = useMemo(
-    () => ({
-      updated,
-      hideUpdated: () => {
-        setUpdated(null)
-      },
-    }),
-    [updated],
-  )
+  const updatedRef = useRef(null as null | Workbox)
+  const updateAfterNavigate = useRef(false)
+
+  const location = useLocation()
+  const lastPathname = useRef(location.pathname)
+
+  useEffect(() => {
+    const v = updateAfterNavigate.current
+    const updated = updatedRef.current
+    if (updated && v && location.pathname !== lastPathname.current) {
+      setTimeout(() => {
+        updated.messageSW({ type: 'SKIP_WAITING' })
+      }, 10)
+    }
+    lastPathname.current = location.pathname
+  }, [location])
 
   useEffect(() => {
     register({
       onUpdate: (wb) => {
         console.log('Update available!')
-        setUpdated(wb)
         updatedRef.current = wb
       },
     })
   }, [register])
   return (
-    <refContext.Provider value={useMemo(() => ({ updated: updatedRef }), [])}>
-      <context.Provider value={providedValue}>{children}</context.Provider>
-    </refContext.Provider>
+    <context.Provider
+      value={useMemo(
+        () => ({
+          updateAfterNavigate: () => {
+            updateAfterNavigate.current = true
+          },
+        }),
+        [],
+      )}
+    >
+      {children}
+    </context.Provider>
   )
 }
 
-export function useServiceWorkerStatus() {
-  return useContext(context)
-}
-
-function useServiceWorkerStatusRef() {
-  return useContext(refContext)
-}
-
-export function useRefreshIfUpdated() {
-  const { updated } = useServiceWorkerStatusRef()
-  return useCallback(() => {
-    if (updated.current) {
-      ;(updated.current as any).messageSW({ type: 'SKIP_WAITING' })
-    }
-  }, [updated])
+export function useUpdateAfterNavigate() {
+  return useContext(context).updateAfterNavigate
 }
