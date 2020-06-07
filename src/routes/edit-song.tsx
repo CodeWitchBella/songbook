@@ -195,6 +195,12 @@ theCopy(Array.from(document.querySelector('#snippet--sheetContent').children).ma
 })).map(sec => (sec.type === 'chorus' ? 'R: ' : 'S: ') + sec.content).join('\\n\\n'))
 `
 
+function safeParseFloat(text: string, fallback: number) {
+  const res = Number.parseFloat(text)
+  if (!Number.isFinite(text)) return fallback
+  return res
+}
+
 const getResult = (propsSong: SongType, theState: State): SongType => {
   const { author, title, textWithChords } = theState
   return {
@@ -202,9 +208,9 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
     title,
     lastModified: DateTime.utc(),
     text: textWithChords,
-    fontSize: Number.parseFloat(theState.fontSize),
-    paragraphSpace: Number.parseFloat(theState.paragraphSpace),
-    titleSpace: Number.parseFloat(theState.titleSpace),
+    fontSize: safeParseFloat(theState.fontSize, 1),
+    paragraphSpace: safeParseFloat(theState.paragraphSpace, 1),
+    titleSpace: safeParseFloat(theState.titleSpace, 1),
     spotify: theState.spotify || null,
 
     extraSearchable: theState.extraSearchable,
@@ -295,9 +301,25 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   const titleChange = (val: string) => change({ title: val })
   const textWithChordsChange = (val: string) => change({ textWithChords: val })
 
-  const fontSizeChange = (val: string) => change({ fontSize: val })
-  const paragraphSpaceChange = (val: string) => change({ paragraphSpace: val })
-  const titleSpaceChange = (val: string) => change({ titleSpace: val })
+  const checkFloat = (val: string) => {
+    // only allow - at start, only one . and otherwise numeric
+    if (!/^-?[0-9]*\.?[0-9]*$/.test(val)) return false
+    if (val === '') return true
+    return Number.isFinite(Number.parseFloat(val))
+  }
+
+  const fontSizeChange = (val: string) => {
+    if (!checkFloat(val)) return
+    change({ fontSize: val })
+  }
+  const paragraphSpaceChange = (val: string) => {
+    if (!checkFloat(val)) return
+    change({ paragraphSpace: val })
+  }
+  const titleSpaceChange = (val: string) => {
+    if (!checkFloat(val)) return
+    change({ titleSpace: val })
+  }
   const spotifyChange = (val: string) => change({ spotify: val })
   const extraSearchableChange = (val: string) =>
     change({ extraSearchable: val })
@@ -370,17 +392,17 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             <>
               <Input
                 label="Velikost písma"
-                value={state.fontSize || '1.00'}
+                value={state.fontSize}
                 onChange={fontSizeChange}
               />
               <Input
                 label="Místo mezi odstavci"
-                value={state.paragraphSpace || '1.00'}
+                value={state.paragraphSpace}
                 onChange={paragraphSpaceChange}
               />
               <Input
                 label="Místo pod nadpisem"
-                value={state.titleSpace || '1.00'}
+                value={state.titleSpace}
                 onChange={titleSpaceChange}
               />
             </>
