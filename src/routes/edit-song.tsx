@@ -185,6 +185,16 @@ Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+s
 copy(content.innerText)
 `.trim()
 
+const akordykytary = `
+var theCopy = typeof copy === 'function' ? copy : console.log.bind(console)
+theCopy(Array.from(document.querySelector('#snippet--sheetContent').children).map(sec => ({
+  type: sec.dataset.type,
+  content: Array.from(sec.children).map(line => 
+    Array.from(line.childNodes).map(atom => atom.className === 'scs-chord' ? '['+atom.textContent+']' : atom.textContent).join('')
+  ).join('\\n'),
+})).map(sec => (sec.type === 'chorus' ? 'R: ' : 'S: ') + sec.content).join('\\n\\n'))
+`
+
 const getResult = (propsSong: SongType, theState: State): SongType => {
   const { author, title, textWithChords } = theState
   return {
@@ -419,6 +429,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
           <br />
           <Code text={nakytarushonzou} />
+          <br />
+          Script pro extrakci textu z{' '}
+          <a href="https://akordy.kytary.cz/">akordy.kytary.cz</a>
+          <br />
+          <Code text={akordykytary} />
         </Help>
         <Help title="Extra info o této písni">
           <h3>Vyhledatelná</h3>
