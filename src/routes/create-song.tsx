@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
+import { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from 'components/input'
 import { errorBoundary } from 'containers/error-boundary'
@@ -29,7 +31,7 @@ function CreateSong() {
   const [title, setTitle] = useState('')
   const [disabled, setDisabled] = useState(false)
 
-  const submit = (evt: React.FormEvent<HTMLFormElement>) => {
+  const submit = (evt: { preventDefault(): void }) => {
     evt.preventDefault()
 
     console.log('submit', { author, title, disabled })
@@ -55,7 +57,10 @@ function CreateSong() {
       <Form onSubmit={submit}>
         <LargeInput label="Autor písně" value={author} onChange={setAuthor} />
         <LargeInput label="Jméno písně" value={title} onChange={setTitle} />
-        <PrimaryButton disabled={disabled}>Vytvořit</PrimaryButton>
+        <PrimaryButton disabled={disabled} onPress={submit}>
+          Vytvořit
+        </PrimaryButton>
+        <button css={{ display: 'none' }} />
       </Form>
     </FormWrap>
   )
