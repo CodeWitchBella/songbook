@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { Switch, Route, useLocation } from 'react-router'
 import NotFound from './not-found'
-import PrivacyPolicy from './privacy-policy'
 import { getGraphqlUrl } from 'store/graphql'
 import InstalledHome from './installed-home'
 import { RouteRenderedMarker } from 'components/service-worker-status'
@@ -95,7 +94,6 @@ function Routes() {
         render={({ match }) => <EditSong slug={match.params.slug} />}
       />
       <Route path="/changelog" exact render={() => <Changelog />} />
-      <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />
       <Route
         path="/graphql"
         exact
