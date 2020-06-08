@@ -27,7 +27,6 @@ const imports = {
   Changelog: once(() =>
     import(/* webpackChunkName: "r-changelog" */ './changelog'),
   ),
-  PDF: once(() => import(/* webpackChunkName: "r-pdf" */ './pdf')),
   Login: once(() => import(/* webpackChunkName: "r-login" */ './login')),
   Register: once(() =>
     import(/* webpackChunkName: "r-register" */ './register'),
@@ -42,7 +41,6 @@ const Song = React.lazy(imports.Song)
 const CreateSong = React.lazy(imports.CreateSong)
 const EditSong = React.lazy(imports.EditSong)
 const Changelog = React.lazy(imports.Changelog)
-const PDF = React.lazy(imports.PDF)
 const Login = React.lazy(imports.Login)
 const Register = React.lazy(imports.Register)
 
@@ -95,11 +93,6 @@ function Routes() {
         path="/edit/:slug"
         exact
         render={({ match }) => <EditSong slug={match.params.slug} />}
-      />
-      <Route
-        path="/pdf/:slug"
-        exact
-        render={({ match }) => <PDF slug={match.params.slug} />}
       />
       <Route path="/changelog" exact render={() => <Changelog />} />
       <Route path="/privacy-policy" exact render={() => <PrivacyPolicy />} />

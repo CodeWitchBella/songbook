@@ -14,13 +14,14 @@ import { useSong } from 'store/store'
 import { DateTime } from 'luxon'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongType, updateSong } from 'store/store-song'
+import { BackButton, BackArrow } from 'components/back-button'
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   font-size: 18px;
   max-width: 600px;
-  margin: 40px auto 0 auto;
+  margin: 20px auto 0 auto;
 `
 
 const TextAreaC = styled.textarea`
@@ -351,6 +352,9 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     <Columns number={state.preview ? 2 : 1}>
       <div>
         <Form onSubmit={submit}>
+          <BackButton style={{ paddingBottom: 10 }}>
+            <BackArrow />
+          </BackButton>
           <InputLine>
             <Input label="Autor" value={state.author} onChange={authorChange} />
             <Input

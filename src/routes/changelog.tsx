@@ -6,6 +6,11 @@ const Changelog = () => (
   <div>
     <Entry date="2020-06-08">
       <li>Další pokus o odstranění probliknutí chybové stránky při updatu</li>
+      <li>
+        Odstraněna separátní stránka pro PDF náhled jednotlivé písně (v editoru
+        náhled stále je)
+      </li>
+      <li>Přidáno tlačítko zpět do editoru písní</li>
     </Entry>
     <Entry date="2020-06-07">
       <li>Opraveno editování čísel v editoru písní</li>

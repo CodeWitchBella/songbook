@@ -53,7 +53,20 @@ const MenuButton = (
   >,
 ) => <button type="button" css={menuStyle} {...props} />
 
-const MenuLink = (props: LinkProps) => <Link css={menuStyle} {...props} />
+const MenuLink = (props: LinkProps) => {
+  const to = props.to
+  return (
+    <Link<any>
+      css={menuStyle}
+      {...props}
+      to={(location) => {
+        const res = typeof to === 'function' ? to(location) : to
+        const obj = typeof res === 'string' ? { pathname: res } : res
+        return { ...obj, state: { canGoBack: true, ...obj.state } }
+      }}
+    />
+  )
+}
 
 function Info({ close, song }: { close: () => void; song: SongType }) {
   return (
@@ -140,9 +153,6 @@ export default function SongMenu({
             </MenuButton>
             <MenuLink to={`/edit/${slug}`}>
               <EditButton />
-            </MenuLink>
-            <MenuLink to={`/pdf/${slug}`}>
-              <span css={{ fontSize: '0.8em' }}>PDF</span>
             </MenuLink>
             <MenuButton onClick={() => setInfo((o) => !o)}>
               <InfoButton />
