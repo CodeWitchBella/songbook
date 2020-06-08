@@ -11,6 +11,7 @@ const Changelog = () => (
         náhled stále je)
       </li>
       <li>Přidáno tlačítko zpět do editoru písní</li>
+      <li>Opravena interakce tlačítka zpět a tlačítka výběru náhodné písně</li>
     </Entry>
     <Entry date="2020-06-07">
       <li>Opraveno editování čísel v editoru písní</li>

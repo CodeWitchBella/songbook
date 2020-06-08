@@ -3,7 +3,7 @@
 import { jsx, Interpolation } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { Link, LinkProps } from 'react-router-dom'
+import { Link, LinkProps, useHistory } from 'react-router-dom'
 import {
   PlayButton,
   Burger,
@@ -12,7 +12,6 @@ import {
   RandomButton,
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
-import { useRouterUnsafe } from 'components/use-router'
 import { useGetRandomSong } from 'store/store'
 
 const MenuWrap = styled.div({
@@ -131,7 +130,7 @@ export default function SongMenu({
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
   const [info, setInfo] = useState(false)
-  const routerUnsafe = useRouterUnsafe()
+  const history = useHistory()
   const getRandomSong = useGetRandomSong()
 
   return (
@@ -169,7 +168,26 @@ export default function SongMenu({
             <MenuButton
               onClick={() => {
                 const nextSong = getRandomSong(song.id)
-                routerUnsafe.history.push('/song/' + nextSong.item.slug)
+                const canGoBackRaw = (history.location.state as any)?.canGoBack
+                let canGoBack =
+                  typeof canGoBackRaw === 'number'
+                    ? canGoBackRaw
+                    : canGoBackRaw
+                    ? 1
+                    : 0
+                if (!canGoBack) {
+                  const location = history.location
+                  history.replace('/all-songs')
+                  history.push(
+                    location.pathname + location.search + location.hash,
+                    location.state,
+                  )
+                  canGoBack = 1
+                }
+
+                history.push('/song/' + nextSong.item.slug, {
+                  canGoBack: canGoBack + 1,
+                })
               }}
             >
               <RandomButton />

@@ -1,11 +1,4 @@
-import {
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-} from 'react'
+import { useContext, useEffect, useState, useCallback, useRef } from 'react'
 // @ts-ignore
 import { __RouterContext, RouteComponentProps } from 'react-router'
 import useForceUpdate from './use-force-update'
@@ -13,7 +6,7 @@ import useForceUpdate from './use-force-update'
 /**
  * Use this only if you know what you are doing
  */
-export function useRouterUnsafe<T = {}>(): RouteComponentProps<T> {
+function useRouterUnsafe<T = {}>(): RouteComponentProps<T> {
   return useContext(__RouterContext as any)
 }
 
@@ -27,17 +20,6 @@ export default function useRouter() {
     return routerContext.history.listen(forceUpdate)
   }, [forceUpdate, routerContext])
   return routerContext
-}
-
-export function useHistoryChange() {
-  const { history } = useRouterUnsafe()
-  return useMemo(
-    () => ({
-      push: (path: string, state?: any) => history.push(path, state),
-      replace: (path: string, state?: any) => history.replace(path, state),
-    }),
-    [history],
-  )
 }
 
 type Setter = (
