@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { ServiceWorkerRegisterConfig } from 'serviceWorker'
 import { Workbox } from 'workbox-window'
-import { useLocation } from 'react-router'
 
 const context = React.createContext({
   updateAfterNavigate: () => {},
+  routeRendered: () => {},
 })
 
 export const ServiceWorkerStatusProvider: React.FC<{
@@ -12,20 +12,6 @@ export const ServiceWorkerStatusProvider: React.FC<{
 }> = ({ children, register }) => {
   const updatedRef = useRef(null as null | Workbox)
   const updateAfterNavigate = useRef(false)
-
-  const location = useLocation()
-  const lastPathname = useRef(location.pathname)
-
-  useEffect(() => {
-    const v = updateAfterNavigate.current
-    const updated = updatedRef.current
-    if (updated && v && location.pathname !== lastPathname.current) {
-      setTimeout(() => {
-        updated.messageSW({ type: 'SKIP_WAITING' })
-      }, 10)
-    }
-    lastPathname.current = location.pathname
-  }, [location])
 
   useEffect(() => {
     register({
@@ -35,12 +21,21 @@ export const ServiceWorkerStatusProvider: React.FC<{
       },
     })
   }, [register])
+
   return (
     <context.Provider
       value={useMemo(
         () => ({
           updateAfterNavigate: () => {
             updateAfterNavigate.current = true
+          },
+          routeRendered: () => {
+            const updated = updatedRef.current
+            if (updated) {
+              setTimeout(() => {
+                updated.messageSW({ type: 'SKIP_WAITING' })
+              }, 10)
+            }
           },
         }),
         [],
@@ -53,4 +48,12 @@ export const ServiceWorkerStatusProvider: React.FC<{
 
 export function useUpdateAfterNavigate() {
   return useContext(context).updateAfterNavigate
+}
+
+export function RouteRenderedMarker() {
+  const { routeRendered } = useContext(context)
+  useEffect(() => {
+    routeRendered()
+  }, [routeRendered])
+  return null
 }
