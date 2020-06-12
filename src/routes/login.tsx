@@ -2,7 +2,7 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import { useLogin } from 'components/use-login'
-import { PrimaryButton } from 'components/button'
+import { PrimaryButton } from 'components/interactive/primary-button'
 import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { LargeInput } from 'components/input'

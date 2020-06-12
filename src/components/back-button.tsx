@@ -2,7 +2,7 @@
 import { jsx, keyframes } from '@emotion/core'
 import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
-import { BasicButton } from 'components/button'
+import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
 

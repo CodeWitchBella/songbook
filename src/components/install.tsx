@@ -3,7 +3,7 @@
 import { jsx } from '@emotion/core'
 import React, { useContext, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
-import { PrimaryButton } from './button'
+import { PrimaryButton } from './interactive/primary-button'
 
 type State = { install?: (() => void) | null }
 const Ctx = React.createContext({} as State)

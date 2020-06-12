@@ -1,6 +1,6 @@
 import React, { useRef } from 'react'
 import { View, TextInput, StyleSheet } from 'react-native'
-import { BasicButton } from './button'
+import { BasicButton } from './interactive/basic-button'
 import { Svg, Path } from 'react-native-svg'
 
 export function SearchTextInput({

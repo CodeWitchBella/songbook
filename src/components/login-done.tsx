@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import { ListButton } from './button'
+import { ListButton } from './interactive/list-button'
 import React from 'react'
 import { User } from 'store/graphql'
 

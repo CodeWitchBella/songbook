@@ -14,7 +14,7 @@ import { css } from '@emotion/core'
 import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { BasicButton } from 'components/button'
+import { BasicButton } from 'components/interactive/basic-button'
 
 const a = css`
   color: black;
