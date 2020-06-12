@@ -3,7 +3,6 @@
 import { jsx } from '@emotion/core'
 import SongList from 'sections/song-list/song-list'
 import { errorBoundary } from 'containers/error-boundary'
-import { InstallButtonLook } from 'components/install'
 import { useCollection } from 'store/store'
 import { useMemo, useCallback } from 'react'
 
@@ -52,7 +51,6 @@ const Collection = ({ slug }: { slug: string }) => {
         slug={collection.slug}
         title={collection.name}
       />
-      <InstallButtonLook />
     </div>
   )
 }

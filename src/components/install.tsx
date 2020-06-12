@@ -1,7 +1,7 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import React from 'react'
+import React, { useContext, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import { PrimaryButton } from './button'
 
@@ -38,25 +38,14 @@ export class InstallProvider extends React.Component<{}, State> {
   componentWillUnmount() {}
 }
 
-export const InstallButton = ({
-  children = () => null,
-}: {
-  children?: (install: () => void) => React.ReactNode
-}) => (
-  <Ctx.Consumer>
-    {({ install }) => {
-      if (!install) return null
-      return children(install)
-    }}
-  </Ctx.Consumer>
-)
+const useInstall = () => {
+  const { install } = useContext(Ctx)
+  return install ?? null
+}
 
 const InstallContainer = styled.div`
-  position: absolute;
-  bottom: 0;
   display: flex;
   justify-content: center;
-  height: 150px;
   align-items: center;
   width: 100%;
   pointer-events: none;
@@ -65,17 +54,18 @@ const InstallContainer = styled.div`
   }
 `
 
-export const InstallButtonLook = () => (
-  <InstallButton>
-    {(install) => (
-      <>
-        <div css={{ height: 150 }} />
-        <InstallContainer>
-          <PrimaryButton onPress={install}>
-            Nainstalovat jako appku
-          </PrimaryButton>
-        </InstallContainer>
-      </>
-    )}
-  </InstallButton>
-)
+export const InstallButtonLook = ({ children }: PropsWithChildren<{}>) => {
+  const install = useInstall()
+  if (!install) return null
+
+  return (
+    <>
+      <InstallContainer>
+        <PrimaryButton onPress={install ?? undefined}>
+          Nainstalovat jako appku
+        </PrimaryButton>
+      </InstallContainer>
+      {children}
+    </>
+  )
+}

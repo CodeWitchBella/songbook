@@ -4,6 +4,9 @@ import { errorBoundary } from 'containers/error-boundary'
 
 const Changelog = () => (
   <div>
+    <Entry date="2020-06-12">
+      <li>Instalační tlačítko přesunuto na domovskou obrazovku</li>
+    </Entry>
     <Entry date="2020-06-08">
       <li>Další pokus o odstranění probliknutí chybové stránky při updatu</li>
       <li>

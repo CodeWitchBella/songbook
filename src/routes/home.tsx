@@ -6,6 +6,7 @@ import { PrimaryButton, ListButton } from 'components/button'
 import { useLogin } from 'components/use-login'
 import { buildData } from 'build-data'
 import { DateTime } from 'luxon'
+import { InstallButtonLook } from 'components/install'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
@@ -60,6 +61,11 @@ export default function Home() {
         <Gap />
         <ListButton to="/changelog">Seznam změn</ListButton>
         <Gap />
+      </View>
+      <View style={{ maxWidth: 400 }}>
+        <InstallButtonLook>
+          <Gap height={30} />
+        </InstallButtonLook>
       </View>
       {buildData.commitTime ? (
         <View style={{ bottom: 10, right: 10, position: 'absolute' }}>

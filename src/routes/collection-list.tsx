@@ -2,7 +2,6 @@
 import { jsx } from '@emotion/core'
 
 import { errorBoundary } from 'containers/error-boundary'
-import { InstallButtonLook } from 'components/install'
 import { useCollectionList } from 'store/store'
 import { useEffect } from 'react'
 import { DateTime } from 'luxon'
@@ -67,7 +66,6 @@ const CollectionList = () => {
           </div>
         ))}
       </View>
-      <InstallButtonLook />
     </div>
   )
 }
