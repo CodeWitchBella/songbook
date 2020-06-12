@@ -24,7 +24,6 @@ export function BackButton({
         },
         style,
       ]}
-      hoverStyle={{ textDecorationLine: 'none', fontWeight: 'bold' }}
       onPress={() => {
         const canGoBack = location.state && (location.state as any).canGoBack
         updateAfterNavigate()

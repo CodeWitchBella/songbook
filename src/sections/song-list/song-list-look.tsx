@@ -63,7 +63,6 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
         fontSize: 20,
         fontFamily: 'Cantarell',
       }}
-      hoverStyle={{ textDecorationLine: 'underline' }}
       to={href}
     >
       {children}

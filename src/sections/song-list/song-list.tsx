@@ -11,47 +11,13 @@ import useRouter, { useQueryParam } from 'components/use-router'
 import { DownloadPDF } from 'components/pdf'
 import { BackButton, BackArrow } from 'components/back-button'
 import { useLocation } from 'react-router'
+import { SearchTextInput } from 'components/search-text-input'
 
 const TheSearch = styled.div`
   font-size: 20px;
   display: block;
   flex-shrink: 0;
-
-  input {
-    box-sizing: border-box;
-    width: calc(100% - 4px);
-    height: 40px;
-    padding: 0;
-    padding-left: 10px;
-    border: 1px solid #222;
-  }
 `
-
-function ClearButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      aria-label="Vyčistit vyhledávání"
-      css={{
-        all: 'unset',
-        position: 'absolute',
-        right: 5,
-        top: 0,
-        height: 40,
-        width: 40,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      type="button"
-      onClick={onClick}
-    >
-      <svg viewBox="0 0 47.271 47.271" height="25" width="25">
-        <path d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z" />
-        <path d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z" />
-      </svg>
-    </button>
-  )
-}
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   return (
@@ -92,7 +58,6 @@ function Search({
   onChange: (v: string) => void
   topMenu: JSX.Element
 }>) {
-  const ref = useRef<HTMLInputElement>(null)
   return (
     <>
       <SearchContainer>
@@ -114,27 +79,7 @@ function Search({
           >
             <BackArrow />
           </BackButton>
-          <div css={{ position: 'relative', flexGrow: 1 }}>
-            <form
-              onSubmit={(evt) => {
-                evt.preventDefault()
-                const refc = ref.current
-                if (!refc) return
-                refc.blur()
-              }}
-            >
-              <input
-                aria-label="Vyhledávání"
-                ref={ref}
-                onChange={(evt) => {
-                  onChange(evt.target.value)
-                }}
-                value={text}
-                placeholder="Vyhledávání"
-              />
-            </form>
-            <ClearButton onClick={() => onChange('')} />
-          </div>
+          <SearchTextInput value={text} onChange={onChange} />
           {topMenu}
         </div>
       </SearchContainer>

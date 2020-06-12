@@ -6,7 +6,6 @@ import {
   TextStyle,
 } from 'react-native'
 import React, { PropsWithChildren, useRef, useEffect } from 'react'
-import Hoverable from './interactive/hoverable'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from './service-worker-status'
 
@@ -15,7 +14,6 @@ type ButtonProps = PropsWithChildren<
     disabled?: boolean
 
     style?: StyleProp<TextStyle>
-    hoverStyle?: StyleProp<TextStyle>
   } & (
     | { onPress: (event: GestureResponderEvent) => void }
     | { to: string }
@@ -27,7 +25,6 @@ export function BasicButton({
   children,
   disabled,
   style,
-  hoverStyle = { textDecorationLine: 'underline' },
   ...rest
 }: ButtonProps) {
   const text = useRef<Text>(null)
@@ -37,42 +34,38 @@ export function BasicButton({
   const history = useHistory()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return (
-    <Hoverable>
-      {(hover) => (
-        <TouchableOpacity
-          disabled={disabled}
-          onPress={
-            disabled
-              ? undefined
-              : 'onPress' in rest
-              ? rest.onPress
-              : 'to' in rest
-              ? () => {
-                  if (
-                    rest.to.startsWith('http://') ||
-                    rest.to.startsWith('https://')
-                  ) {
-                    window.open(rest.to, '_blank', 'noopener,noreferrer')
-                  } else {
-                    updateAfterNavigate()
-                    history.push(rest.to, { canGoBack: true })
-                  }
-                }
-              : undefined
-          }
-          style={{
-            alignItems: 'stretch',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            display: 'flex',
-          }}
-        >
-          <Text ref={text} style={[style, hover ? hoverStyle : null]}>
-            {children}
-          </Text>
-        </TouchableOpacity>
-      )}
-    </Hoverable>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={
+        disabled
+          ? undefined
+          : 'onPress' in rest
+          ? rest.onPress
+          : 'to' in rest
+          ? () => {
+              if (
+                rest.to.startsWith('http://') ||
+                rest.to.startsWith('https://')
+              ) {
+                window.open(rest.to, '_blank', 'noopener,noreferrer')
+              } else {
+                updateAfterNavigate()
+                history.push(rest.to, { canGoBack: true })
+              }
+            }
+          : undefined
+      }
+      style={{
+        alignItems: 'stretch',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        display: 'flex',
+      }}
+    >
+      <Text ref={text} style={[style]}>
+        {children}
+      </Text>
+    </TouchableOpacity>
   )
 }
 

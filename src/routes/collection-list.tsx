@@ -44,11 +44,7 @@ const CollectionList = () => {
         }}
       >
         <div>
-          <ListButton
-            to="/all-songs"
-            style={{ borderWidth: 0 }}
-            hoverStyle={{ textDecorationLine: 'underline' }}
-          >
+          <ListButton to="/all-songs" style={{ borderWidth: 0 }}>
             Všechny písně
           </ListButton>
         </div>
