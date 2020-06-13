@@ -198,7 +198,7 @@ theCopy(Array.from(document.querySelector('#snippet--sheetContent').children).ma
 
 function safeParseFloat(text: string, fallback: number) {
   const res = Number.parseFloat(text)
-  if (!Number.isFinite(text)) return fallback
+  if (!Number.isFinite(res)) return fallback
   return res
 }
 
