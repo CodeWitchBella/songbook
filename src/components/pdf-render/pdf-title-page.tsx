@@ -1,6 +1,6 @@
 import React from 'react'
 import { usePDFSettings } from './pdf-settings'
-import { View, Image, Text } from '@react-pdf/renderer'
+import { View, Image, Text } from './primitives'
 import { DateTime } from 'luxon'
 import { PDFPage } from './pdf-page'
 import image from './cross.png'
@@ -16,7 +16,7 @@ export function PDFTitlePage({ title }: { title: string }) {
           height: 30 * em,
         }}
       >
-        <Image src={image} style={{ width: 20 * em }} />
+        <Image source={image} style={{ width: 20 * em }} />
       </View>
       <View
         style={{

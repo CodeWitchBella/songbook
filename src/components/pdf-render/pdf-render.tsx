@@ -19,6 +19,7 @@ import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
 import { PDFToc } from './pdf-toc'
 import { PDFBooklet } from './pdf-page'
+import { IsInPDFProvider } from './primitives'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
 
@@ -140,18 +141,20 @@ export default function PDFRender({ song }: Props) {
 
   const doc = (
     <Document>
-      <PDFSettingsProvider value={{ ...song, pageSize: pageSize }}>
-        {pages.map((page, i) => (
-          <PDFSongPage
-            key={i}
-            page={page}
-            left={i % 2 === 0}
-            title={song.title}
-            author={song.author}
-            footer={footer || ''}
-          />
-        ))}
-      </PDFSettingsProvider>
+      <IsInPDFProvider>
+        <PDFSettingsProvider value={{ ...song, pageSize: pageSize }}>
+          {pages.map((page, i) => (
+            <PDFSongPage
+              key={i}
+              page={page}
+              left={i % 2 === 0}
+              title={song.title}
+              author={song.author}
+              footer={footer || ''}
+            />
+          ))}
+        </PDFSettingsProvider>
+      </IsInPDFProvider>
     </Document>
   )
 
@@ -272,16 +275,18 @@ export function PDFDownload({
 
   const doc = (
     <Document>
-      <PDFSettingsProvider
-        value={{
-          fontSize: 1,
-          paragraphSpace: 1,
-          titleSpace: 1,
-          pageSize: pageSize,
-        }}
-      >
-        {booklet ? <PDFBooklet pages={pages} /> : pages}
-      </PDFSettingsProvider>
+      <IsInPDFProvider>
+        <PDFSettingsProvider
+          value={{
+            fontSize: 1,
+            paragraphSpace: 1,
+            titleSpace: 1,
+            pageSize: pageSize,
+          }}
+        >
+          {booklet ? <PDFBooklet pages={pages} /> : pages}
+        </PDFSettingsProvider>
+      </IsInPDFProvider>
     </Document>
   )
   return (

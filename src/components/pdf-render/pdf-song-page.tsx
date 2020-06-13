@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import { Line, Paragraph } from 'utils/song-parser/song-parser'
 import { usePDFSettings } from './pdf-settings'
 import { PDFPage } from './pdf-page'
-import { View, Text } from '@react-pdf/renderer'
+import { View, Text } from './primitives'
 import { notNull } from '@codewitchbella/ts-utils'
 
 const nbsp = (text: string) =>

@@ -1,4 +1,5 @@
 import React, { useContext, useMemo, PropsWithChildren } from 'react'
+import { IsInPDFProvider } from './primitives'
 
 type CtxIn = {
   fontSize: number

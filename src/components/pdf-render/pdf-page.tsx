@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
-import ReactPDF, { View } from '@react-pdf/renderer'
+import ReactPDF, { View, Page } from '@react-pdf/renderer'
+import { useIsInPDF } from './primitives'
 
 const margin = {
   top: (7.8 / 148) * 100,
@@ -10,8 +11,11 @@ const margin = {
 }
 
 function DefaultPage({ children }: PropsWithChildren<{}>) {
+  const isInPDF = useIsInPDF()
+  const pdfSettings = usePDFSettings()
+  if (!isInPDF) return <NoopPage>{children}</NoopPage>
   return (
-    <ReactPDF.Page wrap={false} size={`A${usePDFSettings().pageSize}`}>
+    <ReactPDF.Page wrap={false} size={`A${pdfSettings.pageSize}`}>
       {children}
     </ReactPDF.Page>
   )
