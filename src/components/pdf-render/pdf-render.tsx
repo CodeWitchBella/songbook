@@ -2,16 +2,8 @@
 import { jsx } from '@emotion/core'
 import { useState, PropsWithChildren, useEffect } from 'react'
 import { Line, parseSong } from 'utils/song-parser/song-parser'
-import { Document, Font, BlobProvider } from '@react-pdf/renderer'
 import { saveAs } from 'file-saver'
-import Cantarell from 'webfonts/cantarell-regular.woff'
-import CantarellBold from 'webfonts/cantarell-bold.woff'
 import { useQueryParam } from '../use-router'
-import {
-  pdfjs,
-  Document as ReactPDFDocument,
-  Page as ReactPDFPage,
-} from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import { SongType } from 'store/store-song'
 import { PDFSettingsProvider } from './pdf-settings'
@@ -19,9 +11,24 @@ import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
 import { PDFToc } from './pdf-toc'
 import { PDFBooklet } from './pdf-page'
-import { IsInPDFProvider } from './primitives'
+import { PDFProvider, PDFDocument, PDFBlobProvider } from './primitives'
+import { once } from 'utils/utils'
+import React from 'react'
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+const ReactPDF = React.lazy(
+  once(() =>
+    import('react-pdf').then((rpdf) => {
+      rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`
+      return {
+        default: ({
+          children,
+        }: {
+          children: (rpdf: typeof import('react-pdf')) => React.ReactElement
+        }) => children(rpdf),
+      }
+    }),
+  ),
+)
 
 type Props = {
   song: SongType
@@ -32,25 +39,6 @@ export type PDFRenderMultipleSongsProps = {
   slug: string | null
   title: string
 }
-
-Font.register({
-  family: 'Cantarell',
-  src: Cantarell,
-  fonts: [
-    {
-      src: Cantarell,
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-    },
-    {
-      src: CantarellBold,
-      fontStyle: 'normal',
-      fontWeight: 'bold',
-    },
-  ],
-})
-// disable hyphenation
-Font.registerHyphenationCallback((w) => [w] as any)
 
 function PlusMinus({
   onClick,
@@ -85,50 +73,56 @@ function PDFDoc({ url }: { url: string }) {
   const [numPages, setNumPages] = useState(0)
   const [page, setPage] = useState(1)
   return (
-    <ReactPDFDocument
-      file={url}
-      onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-      renderMode="svg"
-    >
-      <div css={{ display: 'flex', justifyContent: 'center' }}>
-        <div className="set-size" css={{ position: 'relative' }}>
-          <ReactPDFPage key={`page_${page}`} pageNumber={page} />
-          <div
-            css={{
-              position: 'absolute',
-              fontSize: `calc(10px + ${Math.sqrt(2)}vh)`,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              padding: '1em 0',
-              display: 'flex',
-              justifyContent: 'center',
-              [`@media (max-width: ${100 / Math.sqrt(2)}vh)`]: {
-                fontSize: 'calc(10px + 1vw)',
-              },
-            }}
-          >
-            <div>
-              <PlusMinus
-                onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
-                hide={page === 1}
-                css={{ marginRight: 10 }}
+    <ReactPDF>
+      {(rpdf) => (
+        <rpdf.Document
+          file={url}
+          onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+          renderMode="svg"
+        >
+          <div css={{ display: 'flex', justifyContent: 'center' }}>
+            <div className="set-size" css={{ position: 'relative' }}>
+              <rpdf.Page key={`page_${page}`} pageNumber={page} />
+              <div
+                css={{
+                  position: 'absolute',
+                  fontSize: `calc(10px + ${Math.sqrt(2)}vh)`,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  padding: '1em 0',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  [`@media (max-width: ${100 / Math.sqrt(2)}vh)`]: {
+                    fontSize: 'calc(10px + 1vw)',
+                  },
+                }}
               >
-                {'<'}
-              </PlusMinus>
-              Strana {page}/{numPages}
-              <PlusMinus
-                onClick={() => setPage((p) => (p + 1 <= numPages ? p + 1 : p))}
-                hide={page === numPages}
-                css={{ marginLeft: 10 }}
-              >
-                {'>'}
-              </PlusMinus>
+                <div>
+                  <PlusMinus
+                    onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
+                    hide={page === 1}
+                    css={{ marginRight: 10 }}
+                  >
+                    {'<'}
+                  </PlusMinus>
+                  Strana {page}/{numPages}
+                  <PlusMinus
+                    onClick={() =>
+                      setPage((p) => (p + 1 <= numPages ? p + 1 : p))
+                    }
+                    hide={page === numPages}
+                    css={{ marginLeft: 10 }}
+                  >
+                    {'>'}
+                  </PlusMinus>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </ReactPDFDocument>
+        </rpdf.Document>
+      )}
+    </ReactPDF>
   )
 }
 
@@ -140,22 +134,20 @@ export default function PDFRender({ song }: Props) {
   const pageSize = 6
 
   const doc = (
-    <Document>
-      <IsInPDFProvider>
-        <PDFSettingsProvider value={{ ...song, pageSize: pageSize }}>
-          {pages.map((page, i) => (
-            <PDFSongPage
-              key={i}
-              page={page}
-              left={i % 2 === 0}
-              title={song.title}
-              author={song.author}
-              footer={footer || ''}
-            />
-          ))}
-        </PDFSettingsProvider>
-      </IsInPDFProvider>
-    </Document>
+    <PDFDocument>
+      <PDFSettingsProvider value={{ ...song, pageSize: pageSize }}>
+        {pages.map((page, i) => (
+          <PDFSongPage
+            key={i}
+            page={page}
+            left={i % 2 === 0}
+            title={song.title}
+            author={song.author}
+            footer={footer || ''}
+          />
+        ))}
+      </PDFSettingsProvider>
+    </PDFDocument>
   )
 
   const sqrt2 = Math.sqrt(2)
@@ -180,11 +172,13 @@ export default function PDFRender({ song }: Props) {
         },
       }}
     >
-      <BlobProvider document={doc}>
-        {({ url }) =>
-          !url ? <div>Generuji PDF...</div> : <PDFDoc url={url} />
-        }
-      </BlobProvider>
+      <PDFProvider>
+        <PDFBlobProvider document={doc}>
+          {({ url }) =>
+            !url ? <div>Generuji PDF...</div> : <PDFDoc url={url} />
+          }
+        </PDFBlobProvider>
+      </PDFProvider>
     </div>
   )
 }
@@ -274,34 +268,34 @@ export function PDFDownload({
   ]
 
   const doc = (
-    <Document>
-      <IsInPDFProvider>
-        <PDFSettingsProvider
-          value={{
-            fontSize: 1,
-            paragraphSpace: 1,
-            titleSpace: 1,
-            pageSize: pageSize,
-          }}
-        >
-          {booklet ? <PDFBooklet pages={pages} /> : pages}
-        </PDFSettingsProvider>
-      </IsInPDFProvider>
-    </Document>
+    <PDFDocument>
+      <PDFSettingsProvider
+        value={{
+          fontSize: 1,
+          paragraphSpace: 1,
+          titleSpace: 1,
+          pageSize: pageSize,
+        }}
+      >
+        {booklet ? <PDFBooklet pages={pages} /> : pages}
+      </PDFSettingsProvider>
+    </PDFDocument>
   )
   return (
-    <BlobProvider document={doc}>
-      {({ blob }) =>
-        !blob ? null : (
-          <Save
-            blob={blob}
-            onDone={onDone}
-            slug={
-              slug + (booklet ? `-booklet-a${pageSize - 2}` : `-a${pageSize}`)
-            }
-          />
-        )
-      }
-    </BlobProvider>
+    <PDFProvider>
+      <PDFBlobProvider document={doc}>
+        {({ blob }) =>
+          !blob ? null : (
+            <Save
+              blob={blob}
+              onDone={onDone}
+              slug={
+                slug + (booklet ? `-booklet-a${pageSize - 2}` : `-a${pageSize}`)
+              }
+            />
+          )
+        }
+      </PDFBlobProvider>
+    </PDFProvider>
   )
 }

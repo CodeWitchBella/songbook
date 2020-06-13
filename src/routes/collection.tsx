@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core'
 import SongList from 'sections/song-list/song-list'
 import { errorBoundary } from 'containers/error-boundary'
 import { useCollection } from 'store/store'
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useEffect } from 'react'
 
 function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })
@@ -22,6 +22,11 @@ const Collection = ({ slug }: { slug: string }) => {
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id) => (set && set?.has(id)) || false, [set])
+
+  const collectionId = collection?.id
+  useEffect(() => {
+    if (collectionId) console.log('Collection id:', collectionId)
+  }, [collectionId])
   if (!collection)
     return (
       <div
@@ -36,7 +41,6 @@ const Collection = ({ slug }: { slug: string }) => {
         Kolekce se načítá nebo neexistuje
       </div>
     )
-  console.log('Collection id:', collection.id)
   return (
     <div css={{ height: '100%' }}>
       <SongList

@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
-import ReactPDF, { View, Page } from '@react-pdf/renderer'
-import { useIsInPDF } from './primitives'
+import { useIsInPDF, PDFPage as PrimitivePDFPage, View } from './primitives'
+import type ReactPDF from '@react-pdf/renderer'
 
 const margin = {
   top: (7.8 / 148) * 100,
@@ -15,9 +15,9 @@ function DefaultPage({ children }: PropsWithChildren<{}>) {
   const pdfSettings = usePDFSettings()
   if (!isInPDF) return <NoopPage>{children}</NoopPage>
   return (
-    <ReactPDF.Page wrap={false} size={`A${pdfSettings.pageSize}`}>
+    <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}`}>
       {children}
-    </ReactPDF.Page>
+    </PrimitivePDFPage>
   )
 }
 
@@ -89,7 +89,7 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
       {realPages.map((page, i) => (
-        <ReactPDF.Page
+        <PrimitivePDFPage
           key={i}
           size={`A${pageSize - 2}`}
           orientation="portrait"
@@ -100,7 +100,7 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
               flexDirection: 'column',
               justifyContent: 'space-between',
               height: '100vh',
-              transform: i % 2 === 0 ? 'rotate(180deg)' : '',
+              transform: i % 2 === 0 ? [{ rotate: '180deg' }] : [],
               flexWrap: 'wrap',
             }}
           >
@@ -112,11 +112,16 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
                 borderColor: 'gray',
               }}
             />
-            <View style={{ flexDirection: 'row', transform: 'rotate(180deg)' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                transform: [{ rotate: '180deg' }],
+              }}
+            >
               {page[1]}
             </View>
           </View>
-        </ReactPDF.Page>
+        </PrimitivePDFPage>
       ))}
     </pageContext.Provider>
   )

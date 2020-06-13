@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react'
 import { Line, Paragraph } from 'utils/song-parser/song-parser'
 import { usePDFSettings } from './pdf-settings'
 import { PDFPage } from './pdf-page'
-import { View, Text } from './primitives'
+import { View, Text, PropsOf } from './primitives'
 import { notNull } from '@codewitchbella/ts-utils'
 
 const nbsp = (text: string) =>
@@ -18,6 +18,11 @@ const lineStyle = {
   flexDirection: 'row',
 } as const
 
+function SizedText(props: PropsOf<typeof Text>) {
+  const { em, fontSize } = usePDFSettings()
+  return <Text {...props} style={[{ fontSize: em * fontSize }, props.style]} />
+}
+
 function ChordLine({ l }: { l: Line }) {
   const { em, vw, fontSize } = usePDFSettings()
   return (
@@ -28,7 +33,7 @@ function ChordLine({ l }: { l: Line }) {
         .map((cur, i) => (
           <View style={{ width: 0 }} key={i}>
             <View style={{ width: 100 * vw }}>
-              <Text>
+              <SizedText>
                 <Text style={{ opacity: 0, ...lineStyle }}>
                   {l.content.slice(0, i).map((t, i2) => (
                     <Text key={i2}>
@@ -42,12 +47,12 @@ function ChordLine({ l }: { l: Line }) {
                 <Text style={{ fontWeight: 'bold' }}>
                   {cur.ch.replace(/^_/, '')}
                 </Text>
-              </Text>
+              </SizedText>
             </View>
           </View>
         ))
         .filter(notNull)}
-      <Text style={{ fontWeight: 'bold' }} />
+      <SizedText style={{ fontWeight: 'bold' }} />
     </View>
   )
 }
@@ -76,22 +81,24 @@ function LineC({ l }: { l: Line }) {
     return (
       <LineWrap hasChord={false}>
         {l.tag ? (
-          <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text>
+          <SizedText style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</SizedText>
         ) : null}
         {l.content.map((c, i) => (
-          <Text style={{ fontWeight: 'bold' }} key={i}>
+          <SizedText style={{ fontWeight: 'bold' }} key={i}>
             {c.ch}
-          </Text>
+          </SizedText>
         ))}
       </LineWrap>
     )
   }
   return (
     <LineWrap hasChord={hasChord(l)}>
-      {l.tag ? <Text style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</Text> : null}
+      {l.tag ? (
+        <SizedText style={{ fontWeight: 'bold' }}>{l.tag}&nbsp;</SizedText>
+      ) : null}
       {hasChord(l) ? <ChordLine l={l} /> : null}
 
-      <Text style={lineStyle}>
+      <SizedText style={lineStyle}>
         {l.content
           .map((c, i) => [
             c.ch && c.ch.startsWith('_') ? (
@@ -109,7 +116,7 @@ function LineC({ l }: { l: Line }) {
             ) : null,
           ])
           .filter(notNull)}
-      </Text>
+      </SizedText>
     </LineWrap>
   )
 }
@@ -126,24 +133,25 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
   )
 }
 
-const header = (titleSpace: number, em: number) =>
-  ({
-    display: 'flex',
-    flexDirection: 'row',
-    fontWeight: 'bold',
-    justifyContent: 'space-between',
-    fontSize: 1.2 * em,
-    paddingBottom: titleSpace * 1.75 * em,
-    margin: 0,
-    marginTop: 0.75 * em,
-  } as const)
-
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em, titleSpace } = usePDFSettings()
+  const textStyle = {
+    fontWeight: 'bold',
+    fontSize: 1.2 * em,
+  } as const
   return (
-    <View style={header(titleSpace, em)}>
-      <Text>{title}</Text>
-      <Text>{author}</Text>
+    <View
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingBottom: titleSpace * 1.75 * em,
+        margin: 0,
+        marginTop: 0.75 * em,
+      }}
+    >
+      <Text style={textStyle}>{title}</Text>
+      <Text style={textStyle}>{author}</Text>
     </View>
   )
 }
@@ -168,7 +176,6 @@ export function PDFSongPage({
         style={{
           position: 'relative',
           height: '100%',
-          fontSize: fontSize * em,
         }}
       >
         <SongHeader title={title} author={author} />
@@ -176,7 +183,7 @@ export function PDFSongPage({
           <ParagraphC p={paragraph} key={i2} />
         ))}
         {left ? null : (
-          <Text
+          <SizedText
             style={{
               position: 'absolute',
               bottom: 0,
@@ -185,7 +192,7 @@ export function PDFSongPage({
             }}
           >
             {footer}
-          </Text>
+          </SizedText>
         )}
       </View>
     </PDFPage>
