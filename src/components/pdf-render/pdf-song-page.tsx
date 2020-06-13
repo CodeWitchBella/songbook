@@ -5,6 +5,7 @@ import { PDFPage } from './pdf-page'
 import { View, Text, PropsOf } from './primitives'
 import { notNull } from '@codewitchbella/ts-utils'
 import { Chord } from './chord'
+import { BackButton, BackArrow } from 'components/back-button'
 
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
@@ -144,7 +145,7 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
 }
 
 function SongHeader({ title, author }: { title: string; author: string }) {
-  const { em, titleSpace } = usePDFSettings()
+  const { em } = usePDFSettings()
   const textStyle = {
     fontWeight: 'bold',
     fontSize: em(1.2),
@@ -155,13 +156,50 @@ function SongHeader({ title, author }: { title: string; author: string }) {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingBottom: em(titleSpace * 1.75),
         margin: 0,
-        marginTop: em(0.75),
+        flexGrow: 1,
       }}
     >
       <DefaultStyleText style={textStyle}>{title}</DefaultStyleText>
       <DefaultStyleText style={textStyle}>{author}</DefaultStyleText>
+    </View>
+  )
+}
+
+function SongHeaderWithBack({
+  title,
+  author,
+  back,
+}: {
+  title: string
+  author: string
+  back: boolean
+}) {
+  const { em, titleSpace } = usePDFSettings()
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        paddingBottom: em(titleSpace * 1.75),
+        marginTop: em(0.75),
+      }}
+    >
+      {back ? (
+        <View
+          style={{
+            alignSelf: 'center',
+            height: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: em(0.2),
+          }}
+        >
+          <BackButton>
+            <BackArrow />
+          </BackButton>
+        </View>
+      ) : null}
+      <SongHeader title={title} author={author} />
     </View>
   )
 }
@@ -172,12 +210,14 @@ export function PDFSongPage({
   title,
   author,
   footer,
+  back = false,
 }: {
   page: Line[][]
   left: boolean
   title: string
   author: string
   footer: string
+  back?: boolean
 }) {
   const { em } = usePDFSettings()
   return (
@@ -188,7 +228,7 @@ export function PDFSongPage({
           height: '100%',
         }}
       >
-        <SongHeader title={title} author={author} />
+        <SongHeaderWithBack title={title} author={author} back={back} />
         {page.map((paragraph, i2) => (
           <ParagraphC p={paragraph} key={i2} />
         ))}

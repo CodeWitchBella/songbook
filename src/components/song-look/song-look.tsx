@@ -1,13 +1,11 @@
 import React from 'react'
 import * as parser from 'utils/song-parser/song-parser'
 import { SongType } from 'store/store-song'
-import { BackButton } from 'components/back-button'
 import { PDFSongPage } from 'components/pdf-render/pdf-song-page'
 import { PDFSettingsProvider } from 'components/pdf-render/pdf-settings'
 
-export const SongPage = ({
+const SongPage = ({
   song,
-  number,
   pageNumber,
   pageData,
   noBack = false,
@@ -16,7 +14,6 @@ export const SongPage = ({
   song: SongType
   pageData: parser.Paragraph[]
   transposition?: number
-  number?: number
   pageNumber?: number
   noBack?: boolean
 }) => (
@@ -35,6 +32,7 @@ export const SongPage = ({
       left={typeof pageNumber === 'number' && pageNumber % 2 === 0}
       page={pageData}
       title={song.title}
+      back={!noBack}
     />
   </PDFSettingsProvider>
 )
@@ -63,7 +61,7 @@ export const SongLook = ({
                 ? `${song.title} (${i + 1}/${parsed.length})`
                 : song.title,
           }}
-          noBack={noBack}
+          noBack={noBack || i !== 0}
           transposition={transposition}
         />
       ))}
