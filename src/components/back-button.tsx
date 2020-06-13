@@ -72,9 +72,9 @@ export function BackArrow() {
         },
       }}
     >
-      <g fill="none" stroke="#000" stroke-width=".7" stroke-linecap="round">
+      <g fill="none" stroke="#000" strokeWidth=".7" strokeLinecap="round">
         <path d="M.907 2.346h4.236" />
-        <path d="M2.276.3L.3 2.346l1.976 2.046" stroke-linejoin="round" />
+        <path d="M2.276.3L.3 2.346l1.976 2.046" strokeLinejoin="round" />
       </g>
     </svg>
   )
