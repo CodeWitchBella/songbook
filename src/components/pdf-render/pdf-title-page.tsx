@@ -13,10 +13,10 @@ export function PDFTitlePage({ title }: { title: string }) {
         style={{
           alignItems: 'center',
           justifyContent: 'center',
-          height: 30 * em,
+          height: em(30),
         }}
       >
-        <Image source={image} style={{ width: 20 * em }} />
+        <Image source={image} style={{ width: em(20) }} />
       </View>
       <View
         style={{
@@ -25,11 +25,11 @@ export function PDFTitlePage({ title }: { title: string }) {
           alignItems: 'center',
         }}
       >
-        <View style={{ paddingBottom: 1.5 * em }}>
-          <Text style={{ fontSize: 3 * em }}>{title}</Text>
+        <View style={{ paddingBottom: em(1.5) }}>
+          <Text style={{ fontSize: em(3) }}>{title}</Text>
         </View>
         <View>
-          <Text style={{ fontSize: 2 * em }}>
+          <Text style={{ fontSize: em(2) }}>
             {DateTime.local().toFormat('d. M. yyyy')}
           </Text>
         </View>

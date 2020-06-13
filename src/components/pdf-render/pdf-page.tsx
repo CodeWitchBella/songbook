@@ -2,6 +2,7 @@ import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
 import { useIsInPDF, PDFPage as PrimitivePDFPage, View } from './primitives'
 import type ReactPDF from '@react-pdf/renderer'
+import SizerPage from 'components/sizer-page'
 
 const margin = {
   top: (7.8 / 148) * 100,
@@ -13,7 +14,7 @@ const margin = {
 function DefaultPage({ children }: PropsWithChildren<{}>) {
   const isInPDF = useIsInPDF()
   const pdfSettings = usePDFSettings()
-  if (!isInPDF) return <NoopPage>{children}</NoopPage>
+  if (!isInPDF) return <SizerPage>{children}</SizerPage>
   return (
     <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}`}>
       {children}
@@ -33,7 +34,7 @@ export function PDFPage({
   left: boolean
   style?: ReactPDF.Style | ReactPDF.Style[]
 }>) {
-  const { vw, vh, em } = usePDFSettings()
+  const { vw, vh, web } = usePDFSettings()
   const { Page } = useContext(pageContext)
 
   return (
@@ -43,14 +44,13 @@ export function PDFPage({
           style as any,
           {
             fontFamily: 'Cantarell',
-            fontSize: em,
             fontWeight: 'normal',
-            height: 100 * vh,
-            width: 100 * vw,
-            paddingTop: margin.top * vh,
-            paddingBottom: margin.bottom * vh,
-            paddingRight: left ? margin.inner * vw : margin.outer * vw,
-            paddingLeft: left ? margin.outer * vw : margin.inner * vw,
+            height: web ? '100%' : vh(100),
+            width: web ? '100%' : vw(100),
+            paddingTop: web ? 0 : vh(margin.top),
+            paddingBottom: web ? 0 : vh(margin.bottom),
+            paddingRight: web ? 0 : vw(left ? margin.inner : margin.outer),
+            paddingLeft: web ? 0 : vw(left ? margin.outer : margin.inner),
           },
         ]}
       >
@@ -62,7 +62,7 @@ export function PDFPage({
 
 function NoopPage({ children }: PropsWithChildren<{}>) {
   const { vw, vh } = usePDFSettings()
-  return <View style={{ width: 100 * vw, height: 100 * vh }}>{children}</View>
+  return <View style={{ width: vw(100), height: vh(100) }}>{children}</View>
 }
 
 export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
@@ -71,14 +71,19 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
     readonly [JSX.Element, JSX.Element],
     readonly [JSX.Element, JSX.Element],
   ])[] = []
+  let keygen = 0
   while (pagesCp.length > 0) {
     const a = [
       pagesCp.splice(pagesCp.length - 1, 1)[0],
-      pagesCp.splice(0, 1)[0] || <PDFPage left={false} />,
+      pagesCp.splice(0, 1)[0] || (
+        <PDFPage left={false} key={`booklet-${keygen++}`} />
+      ),
     ] as const
     const b = [
       pagesCp.splice(0, 1)[0] || <PDFPage left={true} />,
-      pagesCp.splice(pagesCp.length - 1, 1)[0] || <PDFPage left={false} />,
+      pagesCp.splice(pagesCp.length - 1, 1)[0] || (
+        <PDFPage left={false} key={`booklet-${keygen++}`} />
+      ),
     ] as const
     realPages.push([a, b])
     realPages.push([a, b])

@@ -5,11 +5,13 @@ type CtxIn = {
   paragraphSpace: number
   titleSpace: number
   pageSize: number
+  web: boolean
+  transpose: number
 }
 type Ctx = CtxIn & {
-  em: number
-  vw: number
-  vh: number
+  em: (v: number) => number
+  vw: (v: number) => number
+  vh: (v: number) => number
 }
 const settingsCtx = React.createContext(null as null | Ctx)
 export function usePDFSettings() {
@@ -34,7 +36,14 @@ const aSizes = [
 export function PDFSettingsProvider(
   props: PropsWithChildren<{ value: Partial<CtxIn> }>,
 ) {
-  const { fontSize = 1, paragraphSpace = 1, titleSpace = 1, pageSize = 6 } = {
+  const {
+    fontSize = 1,
+    paragraphSpace = 1,
+    titleSpace = 1,
+    pageSize = 6,
+    web = false,
+    transpose = 0,
+  } = {
     ...(useContext(settingsCtx) || {}),
     ...props.value,
   }
@@ -48,11 +57,19 @@ export function PDFSettingsProvider(
           paragraphSpace,
           titleSpace,
           pageSize,
-          em,
-          vw: (aSizes[pageSize][0] / 100) * 2.8346438836889, // mm to pt
-          vh: (aSizes[pageSize][1] / 100) * 2.8346438836889, // mm to pt
+          em: (v): any => (web ? `${v}em` : v * em),
+          vw: (v): any =>
+            web
+              ? `calc(${v} * var(--vw))`
+              : v * (aSizes[pageSize][0] / 100) * 2.8346438836889, // mm to pt
+          vh: (v): any =>
+            web
+              ? `calc(${v} * var(--vh))`
+              : v * (aSizes[pageSize][1] / 100) * 2.8346438836889, // mm to pt
+          web,
+          transpose,
         }),
-        [em, fontSize, pageSize, paragraphSpace, titleSpace],
+        [em, fontSize, pageSize, paragraphSpace, titleSpace, web, transpose],
       )}
     >
       {props.children}

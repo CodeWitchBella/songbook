@@ -24,22 +24,22 @@ export function PDFToc({
           maxHeight: '100%',
           flexDirection: 'column',
           flexWrap: 'wrap',
-          paddingTop: 2.65 * em,
-          paddingRight: -0.2 * em,
-          paddingBottom: 1 * em,
+          paddingTop: em(2.65),
+          paddingRight: em(-0.2),
+          paddingBottom: em(1),
         }}
       >
-        <View style={{ height: (6.7 - 2.65) * em, width: 0 }} />
+        <View style={{ height: em(6.7 - 2.65), width: 0 }} />
         {list.map((song, i) => (
           <View
             key={i}
             style={{
               maxWidth: '50%',
-              paddingBottom: 0.1 * em,
-              paddingRight: 0.2 * em,
+              paddingBottom: em(0.1),
+              paddingRight: em(0.2),
             }}
           >
-            <Text style={{ fontSize: 0.8 * em }}>
+            <Text style={{ fontSize: em(0.8) }}>
               {idToCounter.get(song.id) || i + 1}. {song.title}{' '}
               {`(${song.author})`}
             </Text>
