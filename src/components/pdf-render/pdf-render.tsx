@@ -14,6 +14,8 @@ import { PDFBooklet } from './pdf-page'
 import { PDFProvider, PDFDocument, PDFBlobProvider } from './primitives'
 import { once } from 'utils/utils'
 import React from 'react'
+import { getSongbookMeta } from './songbook-meta'
+import { DateTime } from 'luxon'
 
 const ReactPDF = React.lazy(
   once(() =>
@@ -260,7 +262,7 @@ export function PDFDownload({
           left={i % 2 === 0}
           title={song.counter + '. ' + song.title}
           author={song.author}
-          footer="zpevnik.skorepova.info"
+          footer={getSongbookMeta(title, DateTime.utc()).footer}
         />
       </PDFSettingsProvider>
     )),
