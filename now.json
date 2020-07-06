@@ -3,5 +3,16 @@
     "env": {
       "NODEJS_AWS_HANDLER_NAME": "handler"
     }
-  }
+  },
+  "routes": [
+    {
+      "src": "/*",
+      "headers": {
+        "Cross-Origin-Resource-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "require-corp",
+        "Cross-Origin-Opener-Policy": "same-origin"
+      },
+      "continue": true
+    }
+  ]
 }
