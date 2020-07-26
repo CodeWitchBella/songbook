@@ -1,14 +1,25 @@
 [
   {
+    "global": false,
+    "deleted": true,
+    "owner": "users/293031851651049",
+    "insertedAt": { "seconds": 1558448382, "nanoseconds": 145000000 },
+    "list": [
+      "songs/JZEK9a-Su6OmPJrEM6op",
+      "songs/zC4jRyHipfMDS2Xw7Lmp",
+      "songs/-0OBE9Dtlu6rPRzpZctU"
+    ],
+    "lastModified": { "seconds": 1558711950, "nanoseconds": 0 },
+    "name": "Test",
+    "slug": "codewitchbella/test"
+  },
+  {
     "name": "Kačlehy 2018 Děti",
     "slug": "kaclehy-2018-deti",
     "global": true,
     "deleted": false,
     "owner": "users/293031851651049",
-    "insertedAt": {
-      "seconds": 1558708368,
-      "nanoseconds": 466000000
-    },
+    "insertedAt": { "seconds": 1558708368, "nanoseconds": 466000000 },
     "list": [
       "songs/8CapmML_AOdE0JNfKv80",
       "songs/EFUCtn5WN5Zm5xaa-ZXF",
@@ -61,19 +72,67 @@
       "songs/rmjitEjf0PkzLuf7eqFH",
       "songs/w77qanBVQ0Zu96yJwaP2"
     ],
-    "lastModified": {
-      "seconds": 1558711608,
-      "nanoseconds": 0
-    }
+    "lastModified": { "seconds": 1558711608, "nanoseconds": 0 }
+  },
+  {
+    "deleted": false,
+    "owner": "users/293031851651049",
+    "insertedAt": { "seconds": 1558711644, "nanoseconds": 301000000 },
+    "list": [
+      "songs/jhyQPnkwRryJTtCQljDK",
+      "songs/w6ldkzme1kFy_kPrTOh7",
+      "songs/WrHqcP-8tPTkEY9-ehBl",
+      "songs/G8rrGqqk2n3MjclZfGF5",
+      "songs/QNCbnt9jZEb9AjDRwMcj",
+      "songs/mmAikH7sGnhyu1jgfB9e",
+      "songs/R6cMJLL28368JY3O87kZ",
+      "songs/vqGJzXVrLk1JnLHO-dt0",
+      "songs/hdJPRWx60qyDcgjQ1Kzu",
+      "songs/ZyXuNaybdUl99w6XGRo6",
+      "songs/ZxAqjyDtr2_b3Ftp4D6Q",
+      "songs/JbtV_lquvOlg9oB_u76j",
+      "songs/vBfdFyWtgp18XRHUxi1-",
+      "songs/MY9LSDxC09Z3jPGuEP8U",
+      "songs/3wbgxMYA3B1UEz_USV7L",
+      "songs/2thMB6Bjseb9PpCLA1XP",
+      "songs/9vIIs3BLhXo9_wzlV3Vw",
+      "songs/ZR3dM1V2qyYy80omi-mQ",
+      "songs/w98a5i-X26xNodZvp5pe",
+      "songs/07oT-HJWmVX7mbkCxlv0",
+      "songs/Sl8GTo9s2SQ5XdN5Fb32",
+      "songs/sjXXlHkhf9oPRfjgUBDW",
+      "songs/Ny-z821_V6TN1ISHEoCb",
+      "songs/G_9O2y-r7ZPrhBvCrIbL",
+      "songs/XW_LS2USW6vE2lUFhApf",
+      "songs/pAGLm98u9pAELol7_FlA",
+      "songs/-ixDdprwtJIJHLxleN8H",
+      "songs/1SuqcuQOcH9Z49dwXGoM",
+      "songs/LBC7_LXMgQKGBaNCstn7",
+      "songs/I-PwK5E1xh3QlYdamgY2",
+      "songs/YG3oGFlbe6f5b0SynttE",
+      "songs/qPsuA9ypcGRfolWSgSu-",
+      "songs/h_2zlLlQNjDrnUaUyfIN",
+      "songs/9mBUYZ9khdhe1TaZjglT",
+      "songs/ArLyCOd6nQY1h5QCawbu",
+      "songs/GOMfX43LdbAnMCaS2i7E",
+      "songs/mwQkkZU2G6rk3B3qdDs6",
+      "songs/y8O7hOFR0fkLlIf6wtAX",
+      "songs/AjTFzGKVKXburVD9TueH",
+      "songs/nv4bcja3Kb3owx-FeILs",
+      "songs/zQQ-2ndMhAC79SouPPiJ",
+      "songs/oq4fEB5eUAhr_HOJp-Va",
+      "songs/rf1BslTjyDQ1ENBJVeOa"
+    ],
+    "lastModified": { "seconds": 1558711944, "nanoseconds": 0 },
+    "name": "Kačlehy 2018 Vedoucí",
+    "slug": "kaclehy-2018-vedouci",
+    "global": true
   },
   {
     "global": true,
     "deleted": false,
     "owner": "users/293031851651049",
-    "insertedAt": {
-      "seconds": 1560866213,
-      "nanoseconds": 628000000
-    },
+    "insertedAt": { "seconds": 1560866213, "nanoseconds": 628000000 },
     "list": [
       "songs/8CapmML_AOdE0JNfKv80",
       "songs/EFUCtn5WN5Zm5xaa-ZXF",
@@ -126,41 +185,15 @@
       "songs/-7QWEwa5hUSuG-cjn7Ma",
       "songs/sjXXlHkhf9oPRfjgUBDW"
     ],
-    "lastModified": {
-      "seconds": 1561444423,
-      "nanoseconds": 299000000
-    },
+    "lastModified": { "seconds": 1561444423, "nanoseconds": 299000000 },
     "name": "Kačlehy 2019 Děti",
     "slug": "kaclehy-2019-deti"
-  },
-  {
-    "global": false,
-    "deleted": true,
-    "owner": "users/293031851651049",
-    "insertedAt": {
-      "seconds": 1558448382,
-      "nanoseconds": 145000000
-    },
-    "list": [
-      "songs/JZEK9a-Su6OmPJrEM6op",
-      "songs/zC4jRyHipfMDS2Xw7Lmp",
-      "songs/-0OBE9Dtlu6rPRzpZctU"
-    ],
-    "lastModified": {
-      "seconds": 1558711950,
-      "nanoseconds": 0
-    },
-    "name": "Test",
-    "slug": "codewitchbella/test"
   },
   {
     "global": true,
     "deleted": false,
     "owner": "users/293031851651049",
-    "insertedAt": {
-      "seconds": 1560866218,
-      "nanoseconds": 13000000
-    },
+    "insertedAt": { "seconds": 1560866218, "nanoseconds": 13000000 },
     "list": [
       "songs/jhyQPnkwRryJTtCQljDK",
       "songs/w6ldkzme1kFy_kPrTOh7",
@@ -208,71 +241,8 @@
       "songs/zDIqhi-WA6LMD1ZyPptS",
       "songs/m5p8tsH5aPvAnhK3YpEM"
     ],
-    "lastModified": {
-      "seconds": 1561489047,
-      "nanoseconds": 185000000
-    },
+    "lastModified": { "seconds": 1561489047, "nanoseconds": 185000000 },
     "name": "Kačlehy 2019 Vedoucí",
     "slug": "kaclehy-2019-vedouci"
-  },
-  {
-    "deleted": false,
-    "owner": "users/293031851651049",
-    "insertedAt": {
-      "seconds": 1558711644,
-      "nanoseconds": 301000000
-    },
-    "list": [
-      "songs/jhyQPnkwRryJTtCQljDK",
-      "songs/w6ldkzme1kFy_kPrTOh7",
-      "songs/WrHqcP-8tPTkEY9-ehBl",
-      "songs/G8rrGqqk2n3MjclZfGF5",
-      "songs/QNCbnt9jZEb9AjDRwMcj",
-      "songs/mmAikH7sGnhyu1jgfB9e",
-      "songs/R6cMJLL28368JY3O87kZ",
-      "songs/vqGJzXVrLk1JnLHO-dt0",
-      "songs/hdJPRWx60qyDcgjQ1Kzu",
-      "songs/ZyXuNaybdUl99w6XGRo6",
-      "songs/ZxAqjyDtr2_b3Ftp4D6Q",
-      "songs/JbtV_lquvOlg9oB_u76j",
-      "songs/vBfdFyWtgp18XRHUxi1-",
-      "songs/MY9LSDxC09Z3jPGuEP8U",
-      "songs/3wbgxMYA3B1UEz_USV7L",
-      "songs/2thMB6Bjseb9PpCLA1XP",
-      "songs/9vIIs3BLhXo9_wzlV3Vw",
-      "songs/ZR3dM1V2qyYy80omi-mQ",
-      "songs/w98a5i-X26xNodZvp5pe",
-      "songs/07oT-HJWmVX7mbkCxlv0",
-      "songs/Sl8GTo9s2SQ5XdN5Fb32",
-      "songs/sjXXlHkhf9oPRfjgUBDW",
-      "songs/Ny-z821_V6TN1ISHEoCb",
-      "songs/G_9O2y-r7ZPrhBvCrIbL",
-      "songs/XW_LS2USW6vE2lUFhApf",
-      "songs/pAGLm98u9pAELol7_FlA",
-      "songs/-ixDdprwtJIJHLxleN8H",
-      "songs/1SuqcuQOcH9Z49dwXGoM",
-      "songs/LBC7_LXMgQKGBaNCstn7",
-      "songs/I-PwK5E1xh3QlYdamgY2",
-      "songs/YG3oGFlbe6f5b0SynttE",
-      "songs/qPsuA9ypcGRfolWSgSu-",
-      "songs/h_2zlLlQNjDrnUaUyfIN",
-      "songs/9mBUYZ9khdhe1TaZjglT",
-      "songs/ArLyCOd6nQY1h5QCawbu",
-      "songs/GOMfX43LdbAnMCaS2i7E",
-      "songs/mwQkkZU2G6rk3B3qdDs6",
-      "songs/y8O7hOFR0fkLlIf6wtAX",
-      "songs/AjTFzGKVKXburVD9TueH",
-      "songs/nv4bcja3Kb3owx-FeILs",
-      "songs/zQQ-2ndMhAC79SouPPiJ",
-      "songs/oq4fEB5eUAhr_HOJp-Va",
-      "songs/rf1BslTjyDQ1ENBJVeOa"
-    ],
-    "lastModified": {
-      "seconds": 1558711944,
-      "nanoseconds": 0
-    },
-    "name": "Kačlehy 2018 Vedoucí",
-    "slug": "kaclehy-2018-vedouci",
-    "global": true
   }
 ]
