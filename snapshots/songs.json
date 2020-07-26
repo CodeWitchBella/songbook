@@ -3,7 +3,10 @@
     "author": "Asonance",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 3000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "alison-gross-asonance",
     "spotify": "",
@@ -17,8 +20,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1590407267, "nanoseconds": 161000000 },
-    "lastModified": { "seconds": 1590408510, "nanoseconds": 690000000 },
+    "insertedAt": {
+      "seconds": 1590407267,
+      "nanoseconds": 161000000
+    },
+    "lastModified": {
+      "seconds": 1590408510,
+      "nanoseconds": 690000000
+    },
     "paragraphSpace": 1,
     "slug": "all-star-smash-mouth",
     "spotify": "https://open.spotify.com/track/3cfOd4CMv2snFaKAnMdnvK?si=rWdNlO8cRx2wJQ3ilgOpXw",
@@ -30,7 +39,10 @@
     "author": "Hop Trop",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 176000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "amazonka-hop-trop",
     "spotify": "https://open.spotify.com/track/1aK5Bknad7NeOlAm8mXrPt",
@@ -42,7 +54,10 @@
     "author": "Lucie",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 128000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 128000000
+    },
     "paragraphSpace": 1,
     "slug": "amerika-lucie",
     "spotify": "https://open.spotify.com/track/4FK4Lei3UK3XArHzkn3vld",
@@ -56,12 +71,18 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1584223724, "nanoseconds": 143000000 },
-    "lastModified": { "seconds": 1590950464, "nanoseconds": 323000000 },
+    "insertedAt": {
+      "seconds": 1584223724,
+      "nanoseconds": 143000000
+    },
+    "lastModified": {
+      "seconds": 1591480758,
+      "nanoseconds": 461000000
+    },
     "paragraphSpace": 1,
     "slug": "amfora-eryx",
     "spotify": "",
-    "text": "R: [G]Co nám to pro Dia navezli do dvora?\n[C]To je ta [G]nová [D]designová [G]amfóra\nNěkdo si na ní nakreslil vesele\nVeliké ošklivé chlupaté prdele\n\nS: A co my do té amfóry dáme?\nAnální kolíky zrovna tu máme.\nA když tam anální kolíky dáme,\nanální kolíky v amfóře máme.\n\nR:\n\nS: A co my do té amfóry dáme?\n... zrovna tu máme.\nA když tam anální kolíky dáme,\nAnální kolíky a ... v amfóře máme.\n\nR:\n\nS:\n\n",
+    "text": "R: [G]Co nám to pro Dia navezli do dvora?\n[C]To je ta [G]nová [D]designová [G]amfóra\nNěkdo si na ní nakreslil vesele\nVeliké ošklivé chlupaté prdele\n\nS: A co my do té amfóry dáme?\nAnální kolíky zrovna tu máme.\nA když tam anální kolíky dáme,\nanální kolíky v amfóře máme.\n\nR:\n\nS: A co my do té amfóry dáme?\n zrovna tu máme.\nA když tam anální kolíky dáme,\nAnální kolíky a ... v amfóře máme.\n\nR:\n\nS:\n\n",
     "title": "Amfóra",
     "titleSpace": 1
   },
@@ -69,7 +90,10 @@
     "author": "Karel Kryl",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 456000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "andel-karel-kryl",
     "spotify": "https://open.spotify.com/track/7tRKmr5iL5yrwz6l2MjRUO",
@@ -83,7 +107,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586187429, "nanoseconds": 289000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "andel-xindl-x",
     "spotify": "",
@@ -95,7 +122,10 @@
     "author": "Pink Floyd",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 576000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 576000000
+    },
     "paragraphSpace": 1,
     "slug": "another-brick-in-the-wall-pink-floyd",
     "spotify": "https://open.spotify.com/track/7rPzEczIS574IgPaiPieS3",
@@ -104,10 +134,34 @@
     "titleSpace": 1
   },
   {
+    "author": "Vypsaná fiXa",
+    "editor": "users/173926127225136",
+    "extraNonSearchable": "",
+    "extraSearchable": "",
+    "fontSize": 1,
+    "insertedAt": {
+      "seconds": 1591565917,
+      "nanoseconds": 444000000
+    },
+    "lastModified": {
+      "seconds": 1591622643,
+      "nanoseconds": 852000000
+    },
+    "paragraphSpace": 1,
+    "slug": "antidepresivni-rybicka-vypsana-fixa",
+    "spotify": "",
+    "text": "S: Ona má [C]antidepre[E]sivní rybič[F]ku\nvy[C]tetovanou na [E]nejtajnějším [F]místě\n[C]Možná je pod [E]srdcem a [F]možná trochu níž\n[C]ona může [E]všude, prostě [F]tam kam si vymyslíš\n\nR: A ona [C]plave z orgánu [G]do orgánu\nžere [Am]plevel kte[D]rej po ránu\n[C]omotával mozek a [G]kotníky na konci pelesti[Am D]\nA ona plave z modřiny do modřiny\na vygumuje je úplně všechny\na tvoje vnitřní orgány tolerují tvoje rebelství\n\nS: Veze si antidepresivní rybičku (ušululululu)\nměstem, co má velkou spoustu pastí (ušululululu)\nFalešný městský strážník, bary a zloději kol (ušululululu)\na nebo prostě každý, koho si ty vymyslíš\n\nR: Ona je [C]rebel, kouří [G]na zastávce\njí to [Am]chutná [D]v týhle válce\na [C]její vnitřní orgány [G]tolerují její rebels[Am D]tví \n(2x)\n\nA potom [C]přijde DJ [G]PUNK, bude to [Am]nejlepší herec a [D]další\na [C]celej under[G]ground i ryba [Am]pod monopolem[D]\n(2x)\na potom [C]přijde DJ PUNK",
+    "title": "Antidepresivní rybička",
+    "titleSpace": 1
+  },
+  {
     "author": "Spirituál kvintet",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 697000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "batalion-spiritual-kvintet",
     "spotify": "https://open.spotify.com/track/6hUFDS88JaGAxlTY4Ozldp",
@@ -119,7 +173,10 @@
     "author": "Miky Ryvola",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 531000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.6,
     "slug": "bedna-od-whisky-miky-ryvola",
     "spotify": "https://open.spotify.com/track/2w9UkxD1gAI6DAgEUaoRnQ",
@@ -133,7 +190,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586453264, "nanoseconds": 86000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "behind-blue-eyes-limp-bizkit",
     "spotify": "https://open.spotify.com/track/1MTQHCpraD4S8g5PAFKzoj",
@@ -145,7 +205,10 @@
     "author": "Pavel Dydovič",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 401000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "blaznova-ukolebavka-pavel-dydovic",
     "spotify": "https://open.spotify.com/track/3MKWPScmApda8cQvuHmq7X",
@@ -157,7 +220,10 @@
     "author": "Michal Tučný",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 891000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "blizko-little-big-hornu-michal-tucny",
     "spotify": "https://open.spotify.com/track/3OPToda2MXCYMaJzZeyb0g",
@@ -172,7 +238,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586011187, "nanoseconds": 970000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 1,
     "slug": "blowin-in-the-wind-bob-dylan",
     "spotify": "",
@@ -186,8 +255,14 @@
     "extraNonSearchable": "https://tabs.ultimate-guitar.com/tab/daughter/burn_it_down_chords_2146439",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1559419628, "nanoseconds": 554000000 },
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 542000000 },
+    "insertedAt": {
+      "seconds": 1559419628,
+      "nanoseconds": 554000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 424000000
+    },
     "paragraphSpace": 1,
     "slug": "burn-it-down-daughter-dodelat",
     "spotify": "",
@@ -201,7 +276,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 0.96,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 664000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 0.7,
     "slug": "carodejka-z-amesbury-asonance",
     "spotify": "",
@@ -213,7 +291,10 @@
     "author": "Traband",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 360000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 360000000
+    },
     "paragraphSpace": 1,
     "slug": "cernej-pasazer-traband",
     "spotify": "https://open.spotify.com/track/56gw2bJA5GCM2E2mQ8t9ME",
@@ -225,7 +306,10 @@
     "author": "Alkehol",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 681000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 681000000
+    },
     "paragraphSpace": 1,
     "slug": "cerny-muz-alkehol",
     "text": "S: [E]Černý muž pod bičem otrokáře žil,\n[A]černý muž pod bičem [E]otrokáře žil\nčerný muž pod bičem otrokáře žil,\nkapi[H7]tán John Brown to [E]zřel\n\nR: Glory glory aleluja, glory glory aleluja\nglory glory aleluja, kapitán John Brown to zřel.\n\nS: Sebral z Virginie černých přátel šik\nprapor svobody tam zdvih\n\nR: Glory, glory... prapor svobody tam zdvih\n\nS: Hrstka statečných však odolána\nkapi John Brown je jat\n\nR: Glory, glory... kpt. John Brown je jat\n\nS: Zvony z Charlestonu v dáli temně zní\nna pozdrav to poslední\n\nR: Glory, glory... na pozdrav to poslední\n\nS: John Brown mrtev jest a jeho télo tlí\njeho duch však kráčí dál\n\nR: Glory, glory... jeho duch však kráčí dál\n",
@@ -238,7 +322,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561490318, "nanoseconds": 68000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "cervena-reka-ivo-fischer",
     "spotify": "https://open.spotify.com/track/3eLIJ24R3d0iN5y5uB6hhl",
@@ -252,7 +339,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563714861, "nanoseconds": 876000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 1,
     "slug": "cervena-reka-michal-tucny",
     "spotify": "https://open.spotify.com/track/4IAvNwD4y4npvrCCQinGVp",
@@ -264,7 +354,10 @@
     "author": "Tomáš Klus",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 509000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "chybis-mi-tomas-klus",
     "spotify": "https://open.spotify.com/track/4IWtHq26aNMy14waFt9G73",
@@ -276,7 +369,10 @@
     "author": "Kabát",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 955000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "colorado-kabat",
     "spotify": "https://open.spotify.com/track/1RHZeGdGtra1DJDszWRzLJ",
@@ -288,7 +384,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 329000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 329000000
+    },
     "paragraphSpace": 1,
     "slug": "cukrarska-bossanova-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/5dQk2mRynpK0ZcK5HF9o3D",
@@ -300,7 +399,10 @@
     "author": "Paul Anka",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 41000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "dajana-paul-anka",
     "spotify": "https://open.spotify.com/track/2PU8bRd9Cnlubgj5RvmPHm",
@@ -312,7 +414,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 457000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 457000000
+    },
     "paragraphSpace": 1,
     "slug": "darmodej-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/07VwgQdh8CrNxJ5dgNMoDW",
@@ -324,7 +429,10 @@
     "author": "Xavier Baumaxa",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 744000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 744000000
+    },
     "paragraphSpace": 1,
     "slug": "datamtuja-hallelujah-xavier-baumaxa",
     "spotify": "https://open.spotify.com/track/3WY16uOAt92AnPOvZThlJE?si=gUFJaPwjRwqPWGFyFEPLXw",
@@ -336,7 +444,10 @@
     "author": "Olympic",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 325000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "dej-mi-vic-sve-lasky-olympic",
     "spotify": "https://open.spotify.com/track/0udtAsgHYuKAU7weGSxBL6",
@@ -350,7 +461,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1572262496, "nanoseconds": 11000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "demons-imagine-dragons",
     "spotify": "https://open.spotify.com/track/5qaEfEh1AtSdrdrByCP7qR",
@@ -362,7 +476,10 @@
     "author": "Vypsaná fixa",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 705000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 705000000
+    },
     "paragraphSpace": 1,
     "slug": "dezolat-vypsana-fixa",
     "spotify": "",
@@ -374,7 +491,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 491000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 1,
     "slug": "divoci-kone-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/1bEizyoTmhOThSvSaCYhRh",
@@ -386,7 +506,10 @@
     "author": "Marta Kubišová",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 798000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 798000000
+    },
     "paragraphSpace": 1,
     "slug": "dobrodruzstvi-s-bohem-panem-marta-kubisova",
     "spotify": "https://open.spotify.com/track/7qer4DODV5S1X3qG3G2dTd",
@@ -398,7 +521,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 969000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 969000000
+    },
     "paragraphSpace": 1,
     "slug": "dokud-se-zpiva-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/7eq7WZGAZT2PHTGorZsi4j",
@@ -410,7 +536,10 @@
     "author": "Irish rover",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 298000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "drunken-sailor-irish-rover",
     "spotify": "https://open.spotify.com/track/5dPor8NmoUe6cZu1uH9GG7",
@@ -422,7 +551,10 @@
     "author": "Asonance",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 234000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "dva-havrani-asonance",
     "text": "S: Když jsem se z [Dmi]pole [C]vrace[Dmi]la,\ndva havrany jsem [C]slyše[Dmi]la,\njak jeden [F]druhého se [C]ptá:\n[Dmi]kdo dneska veče[C]ři nám [Dmi]dá?\nkdo dneska veče[C]ři nám [Dmi]dá?\n\nS: Ten první k druhému se otočil\na černým křídlem cestu naznačil,\nkrhavým zrakem k lesu hleděl\na takto jemu odpověděl\na takto jemu odpověděl:\n\nS: \"Za starým náspem, v trávě schoulený\ntam leží rytíř v boji raněný,\na nikdo neví, že umírá,\njen jeho kůň a jeho milá.\nJen jeho kůň a jeho milá.\"\n\nS: \"Jeho kůň dávno po lesích běhá\na jeho milá už jiného má,\nuž pro nás bude dosti místa,\nhostina naše už se chystá.\nHostina naše už se chystá.\"\n\nS: \"Na jeho bílé tváře usednem\na jeho modré oči vyklovem,\na až se masa nasytíme,\nz vlasů si hnízdo postavíme.\nZ vlasů si hnízdo postavíme.\"\n",
@@ -435,11 +567,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 324000000 },
+    "lastModified": {
+      "seconds": 1593190953,
+      "nanoseconds": 975000000
+    },
     "paragraphSpace": 1,
     "slug": "enjoy-the-silence-depeche-mode",
     "spotify": "",
-    "text": "[Ami C F D]Intro\n\nS:[Ami]Words like violence [Cmi]break the silence, [F]come crashing in, into my little world\n[Ami]Painful to me, [C#]pierce right through me, [F]can't you understand, oh my little girl\n\nR:[Dmi]All I ever wanted - [F]All I ever needed is [Ami]here in m[G]y arms\n[Dmi]Words are very [F]unnecessary, [Ami]They can only [F]do harm\n\nIntro\n\nS:[Ami]Vows are spoken [C#]to be broken, [F]feelings are intense, words are trivial\n[Ami]Pleasures remain, [C#]so does the pain, [F]words are meaningless, and forgettable\n\nR:\n\n\n",
+    "text": "[Ami C F D]Intro\n\nS:[Ami]Words like violence [Cmi]break the silence,\n[F]come crashing in, into my little world\n[Ami]Painful to me, [C#]pierce right through me,\n[F]can't you understand, oh my little girl\n\nR:[Dmi]All I ever wanted - [F]All I ever needed is [Ami]here in m[G]y arms\n[Dmi]Words are very [F]unnecessary, [Ami]They can only [F]do harm\n\nIntro\n\nS:[Ami]Vows are spoken [C#]to be broken,\n[F]feelings are intense, words are trivial\n[Ami]Pleasures remain, [C#]so does the pain,\n[F]words are meaningless, and forgettable\n\nR:\n\n\n",
     "title": "Enjoy the silence",
     "titleSpace": 1
   },
@@ -449,7 +584,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1590941942, "nanoseconds": 396000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "f-ck-it-all-leendadproductions",
     "spotify": "",
@@ -463,7 +601,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 0.93,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 247000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 0.65,
     "slug": "far-over-the-misty-mountains-cold-hobbit",
     "spotify": "https://open.spotify.com/track/1yJzoX4xPsACzVxUarXRKa",
@@ -475,7 +616,10 @@
     "author": "Flogging Molly",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 191000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 191000000
+    },
     "paragraphSpace": 1,
     "slug": "float-flogging-molly",
     "spotify": "https://open.spotify.com/track/6CCXU7qAZqFcRgtXHutLgM",
@@ -489,7 +633,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561490381, "nanoseconds": 803000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "frankie-dlouhan-brontosauri",
     "spotify": "https://open.spotify.com/track/5sKhM1bNdJUVo2T95mZWiX",
@@ -501,7 +648,10 @@
     "author": "Barns Courtney",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 230000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 230000000
+    },
     "paragraphSpace": 1,
     "slug": "glitter-and-gold-barns-courtney",
     "spotify": "https://open.spotify.com/track/6bYjclvTLjcmZZC5GhmSFQ",
@@ -513,7 +663,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 38000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "gronska-pisnicka-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/3MSZyFri0yc0i9T59ACWOI",
@@ -525,7 +678,10 @@
     "author": "Leonard Cohen",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 425000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 425000000
+    },
     "paragraphSpace": 1,
     "slug": "hallelujah-leonard-cohen",
     "spotify": "https://open.spotify.com/track/7yzbimr8WVyAtBX3Eg6UL9",
@@ -537,7 +693,10 @@
     "author": "Hunger games",
     "deleted": false,
     "fontSize": 0.98,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 649000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 0.7,
     "slug": "hanging-tree-hunger-games",
     "spotify": "https://open.spotify.com/track/5ONu4EF5vxDOCmBbQI6s0M",
@@ -548,8 +707,13 @@
   {
     "author": "Camila Cabello",
     "deleted": false,
+    "extraNonSearchable": "",
+    "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 685000000 },
+    "lastModified": {
+      "seconds": 1592077400,
+      "nanoseconds": 478000000
+    },
     "paragraphSpace": 1,
     "slug": "havana-camila-cabello",
     "spotify": "https://open.spotify.com/track/1rfofaqEpACxVEHIZBJe6W",
@@ -561,7 +725,10 @@
     "author": "Beatles",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 603000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 0.8,
     "slug": "hey-jude-beatles",
     "spotify": "https://open.spotify.com/track/0aym2LBJBk9DAYuHHutrIl",
@@ -573,7 +740,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 414000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "hlidac-krav-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/4KrrsCzsgEmPuwxxaBlITw",
@@ -587,7 +757,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561821602, "nanoseconds": 7000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "ho-ho-watanay-zalman",
     "spotify": "https://open.spotify.com/track/3RGALFkX2j8TXJEDSmBcpE",
@@ -599,7 +772,10 @@
     "author": "Noc na Karlštejně",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 353000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "hoja-hoj-noc-na-karlstejne",
     "spotify": "https://open.spotify.com/track/1sNwHok5huk5ac9OpLdjRq",
@@ -611,12 +787,36 @@
     "author": "J. Schelinger",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 405000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "holubi-dum-j-schelinger",
     "spotify": "https://open.spotify.com/track/5Us0TKtDhVUisoXqiJajA4",
     "text": "S: [Emi]Zpívá[D]m [Cmaj]ptákům a [Hm7]zvlášť holu[Emi]bům,\n[Emi]stáva[D]l v [Cmaj]údolí [Hm7]mém starý [Emi]dům.\n[G]Ptá[D]ků [G]houf zalé[D]tal ke kro[G]vům,\n[Emi]měl js[D]em [Cmaj]rád holu[Hm7]bích křídel [Emi]šum.\n\nS: Vlídná dívka jim házela hrách,\nmávání perutí víří prach.\nPtáci krouží a neznají strach,\nměl jsem rád starý dům, jeho práh.\n\nR: Hledám [Ami7]dům holu[D7]bí, kdopak [G]z vás cestu [Emi]ví,\nmíval [Ami]stáj roube[D7]nou, bílý [G]štít.\nKde je [Ami7]dům holu[D7]bí a ta [G]dívka kde [Emi]spí,\nvždyť to [Ami7]ví, že jsem [Hm7]chtěl pro ni [Emi D Emi] žít.\n\nS: Sdílný déšť vypráví okapům,\nbláhový, kdo hledá tenhle dům.\nOdrůstáš chlapeckým střevícům,\nneslyšíš holubích křídel šum.\n\nS: Nabízej úplatou cokoli,\nnepojíš cukrových homolí.\nMůžeš mít třeba zrak sokolí,\nnespatříš ztracené údolí.\n\nR: \n\nS: Zpívám ptákům a zvlášť holubům,\nstával v údolí mém starý dům.\n",
     "title": "Holubí dům",
+    "titleSpace": 1
+  },
+  {
+    "author": "The Animals",
+    "editor": "users/173926127225136",
+    "extraNonSearchable": "",
+    "extraSearchable": "",
+    "fontSize": 1,
+    "insertedAt": {
+      "seconds": 1591565634,
+      "nanoseconds": 735000000
+    },
+    "lastModified": {
+      "seconds": 1591622884,
+      "nanoseconds": 559000000
+    },
+    "paragraphSpace": 1,
+    "slug": "house-of-the-rising-sun-the-animals",
+    "spotify": "",
+    "text": "\n\nS: [Am]There is a [C]house in [D]New [F]Orleans\n[Am]They call the [C]Rising [E]Sun[E7]\n[Am]And it's been the [C]ruin of [D]many a [F]poor boy\nAnd [Am]God I [E]know I'm [Am]one[E]\n\nS:My mother was a tailor\nShe sewed my new blue jeans\nMy father was a gamblin' man\nDown in New Orleans\n\nS:Now the only thing a gambler needs\nIs a suitcase and trunk\nAnd the only time he's satisfied\nIs when he's on a drunk\n\nS:Oh mother tell your children\nNot to do what I have done\nSpend your lives in sin and misery\nIn the House of the Rising Sun\n\nS:Well, I got one foot on the platform\nThe other on the train\nI'm goin' back to New Orleans\nTo wear that ball and chain\n\nS:Well, there is a house in New Orleans\nThey call the Rising Sun\nAnd it's been the ruin of many a poor boy\nAnd God I know I'm one",
+    "title": "House of the Rising Sun",
     "titleSpace": 1
   },
   {
@@ -627,7 +827,10 @@
     "extraSearchable": "",
     "fontSize": 1,
     "insertedAt": "2019-05-19T23:48:34.751Z",
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 513000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "how-to-know-if-a-girl-is-a-lesbian-ally-hills",
     "spotify": "",
@@ -639,7 +842,10 @@
     "author": "Čechomor",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 566000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 496000000
+    },
     "paragraphSpace": 1,
     "slug": "hruska-cechomor",
     "text": "předehra:\n[ /: G A A A G A A A :/]\nS:Sto[D]jí hruška v ši[A]rém poli \n  vr[D]šek se jí [G]zele[A]ná \n  /: Pod [D]ní se [G]pase [A]kůň vra[D]ný \n     pase ho [A]má mi[D]lá :/ \n     \nS:Proč má milá dnes pásete \n  z večera do rána \n  /: Kam můj milý pojedete \n     já pojedu s vámi:/\n \nmezihra:\n [ /: A G G A A G G A :/]\n[A G G A A G G A]\n[A A G A A G G A]\n\nS: A já pojedu daleko  \n   přes vody hluboké \n   /: Kéž bych byl nikdy nepoznal  \n      panny černooké :/\n",
@@ -652,7 +858,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1572027958, "nanoseconds": 521000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "hurt-johnny-cash",
     "spotify": "",
@@ -664,7 +873,10 @@
     "author": "UDG",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 900000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 900000000
+    },
     "paragraphSpace": 1,
     "slug": "hvezdar-udg",
     "text": "S: Ztrácíš se [D]před očima, rosteš jen [A]ve vlastním stínu.\nKaždá [Emi]další vina, odkrývá [Cadd9]mojí vinu.\nZtrácíš se před očima, rosteš jen ve vlastním stínu.\nKaždá další vina odkrývá mojí vinu.\n\nVe vínu dávno nic nehledám, (dávno nic) nehledám.\nVe vínu dávno nic nehledám, (dávno nic) nehledám.\n\nR: Jak luna mizí s nocí v bělostných šatech pro nemocné,\nprosit je zvláštní pocit, jen ať je den noc ne.\nJak luna mizí s nocí v milostných šatech pro nemocné,\nprosit je zvláštní pocit, jen ať je den noc ne.\n\nOd proseb dávno nic nečekám (dávno nic) nečekám.\nOd proseb dávno nic nečekám (dávno nic) nečekám.\n\nS: Na chodbách v bludných kruzích zářivka vyhasíná,\njá ti do infuzí chci přilít trochu vína.\nNa nebi jiných sluncí, jak se tam asi cítíš,\ns nebeskou interpunkcí, jiným tulákům svítíš.\n\nVe vínu dávno nic nehledám (dávno nic) nehledám.\nVe vínu dávno nic nehledám (dávno nic) nehledám.\n\nR: \n\nObzor neklesne níž, je ráno a ty spíš.\nOd vlků odraná hvězdáře Jordána.\nObzor neklesne níž, je ráno a ty spíš.\nOd vlků odraná hvězdáře Jordána.\nObzor neklesne níž, je ráno a ty spíš.\nOd vlků odraná hvězdáře Giordána... opouštíš\n",
@@ -675,7 +887,10 @@
     "author": "John Lennon",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 169000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "imagine-john-lennon",
     "text": "S: [C]Imagine [Cmaj7]there's no [F]heaven \nIt's easy if you try \nNo hell below us \nAbove us only sky \n\nR1: [F]Imagine [Ami]all the [Dmi]people [_F] \n[G]Living for [C]to[G7]day \n\n\nS: Imagine there's no countries \nIt isn't hard to do \nNo greed or hunger \nAnd no religion too \n\nR1: Imagine all the people \nLiving life in peace \n\nR2: [F]You may [G]say I'm a [C]dreamer [_E7] \n[F]But I'm not [G]the only [C]one [_E7] \n[F]I hope [G]someday you'll [C]join us [_E7] \n[F]And the [G]world will [C]live as one \n\nS: Imagine no possessions \nI wonder if you can \nNothing to kill or die for \nA brotherhood of man \n\nR1: Imagine all the people \nSharing all the world \n\nR2: You may say I'm a dreamer \nBut I'm not the only one \nI hope someday you'll join us \nAnd the world will live as one\n",
@@ -686,7 +901,10 @@
     "author": "Pavlína Jíšová",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 469000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "ja-pisnicka-pavlina-jisova",
     "spotify": "",
@@ -698,7 +916,10 @@
     "author": "Nerez",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 797000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "ja-s-tebou-zit-nebudu-nerez",
     "text": "S: [Emi]Bylas' jak poslední hlt [F#]vína,\n[H7]sladká a k ránu bolavá,[Emi Edim H7]\n[Emi]za nehty výčitky a špí[F#]na,\n[H7]říkalas': dnešní noc je tvá.[Emi Edim H7]\nR1: [G]Co my dva z lásky vlastně [H]máme,\n[Ami]hlubokou [Edim]šachtou padá zd[H7]viž, já říkám \"kiš-kiš\",\n[Emi]navrch má vždycky těžký [F#]kámen\n[H7]a my jsme v koncích čím dál blíž, [Emi Edim H7]\n/: [Emi]a me tu ha nadži vava [Ami]jaj dari[Edim]   dari  [H7]daj. :/\nS: Zejtra tě potkám za svým stínem,\nneznámí známí v tramvaji,\nv cukrárně kávu s harlekýnem,\nhořká a sladká splývají.\nR1:\nS: Bylas' jak poslední hlt vína,\nzbývá jen účet zaplatit a jít,\nza nehty výčitky a špína\na trapný průchod banalit.\nR2: Co my tři z lásky vlastně máme,\nhlubokou šachtou padá zdviž, co čumíš, kiš-kiš,\nnavrch má vždycky těžký kámen\na my jsme v koncích čím dál blíž,\na me tu ha ....\n*: /: /: [Emi]Navrch má vždycky těžký [F#]kámen\n[H7]a my jsme v koncích čím dál [Emi]blíž  [Edim H7] ... :/ :/\n",
@@ -711,7 +932,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1570829984, "nanoseconds": 622000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "jdem-zpatky-do-lesu-zalman",
     "spotify": "",
@@ -723,7 +947,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 670000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 670000000
+    },
     "paragraphSpace": 1,
     "slug": "jdou-po-mne-jdou-jaromir-nohavica",
     "text": "S: Býval jsem [C]chudý jak [F]kostelní [C]myš,\nna půdě [Emi]půdy jsem [Ami]míval svou [G]skrýš,\n|: [F]pak jednou v [C]létě [G]řek' jsem si: [Ami]ať,\n[F]svět facku[C]je tě, a [F]tak mu to [C]vrať. :|\n\nS: Když mi dát [C]nechceš, já [F]vezmu si [C]sám,\nzámek jde [Emi]lehce a [Ami]adresu [G]znám,\n|: [F]zlato jak [C]zlato, [G]dolar či [Ami]frank,\n[F]tak jsem šel [C]na to do [F]National [C]Bank. :/\n\nR1: Jdou po mně, [C]jdou, [F]jdou, [C]jdou,\nna každém [Emi]rohu ma[Ami]jí fotku [G]mou,\n[F]kdyby mě [C]chytli, [G]jó, byl by [Ami]ring,\n[F]tma jako v [C]pytli je v [B]celách Sing-[F]sing.[G C F C]\n\n\nS: Ve státě [C]Iowa byl [F]od poldů [C]klid,\nchudičká [Emi]vdova mi [Ami]nabídla [G]byt,\n|: [F]jó, byla to [C]kráska, já [G]měl pení[Ami]ze,\n[F]tak začala [C]láska jak z [F]televi[C]ze. :|\n--- page break ---\nS: Však půl roku [C]na to [F]řekla mi: [C]„Dost,\ntobě došlo [Emi]zlato, mně [Ami]trpěli[G]vost,\n|: [F]sbal svých pár [C]švestek a [G]běž si, kam [Ami]chceš,“\n[F]tak jsem na [C]cestě a [F]chudý jak [C]veš. :|\n\nR1:\n\nS: Klenotník [C]Smith mi [F]do očí [C]lhal,\ndvě facky [Emi]slíz' a [Ami]dal, vše mi [G]dal,\n|: [F]a pak jsem vzal [C]nohy [G]na rame[Ami]na,\n[F]ten, kdo nemá [C]vlohy, nic [F]nezname[C]ná. :|\n\nS: Teď ve státě [C]Utah ži[F]ju spoko[C]jen,\npípu jsem [Emi]utáh' a [Ami]straním se [G]žen,\n|: [F]jó, kladou mi [C]pasti a [G]do pastí [Ami]špek,\n[F]já na ně [C]mastím, jen [F]ať mají [C]vztek. :|\n\nR2: Jdou po mně [C]jdou, [F]jdou, [C]jdou,\nna nočních [Emi]stolcích ma[Ami]jí fotku mou,\n[F]kdyby mě [C]klofly, [G]jó, byl by [Ami]ring,\n[F]být pod pan[C]toflí je [B]hůř než v Sing-[F]sing.[G C]\n",
@@ -736,7 +963,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561821447, "nanoseconds": 565000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "jeste-jedno-kafe-druha-trava",
     "spotify": "",
@@ -750,7 +980,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 646000000 },
+    "lastModified": {
+      "seconds": 1591566615,
+      "nanoseconds": 928000000
+    },
     "paragraphSpace": 1,
     "slug": "jesterice-lihova",
     "spotify": "",
@@ -762,7 +995,10 @@
     "author": "Kačlehy 2008",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 96000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "jezerni-pisen-kaclehy-2008",
     "text": "S: [Emi]Daleko v Africe tam leží víska malá, \nna břehu [C]jezera, jež skví se krásou [G]svou, \n|: oheň, co [C]večerem když ku obloze [G]sálá, \nzpěv lidí [H7]statečných zní noční oblo[Emi]hou :|\n\nS: Mocný duch jezera má sílu sedmi moří, \na v časech mírových všem radost rozdává, \n|: však pýcha marnivá klid jezerní nám boří, \nobdobí temna dobrým lidem nastává. :|\n\nR: [Emi]Jezero, vlny se vzdouvají, \ndo hlubin [C]modravých oběti [G]klesají, \naž k jeho [C]pramenům mé přání [G]doletí, \nať kletba [C]jezerní už navždy [H7]odletí. \n[Emi]Jezero, až zrada přebolí, \nodvaha [C]všech lidí překoná [G]cokoli, \npaprsky [C]sluneční vítěství [G]oznámí, \nnad vodou [C]vzplanou velký ohně [H7]oslavný, [Emi]oslavný.\n\nS: Síly všech rodů se v této době spojí, \nmoc vodní symbolů odvahu dodává, \n|: Po bojích náročných pak vítěztví se rodí, \ndo hlubin jezera zpět kletbu dostává. :| \nR:\n",
@@ -775,7 +1011,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561821549, "nanoseconds": 430000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "jezis-mucha",
     "spotify": "",
@@ -787,7 +1026,10 @@
     "author": "Dolly Parton",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 223000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 492000000
+    },
     "paragraphSpace": 1,
     "slug": "jolene-dolly-parton",
     "spotify": "",
@@ -799,7 +1041,10 @@
     "author": "Kačlehy 2009",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 906000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 1,
     "slug": "kamelot-kaclehy-2009",
     "text": "S: [C]Den slunce otvírá a [F]bard svou píseň [C]zpí[G7]vá, \njde [C]pověst světem [F]dávných hrdi[G7]nů: \nV daleké [C]zemi vzdále[F]né, \nv mlhách [C]skryté,  tajem[G]né, \nstojí [Dmi]hrad se jménem [G7]slavným: Kame[C]lot.\n\nR: [C]Jít [F]dál vstříc [C]říši západ[Ami]ní, \njít [C]tam, kde stojí [Ami]hrad dávných [Dmi G7]snů, \nza láskou [C]dam, ctí rytí[F]řů, \nkrajinou [C]víl i mordý[G7]řů, \nkde [Dmi]brány své ot[G7]vírá Kame[C]lot.\n\nS: Noc stíny ohlásí a tma svět obestírá, \nvšak závist, strach a válku přináší, \npro pýchu svoji, lež a klam, \nzlé síly brojí a Artuš sám, \nv čele svých věrných teď do boje vyráží.\n\nR:\n\nS: Temná noc už doznívá a v každém srdci dřímá \nozvěna bojů, kouzel, čar i úkladů, \nMordred to nikam nedotáh', \nMorgana mizí v temnotách, \ndál vládne zemi mocný Kamelot.\n\nR: \n+ Kde brány své otvírá Kamelot.\n\n",
@@ -812,7 +1057,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586010615, "nanoseconds": 656000000 },
+    "lastModified": {
+      "seconds": 1586010615,
+      "nanoseconds": 656000000
+    },
     "paragraphSpace": 1,
     "slug": "karavana-mraku-karel-kryl",
     "spotify": "",
@@ -824,7 +1072,10 @@
     "author": "Žalman",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 297000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 297000000
+    },
     "paragraphSpace": 1,
     "slug": "kdyby-tady-byla-takova-panenka-zalman",
     "text": "S: |: [D]Kdyby tady byla taková panenka,\n[A7]která by mě chtě[D]la :|\n|: [G]která by mě chtěla, [D]syna vychovala,\n[A7]přitom pannou by[D]la :|\n\nS: |: Kdybych já ti měla syna vychovati,\npřitom pannou býti :|\n|: ty by jsi mně musel kolíbku dělati,\ndo dřeva netíti :|\n\nS: |: Kdybych já ti musel kolíbku dělati,\ndo dřeva netíti :|\n|: ty bys mně musela košiličku šíti\nbez jehel a nití :|\n\nS: |: Kdybych já ti měla košiličku šíti\nbez jehel a nití :|\n|: ty by jsi mně musel žebřík udělati\naž k nebeské výši :|\n\nS: |: Kdybych já ti musel žebřík udělati\naž k nebeské výši :|\n|: lezli bysme spolu, spadli bysme dolů,\nbyl by konec všemu :|\n",
@@ -835,7 +1086,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 504000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "kdyz-me-brali-za-vojaka-jaromir-nohavica",
     "text": "S: [Ami]Když mě brali za vo[C]jáka [G]stříhali mě doho[C]la.\n[Dmi]Vypadal jsem jako [Ami]blbec.\n[E]Jak ti všichni doko[F]la, [G]la, [C]la, [G]la, [Ami]jak ti všichni [E]doko[Ami]la.\n\nS: Zavřeli mě do kasáren, začali mě učiti\njak mám správný voják býti\na svou zemi chrániti, ti, ti, ti, a svou zemi chrániti.\n\nS: Na pokoji po večerce ke zdi jsem se přitulil.\nVzpomněl jsem si na svou milou\nkrásně jsem si zabulil, lil, lil, lil, krásně jsem si zabulil.\n\nS: Když přijela po půl roce, měl jsem zrovna zápal plic,\npo chodbě furt někdo chodil,\ntak nebylo z toho nic, nic, nic, nic, tak nebylo z toho nic.\n\nS: Neplačte, vy oči moje, ona za to nemohla,\nprotože mladá holka lásku potřebuje,\ntak si k lásce pomohla, la, la, la tak si k lásce pomohla.\n\nS: Major nosí velkou hvězdu, před branou ho potkala.\nŘek jí, že má zrovna volný kvartýr\nTak se sbalit nechala, la, la, la. Tak se sbalit nechala.\n\nS: Co je komu do vojáka, když ho holka zradila.\nNa shledanou, pane Fráňo Šrámku,\npísnička už skonči[F]la.\n[G]La, [C]la, [G]la, [Ami]jakpak se Vám [E]líbi[F]la?\n[G]La, [C]la, [G]la, [Ami]nic moc extra [E]neby[Ami]la.\n",
@@ -846,7 +1100,10 @@
     "author": "Tři sestry",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 778000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "kelti-tri-sestry",
     "text": "S: [Ami]Dneska takhle v podvečer jsem [C]viděl [G]táhnout [Ami]Kelty, \nnesli kůže medvědí a taky ňáký celty, \nměli s sebou alkohol a hodně teplý melty, \ntáhli jeden za druhym a ved je jejich šéf.\n\nR: |: Kelti [G]jdou, Kelti jdou, \nKelti [Ami]jdou a je jich moc, \nKelti [G]jdou, Kelti jdou, \ndneska [Ami]bude [G]keltská [Ami]noc. :|\n\nS: Na lukách už ohně planou, slyším hlasy druidů, \ni nejlepší jedinci už podléhají fluidu, \nletní noci stejně temné jako hudba Floydů, \nvždycky když je slunovrat, tak Kelti vyváděj.\n\nR: x3\n",
@@ -857,7 +1114,10 @@
     "author": "Karel Plíhal",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 978000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "kluziste-karel-plihal",
     "text": "S: [C]Strejček [Em]kovář [Am]chytil [C/G]kleště, [Fmaj7]uštíp' z [C]noční [Fmaj7 G]oblohy\n[C]jednu [Em]malou [Am7]kapku [C/G]deště, [Fmaj7]ta mu s[C]padla [Fmaj7]pod no[G]hy,\n[C]nejdřív [Em]ale [Am]chytil [C/G]slinu, [Fmaj7]tak šáh' [C]kamsi [Fmaj7 G]pro pivo,\n[C]pak při[Em]táhl [Am]kova[C/G]dlinu [Fmaj7 C]a obrovský [Fmaj7 G]kladivo.\n\nR: Zatím [C]tři bílé [Em7]vrány [Am7]pěkně za se[C/G]bou\nkolem [Fmaj7]jdou, někam [C]jdou, do ryt[D7]mu se kýva[G]jí,\ntyhle [C]tři bílé [Em7]vrány [Am7]pěkně za se[C/G]bou\nkolem [Fmaj7]jdou, někam [C]jdou, nedo[Fmaj7]jdou, nedo[G]jdou.\n\nS: Vydal z hrdla mocný pokřik ztichlým letním večerem,\npak tu kapku všude rozstřík' jedním mocným úderem,\ncelej svět byl náhle v kapce a vysoko nad námi\nna obrovské mucholapce visí nebe s hvězdami.\n\nR: \n\nS: Zpod víček mi vytrysk' pramen na zmačkané polštáře,\nkdosi mě vzal kolem ramen a políbil na tváře,\nkdesi v dálce rozmazaně strejček kovář odchází,\ndo kalhot si čistí dlaně umazané od sazí.\n\nR:\n",
@@ -868,7 +1128,10 @@
     "author": "Bob Dylan",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 822000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 416000000
+    },
     "paragraphSpace": 1,
     "slug": "knockin-on-heaven-s-door-bob-dylan",
     "text": "S: [G]Mama [D]take this badge off of [Ami]me\n[G]I can't [D]use it any[C]more\n[G]It's getting [D]dark, too dark to [Ami]see\n[G]I feel I'm [D]knockin on heaven's [C]door\n\nR: |: Knock, knock, knockin' on heaven's door :|x4\n\nS: Mama put my guns in the ground\nI can't shoot them any-more\nThat long black cloud is comin' down\nI feel I'm knockin' on heaven's door\n\nR: \n\nBonus:\n\nKde je Laco, i don't know,\nkde je Fero, i don't know,\nkde je Jožo, i don't know,\nkde jsou všichni?\n|: Nak nak nakydej tenhle hnůj. :|x4\n\nKdo uklidí na poli?\nKdo podojí v maštali?\nKdo nahodí traktory?\nJenom ty, ty's tu zbyl!\n|: Nak nak nakydej tenhle hnůj. :|x4\n",
@@ -878,8 +1141,13 @@
   {
     "author": "Jaromír Nohavica",
     "deleted": false,
+    "extraNonSearchable": "",
+    "extraSearchable": "",
     "fontSize": 0.95,
-    "lastModified": { "seconds": 1563213871, "nanoseconds": 17000000 },
+    "lastModified": {
+      "seconds": 1592073990,
+      "nanoseconds": 746000000
+    },
     "paragraphSpace": 0.7,
     "slug": "kometa-jaromir-nohavica",
     "spotify": "",
@@ -891,7 +1159,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 908000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 908000000
+    },
     "paragraphSpace": 1,
     "slug": "kozel-jaromir-nohavica",
     "text": "S: Byl jeden [G]pán ten kozla [C]měl\nvelice [D7]si s ním rozu[G]měl\nMěl ho moc rád, opravdu [C]moc\nHladil mu [D7]fous na dobrou noc[G D7 G]\n\nS: Jednoho dne se kozel splet\nrudé tričko pánovi sněd\nKdyž to pán zřel, zařval jejé\nSvázal kozla na koleje\n\nS: Zapískal vlak, kozel se lek\nTo je má smrt, mečel mek mek\nJak tak mečel, vykašlal pak\nRudé tričko, čímž stopnul vlak.\n\nS: Ná ná ná na, ná ná ná na\nNá ná ná na, ná ná ná na\nNá ná ná na, ná ná ná na\nNá ná ná na, ná ná ná na\n",
@@ -904,7 +1175,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 968000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 968000000
+    },
     "paragraphSpace": 1,
     "slug": "kralovstvi-keltu-asonance",
     "spotify": "",
@@ -916,7 +1190,10 @@
     "author": "Traband",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 899000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "krasojezdkyne-traband",
     "text": "[F#mi]Přijel jsem [D]na chvíli [E]pozdravit [C#7]přátele\n[F#mi]Po hospodách [D]vést silácké [E]řeči [_C#7]\n[F#mi]Představení [D]skončilo, [E]zítra je [C#7]neděle\n[F#mi]Odplouvám [C#7]do bezpe[F#mi]čí\n\nBolestí jednoho je druhého štěstí\nCo nelze vyslovit, to voní po neřesti\n\nKrasojezdkyně, sestro akrobatů\nLotova dcero oděná do šarlatu\nKdo smí se dotknout lemu od tvých šatů?\nJsem na cestě a toužím po návratu\n\nČas je šarlatán a věci sotva změní\nTahleta zastávka byla jen na znamení\nNaše cesty už se asi těžko zkříží\nHledám tě v Babylóně, a ty jsi v Paříži\n\nKrasojezdkyně, sestro akrobatů\nLotova dcero oděná do šarlatu\nKdo smí se dotknout lemu od tvých šatů?\nJsem na cestě a toužím po návratu\n",
@@ -929,7 +1206,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "lag",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213816, "nanoseconds": 996000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 0.75,
     "slug": "l-a-g-song-horkyze-slize",
     "spotify": "",
@@ -941,7 +1221,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 427000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 0.33,
     "slug": "lachtani-jaromir-nohavica",
     "text": "R: /: [C]Lach, lach, [F]jé, [C]jé  [Ami]lach, lach, [G]jé, [C]jé :/\n\nS: [C]Jedna lachtaní [F]rodi[C]na\n[Ami]rozhodla se, že si vyjde [G]do ki[C]na,\njeli lodí, [C]metrem, vlakem a pak [F]tramva[C]jí\na teď [Ami]u kina Vesmír [G]lachta[C]jí,\n[G]lachtaní úspory [C]dali dohromady,\n[G]koupili si lístky [C]do první [G]řady,\n[C]táta lachtan řekl: \"Nebudem [F]třít bí[C]du\"\na [Ami]pro každého koupil pytlík [G]araší[C]dů, ó.\n\nR: \n\nS: Na jižním pólu je nehezky\na tak lachtani si vyjeli na grotesky,\ntěšili se, jak bude veselo,\nkdyž zazněl gong a v sále se setmělo,\nco to ale vidí jejich lachtaní zraky:\nsníh a mráz a sněhové mraky,\npro veliký úspěch změna programu,\ndnes dáváme film ze života lachtanů, ó.\n\nR: \n\nS: Táta lachtan vyskočil ze sedadla\nnevídaná zlost ho popadla\nproto jsem se netrmácel přes celý svět\nabych tady v kině mrznul jak turecký med\ndoma zima tady zima všude jen chlad\nkde má chudák lachtan relaxovat\nnedivte se té lachtaní rodině\nže pak rozšlapala arašídy po kině\n\nR: \n\nS: [C]Tahle lachtaní [F]rodi[C]na [Ami]od té doby nechodí už [G]do ki[C]na, [G]lach [C]lach.\n",
@@ -952,7 +1235,10 @@
     "author": "Lucie Bílá",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 95000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 95000000
+    },
     "paragraphSpace": 1,
     "slug": "laska-je-laska-lucie-bila",
     "spotify": "",
@@ -966,7 +1252,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 603000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 603000000
+    },
     "paragraphSpace": 1,
     "slug": "leaving-on-a-jet-plane-john-denver",
     "spotify": "",
@@ -980,8 +1269,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1584274924, "nanoseconds": 154000000 },
-    "lastModified": { "seconds": 1584276387, "nanoseconds": 505000000 },
+    "insertedAt": {
+      "seconds": 1584274924,
+      "nanoseconds": 154000000
+    },
+    "lastModified": {
+      "seconds": 1584276387,
+      "nanoseconds": 505000000
+    },
     "paragraphSpace": 1,
     "slug": "leco-podpalubni-ansambl-kapitana-salmara",
     "spotify": "",
@@ -995,7 +1290,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "Citronovník",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563480173, "nanoseconds": 80000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "lemon-tree-fool-s-garden",
     "spotify": "",
@@ -1007,7 +1305,10 @@
     "author": "Passenger",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 160000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 160000000
+    },
     "paragraphSpace": 1,
     "slug": "let-her-go-passenger",
     "text": "R: Well you only need the [F]light when it's burning [C]low\nOnly miss the [G]sun when it starts to [Am]snow\nOnly know you [F]love her when you let her [C]go [G]\nOnly know you've been high when you're feeling low\nOnly hate the road when you're missing home\nOnly know you love her when you let her go\nAnd you let her go\n[Am, F, G, Em]\n[Am, F, G]\n\nS: [Am]Staring at the bottom of your [F]glass\nHoping [G]one day you'll make a dream [Em]last\nBut dreams come [Am]slow and they go so [F]fast [G]\nYou see her when you close your eyes\nMaybe one day you'll understand why\nEverything you touch, oh it dies\n\nR: But you only need the [F]light when it's burning [C]low\nOnly miss the [G]sun when it starts to [Am]snow\nOnly know you [F]love her when you let her [C]go [G]\nOnly know you've been high when you're feeling low\nOnly hate the road when you're missing home\nOnly know you love her when you let her go\n\nS: Staring at the ceiling in the dark\nSame old empty feeling in your heart\n'Cause love comes slow and it goes so fast\nWell you see her when you fall asleep\nBut never to touch and never to keep\n'Cause you loved her too much and you dive too deep\n\n--- page break ---\n\nR: Well you only need the [F]light when it's burning [C]low\nOnly miss the [G]sun when it starts to [Am]snow\nOnly know you [F]love her when you let her [C]go [G]\nOnly know you've been high when you're feeling low\nOnly hate the road when you're missing home\nOnly know you love her when you let her go\n\nAnd you let her [Am]go\nOh [F]oh oh [G]no\nAnd you let her go\nOh oh oh no\nWell you let her go\n[Am, F, G, Em]\n[Am, F, G]\nR: 'Cause you only need the light when it's burning low\nOnly miss the sun when it starts to snow\nOnly know you love her when you let her go\nOnly know you've been high when you're feeling low\nOnly hate the road when you're missing home\nOnly know you love her when you let her go\n\nR: 'Cause you only need the light when it's burning low\nOnly miss the sun when it starts to snow\nOnly know you love her when you let her go\nOnly know you've been high when you're feeling low\nOnly hate the road when you're missing home\nOnly know you love her when you let her go\nAnd you let her go...\n",
@@ -1018,7 +1319,10 @@
     "author": "Beatles",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 63000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 63000000
+    },
     "paragraphSpace": 1,
     "slug": "let-it-be-beatles",
     "text": "S: [G]When I find myself in [D]times of trouble\n[Emi]Mother Mary [C]comes to me\n[G]Speaking words of [D]wisdom, let it [C, string 5 play 2-0, G]be\nAnd in my hour of [D]darkness\nShe is [Emi]standing right in [C]front of me\n[G]Speaking words of [D]wisdom, let it [C]be[G]\n\nR: Let it [Emi]be, let it [D]be\nLet it [C]be, let it [G]be\nWhisper words of [D]wisdom\nLet it [C]be[G]\n\nS: And when the broken hearted people\nLiving in the world agree\nThere will be no answer, let it be\nBut though there may be parted\nThere is still a chance that they will see\nThere will be an answer, let it be\n\nR: \n\nS: And when the night is cloudy\nThere is still a light that shines on me\nShine until tomorrow, let it be\nI wake up to the sound of musict it be\nMother Mary comes to me\nWhisper words of wisdom, let it be\n\nR:\n",
@@ -1029,7 +1333,10 @@
     "author": "Frozen",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 232000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "let-it-go-frozen",
     "text": "CAPO 1\nThe [Am]snow glows white on the [F]mountain tonight\nNot a [C]footprint to be [Dsus4 Dm]seen\nA [Am]kingdom of iso[F]lation and it [G]looks like I'm the [Dsus4 D]queen\nThe [Am]wind is [F]howling like this [G]swirling storm in[Dsus4 Dm]side\n[Am]Couldn't keep it [G]in, heaven knows I [D]tried\n\n[G]Don't let them in, don't let them [F]see\nBe the good girl you always have to [G]be\nConceal, don't feel, don't let them [F]know\nWell, now they [Fadd2]know\n\n[F]Let it [C]go, let it [G]go\nCan't [Am]hold it back any[F]more\nLet it go, let it go\nTurn away and slam the door\n\n[C]I don't [G]care what they're [C]going to [F]say\nLet the [G]storm rage on\nThe [F]cold never bothered me anyway\n\nIt's [Am]funny how some [C]distance\nMakes [G]everything seem [Dm]small\nAnd the [Am]fears that once con[G]trolled me\nCan't [D]get to me at all\n\n--- page break ---\n\nIt's time to see what I can do\nTo test the limits and break through\nNo right, no wrong, no rules for me\nI'm free\n\nLet it go, let it go\nI am one with the wind and sky\nLet it go, let it go\nYou'll never see me cry\n\nHere I stand and here I'll stay\nLet the storm rage on\n\n[F]My power flurries through the air into the ground\n[F]My soul is spiraling in frozen fractals all around\n[G]And one thought crystallizes like an icy blast\n[Am]I'm never [F]going back, the [G]past is in the [Dm F]past\n\nLet it go, let it go\nAnd I'll rise like the break of dawn\nLet it go, let it go\nThat perfect girl is gone\n\nHere I stand in the light of day\nLet the storm rage on\nThe cold never bothered me anyway\n",
@@ -1043,7 +1350,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586011084, "nanoseconds": 415000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "malovani-divokej-bill",
     "spotify": "https://open.spotify.com/track/2Q316tet0XhJvUJmla5iyG",
@@ -1055,7 +1365,10 @@
     "author": "Pacifik",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 636000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 508000000
+    },
     "paragraphSpace": 1,
     "slug": "maly-velky-muz-pacifik",
     "text": "S: Dokud [Emi]tráva bude růst, řeky potečou a [C]stoupat bude dým,\nléta utečou a [D]kam jen padne stín, země tvá bude [Emi]tvou.\nDokud [Ami]noci střídá den, vítr bude vát a [G]mraky poplujou,\nslunce bude plát a [H7]tak jak léta jdou, země tvá bude [Emi]tvou.\n\nR: Jen [G]Malý velký muž tolik dobře věděl,\n[Emi]co je vostrej nůž, smutek prázdných sedel,\n[C]Malý velký muž čekal svý znamení[D].\nJen [G]Malý velký muž žehnal ohni sílu \n[Emi]z rudých kamenů, vítal dýmku míru,\n[C]přesto pohřbil [D]sen, velký sen o Wounded [Emi]Knee.\n\nS: Dokud tráva bude růst, ruce špinavý až v pláni vztyčí kříž,\nřeky zastaví se - plakat uslyšíš, slunce zář krvavou.\nDokud noci střídá den, slova neplatí a co je vlastně jen\nono prokletí, co padlo na tvou zem, na tvou zem ztracenou.\n\nR:\n\nS: Dokud tráva bude růst, rány nezhojí a neopláchne déšť,\nřeky nespojí se v jeden silný proud, silný proud nadějí.\nDokud noci střídá den, srdce zlomená a jejich dávný sen,\nskalní ozvěna, už nevrátí tvou zem, silný proud nadějí. \n\nR:\n",
@@ -1068,7 +1381,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "Kočka",
     "fontSize": 0.89,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 500000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.5,
     "slug": "mam-doma-kocku-pokac",
     "spotify": "",
@@ -1080,7 +1396,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 0.9,
-    "lastModified": { "seconds": 1563213823, "nanoseconds": 281000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 0.7,
     "slug": "mam-jizvu-na-rtu-jaromir-nohavica",
     "text": "S: [C9]Sem příliš starý na to abych věřil v revoluci\n[Gsus4]a svoji velkou hlavu [G]těžko skryji pod kapucí\n[Ami]a nechutná mi když se [F]vaří předvařená rýže,\n[C9]v náprsní kapse nosím [G/H]Ventinol na potíže.\n\n[Ami]Jakto tak vidím asi těžko projdu [Ami/H]uchem jehly,\n[F]ale sem, běhám tak, aby [C9]mě vlci nedoběhli.\n[Dmi]A kdyby se někdo z vás na anděla ptal,\ntak [Gsus4]mám jizvu na rtu, [G]když při mně stál.[_C9 G/H F G]\n\nS: Sako mám od popílku, na kravatě saze,\nmé hrubé prsty neumí uzly na provaze\na když mi občas tečou slzy, hned je polykám\na tančím jen tak rychle, jak hraje muzika.\n\nMé oči mnohé viděli a ruce mnohé měli,\na srdce stydělo se, když salvy slávy zněli\na kdyby se někdo z vás na anděla ptal,\ntak mám jizvu na rtu, když při mně stál.\n\nS: Mluvil sem s prezidenty, potkal sem vrahy,\nnahý sem na svět přišel a odejdu nahý,\nv patnácti viděl sem jak kolem jeli ruské tanky\na v padesáti nechával si věštit od cigánky.\n\nA dříve, než mě příjme svatý Petr u komise,\nbásníkům české země chtěl bych uklonit se,\na kdyby se někdo z vás na anděla ptal,\ntak mám jizvu na rtu, když při mně stál.\n\nS: V Paříži četl sem si ruskou verzi Le manité,\na z bible zatím pochopil jen věty nerozvité,\nv New Yorku chyt sem koutek od plastových lžyček,ale\nnejlepsí káva je v hypernově U Rybiček.\n\nTrumfové eso v mariáši hážu do talónu\na chtěl bych vidět Baník, jak poráží Barcelonu.\nA kdyby se někdo z vás na anděla ptal,\ntak mám jizvu na rtu, když při mně stál.\n",
@@ -1090,12 +1409,17 @@
   {
     "author": "Tomáš Klus",
     "deleted": false,
+    "extraNonSearchable": "",
+    "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 290000000 },
+    "lastModified": {
+      "seconds": 1591485269,
+      "nanoseconds": 107000000
+    },
     "paragraphSpace": 1,
     "slug": "marie-tomas-klus",
     "spotify": "",
-    "text": "S:Je [F]den.Tak [A]pojď Marie ven. \nBudeme [B]žít. A házet [C]šutry do oken. \nJe dva. Necháme doma trucovat. \nKdyž nechtějí - nemusí. Nebudem se vnucovat.\nJémine. Všechno zlý jednou pomine. \nTak Marie. Co ti je? \n\nS:Všemocné. Jsou loutkařovi prsty. \nAť jsou tenký nebo tlustý. Občas přetrhají nit. \nA to pak jít. A nemít nad sebou svý jistý. \nPořád s tváří optimisty. Listy v žití obracet. \n\nS:Je to jed. Mazat si kolem huby med. \nA neslyšet. Jak se ti bortí svět. \nMarie. Kdo přežívá nežije. Tak ádijé. \n\nS:Marie. Už zase máš (k)tulení sklony. \nJako loni. Slyším kostelní zvony znít. \nA to mě zabije. A to mě zabije. \nA to mě zabije. Jistojistě. \n\nR1:Já [F]mám Marie [A]rád. Když má [B]moje bytí [C]spád. \nBýti věčně na cestách.A k ránu spícím plícím. \nŽivot vdechovat. Nechtěj mě milovat. \nNechtěj mě milovat. Nechtěj mě milovat. \n\nR2:Já mám Marie rád. Když má moje bytí spád. \nBýti věčně na cestách. A kránu spícím plícím. \nŽivot vdechovat. \n\nS:Copak nemůže být. Mezi ženou a mužem. \nPřátelství - kde není nikdo nic dlužen. Prostě. \nJen prosté. Spříznění duší. \nAniž by kdokoli. Cokoli tušil. \n\nNananána...\nR1:",
+    "text": "S:Je [F]den, tak [A]pojď Marie ven\nbudeme [B]žít a házet [C]šutry do oken \nJe dva necháme doma trucovat\nKdyž nechtějí - nemusí, nebudem se vnucovat\nJémine, všechno zlý jednou pomine \ntak Marie... Co ti je? \n\nS:Všemocné jsou loutkařovy prsty \nať jsou tenký nebo tlustý občas přetrhají nit\nA to pak jít a nemít nad sebou svý jistý \npořád s tváří optimisty listy v žití obracet \n\nS:Je to jed, mazat si kolem huby med \na neslyšet, jak se ti bortí svět \nMarie, kdo přežívá nežije tak ádijé \n\nS:Marie, už zase máš (k)tulení sklony \nJako loni slyším kostelní zvony znít\nA to mě zabije, a to mě zabije \na to mě zabije, jistojistě \n\nR:Já [F]mám Marie [A]rád když má [B]moje bytí [C]spád \nBýti věčně na cestách a k ránu spícím plícím život vdechovat\nNechtěj mě milovat, nechtěj mě milovat, nechtěj mě milovat\nJá mám Marie rád když má moje bytí spád \nBýti věčně na cestách a k ránu spícím plícím život vdechovat \n\nS:Copak nemůže být mezi ženou a mužem\npřátelství, kde není nikdo nic dlužen \nProstě jen prosté spříznění duší \nAniž by kdokoli cokoli tušil \nNananána...\n\nR:",
     "title": "Marie",
     "titleSpace": 1
   },
@@ -1103,7 +1427,10 @@
     "author": "Malomocnost prázdnoty",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 355000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "maruska-malomocnost-prazdnoty",
     "text": "S: [C]Na malém plácku [G]děti si hrají \n[Ami]hrají si na válku [E]všechno už mají \nStejnokroj z tepláků větší než na míru \ndřevěný pistole, čepice z papíru \nA bitva za bitvou, tak to jde dokola \naž potom najednou něčí hlas zavolá:\n\nR: [C]Zastavte válku \n[G]Maruška brečí \n[Ami]dostala kamenem \n[E]při naší zteči \nCo jste to za vojsko \nkdyž místo střílení \ndo svých nepřátel \nházíte kamení \nNa to my nehrajem \nvy nám to kazíte \nnedbáte pravidel \na pak se divíte...\n\nS: Na velkém plácků hrají si dospělí \njen místo dřevěných hračky maj z oceli \nocel se zarývá do kůry stromů \ndesítky jizviček a blesky hromů \nNěkterým na duši, některým do těla \npálí znamení, proč nikdo nevolá?\n\nR: \n\n",
@@ -1116,8 +1443,14 @@
     "extraNonSearchable": "https://www.supermusic.cz/skupina.php?idpiesne=1376790",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1560437271, "nanoseconds": 478000000 },
-    "lastModified": { "seconds": 1560886497, "nanoseconds": 207000000 },
+    "insertedAt": {
+      "seconds": 1560437271,
+      "nanoseconds": 478000000
+    },
+    "lastModified": {
+      "seconds": 1592080190,
+      "nanoseconds": 919000000
+    },
     "paragraphSpace": 1,
     "slug": "matfyzak-na-discu-pokac",
     "spotify": "https://open.spotify.com/track/09hXGuc2p1wIdmjGaZikm1",
@@ -1129,7 +1462,10 @@
     "author": "Čechomor",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 768000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "mezi-horami-cechomor",
     "text": "S: |: [Ami]Mezi [G]hora[Ami]mi\n[Ami]lipka [G]zele[Ami]ná :|\n|: [C]Zabili Janka\n[G]Janíčka, [Ami]Janka\n[Ami]miesto [Emi Ami] jeleňa :|\n\nS: |: Keď ho zabili\nzamordovali :|\n|: Na jeho hrobě\nNa jeho hrobě\nKříž postavili :|\n\nS: |: Ej, křížu, křížu\nukřižovaný :|\n|: Zde leží Janík\nJaníček, Janík\nZamordovaný :|\n\nS: |: Tu šla Anička\nPlakat Janíčka :|\n|: Hneď na hrob padla\nA viac nevstala\nDobrá Anička :|\n\nS:1\n",
@@ -1143,7 +1479,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586010986, "nanoseconds": 978000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "morituri-te-salutant-karel-kryl",
     "spotify": "",
@@ -1155,7 +1494,10 @@
     "author": "Buty",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 514000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 514000000
+    },
     "paragraphSpace": 1,
     "slug": "nad-stadem-koni-buty",
     "text": "[D]Nad stádem [A]koní [Emi]podkovy [G]zvoní, zvoní [_D]\nčerný vůz [A]vlečou [Emi]a slzy [G]tečou a já vo[D]lám:\n\nTak neplač můj kamaráde\nnáhoda je blbec když krade\n\nJe [D]tuhý jak [A]veka a řeka ho zpla[Emi]ví. Máme ho [G]rádi.\nNo tak [C]co tak [G]co tak [A]co.\n\nVždycky si přál až bude popel i s kytarou, hou\nVodou ať plavou jen žádný hotel s křížkem nad hlavou\n\naž najdeš místo kde je ten pramen A kámen co praská\nBudeš mít jisto Patří  sem popel a každá láska\nNo tak co tak co tak co\n\nNad stádem koní podkovy zvoní zvoní černý vůz vlečou\na slzy tečou a já šeptám\n\nVysyp ten popel kamaráde do bílé vody vody\nVyhasnul kotel a Náhoda je Štěstí od [G]podkovy\n\nVysyp ten [D]popel [A]kamará[G]de do bílé [D]vody [A]vo[G]dy\nVyhasnul [D]kotel\na [A]Náhoda [Emi]je\nŠtěstí od podko[G]vy\n",
@@ -1166,7 +1508,10 @@
     "author": "Mňága a Žďorp",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 69000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 69000000
+    },
     "paragraphSpace": 1,
     "slug": "nagasaki-hirosima-mnaga-a-zdorp",
     "text": "S: [C]Tramvají [G]dvojkou [F]jezdíval jsem [G]do Žide[C]nic[G F G]\nz [C]tak velký [G]lásky [F]většinou [G]nezbyde [Ami]nic\nz [F]takový [C]lásky [F]jsou kruhy [C]pod oči[G]ma\na dvě [C]spálený [G]srdce - [F]Nagasaki Hi[G]rošima[C G F G]\n\nS: Jsou jistý věci co bych tesal do kamene\ntam kde je láska tam je všechno dovolené\na tam kde není tam mě to nezajímá\njó dvě spálený srdce - Nagasaki Hirošima\n\nS: Já nejsem svatej ani ty nejsi svatá\nale jablka z ráje bejvala jedovatá\njenže hezky jsi hřála, když mi někdy bylo zima\njó dvě spálený srdce - Nagasaki Hirošima\n\nS: Tramvají dvojkou jezdíval jsem do Židenic\nz tak velký lásky většinou nezbyde nic\nz takový lásky jsou kruhy pod očima\na dvě spálený srdce - Nagasaki Hirošima\na dvě spálený srdce - Nagasaki Hirošima\na dvě spálený srdce - Nagasaki Hirošima\na dvě spálený srdce - Nagasaki Hirošima\n",
@@ -1180,7 +1525,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586010866, "nanoseconds": 453000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "najednou-udg",
     "spotify": "https://open.spotify.com/track/2cnEinnA256xRSsUIRBjxZ",
@@ -1192,7 +1540,10 @@
     "author": "Mňága a Žďorp",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 876000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 876000000
+    },
     "paragraphSpace": 1,
     "slug": "nejlip-jim-bylo-mnaga-a-zdorp",
     "text": "S: Nejlíp jim [C]bylo[_Fmaj7] \n[C]když [Fmaj7]nevěděli co [C]dělají[_Fmaj7 C Fmaj7]\njenom se [G]potkali \n[F]a neznělo to [C]špatně[_Fmaj7]\n\ntak se snažili \na opravdu si užívali \njenom existovali \na čas běžel skvěle \n\nR: [F]nechám si projít [C]hlavou \n[G]kam všechny věci [Ami]plavou \n[F]jestli je všechno jen [C]dech \n[G]tak jako kdysi v noci \n[Ami]spolu potmě na schodech[_C Fmaj7]\n\nS: pak se ztratili \na chvílema se neviděli \njenom si telefonovali \na byli na tom bledě\n\na když se vrátili \nuž dávno nehořeli \njenom dál usínali \nchvíli spolu - chvíli vedle sebe \n\nR: + nechej si projít hlavou \nkam všechny věci plavou \njestli je všechno jen dech \ntak jako kdysi v noci spolu potmě na schodech\n",
@@ -1205,8 +1556,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1574022279, "nanoseconds": 187000000 },
-    "lastModified": { "seconds": 1574023544, "nanoseconds": 891000000 },
+    "insertedAt": {
+      "seconds": 1574022279,
+      "nanoseconds": 187000000
+    },
+    "lastModified": {
+      "seconds": 1574023544,
+      "nanoseconds": 891000000
+    },
     "paragraphSpace": 1,
     "slug": "no-diggity-thrift-shop-ed-sheeran-and-passenger",
     "spotify": "",
@@ -1218,7 +1575,10 @@
     "author": "Karel Plíhal",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 726000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 726000000
+    },
     "paragraphSpace": 1,
     "slug": "nosorozec-karel-plihal",
     "text": "S: P[Ami]řivedl jsem domů Božce [Dmi]nádhernýho [Ami]nosorožce,\n   [Dmi]originál tl[Ami]ustokožce, k[D#dim]oupil jsem ho v h[H7]ospodě.\n   Z[Ami]a dva rumy a dvě vodky př[Dmi]ipadal mi v[Ami]elmi krotký,\n   p[Dmi]ošlapal mi p[Ami]olobotky, [H7]ale jinak v p[Ami]ohodě.\n   Vzn[Dmi]ikly menší p[Ami]otíže př[H7]i nástupu d[Ami]o zdviže,\n   př[Dmi]i výstupu z[Ami]e zdviže [D#dim]už nám to šlo l[H7]ehce.\n   Vzn[Ami]ikly větší potíže, kd[Dmi]yž Božena v n[Ami]egližé,\n   kd[Dmi]yž Božena v n[Ami]egližé řv[D#dim]ala, že ho n[E7]echce.\n\nS: Marně jsem se snažil Božce vnutit toho tlustokožce,\n   originál nosorožce, co nevidíš v obchodech.\n   Řvala na mě, že jsem bohém, pak mi řekla: Padej, sbohem,\n   zabouchla nám před nosorohem, tak tu sedím na schodech.\n   Co nevidím - souseda, jak táhne domů medvěda,\n   originál medvěda, tuším značky grizzly.\n   Už ho ženě vnucuje a už ho taky pucuje\n   a zamčela a trucuje, [E7]tak si to taky [Ami]slízli.\n\nS: [Ami]Tak tu sedím se sousedem, s [Dmi]nosorožcem[Ami] a s medvědem,\n   n[Dmi]adáváme j[Ami]ako jeden n[H7]a ty naše sl[Ami]epice.\n",
@@ -1229,7 +1589,10 @@
     "author": "Metallica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 926000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "nothing-else-matters-metallica",
     "text": "S: [_Em]So close no [D]matter how [C]far\n[_Em]couldn't be much more [D]from the [C]heart\n[_Em]forever trusting [D]who we [C]are\n[_G]and [H7]nothing else [Em]matters\n\nS: Never opened myself this way\nlife is ours, we live it our way\nall these words I don't just say\nand nothing else matters\n\nS: Trust I seek and I find in you\nevery day for us something new\nopen mind for a different view\nand nothing else matters\n\nR: [_C A D]Never cared for what they [C]do[_A D]\nnever cared for what they know\n[D]but I [Em]know\n\nS:1 \n\nR: \n\nS:2 \n\nR: Never cared for what they say\nnever cared for games they play\nnever cared for what they do\nnever cared for what they know\nbut I know\n\nS:1\n",
@@ -1240,7 +1603,10 @@
     "author": "Hop Trop",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 471000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 471000000
+    },
     "paragraphSpace": 0.6,
     "slug": "obluda-hop-trop",
     "text": "S: Jó, dv[Ami]ěstě nás tam bylo na brize do Číny\na f[C]urt se jenom pilo, až tuhly ledvin[E]y,\na kd[F]yž už bylo k r[G]ánu a vš[C]ichni pod vobr[E]az,\nkřik' pl[Ami]avčík na stožáru, a hl[C]ásek se mu tř[G]ás':\n\nR: [C]Já tady [F]nebudu, [C]já vidím [F]vobludu,\n[C]já vocaď [F]pryč pudu, [C]jímá mě [G]strach,\n[C]chyťte tu [F]vobludu, [C]sežere [F]palubu,\n[C]tohle je [F]vo hubu, [C]ach, [E]ich, och, [Ami]ach.\n\nS: Má vocas dvěstě sáhů a ploutev přes hektar\na zubů plnou hubu, a rozcvičuje spár\na rozčileně mrká svým vokem jediným,\na páchne, řve a krká a z tlamy pouští dým.\n\nR: \n\nS: Rum kapitánem hází, chce pálit z kanónu,\nzapomněl, že ho v září prochlastal v Kantonu,\nkdyž uvidaěl tu bídu, hned zpotil se jak myš,\npoklekl k komínu, pěl: K tobě, Bože, blíž.\n\nR: \n\nS: Náš kormidelník chrabrý je drsná povaha,\nzalehl u zábradlí a házel flaškama,\nkdyž na vobludě bouchl kanystr vod ginu,\ntu přízrak vztekle houkl a vlítl na brigu.\n\nR: \n\nS: Tři stěžně rozlámala na naší kocábce,\nvšak ztuhla jako skála, když čuchla k posádce,\npak démon alkoholu ji srazil v oceán,\nmy slezli zase dolů a chlastali jsme dál.\n\nR:\n",
@@ -1251,7 +1617,10 @@
     "author": "Syd Matters",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 763000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 763000000
+    },
     "paragraphSpace": 1,
     "slug": "obstacles-syd-matters",
     "text": "[Vybrnkané Fmaj7, C, kapo 3]Let's say sunshine for everyone\nBut as far as I can remember\nWe've been migratory animals\nLiving under changing weather\n\nSomeday we will foresee obstacles\nThrough the blizzard, through the blizzard\nToday we will sell our uniform\nLive together, live together\n\nWe played hide and seek in waterfalls\nWe were younger, we were younger\nWe played hide and seek in waterfalls\nWe were younger, we were younger\nWe played hide and seek in waterfalls\nWe were younger, we were younger\nWe played hide and seek in waterfalls\nWe were younger, we were younger\n\nSomeday we will foresee obstacles\nThrough the blizzard, through the blizzard\n",
@@ -1262,7 +1631,10 @@
     "author": "Hoboes",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 581000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "osamele-mesto-tereza-hoboes",
     "text": "S: [C]Ten den, co vítr [D]listí z města [G]svál,\nmůj [C]džíp se vracel, [D]jako by se [Emi]bál,\nže [C]asfaltový [D]moře odliv [G]má\na [C]stáj že svýho [D]koně nepo[E]zná.\n\nR: Řekni, [G]kolik je na světě, kolik je takovejch [D]měst,\nřekni, [Ami]kdo by se vracel, všude je tisíce [Emi]cest,\ntenkrát, [G]když jsi mi, Terezo, řekla, že ráda mě [D]máš,\ntenkrát [Ami]ptal jsem se, Terezo, kolik mi polibků [Emi]dáš\nnapo[D]sled, napo[G]sled.\n\nS: Já z dálky viděl město v slunci stát\na dál jsem se jen s hrůzou musel ptát,\nproč vítr mlátí spoustou okenic,\nproč jsou v ulici auta, jinak nic?\n\nR: Řekni...\n\nS: Do prázdnejch beden zotvíranejch aut\nzaznívá odněkud něžný tón flaut\na v závěji starýho papíru\nválej' se černý klapky z klavíru.\n\nR: Řekni...\n\nS: Tak loudám se tím hrozným městem sám\na vím, že Terezu už nepotkám,\njen já tu zůstal s prázdnou ulicí\na vosamělý město mlčící.\n\nR: Řekni...\n",
@@ -1273,7 +1645,10 @@
     "author": "Karel Plíhal",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 259000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 259000000
+    },
     "paragraphSpace": 1,
     "slug": "padaly-hvezdy-karel-plihal",
     "text": "R: [C]Padaly h[Ami]vězdy a [D9/F#]jedna z nich s[G]lítla\n   mé milé př[C]ímo d[D9/F#]o klína[G],\n   j[C]ak byla žh[Ami]avá, tak s[D9/F#]ukně jí ch[G]ytla,\n   a od sukně c[C]elá r[Fmaj7 C]oklina.\n\nS: [Ami]Má milá k[Emi]řičí: [Ami]pomoz mi p[Emi]řece,\n   n[Ami]estůj tu j[Emi]ako z k[D#dim]amene,\n   t[Ami]ak jsem ji r[Emi]ychle [Ami]odtáhl k ř[Emi]ece\n   z d[Ami]osahu t[Emi]oho pl[D]amen[G]e.\n\nR:\n\nS: Jenže ta hvězda tu moji milou\n   rozpálila jak kamínka,\n   zuby i nehty mi pustila žilou\n   a já drtil její ramínka.\n\nR:\n\nS: Pod hlavou nebe a nad hlavou země,\n   v obrovským požáru škvařím se,\n   jsem totiž v ní, jako ona je ve mně,\n   jako dvě kapky steklé na římse.\n\nR:\n\nR: Teď už jen v očích jak tečka za snem\n   skomírá malý plamínek,\n   běžíme k hvězdě a oba žasnem:\n   je to jen chladnoucí kamínek.\n",
@@ -1284,7 +1659,10 @@
     "author": "R. Křesťan",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 469000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "panenka-r-krestan",
     "text": "S: [C]Co skrýváš za [F]víčky\na [C]plameny [F]svíčky\nsnad [C]houf bílých holubic nebo jen [G]žal\nTak [F]skončil ten [C]prvý\nden [F]zmáčený [C]krví\n[C]ani pouťovou panenku [G7]nezane[C]chal\n\nR: [C]Otevři [F]oči ty [C]uspěcha[G]ná\n[F]dámo [C]uplaka[G]ná\n[F]otevři [C]oči\nta [F]hloupá noc [C]končí\n[C]a mír je [G7]mezi ná[C]ma\n\nS: Už si oblékni šaty\na řetízek zlatý\na umyj se půjdeme na karneval\nA na bílou kůži\nti napíšu tuší\nže dámou jsi byla a zůstáváš dál\n\nR:\n",
@@ -1295,7 +1673,10 @@
     "author": "Xavier Baumaxa",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 694000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "pazitka-xavier-baumaxa",
     "spotify": "https://open.spotify.com/track/73zTzw7kRyrd1TMlVmyVaP?si=BraUC7wER-WWnWMxRn974g",
@@ -1307,7 +1688,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 433000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "peterburg-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/0ykTx8oTm7oO4CZqTU40Ap",
@@ -1319,7 +1703,10 @@
     "author": "Zdeněk Svěrák",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213826, "nanoseconds": 167000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 425000000
+    },
     "paragraphSpace": 1,
     "slug": "pisen-proti-trudomyslnosti-zdenek-sverak",
     "text": "S: [G]Polární noc má zvláštní moc, každého přepadne smute[D7]k, \nNěmec i Brit, křesťan i Žid, každý by nejraději ute[G]k', \nba i ti [C]šikovní Žapon[G]ci se sila[A7]mi jsou na kon[D7]ci, \njen jeden z ná[G]rodů neskon[C]á, hrůzy seve[G]ru slavně pře[D7]ko[G]ná! \n\nR: Tam, kde hy-, tam, kde hy-, kde hynuli vl[D7]ci, \ntam, kde hy-, tam, kde hy-, kde hynuli vl[G]ci, \ntam, kde hy-, tam, kde hy-, kde hynuli so[C]bi, \n[D7]Čech se přizpůso[G]bil, [D7]Čech se přizpů[G]so[D7]bil[G] !\n",
@@ -1332,7 +1719,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 0.95,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 591000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.5,
     "slug": "pisen-zhrzeneho-trampa-jaromir-nohavica",
     "spotify": "",
@@ -1344,7 +1734,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 0.95,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 783000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 783000000
+    },
     "paragraphSpace": 1,
     "slug": "pochod-marodu-jaromir-nohavica",
     "text": "S: [Ami]Krabička cigaret a [C]do kafe [G]rum, [F]rum, [Ami]rum,\ndvě vodky a fernet a teď, [C]doktore, [G]čum, [F]čum, [Ami]čum,\nchra[Dmi]pot v hrud[F]ním ko[Ami]ši, no [Dmi]to je [F]záži[E]tek,\n[Ami]my jsme kámoši řidi[C]čů sani[G]tek, -[F]tek, -[Ami]tek.\n\nS: Měli jsme ledviny, ale už jsou nadranc, -dranc, -dranc,\ni tělní dutiny už ztratily glanc, glanc, glanc,\nu srdce divný zvuk, co je to, nemám šajn,\nje to vlastně fuk, žijem fajn, žijem fajn, fajn, fajn.\n\nR: [Ami]Cirhóza, [C]trombóza, [G]dávivý [C]kašel,\n[Dmi]tuberku[Ami]lóza - [E]jó, to je [Ami]naše!\nneuróza, [C]skleróza, [G]ohnutá [C]záda,\n[Dmi]paraden[Ami]tóza, no [E]to je pa[Ami]ráda!\nJsme [Dmi]slabí na tě[Ami]le, ale [G]silní na du[C]chu,\n[Dmi]žijem ve[Ami]sele, [E]juchuchuchu[Ami]chu!\n\nS: Už kolem nás chodí pepka mrtvice, -ce, -ce,\ntak pozor, marodi, je zlá velice, -ce, -ce,\nzná naše adresy a je to čiperka,\nkoho chce, najde si, ten natáhne perka, -rka, -rka.\n\nS: Zítra nás odvezou, bude veselo, -lo, -lo,\ndoktoři vylezou na naše tělo, -lo, -lo,\nbudou nám řezati ty naše vnitřnosti\na přitom zpívati ze samé radosti, -sti, -sti.\n\nR: Zpívati: cirhóza, trombóza, dávivý kašel,\ntuberkulóza, hele, já jsem to našel!\nNeuróza, skleróza, křivičná záda,\nparadentóza, no to je paráda!\nByli slabí na těle, ale silní na duchu,\nžili vesele, než měli poruchu.\n",
@@ -1355,7 +1748,10 @@
     "author": "Tomáš Klus",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 296000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "pocity-tomas-klus",
     "spotify": "https://open.spotify.com/track/55TAuwxbjURBFc4HDXv2bO?si=03lAwxEtRGWS4MO9WXIgqg",
@@ -1367,7 +1763,10 @@
     "author": "Ginevra",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213871, "nanoseconds": 48000000 },
+    "lastModified": {
+      "seconds": 1563213871,
+      "nanoseconds": 48000000
+    },
     "paragraphSpace": 1,
     "slug": "podivej-ginevra",
     "text": "S: Podí[G]vej teď padají [C]hvězdy, [G]každou noc jsou [D]blíž\nVypl[Emi]ní ta nejtajnější [C]přání, na [Ami]které pomy[D]slíš\nPodívej jedna z nich je jasná a druhá září míň\nVzpomínej na ty co už zhasly, co po nich zbyl jen stín\n\nR: Tu [C]svoji mezi nimi [D]najdeš, jako [G]káně starý [C]hrad\njen [Emi]jediné velké [A]přání ti [C]nemohou [D]splnit ani [G]dát\n\nS: Podívej teď padají hvězdy svítí na zem k nám\nhledají lidem šťastné místo kde není nikdo sám\nPodívej každej má jednu za kterou musí jít\nmožná dříve nebo za moc dlouho jak se jim bude chtít\n\nR: \n\nS: Podívej teď padají hvězdy, něžným světlem promluví\nDlouhá léta po nebeské dráze míchají osudí\nPodívej už maličko svítá a hvězdy chtějí spát\nMnoho nocí dál se na ně dívat budem potají si přát\n\nR: \n\n4x: Podí[G]vej teď padají [C]hvězdy, ... podí[G]vej\n",
@@ -1378,7 +1777,10 @@
     "author": "Nedvědi",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 926000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 926000000
+    },
     "paragraphSpace": 1,
     "slug": "podvod-nedvedi",
     "spotify": "",
@@ -1387,10 +1789,34 @@
     "titleSpace": 1
   },
   {
+    "author": "Kabát",
+    "editor": "users/293031851651049",
+    "extraNonSearchable": "",
+    "extraSearchable": "",
+    "fontSize": 1,
+    "insertedAt": {
+      "seconds": 1591563597,
+      "nanoseconds": 407000000
+    },
+    "lastModified": {
+      "seconds": 1591564269,
+      "nanoseconds": 133000000
+    },
+    "paragraphSpace": 1,
+    "slug": "pohoda-kabat",
+    "spotify": "",
+    "text": "S: [F#m]Vezmu tě má milá [C#m]rovnou k nám\n[F#m]kolem louky lesy [C#m]hejna vran,\n[F#m]všude samá [E]kráva samej [Bm]vůl\nMáme kino, máme hospodu,\nv obci všeobecnou pohodu,\nmáme hujer, žito, chléb i sůl\n\nR: [D]Když se u nás chlapi [A]poperou,\ntak jenom [E]nožem, a nebo [Bm]sekerou,\nV zimě tam [D]dlouhý noci [A]jsou a tuhej [Bm]mráz\n[D]Jak jsou naše cesty [A]zavátý,\ntak vezmem [E]vidle, a nebo [Bm]lopaty,\nkdyž něco [D]nejde, co na tom [A]sejde, my máme [Bm]čas\n\nS: Chlapi někdy trochu prudký jsou,\nholky s motykama tancujou,\ns ranní rosou táhnou do polí\nNikdo se tam nikam nežene,\nmáme traktory a né že né,\naž to spatříš ledy povolí\n\nR:\n\nS: Hoří les a hoří rodnej dům,\nhoří velkostatek sousedům,\nto je smůla, drahá podívej\nHasiči to stejně přejedou,\noni si moc dobře nevedou,\nschovej sirky ať je neviděj\n\nR: (2x)",
+    "title": "Pohoda",
+    "titleSpace": 1
+  },
+  {
     "author": "Čechomor",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 828000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "promeny-cechomor",
     "text": "S: [Ami]Darmo sa ty trápíš [G]můj milý [C]synečku,\nnenosím já tebe, [E]nenosím v [Ami]srdéčku,\npřece tvo[G C G C]ja nebudu, [Dmi]ani jednu [E]hodi[Ami]nu.\nS: Copak sobě myslíš má milá panenko,\nvždyť ty jsi to moje rozmilé srdénko\na ty musíš býti má, lebo mi tě Pán Bůh dá.\n\nS: A já sa udělám malú veveričkú\na ti uskočím z dubu na jedličku,\npřece tvoja nebudu, ani jednu hodinu.\nS: A já chovám doma takú sekérečku,\nona mi podetne dúbek i jedličku\na ty musíš býti má, lebo mi tě Pán Bůh dá.\n\nS: A já sa udělám tú malú rybičkú\na já ti uplynu preč po Dunajíčku,\npřece tvoja nebudu, ani jednu hodinu.\nS: A já chovám doma takovú udičku,\nco na ni ulovím kdejakú rybičku\na ty přece budeš má, lebo mi tě Pán Bůh dá.\n\nS: A já sa udělám tú velikú vranú\na já ti uletím na Uherskú stranu,\npřece tvoja nebudu, ani jednu hodinu.\nS: A já chovám doma starodávnú kušu,\nco ona vystřelí všeckým vranám dušu\na ty musíš býti má, lebo mi tě Pán Bůh dá.\n\nS: A já sa udělám hvězdičkú na nebi\na já budu lidem svítiti na nebi,\npřece tvoja nebudu, ani jednu hodinu.\nS: A sú u nás doma takoví hvězdáři,\nco vypočítajú hvězdičky na nebi\n|: a ty musíš býti má, lebo mi tě Pán Bůh dá. :|\n",
@@ -1403,7 +1829,10 @@
     "extraNonSearchable": "Capo 7 se dobře zpívá a zní hezky ",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1572262470, "nanoseconds": 308000000 },
+    "lastModified": {
+      "seconds": 1572262470,
+      "nanoseconds": 308000000
+    },
     "paragraphSpace": 1,
     "slug": "prvni-signalni-chinaski",
     "spotify": "",
@@ -1417,8 +1846,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1567684486, "nanoseconds": 271000000 },
-    "lastModified": { "seconds": 1567684931, "nanoseconds": 71000000 },
+    "insertedAt": {
+      "seconds": 1567684486,
+      "nanoseconds": 271000000
+    },
+    "lastModified": {
+      "seconds": 1567684931,
+      "nanoseconds": 71000000
+    },
     "paragraphSpace": 1,
     "slug": "pterodaktylus-mirek-cerny",
     "spotify": "https://open.spotify.com/track/1kVVaLi2IKJ4llul7VSySq",
@@ -1430,7 +1865,10 @@
     "author": "Karel Plíhal",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 834000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 410000000
+    },
     "paragraphSpace": 1,
     "slug": "rada-se-miluje-karel-plihal",
     "text": "R: [Ami]Ráda se miluje, [G]ráda [C]jí, \n[F]ráda si [Emi]jenom tak [Ami]zpívá, \nvrabci se na plotě [G]háda[C]jí, \nko[F]lik že [Emi]času jí [Ami]zbývá.\n\nS: [F]Než vítr dostrká k [C]útesu [F]tu její legrační [C]bár[E]ku \n[Ami]Pán bůh si do svýho [G]note[C]su [F]udělá [Emi]jen další [Ami]čárku.\n\nR: Ráda se miluje, ráda jí, \nráda si jenom tak zpívá, \nvrabci se na plotě hádají, \nkolik že času jí zbývá.\n\nS: Psáno je v nebeské režii, a to hned na první stránce, \nže naše duše nás přežijí v jinačí tělesný schránce.\n\nR: Ráda se miluje, ráda jí, \nráda si jenom tak zpívá, \nvrabci se na plotě hádají, \nkolik že času jí zbývá.\n\nS: Úplně na konci paseky, tam, kde se ozvěna tříští, \nsedí šnek ve snacku pro šneky - snad její podoba příští.\n\nR: Ráda se miluje, ráda jí, \nráda si jenom tak zpívá, \nvrabci se na plotě hádají, \nkolik že času jí zbývá.\n",
@@ -1438,10 +1876,34 @@
     "titleSpace": 1
   },
   {
+    "author": "B.J. Thomas",
+    "editor": "users/173926127225136",
+    "extraNonSearchable": "",
+    "extraSearchable": "",
+    "fontSize": 0.99,
+    "insertedAt": {
+      "seconds": 1591564457,
+      "nanoseconds": 594000000
+    },
+    "lastModified": {
+      "seconds": 1591565284,
+      "nanoseconds": 193000000
+    },
+    "paragraphSpace": 1.15,
+    "slug": "raindrops-keep-falling-on-my-head-b-j-thomas",
+    "spotify": "",
+    "text": "[F C A# C]\nS: [F]Raindrops keep fallin' on my [Fmaj7]head\nAnd [F7]just like the guy whose feet are [A#]too big for his b[Am]ed\n[D7]Nothin' seems to [Am]fit\n[D7]Those [Gm7]raindrops are fallin' on my head, they keep fallin'\n\nS: [C7]So I just [F]did me some talkin' to the [Fmaj7]sun\nAnd [F7]I said I didn't like the [A#]way he got things [Am]done\n[D7]Sleepin' on the [Am]job\n[D7]Those [Gm7]raindrops are fallin' on my head, they keep fallin'\n\n[C7]But there's one [F]thing I [Fmaj7]know\nThe b[A#]lues they send to [C]meet me won't de[Am]feat me\nIt won't be long till [D7]happiness steps [Gm7]up to greet me[A# C A# C]\n\nR: [F]Raindrops keep fallin' on my [Fmaj7]head\nBut [F7]that doesn't mean my eyes will [A#]soon be turnin' r[Am]ed\n[D7]Cryin's not for [Am]me\n'C[D7]ause I[Gm7]'m never gonna stop the rain by complainin'\n[C7]Because I'm [F]free, [C7]nothin's worryin' me\n\n[F Fmaj7 A# C Am]\nIt won't be long till [D7]happiness steps [Gm7]up to greet me[A# C A# C]\nR:",
+    "title": "Raindrops Keep Falling on My Head",
+    "titleSpace": 0.5
+  },
+  {
     "author": "Game of Thrones",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213865, "nanoseconds": 720000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "rains-of-castamere-game-of-thrones",
     "text": "S: And [Dmi]who are [C]you, the [Dmi]proud lord [C]said,\nthat [Dmi]I must bow so [C]low?\n[F]Only a [C]cat of a [F]different [C]coat,\nthat's [Gmi]all the truth I [Ami]know.\n\nS: In a coat of gold or a coat of red,\na lion still has claws,\nAnd mine are long and sharp, my lord,\nas long and sharp as yours.\n\nR: And [Dmi]so he spoke, and [C]so he spoke,\nthat [Dmi]lord of Casta[C]mere,\nBut [A#]now the rains weep [Gmi]o'er his hall,\nwith [A#]no one [Ami]there to [Dmi]hear.\nYes [A#]now the rains weep [Gmi]o'er his hall,\nand [A#]not a [Ami]soul to [Dmi]hear.\n",
@@ -1452,7 +1914,10 @@
     "author": "Traditional",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 55000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "red-river-valley-traditional",
     "text": "S: From this [D]valley they [D7]say you are [G]going\nI shall [D]miss your bright [H7]eyes and sweet [Emi A]smile\nfor they [D]say you are [D7]taking the [G]sunshine\nThat has [D]brighten my [A7]pathway a [D]while.\n\nS: Come and sit by my side if you love me\nDo not hasten to bid me adieu\nJust remember the red river valley\nAnd the cowboy who has loved you so true.\n\nS: For a long time, my darling, I've waited\nFor the sweet words you never would say\nNow at last all my fond hopes have vanished\nFor they say that you're going away\n\nS:2\n",
@@ -1463,7 +1928,10 @@
     "author": "W. Daněk",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 889000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "rosa-na-kolejich-w-danek",
     "text": "[C F6 F#6 G6 F#6 F6 C]\n\nS: [C]Tak jako jazyk [F6] stále na[F#6 G6]ráží na vylomený [C]zub\ntak se vracím [F6]k svýmu ná[F#6 G6]draží abych šel zas [C]dál\n[Fadd9]Přede mnou stíny se [G]plouží a [Ami]nad krajinou [F#dim] krouží\npodivnej [F6]pták, [F#6 G6]pták nebo [C]mrak.\n\nR: Tak do toho [F6]šlápni ať [G6]vidíš kousek [C]světa\nvzít do dlaní [F6]dálku [G6]zase jednou [C]zkus\ntelegrafní [F6]dráty [G6]hrajou ti už [C]léta\nto nekonečně [_F6][ F#6]dlouhý [G6]mono[F#6 F6 C]tónní blues\n[C]Je ráno, je ráno.\nNohama [F6 F#6 G6]stíráš rosu na [F#6 F6 C]kolejích\nNohama stíráš rosu na kolejích\n\nS: Pajda dobře hlídá pocestní co se nocí toulaj\nCo si radši počkaj až se stmí a pak šlapou dál\nPo kolejích táhnou bosí a na špagátu nosí\ncelej svůj dům - deku a rum.\n\nR:\n",
@@ -1471,12 +1939,15 @@
     "titleSpace": 0.001
   },
   {
-    "author": "Spirituál kvintent",
+    "author": "Spirituál kvintet",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 833000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 833000000
+    },
     "paragraphSpace": 1,
-    "slug": "ryl-jen-celej-den-ryl-spiritual-kvintent",
+    "slug": "ryl-jen-celej-den-ryl-spiritual-kvintet",
     "text": "S: Já [Ami]každý ráno v sedm hodin vstal\na [E7]krumpáč s lopatou [Ami]vyfa[E7]soval,\npak s [Ami]partou, která makat dovede,\njsem [E]došel tam, co tunel povede.\n\nR: A [Ami]ryl jen, [E7]celej den [Ami]ryl,\njá ryl jen, [G]celej den [Ami]ryl,\nabych dřív, než do svý [C]boudy půjdu [E7]spát,\n[Ami]čaj v kan[G]týně [F]moh' si [E7]dát,\njá [Ami]ryl jen, [E7]celej den [Ami]ryl, celej den,\n[Ami]jak krtek [E7]jen [Ami]ryl.\n\nS: Kdo netrhal skálu, těžko pochopí,\nco sám dynamit někdy natropí,\nkdyž jednou náhle došlo k výbuchu,\nJim Goff vyletěl majli do vzduchu.\nR: \n\nS: A když z tý vejšky zas na zem si kec,\npředák McCane ho popad' za límec:\nTak se mi zdá, že línej jsi jak veš,\nmně ve vzduchu se flákat nebudeš!\nR: \n\nS: Teď po létech, když večer sedím sám,\nna starý dobrý časy vzpomínám,\nzas slyším tmou, jak rány duněly,\nkdyž ve skalách jsem lámal tunely.\nR:\n",
     "title": "Ryl, jen celej den ryl",
     "titleSpace": 1
@@ -1485,7 +1956,10 @@
     "author": "Žlutý pes",
     "deleted": false,
     "fontSize": 0.98,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 569000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 569000000
+    },
     "paragraphSpace": 1,
     "slug": "sametova-zluty-pes",
     "text": "S:[G]Vzpomínám když tehdá [C]před lety [G]začaly lítat [C]rakety  [\n[G]zdál se to bejt [Emi]docela do[C]brej ná[D]pad\nSaxofony hrály unyle a frčely švédský košile\nněkdo se moh docela dobře flákat.\n\nS:Když tam stál rohatej u školy my neměli podepsaný úkoly\nuž tenkrát rozhazoval svoje sítě\nPoučen z předchozích nezdarů sestrojil elektrickou kytaru\na rock´n´roll byl zrovna narozený dítě\n\nR:  [G]Vzpomínáš, takys tu [D]žila a [Emi]nedělej, že jsi ji[C]ná\ntaková [G]malá pilná [D]včela, [C]taková celá [D]Sameto[G] vá \n\n\nS: Přišel čas a jako náhoda byla tu bigbeatová pohoda\nkytičky a úsmevy sekretárok.\nSousedovic bejby Milena je celá blbá z Boba Dylana\nale to nevadí, já mám taky nárok\n\nS: Starý, mladý nebo pitomý mlátily do toho jako my\nhlavu plnou Londýna nad Temží\nStarej dobrej satanáš hraje u nás v hospodě mariáš\npazoura se mu trumfama jenom hemží\n\nR:Vzpomínáš, už je to jinak a jde z toho na mě zima\nty jsi holka tehdá byla, taková celá Sametová\n\nS: A do toho tenhle Gorbačov co ho znal celej Dlabačov\nkopyta měl jako z Arizóny\nPřišel a zase vodešel a nikdo se kvůli tomu nevěšel\na po něm tu zbyly samý volný zóny\n\nR: Vzpomínáš, jak jsi se měla\nkdyž jsi nic nevěděla\nbyla to taková krásná cela a byla celá\nR: Vzpomínáš, jak jsi se měla\nkdyž jsi nic nevěděla\nbyla to taková krásná cela a byla celá Sametová\n",
@@ -1496,7 +1970,10 @@
     "author": "S. McKenzie",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 999000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 999000000
+    },
     "paragraphSpace": 1,
     "slug": "san-francisco-s-mckenzie",
     "text": "S: [Emi]If you're [C]going to [G]San Fran[D]cisco \n[Emi]Be sure to [C]wear some [G]flowers in your [D]hair \n[Emi]If you're [G]going to [C]San Fran[G]cisco \nYou're gonna [Hmi] meet some [G]gentle people [D]there\n\nS: For those who come to San Francisco \nSummertime will be a love-in there \nIn the streets of San Francisco \nGentle people with flowers in their hair\n\nR: [F]All across the nation such a strange vibration \n[G]People in motion \n[F]There's a whole generation with a new explanation \n[G]People in motion [D]people in motion\n\nS: For those who come to San Francisco \nBe sure to wear some flowers in your hair \nIf you come to San Francisco \nSummer[Hmi]time will [Emi]be a love in [G]there\n",
@@ -1507,7 +1984,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 231000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "sarajevo-jaromir-nohavica",
     "spotify": "https://open.spotify.com/track/7AVKCmRkRbVV3GNQKMUp2R",
@@ -1519,7 +1999,10 @@
     "author": "Traband",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 393000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 393000000
+    },
     "paragraphSpace": 1,
     "slug": "saro-traband",
     "text": "R: [Ami]Sáro, [Emi]Sáro, [F]v noci se mi [C]zdálo\nže [F]tři andělé [C]Boží k nám [F]přišli na o[G]běd\n[Ami]Sáro, [Emi]Sáro, jak [F]moc a nebo [C]málo\nmi [F]chybí abych [C]tvojí duši [F]mohl rozu[G]mět?\n\nS: Sbor kajícných mnichů jde krajinou v tichu\na pro všechnu lidskou pýchu má jen přezíravý smích.\nA z prohraných válek se vojska domů vrací.\nVšak zbraně stále burácí a bitva zuří v nich.\nR:\nS: Vévoda v zámku čeká na balkóně\naž přivedou mu koně a pak mává na pozdrav.\nA srdcová dáma má v každé ruce růže,\ntak snadno poplést může sto urozených hlav.\nR:\nS: Královnin šašek s pusou od povidel\nsbírá zbytky jídel a myslí na útěk.\nA v podzemí skrytí slepí alchymisté\nuž objevili jistě proti povinnosti lék.\nR:\nS: Páv pod tvým oknem zpívá sotva procit\no tajemstvích noci ve tvých zahradách.\nA já - potulný kejklíř, co svázali mu ruce\nteď hraju o tvé srdce a chci mít tě nadosah.\nS: [Ami]Sáro, [Emi]Sáro, [F]pomalu a [C]líně\n[F]s hlavou na tvém [C]klíně já [F]chci se probou[G]zet.\n[Ami]Sáro, Sáro, [Emi]Sáro, Sáro, [F]rosa padá [C]ráno\na [F]v poledne už [C]možná [F]bude jiný [G]svět.\n[Ami]Sáro, [Emi]Sáro, [F]vstávej, milá [C]Sáro!\n[F]Andělé k nám [Dmi]přišli na o[Cmaj]běd.\n",
@@ -1530,7 +2013,10 @@
     "author": "Simon & Garfunkel",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 440000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 440000000
+    },
     "paragraphSpace": 1,
     "slug": "scarborough-fair-simon-garfunkel",
     "text": "S: [Ami]Are you going to [G]Scarborough [Ami]Fair\n[C]Parsley [Ami]sage rose[C]mary [D]and [Ami]thyme\nRe[Ami]member [C]me to [C]one [G/B]who [Ami]lives [G]there\n[Ami]She once [G]was a true love of [Ami]mine\n\nS: Tell her to make me a cambric shirt\nParsley sage rosemary and thyme\nWithout no seams nor nee-ee-dle work\nThen she'll be a true love of mine\n\nS: Tell her to find me an acre of land\nParsley sage rosemary and thyme\nBetween the salt water and the sea strands\nThen she'll be a true love of mine\n\nS: Tell her to reap it with a sickle of leather\nParsley sage rosemary and thyme\nAnd gather it all in a bunch of heather\nThen she'll be a true love of mine\n\nS: Are you going to Scarborough Fair\nParsley sage rosemary and thyme\nRemember me to one who lives there\nShe once was a true love of mine\n",
@@ -1541,7 +2027,10 @@
     "author": "W. Matuška",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 436000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "sedm-dostavniku-w-matuska",
     "text": "S: [Emi]Plání se blíží sedm dostav[D]níků,\n   [Emi]stačí jen mávnout, a jeden zasta[D]ví,\n   [Emi]sveze tě [C]dál [D]za pár slov a [Emi]díků\n   ten kočí, [C]co má modrý [D]oči laska[Emi D Emi D Emi]vý.\n   \nR: [Emi]Heja heja [D]hou, dlouhá bude [Emi]cesta,\n   dlouhá jako [D]píseň, co mě napa[Emi]dá,\n   heja heja [D]hou, sám když někdy [Emi]stojím,\n   sám proti [C]slunci, který [D]právě zapa[Emi]dá.\n\nS: Vím, že se dneska hvězdy nerozsvítí,\n   neklidní ptáci maj' hlasy laskavý,\n   vyprahlá tráva už velký deště vítá,\n   ty deště, co i moje stopy zahladí.\n   \nR: Heja heja hou...\n",
@@ -1554,7 +2043,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1570830959, "nanoseconds": 195000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "sen-lucie",
     "spotify": "",
@@ -1566,7 +2058,10 @@
     "author": "Z. Svěrák, J. Uhlíř",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 407000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 407000000
+    },
     "paragraphSpace": 1,
     "slug": "severni-vitr-z-sverak-j-uhlir",
     "text": "S: Jdu s [C]děravou patou, mám [Ami]horečku zlatou\nJsem [F]chudý, jsem sláb a nemo[C]cen[G]\n[C]Hlava mě pálí a v [Ami]modravé dáli\nSe [F]leskne a [G]třpytí můj [C]sen\n\nS: Kraj pod sněhem mlčí, tam stopy jsou vlčí\nTam zbytečně budeš mi psát\nSám v dřevěné boudě sen o zlaté hroudě\nJá nechám si tisíc krát zdát\n\nR: [C]Severní [C7]vítr je [F]krutý,\n[C]počítej lásko má [G7]s tím\n[C]k nohám ti [C7]dám zlaté [F]pruty\nnebo se [C]vůbec [G]nevrá[C]tím\n\nS: Zarůstám vousem a vlci už jdou sem\nUž slyším je výt blíž a blíž\nuž mají mou stopu, už větří že kopu\nsvůj hrob a že stloukám si kříž\n\nS: Zde leží ten blázen, chtěl vilu, chtěl bazén\nA opustil tvou krásnou tvář\nMá plechovej hrnek v něm pár zlatejch zrnek\na nad hrobem polární zář.\n\nR:\n",
@@ -1577,7 +2072,10 @@
     "author": "Škwor",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 623000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 492000000
+    },
     "paragraphSpace": 1,
     "slug": "sila-starejch-vin-skwor",
     "text": "S: [G]Podle nepsanejch [Emi]zákonů hledáme [C]něco, co nám nejspíš [D]schází\nPodle prastarejch pudů, který nás nutěj furt za něčim jít\nDo stejný řeky nikdy nevstoupíš, proč klacky sám sobě pod nohy házíš\n[G]Cos chtěl, máš, stejně [Emi]dojdeš k poznání[D]\n\nR: Že věci [G]některý jsou [D]neměnný jak [Emi]síla starejch [C]vín\nA někdy je [Emi]tma kolem [C]nás\nTo když [Emi]zrovna nejsme stálí[D]\nNajednou [G]blízký jsou si [D]vzdálený\nTo z [Emi]vočí kouká [C]nám\nTak na chví[Emi]li stůj, [C]vzpomínej,\nNo a [Emi]přiznej, taky jsme se [D]báli, co bude [G]dál\n\nS: Každej ctí asi jinej zákon a kdo ví co nám odvahu dává\nKaždej má asi jinej kód a Ty sám zřejmě všechno víš líp\nJak když přesadíš starej strom taky to nebude velká sláva\nCos chtěl, máš stejně dojdeš k poznání\n\nR:\n",
@@ -1588,7 +2086,10 @@
     "author": "W. Matuška",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 957000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 957000000
+    },
     "paragraphSpace": 1,
     "slug": "slavici-z-madridu-w-matuska",
     "text": "[Ami]Lalalalalala, [Emi]lalalalalala, [H7]lalalalalala [Emi E]la \n[Ami]lalalalalala, [Emi]lalalalalala, [H7]lalalalalala [Emi]la.\n\nS: [Emi]Nebe je modrý a [H7]zlatý, bílá sluneční [Emi]záře, \nhorko a sváteční šaty, vřava a zpocený tváře, \nvím, co se bude dít, býk už se v ohradě vzpíná, \nkdo chce, ten může jít, já si dám sklenici vína.\n\nR: Žízeň je veliká, život mi utíká, nechte mě příjemně snít, \nve stínu pod fíky poslouchat slavíky, zpívat si s nima a pít. \nLalala...\n\nS: Ženy jsou krásný a cudný, mnohá se ve mně zhlídla, \noči jako dvě studny, vlasy jak havraní křídla, \ndobře vím, co znamená pád do nástrah dívčího klína, \nněkdo má pletky rád, já si dám sklenici vína. \n\nR:\n\nS: Nebe je modrý a zlatý, ženy krásný a cudný, \nmantily, sváteční šaty, oči jako dvě studny, \nzmoudřel jsem stranou od lidí, jsem jak ta zahrada stinná, \nkdo chce, ať mi závidí, já si dám sklenici vína.\n\nR: ad infinitum\n",
@@ -1599,7 +2100,10 @@
     "author": "Louisiana",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 197000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 197000000
+    },
     "paragraphSpace": 1,
     "slug": "slunecni-lod-louisiana",
     "text": "S: [G]Když mi bylo asi pět\n[C]zdával se mi malý svět\n[D]končil naší zahradou [G]a byl tak [C]bezpeč[G]ný.\nDěda můj si se mnou hrál\nčastokrát mě s sebou bral\nna projížďku na palubě lodi sluneční.\n\nR: [C]Byla na ní kotva z korálků, [G]byly na ní plachty z červánků\n[Ami]do těch plachet teplý vítr, [D]do těch plachet teplý [G]vítr vál. [D]\n[C]Byli na ní čtyři plavčíci, [G]kormidelník s bílou čepicí\n[Ami]kapitán se bez ustání, [D]kapitán se bez ustání [G]smál.\n\nS: Už mi dávno není pět\nvím už jak je velký svět\nčlověk se v něm někdy cítí jako trosečník.\nKdyž mu někdy těžko je, v tichu svého pokoje\nzase chodí po palubě lodi sluneční.\n\nR:\n\nS: Možná jednou za pár let\nněkdo komu bude pět\nvykouzlí zas na mé tváři úsměv bezděčný\nAž mi řekne pojď si hrát\nbudeme se spolu smát\nzavedu ho na palubu lodi sluneční\n\nR: Bude na ní kotva z korálků, budou na ní plachty z červánků\nDo těch plachet bude vítr, do těch plachet bude vítr vát.\nSalutovat budou plavčíci, kormidelník s bílou čepicí\nkapitán se zase bude smát, kapitán se zase bude smát.\n",
@@ -1610,7 +2114,10 @@
     "author": "Kamakawiwo'ole",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 821000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 821000000
+    },
     "paragraphSpace": 0.6,
     "slug": "somewhere-over-the-rainbow-kamakawiwo-ole",
     "text": "[C Em F C]Oooo, oooo, oooo...\n[F E7 Am F]Oooo, oooo, oooo...\n\nR1: [C]Somewhere [Em]over the rainbow\n[F]Way up [C]high\n[F]And the [C]dreams that you dream of\n[G]Once in a [Am]lullaby[F]...\nOh, [C]somewhere [Em]over the rainbow\n[F]Blue birds [C]fly\n[F]And the [C]dreams that you dream of\n[G]Dreams really do come [Am]true.[F]..\n\nS: [C]Someday I'll wish upon a star\n[G]Wake up where the clouds are far be[Am]hind [F]me\nWhere [C]trouble melts like lemon drops\n[G]High above the chimney tops\nThat's [Am]where you'll [F]find me\n\nR2: Oh, somewhere over the rainbow\nBlue birds fly\nAnd the dream that you dare to\nWhy oh why can't I...\n\nS:1 \n\nR2: \n\n[C Em F C]Oooo, oooo, oooo...\n[F E7 Am F]Oooo, oooo, oooo...\n",
@@ -1621,7 +2128,10 @@
     "author": "Simon & Garfunkel",
     "deleted": false,
     "fontSize": 0.97,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 769000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 0.46,
     "slug": "sound-of-silence-simon-garfunkel",
     "text": "CAPO  6\nS: [Ami]Hello darkness, my old [G]friend,\nI've come to talk with you [Ami]again,\nBecause a vision [F]softly [C]creeping,\nLeft its [Ami]seeds while I [F]was [C]sleeping,\nAnd the [F]vision that was planted in my [C]brain\nStill [Ami]remains Within the [G]sound of [Ami]silence.\n\nS: In restless dreams I walked alone\nNarrow streets of cobblestone,\n'Neath the halo of a street lamp,\nI turned my collar to the cold and damp\nWhen my eyes were stabbed by the flash of a neon light\nThat split the night And touched the sound of silence.\n\nS: And in the naked light I saw\nTen thousand people, maybe more.\nPeople talking without speaking,\nPeople hearing without listening,\nPeople writing songs that voices never share\nAnd no one dare Disturb the sound of silence.\n\nS: Fools said I, you do not know\nSilence like a cancer grows.\nHear my words that I might teach you,\nTake my arms that I might reach you.\nBut my words like silent raindrops fell,\nAnd echoed In the wells of silence\n\nS: And the people bowed and prayed\nTo the neon God they made.\nAnd the sign flashed out its warning,\nIn the words that it was forming.\nAnd the sign said, the words of the prophets are written on the subway walls\nAnd tenement halls. And whispered in the sounds of silence.\n",
@@ -1632,7 +2142,10 @@
     "author": "Spiritual Kvintet",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 656000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 656000000
+    },
     "paragraphSpace": 1,
     "slug": "stara-archa-spiritual-kvintet",
     "text": "R1: /: [A7]Já mám [D]kocábku [A7]náram-, [D]náram-, náram-,\n      kocábku ná[A7]ram-, [D]náramnou. :/\nR1:\nS: [D]Pršelo a blejskalo se sedm neděl,\n   kocábku ná[A7]ram-, [D]náramnou,\n   Noe nebyl překvapenej, on to věděl,\n   kocábku ná[A7]ram-, [D]náramnou.\nR1:\nR2: [D]Archa má cíl, jé, archa má směr, jé,\n   plaví se k Ara[A7]ratu [D]na sever.\nR1:\nS: Šem, Nam a Jafet byli bratři rodní,\n   kocábku náram-, náramnou,\n   Noe je zavolal ještě před povodní,\n   kocábku náram-, náramnou.\n\nS: Kázal jim uložiti ptáky, savce,\n   kocábku náram-, náramnou,\n   \"ryby nechte, zachrání se samy hladce,\"\n   kocábku náram-, náramnou.\nR1:\nR2:\nR1:\nS: Přišla bouře, zlámala jim pádla, vesla,\n   kocábku náram-, náramnou,\n   tu přilétla holubice, snítku nesla,\n   kocábku náram-, náramnou.\n\nS: Na břehu pak vyložili náklad celý,\n   kocábku náram-, náramnou,\n   ještě že tu starou dobrou archu měli,\n   kocábku náram-, náramnou.\nR1: R2: R1: R1:\n",
@@ -1643,7 +2156,10 @@
     "author": "Pacifik",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 362000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 362000000
+    },
     "paragraphSpace": 1,
     "slug": "stara-pacificka-pacifik",
     "text": "S: [G]Čekám až Bill [C]přiveze svou [G]káru,\n[D7]s ostrým hvizdem zastaví u [G]nás,\nskočí z tendru a [C]vypustí [G]páru,\n[D7]mezi doušky brandy zazní [G]hlas:\n\nR: Hoši, stará [C]pacifická [G]veze dynamit\n[D7]šéf se ptá, jak pokračujem [G]v dál.\nZdali trať už [C]překročila [G]vosumnáctou majli,\n[D7]Rocky Tab' zdali byl proko[G]pán.\n\nS: Drezina k nám jezdí každej tejden,\nveze ženský, zásoby a chlast.\nA když večer do salónu vejdem,\nz votevřenejch voken slyšet hlas:\n\nR: \n\nS: A když přišly ty Skalistý skály,\nvšude kopec, všude samej sráz.\nS Cherokézy jsme tam bojovali,\nz ústí pušek bylo slyšet hlas:\n\nR: \n\nS: Roky pryč a já pasu jen stáda,\nruce ztvrdlý, šedivej mám vlas.\nRád se vracím tam, kde žloutne tráva,\nkdyž projíždí express slyším hlas:\n\nR:\n",
@@ -1654,8 +2170,14 @@
     "author": "Wohnout",
     "editor": "users/293031851651049",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1559472650, "nanoseconds": 262000000 },
-    "lastModified": { "seconds": 1559472948, "nanoseconds": 908000000 },
+    "insertedAt": {
+      "seconds": 1559472650,
+      "nanoseconds": 262000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 0.6,
     "slug": "svaz-ceskych-bohemu-wohnout",
     "spotify": "",
@@ -1667,7 +2189,10 @@
     "author": "Jaromír Nohavica",
     "deleted": false,
     "fontSize": 0.97,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 367000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "tesinska-jaromir-nohavica",
     "text": "S: [Ami]Kdybych se narodil [Dmi]před sto lety [F E Ami Dmi F E Ami]v tomhle městě\nu Larischů na zahradě trhal bych květy své nevěstě\n[C]Moje nevěsta by byla [Dmi]dcera ševcova\nz [F]domu Kamińskich od[C]někud ze Lvova\nkochał bym ja i [Dmi]pieśćił [F E]chyba lat [Ami Dmi F E Ami]dwieśćie\n\nS: Bydleli bychom na Sachsenbergu v domě u žida Kohna\nnejhezčí ze všech těšínských šperků byla by ona\nMluvila by polsky a trochu česky\npár slov německy a smála by se hezky\njednou za sto let zázrak se koná zázrak se koná\n\nS: Kdybych se narodil před sto lety byl bych vazačem knih\nu Prohazků dělal bych od pěti do pěti a sedm zlatek za to bral bych\nMěl bych krásnou ženu a tři děti\nzdraví bych měl a bylo by mi kolem třiceti\ncelý dlouhý život před sebou celé krásné dvacáté století\n\nS: Kdybych se narodil před sto lety v jinačí době\nu Larischů na zahradě trhal bych květy má lásko tobě\nTramvaj by jezdila přes řeku nahoru\nslunce by zvedalo hraniční závoru\na z oken voněl by sváteční oběd\n\nS: Večer by zněla od Mojzese melodie dávnověká\nbylo by léto tisíc devět set deset za domem by tekla řeka\nVidím to jako dnes šťastného sebe\nženu a děti a těšínské nebe\nještě že člověk nikdy neví co ho čeká\n",
@@ -1680,8 +2205,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1580822962, "nanoseconds": 710000000 },
-    "lastModified": { "seconds": 1580825572, "nanoseconds": 997000000 },
+    "insertedAt": {
+      "seconds": 1580822962,
+      "nanoseconds": 710000000
+    },
+    "lastModified": {
+      "seconds": 1580825572,
+      "nanoseconds": 997000000
+    },
     "paragraphSpace": 1,
     "slug": "the-poet-and-the-muse-old-gods-of-asgard",
     "spotify": "https://open.spotify.com/track/13H1BCvtb5qWBopmgEicTT?si=rvnPwpPkTsSOJpeECofYmw",
@@ -1695,8 +2226,14 @@
     "extraNonSearchable": "https://tabs.ultimate-guitar.com/tab/ed_sheeran/thinking_out_loud_chords_1486860\n",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1559913791, "nanoseconds": 294000000 },
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 758000000 },
+    "insertedAt": {
+      "seconds": 1559913791,
+      "nanoseconds": 294000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.7,
     "slug": "thinking-out-loud-ed-sheeran-dodelat",
     "spotify": "",
@@ -1710,8 +2247,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1584109354, "nanoseconds": 333000000 },
-    "lastModified": { "seconds": 1584110185, "nanoseconds": 685000000 },
+    "insertedAt": {
+      "seconds": 1584109354,
+      "nanoseconds": 333000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "tin-man-eryx",
     "spotify": "",
@@ -1723,7 +2266,10 @@
     "author": "Nerez",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 812000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 812000000
+    },
     "paragraphSpace": 1,
     "slug": "tisic-dnu-mezi-nami-nerez",
     "text": "S: [Ami]Ocelově [Dmi]modrou [Ami9]masku máš\n[Emi7]pátý  [Hmi7]týden se ti [Ami]bráním\nden za dnem si na nit navlékáš\nkorálky s vůni našich dlaní\n\nR: Světlo a [Emi]tma tak [Hmi7]to jsem[Bmi] .....  [Ami]já\nzhasni a [Emi]dělej, co se dělat [Hmi]může [Ami]světlo a tma tak to jsem já\njestli chceš, nezůstane na mně ani kůže\n\nS: Telefonní seznam nových tváří\nto je tvůj polštář pod mou hlavou\nzatržená jména v kalendáři\npátý týden ve vzduchu plavou\n\nR: \n\nS: [Ami]Tisíc [Dmi7]dnů me[Emi7]zi ná[Ami]mi\njako nekonečno nevypadá\nnašel jsem tě kdysi ve stohu slámy\nJeště dnes mi za košili padá\n\nS: Tisíckrát vlasy rozcuchaný\nvlasy rozcuchaný jako křoví máš\nsladká jak hrušky planý\nv hlavě mám z tebe galimatyáš\n\nS: Tisíckrát přešívaný\nknoflíček u krku máš\na tvůj smích zvoní stejně jako hrany\nv hlavě mám z tebe galimatyáš\n",
@@ -1734,7 +2280,10 @@
     "author": "W. Matuška",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 291000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 291000000
+    },
     "paragraphSpace": 1,
     "slug": "tisic-mil-w-matuska",
     "text": "S: V nohách [C]mám už tisíc [Ami]mil \nstopy [Dmi]déšť a vítr [F]smyl \na můj [Dmi]kůň i já jsme [G7]cestou znave[C]ní.\n\nR1: Těch tisíc mil těch tisíc mil \nmá jeden směr a jeden cíl \nbílej dům to malý bílý stavení.\n\nS: Je tam stráň a příkrej sráz \nmodrá tůň a bobří hráz \ntáta s mámou kteří věřej dětskejm snům.\n\nR2: Těch tisíc mil těch tisíc mil \nmá jeden směr a jeden cíl, \njeden cíl ten starej známej bílej dům.\n\nS: V nohách mám už tisíc mil \nteď mi zbejvá jen pár chvil \ncestu znám a ta se tam k nám nemění.\n\nR1: Těch tisíc mil těch tisíc mil \na jeden směr a jeden cíl \nbílej dům to malý bílý stavení.\n\nS: Kousek dál a já to vím uvidím už stoupat dým \nšikmej štít střechy čnít k nebesům. \n\nR2: Těch tisíc mil těch tisíc mil \na jeden směr a jeden cíl, \njeden cíl ten starej známej bílej dům.\n\nS: Těch tisíc mil těch tisíc mil\nmá jeden směr a jeden cíl\nbílej dům to malý bílý stavení.\n",
@@ -1745,7 +2294,10 @@
     "author": "Tři Sestry",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 505000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 505000000
+    },
     "paragraphSpace": 1,
     "slug": "titanic-tri-sestry",
     "text": "[C]\"Z celé jižní eska[F]dróny, eskadróny\n[G]nezbyl ani jeden [C]muž, ale už, ani už\n\"V Montgomery blijou [F]sloni\" \n\"Bijou slony\"\n\nS: [C]Z výšin Velkých [G]Karpat přes [Ami]moře na [G]západ \n[C]bída v Ame[G]rice má [F]cíl [_G]\n[C]ráno maj už [G]lístek, Ti[Ami]tanic je [G]místem \n[C]kde teď budou [G]týdnů pár [F]žít [_G]\n\nR: [C]Jen [G]já zpi[F]tej zas jak [G]dán,\nprošvi[Ami]hnul odjezd [G]parníku [F]z Toulou[G]se \n[C]má[G]ma ta [F]pláče že [G]sám\nodsou[Ami]dil se zkrz [G]pitku ke [F]smutnému [G]zítřku svých [C, G, Ami, G]dnů.\n\nS: [C]Přístavem se [G]toulá a [Ami]lístek svůj [G]žmoulá \n[C]protáhnul ten [G]mejdan pár [F]dní [_G]\n[C]náhle z novin [G]zpráva, že [Ami]ledovec jak [G]kráva \n[C]potopil ten [G]slavný par[F]ník [_G]\n\nR: [C]Pán [G]Ján zpi[F]tej zas jak [G]dán\nslavný [Ami]muž jenž měl [G]zpekla ště[F]stí [_G]\n[C]vrá[G]tí se [F]zpátky jen [G]sám\nodchá[Ami]zí z Karpat [G]bída on [F]hodlá dál [G]žít na zce[C]stí.\n",
@@ -1758,8 +2310,14 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1584057017, "nanoseconds": 709000000 },
-    "lastModified": { "seconds": 1584104126, "nanoseconds": 221000000 },
+    "insertedAt": {
+      "seconds": 1584057017,
+      "nanoseconds": 709000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "trains-porcupine-tree",
     "spotify": "https://open.spotify.com/track/5lBQ3mnWsYIt5aCdgz1U9n?si=7X1lCPUjSw6InGcqCYLrTQ",
@@ -1771,7 +2329,10 @@
     "author": "Spirituál kvintet",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 257000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 492000000
+    },
     "paragraphSpace": 1,
     "slug": "trh-ve-scarborough-spiritual-kvintet",
     "text": "S: [Ami]Příteli, máš do [G]Scarborough [Ami]jít,\n[C]dobře [Ami]vím, že [C]půjdeš [D]tam [Ami]rád,\ntam dívku [C]najdi na Market [G]Street,\n[Ami]co chtěla [D]dřív mou [F]ženou [G]se [Ami]stát.\n\nS: Vzkaž ji, ať šátek začne mi šít,\nza jehlu rýč však smí jenom brát\na místo příze měsíční svit,\nbude-li chtít mou ženou se stát.\n\nS: Až přijde máj a zavoní zem,\nšátek v písku přikaž ji prát\na ždímat v kvítku jabloňovém,\nbude-li chtít mou ženou se stát.\n\nS: Z vrkočů svých ať uplete člun,\nv něm se může na cestu dát,\ns tím šátkem pak ať vejde v můj dům,\nbude-li chtít mou ženou se stát.\n\nS: Kde útes ční nad přívaly vln,\nzorej dva sáhy pro růží sad,\nza pluh ať slouží šípkový trn,\nbudeš-li chtít mým mužem se stát.\n\nS: Osej ten sad a slzou ho skrop,\nchoď těm růžím na loutnu hrát,\naž začnou kvést, tak srpu se chop,\nbudeš-li chtít mým mužem se stát.\n\nS: Z trní si lůžko zhotovit dej,\ndruhé z růží pro mě nech stlát,\njen pýchy své a boha se ptej,\nproč nechci víc tvou ženou se stát.\n",
@@ -1782,7 +2343,10 @@
     "author": "Hop Trop",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 102000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "tri-krize-hop-trop",
     "text": "S: [Dmi]Dávám sbohem [C]všem břehům [Ami]prokletejm\nkterý v [Dmi]drápech má [C]ďábel [Dmi]sám\nbílou přídí [C]šalupa my [Ami]grave\nmíří k [Dmi]útesům, [C]který [Dmi]znám.\n\nR: Jen tři [F]kříže z [C]bílýho [Ami]kamení\nněkdo [Dmi]do písku [C]posklá[Dmi]dal\nslzy v [F]očích měl a v [C]ruce [Ami]znavený\nlodní [Dmi]deník co [C]sám do něj [Dmi]psal.\n\nS: První kříž má pod sebou jen hřích\nsamý pití a rvačka jen\nchřestot nožů při kterým přejde smích\nsrdce kámen a jméno Sten.\nR: \nS: Já Bob Green mám tváře zjizvený\nštěkot psa zněl když jsem se smál\ndruhej kříž mám a spím pod zemí\nže jsem falešný karty hrál.\nR: \nS: Třetí kříž snad vyvolá jen vztek\nKatty Rogers těm dvoum život vzal\nSvědomí měl a vedle nich si klek...\nRec. Vím, trestat je lidský, ale odpouštět božský. Ať mi tedy bůh odpustí.\n\nR: Jen tři kříže z bílýho kamení\njsem jim do písku poskládal\nslzy v očích jsem měl a v ruce znavený\nlodní deník a v něm co jsem psal.\n",
@@ -1795,7 +2359,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1561490299, "nanoseconds": 479000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 412000000
+    },
     "paragraphSpace": 1,
     "slug": "tulacky-rano-brontosauri",
     "spotify": "",
@@ -1809,7 +2376,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213863, "nanoseconds": 980000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "tydlitat-slapeto",
     "spotify": "",
@@ -1821,7 +2391,10 @@
     "author": "Jaroslav Samson Lenk",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 155000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 492000000
+    },
     "paragraphSpace": 1,
     "slug": "uz-to-nenapravim-jaroslav-samson-lenk",
     "text": "R: [Ami]Vapadapadapadapap[D F E Ami E]padadada\nS: [Ami]V devět hodin dvacet pět mě [D]opustilo štěstí\nten [F]vlak, co jsem jím měl jet na koleji [E]dávno nestál\n[Ami]V devět hodin dvacet pět ja[D]ko bych dostal pěstí\n[F]já za hodinu na náměstí měl jsem [E]stát, ale v jiným městě\nTvá [A]zpráva zněla prostě [A7]a byla tak krátká\nže [Dmi]stavíš se jen na skok, že nechalas mi vrátka\n[G]zadní otevřená, [E]zadní otevřená\n[A]já naposled tě viděl, [A7]když ti bylo dvacet\n[Dmi]to jsi tenkrát řekla, že se nechceš vracet\n[G]že jsi unavená, [E]ze mě unavená\nR: \n\nS: [Ami]Já čekala jsem hlavu jako střep a [D]zdálo se, že dlouho\n[F]může za to vinný sklep, že člověk [E]často sleví\nJá [Ami]čekala jsem hlavu jako střep, s [D]podvědomou touhou\n[F]čekala jsem dobu dlouhou víc než [E]dost kolik přesně nevím\nPak [A]jedenáctá bila a [A7]už to bylo pasé\njá [Dmi]měla vědět dřív, že vidět chci tě zase\n[G]láska nerezaví, [E]láska nerezaví\n[A]Ten list co jsem ti psala byl [A7]dozajista hloupý\n[Dmi]byl odměřený moc, na vlídný slovo skoupý\n[G]už to nenapravím, [E]už to nenapravím\n",
@@ -1834,7 +2407,10 @@
     "editor": "users/293031851651049",
     "fontSize": 0.95,
     "insertedAt": "2019-05-19T22:12:38.638Z",
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 192000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 0.5,
     "slug": "v-lese-pokac",
     "spotify": "https://open.spotify.com/track/5Yj2rEqLXvpt78CiKTItNo",
@@ -1846,7 +2422,10 @@
     "author": "Vladimír Mišík",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 692000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 692000000
+    },
     "paragraphSpace": 1,
     "slug": "variace-na-renesancni-tema-vladimir-misik",
     "text": "Předehra:\n[Ami, F, G, Ami, Ami, Ami6]\n\nS:[Ami]Láska je jako [F]večernice [G]plující černou [Ami]oblohou,\n[Ami]zavřete dveře [F]na petlice, [G]zhasněte v domě [Ami]všechny svíce!\n[Ami]A opevněte svoje [F]těla, [G]vy, kterým srdce [Ami]zkameněla. \n\nMezihra:[C, G, Ami, Ami7, D, D, Dmi, Emi7, Ami7, Ami6, Ami7, Ami6]\n\nS:[Ami]Láska je jako krásná [F]loď, [G]která ztratila [Ami]kapitána,\n[Ami]námořníkům se třesou [F]ruce a [G]bojí se, co bude [Ami]zrána!\n[Ami]Láska je jako bolest z [F]probuzení a [G]horké ruce [Ami]hvězd,\n[Ami]které ti oknem [F]do vězení [G]květiny sypou [Ami]ze svatebních cest,\n[Ami]které ti oknem [F]do vězení [G]květiny sypou [Ami]ze svatebních cest.\n\nMezihra:[C, G, Ami, Ami7, D, D, Dmi, Emi7, Ami7, Ami6, Ami7, Ami6]\n\nS:[Ami]Láska je jako [F]večernice [G]plující černou [Ami]oblohou!\n[Ami]Náš život hoří [F]jako svíce a [G]mrtví milovat [Ami]nemohou!\n[Ami]Náš život hoří [F]jako svíce a [G]mrtví milovat [Ami]nemohou.\n\nDohra:\n[C, G, Ami, Ami7, D, D, Dmi, Emi7, Ami7, Ami6, Ami7, Ami6]\n",
@@ -1857,7 +2436,10 @@
     "author": "P. Bobek",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213864, "nanoseconds": 40000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 411000000
+    },
     "paragraphSpace": 1,
     "slug": "ved-me-dal-p-bobek",
     "text": "S: [C]Někde v dálce [Ami]cesty končí, \n[G]každá prý však [F]cíl svůj [C]skrývá \nNěkde v dálce [Ami]každá má svůj cíl \n[G]ať je pár chvil dlouhá [F]nebo tisic [C]mil \n\nR: Veď mě [C]dál, cesto [G]má, \nveď mě [Ami]dál, vždyť i [F]já \nTam kde [C]končíš, chtěl bych [G]dojít \nVeď mě [F]dál, cesto [C]má \n\nS: Chodím dlouho po všech cestách, \nvšechny znám je, jen ta má mi zbývá \nJe jak dívky co jsem měl tak rád \nPlná žáru bývá, hned zas samý chlad \n\nR:\n\n[Ami]Pak na pat[G]ník posled[C]ní \nnapíšu křídou [F]jméno své \nA [C]pod něj, že jsem [G]žil hrozně rád \n[Ami]Písně své, co mi [B]v kapsách zbydou \n[F]Dám si bandou [C]cvrčků hrát \nA [G]půjdu spát, půjdu [G7]spát \n\nR:\n",
@@ -1868,7 +2450,10 @@
     "author": "Pacifik",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213871, "nanoseconds": 81000000 },
+    "lastModified": {
+      "seconds": 1563213871,
+      "nanoseconds": 81000000
+    },
     "paragraphSpace": 1,
     "slug": "velrybarska-vyprava-pacifik",
     "text": "S: [C]Jednou plác mě [F]přes rameno [G7]Johny zvanej [C]Knecht:  \n[Ami]\"Mám pro tebe, [Dmi]hochu, v pácu [G7]moc fajnovej [C]kšeft!\" \nObjednal hned litr rumu a pak nežně řval: \n\"Sbal se, jedem na velryby, prej až za polár.\" \n\nR: |: Výprava velrybářská kolem Grónska nezdařila se, \nprotože nejeli jsme na velryby, ale na mrože. :|\n\nS: Briga zvaná Malá Kitty kotví v zátoce, \nnakládaj se sudy s rumem, maso, ovoce, \nvypluli jsme časne zrána, směr severní pól, \ndřív, než přístav zmizel z očí, každej byl namol. \nR: \nS: Na loď padla jinovatka, s ní třeskutej mráz, \nhoň velryby v kupách ledu, to ti zlomí vaz, \nna pobreží místo ženskejch mávaj tučňáci, \nv tomhle kraji beztak nemáš jinou legraci. \nR: \nS: Když jsme domů připluli, už psal se přítí rok, \nstarej řejdař povídá, že nedá ani flok: \n\"Místo velryb v Grónským moři zajímal vás grog, \ntuhle práci zaplatil by asi jenom cvok.\" \nR: \nS: Tohleto nám neměl říkat, teď to dobře ví, \nstáhli jsme mu kuži z těla, tomu hadovi, \nz paluby pak slanej vítr jeho tělo smet, chachacha, \nmáme velryb plný zuby, na to vezmi jed. \nR:\n\n",
@@ -1879,7 +2464,10 @@
     "author": "Pokáč",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 714000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 714000000
+    },
     "paragraphSpace": 1,
     "slug": "vymlaceny-entry-pokac",
     "spotify": "https://open.spotify.com/track/4TbBexJ8gwjFvd1J6PEgjE",
@@ -1893,7 +2481,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1563211086, "nanoseconds": 635000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 494000000
+    },
     "paragraphSpace": 1,
     "slug": "vyvoleni-kaclehy-2019",
     "spotify": "",
@@ -1907,8 +2498,14 @@
     "extraNonSearchable": "https://tabs.ultimate-guitar.com/tab/4_non_blondes/whats_up_chords_349210",
     "extraSearchable": "whats",
     "fontSize": 1,
-    "insertedAt": { "seconds": 1564505839, "nanoseconds": 323000000 },
-    "lastModified": { "seconds": 1589909374, "nanoseconds": 0 },
+    "insertedAt": {
+      "seconds": 1564505839,
+      "nanoseconds": 323000000
+    },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "whats-up-4-non-blondes",
     "spotify": "",
@@ -1920,7 +2517,10 @@
     "author": "Nirvana",
     "deleted": false,
     "fontSize": 0.98,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 15000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.7,
     "slug": "where-did-you-sleep-last-night-nirvana",
     "text": "S: [E]My girl, my girl, don't [A]lie to [G]me\nTell me [H]where did you sleep last [E]night\n[E]In the pines, in the pines\nWhere the [A]sun don't ever [G]shine\nI would [H]shiver the whole night [E]through\n\nR: My girl, my girl, where will you go\nI'm going where the cold wind blows\nIn the pines, in the pines\nWhere the sun don't ever shine\nI would shiver the whole night through\n\nS: Her husband, was a hard working man\nJust about a mile from here\nHis head was found in a driving wheel\nBut his body never was found\n\nS:My girl, my girl, don't lie to me\nTell me where did you sleep last night\nIn the pines, in the pines\nWhere the sun don't ever shine\nI would shiver the whole night through\n[E A G H E]Interlude\n\nR:\nS: My girl, my girl, don't lie to me\nTell me where did you sleep last night\nIn the pines, in the pines\nWhere the sun don't ever shine\nI would shiver the whole night through\n\nS: My girl, my girl, where will ya go\nI'm going where the cold wind blows\nIn the pines, the pines\nThe sun, the shine\nI'll shiver the whole night through\n",
@@ -1933,7 +2533,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 0.85,
-    "lastModified": { "seconds": 1564660776, "nanoseconds": 267000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 0.5,
     "slug": "wonderwall-oasis",
     "spotify": "",
@@ -1945,7 +2548,10 @@
     "author": "Kačlehy 2010",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213867, "nanoseconds": 950000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 491000000
+    },
     "paragraphSpace": 1,
     "slug": "woodstock-kaclehy-2010",
     "text": "S: [C]Válím se na gauči a koukám do pito[Dmi]ma \n[G]Jsem hrozně znuděnej a nechci sedět do[C]ma \nV rádiu říkali, že prej se něco [Dmi]chystá \nNo tak tam pojedem, říká John, pařba je [G]jistá\n\nR: Pá[Dmi]dáme, [G]joo, ma[C]káme, jo[Ami]oo \nWood[Dmi]stock na [G]zemi je [C]ráj \nJe[Dmi]dem, tam [G]všichni se [C]maj.\n\nS: Sejdou se kámoši z celé republiky, \nv blátě se budeme brodit až po kotníky, \nkapely zahrajou písničky, který mám rád, \nvšem, co nás nechápou, budem se upřímně\nsmát.\n\nR:\n\nS: V hlavě pak budem mít vzpomínky květinový \nto, co jsme prožili dneska už málokdo ví \njednou se vrátíme zaberem louku i pláž \nKačlehy ožijou festival bude zas náš\n\nR:\n",
@@ -1956,7 +2562,10 @@
     "author": "Ally Hills",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213866, "nanoseconds": 93000000 },
+    "lastModified": {
+      "seconds": 1590961945,
+      "nanoseconds": 413000000
+    },
     "paragraphSpace": 1,
     "slug": "wrong-ally-hills",
     "spotify": "https://open.spotify.com/track/28Etz9ei408rNU7p6lejZZ?si=gg7zdVmLSK2Vu7BOICDxJQ",
@@ -1970,7 +2579,10 @@
     "extraNonSearchable": "",
     "extraSearchable": "",
     "fontSize": 1,
-    "lastModified": { "seconds": 1586010141, "nanoseconds": 368000000 },
+    "lastModified": {
+      "seconds": 1586010141,
+      "nanoseconds": 368000000
+    },
     "paragraphSpace": 1,
     "slug": "yesterday-beatles",
     "spotify": "",
@@ -1982,7 +2594,10 @@
     "author": "Jiří Štědroň",
     "deleted": false,
     "fontSize": 1.05,
-    "lastModified": { "seconds": 1563213868, "nanoseconds": 866000000 },
+    "lastModified": {
+      "seconds": 1563213868,
+      "nanoseconds": 866000000
+    },
     "paragraphSpace": 1,
     "slug": "zabili-zabili-jiri-stedron",
     "text": "S:[C]Zabili [F]zabili\n[Dmi]chlapa [F]z Kolo[C]čavy\n[C]řekněte [F]hrobaři\n[Dmi]kde je [F]pocho[C]vaný\n\nR:Bylo tu [C]není tu\nhavrani [F]na plotu\n[C]bylo víno v sudě\nteď tam voda [G]bude\nnení [C]není tu\n\nS: Špatně ho zabili\nšpatně pochovali\nvlci ho pojedli\nptáci rozklovali\n\nR:\n\nS:Vítr ho roznesl\npo dalekém kraji\nhavrani pro něho\nna poli krákají\n\nR: \n\nS:Kráká starý havran\nkrákat nepřestane\ndokud v Koločavě\nživý chlap zůstane\n",
@@ -1993,7 +2608,10 @@
     "author": "Fleret",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 778000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 778000000
+    },
     "paragraphSpace": 1,
     "slug": "zafukane-fleret",
     "spotify": "https://open.spotify.com/track/366C1ToK1DqTlG13mjfkQR",
@@ -2005,7 +2623,10 @@
     "author": "Projektil",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 32000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 32000000
+    },
     "paragraphSpace": 1,
     "slug": "zahrada-ticha-projektil",
     "text": "S: [D]Je tam brána zdobená, cestu oteví[Emi]rá, \nzahradu zele[C]nou,[_G] všechno připomí[D]ná.\n\nS: Jako dým závojů, mlhou opředených, \nvstupuješ do ticha, cestou vyvolených.\n\nS: Je to březový háj, je to borový les. \nJe to anglický park, je to hluboký vřes.\n\nS: Je to samota dnů, kde jsi pomalu zrál. \nV zahradě zelený, kde sis za dětství hrál.\n\nS: Kolik chceš, tolik máš očí otevřených. \nTam venku za branou, leží studený sníh.\n\nS: Zpočátku uslyšíš, vítr a ptačí hlas, \nv zahradě zelený, přejdou do ticha zas.\n\nS: Světlo připomíná, rána slunečných dnů, \nv zahradě zelený, v zahradě beze snů.\n\nS: Uprostřed závratí sluncem prosvícených \nvstupuješ do ticha cestou vyvolených.\n\nS:1\n",
@@ -2016,7 +2637,10 @@
     "author": "Elán",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 225000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 225000000
+    },
     "paragraphSpace": 1,
     "slug": "zanedbany-sex-elan",
     "spotify": "",
@@ -2028,7 +2652,10 @@
     "author": "Spirituál kvintet",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 612000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 612000000
+    },
     "paragraphSpace": 1,
     "slug": "zelene-plane-spiritual-kvintet",
     "text": "S:[Ami]Tam kde zem [Dmi]duní [Ami]kopyty [E]stád\n[Ami]znám plno [Dmi]vůní co [C]dejchám je tak [G]rád\n[F]čpí tam pot [G]koní a [C]voní tymi[Ami]án\n[Dmi]kouř obzor [G]cloní jak [C]dolinou je [E]hnán\n[Ami]rád žiju [Dmi]na ní tý [_Ami] plá[E]ni zele[Ami]ný.\n\nS: Tam kde mlejn s pilou proud řeky hnal\njá měl svou milou a moc jsem o ni stál\naž přišlo psaní ať na ni nečekám\nprý k čemu lhaní a tak jsem zůstal sám\nsám znenadání v tý pláni zelený.\n\nR: [F]Dál čistím chlív a [G7]lovím v oře[C]ší\n[F]jenom jako dřív mě [G7]žití netě[C]ší\n[Ami]když hlídám stáj a [Dmi]slyším vítr dout\n[Ami]prosím ať jí [Dmi]poví že [H7]mám v srdci [E]troud.\n\nS: Kdo ví až se doví z větrnejch stran\ndál že jen pro ni tu voní tymián\nvlak hned ten ranní ji u nás vyloží\na ona k spaní se šťastná uloží\nsem do mejch dlaní v tý pláni zelený.\n",
@@ -2039,7 +2666,10 @@
     "author": "Visací zámek",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213869, "nanoseconds": 939000000 },
+    "lastModified": {
+      "seconds": 1563213869,
+      "nanoseconds": 939000000
+    },
     "paragraphSpace": 1,
     "slug": "znamka-punku-visaci-zamek",
     "text": "[E]Holinky [D]nosil [A]vždycky [G]na[F#]ruby \nKohoutí hnát si zapích do huby \nTeplej rum pil i když potom blil \nCo hořelo to vyhulil \nMyslel si že je to známka punku \n\nR: [3xH, C, H 1xC, D, C]Ale holky říkaly \nŽe punk je jinde \nAle holky říkaly \nTo snad není možný \n\nPřeplněnej autobus nechával vždycky ujet \nKytky v jeho zahradě mohly volně bujet \nUznával jen kapely co neuměly hrát \nKolem krku nosil umělohmotnej drát \nMyslel že je to známka punku \n\nR:\n\nNo ale kdo není \nBoží nadělení \nNedělejme z punka tupce \nNo ale kdo není \nBoží nadělení \nKaždé zboží má svého kupce \n\nKřivák nosila vždycky naruby \nRtěnku si nanášela rovnou na zuby \nSmála se jenom smutným věcem \nHrála v kapele s Jardou Švecem \nMyslela že je to známka punku \n\nR: Ale lidi říkali, že punk je jinde \nAle lidi říkali. No to snad není možný\n",
@@ -2050,7 +2680,10 @@
     "author": "UDG",
     "deleted": false,
     "fontSize": 1,
-    "lastModified": { "seconds": 1563213870, "nanoseconds": 866000000 },
+    "lastModified": {
+      "seconds": 1563213870,
+      "nanoseconds": 866000000
+    },
     "paragraphSpace": 1,
     "slug": "zvedava-udg",
     "spotify": "https://open.spotify.com/track/6hViwauN7fr262KG33qxhF",
