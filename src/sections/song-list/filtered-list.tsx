@@ -58,9 +58,12 @@ export default function FilteredList({
     const song = getSongById(id)
     if (!song) return null
     return {
-      text: sortByAuthor
-        ? `${song.author} - ${song.title}`
-        : `${song.title} - ${song.author}`,
+      text:
+        !song.author || !song.title
+          ? song.author || song.title
+          : sortByAuthor
+          ? `${song.author} - ${song.title}`
+          : `${song.title} - ${song.author}`,
       slug: song.slug,
     }
   }
