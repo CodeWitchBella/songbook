@@ -487,6 +487,7 @@ const resolvers = {
       await doc.set({
         title,
         author,
+        deleted: false,
         slug,
         text: '',
         editor: 'users/' + viewer.id,
