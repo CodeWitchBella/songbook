@@ -1,9 +1,10 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import React, { Component } from 'react'
+import React, { Component, ErrorInfo } from 'react'
 import { Raven } from '../utils/globals'
+import { __RouterContext, RouteComponentProps } from 'react-router'
 
-const Fallback = () => {
+function DefaultFallback() {
   return (
     <div
       css={{
@@ -19,40 +20,43 @@ const Fallback = () => {
   )
 }
 
-export default class ErrorBoundary extends Component<{
-  fallback?: () => React.ReactNode
-}> {
-  state = { hasError: false }
+// NOTE: we check strict equality of errorKeys and this is a way to make sure
+// that no passed value equals default
+const noError = {}
+type State = { errorKey: any }
+type Props = { errorKey?: any; fallback?: JSX.Element | null }
 
-  static getDerivedStateFromError() {
-    return { hasError: true }
+export class ErrorBoundary extends Component<Props, State> {
+  context!: RouteComponentProps
+
+  static contextType = __RouterContext
+
+  state: State = { errorKey: noError }
+
+  static getDerivedStateFromProps(props: Props, state: State) {
+    if (state.errorKey && props.errorKey !== state.errorKey) {
+      return { errorKey: noError }
+    }
+    return state
   }
-  componentDidCatch(error: Error, info: any) {
-    console.error({ error, info })
-    if (Raven)
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    this.setState({ errorKey: this.props.errorKey })
+    if (Raven) {
       Raven.captureException(error, {
-        extra: info,
+        extra: errorInfo,
         tags: {
           errorBoundary: 'general',
         },
       })
+    }
   }
 
   render() {
-    if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <Fallback />
+    if (this.props.errorKey !== this.state.errorKey) {
+      return <>{this.props.children}</>
     }
-    return this.props.children
+    const { fallback = <DefaultFallback /> } = this.props
+    return fallback
   }
-}
-
-export const errorBoundary = <T extends {}>(
-  Component: React.ComponentType<T>,
-): React.FC<T> => (props) => {
-  return (
-    <ErrorBoundary>
-      <Component {...props} />
-    </ErrorBoundary>
-  )
 }

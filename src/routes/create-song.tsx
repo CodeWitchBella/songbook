@@ -3,7 +3,6 @@ import { jsx } from '@emotion/core'
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from '../components/input'
-import { errorBoundary } from '../containers/error-boundary'
 import { PrimaryButton } from '../components/interactive/primary-button'
 import { useNewSong } from '../store/store'
 
@@ -25,7 +24,7 @@ type State = {
   disabled: boolean
 }
 
-function CreateSong() {
+export default function CreateSong() {
   const newSong = useNewSong()
   const [author, setAuthor] = useState('')
   const [title, setTitle] = useState('')
@@ -65,4 +64,3 @@ function CreateSong() {
     </FormWrap>
   )
 }
-export default errorBoundary(CreateSong)

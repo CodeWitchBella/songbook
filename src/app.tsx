@@ -5,7 +5,7 @@ import Routes from './routes/routes'
 import { InstallProvider } from './components/install'
 import { css, Global } from '@emotion/core'
 import OutlineHandler from './utils/outline-handler'
-import ErrorBoundary from './containers/error-boundary'
+import { ErrorBoundary } from './containers/error-boundary'
 import { StoreProvider } from './store/store'
 
 import cantarellRegularWoff from './webfonts/cantarell-regular.woff'

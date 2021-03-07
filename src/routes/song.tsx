@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react'
 import Song from '../sections/song/song'
 import { ScrollToTopOnMount } from '../components/scroll'
-import { errorBoundary } from '../containers/error-boundary'
 
-const SongRoute = ({ slug }: { slug: string }) => {
+export default function SongRoute({ slug }: { slug: string }) {
   useWakeLock()
   return (
     <main>
@@ -39,5 +38,3 @@ function useWakeLock() {
     return undefined
   }, [])
 }
-
-export default errorBoundary(SongRoute)

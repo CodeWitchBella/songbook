@@ -2,7 +2,7 @@ import * as serviceWorker from './serviceWorker'
 
 import ReactDOM from 'react-dom'
 import React from 'react'
-import ErrorBoundary from './containers/error-boundary'
+import { ErrorBoundary } from './containers/error-boundary'
 import { BrowserRouter } from 'react-router-dom'
 import App, { InjectGlobal } from './app'
 import { ServiceWorkerStatusProvider } from './components/service-worker-status'

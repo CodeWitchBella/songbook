@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 
-import { errorBoundary } from '../containers/error-boundary'
 import { useCollectionList } from '../store/store'
 import { useEffect } from 'react'
 import { DateTime } from 'luxon'
@@ -11,7 +10,7 @@ import { View } from 'react-native'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
-const CollectionList = () => {
+export default function CollectionList() {
   const { list, refresh } = useCollectionList()
   useEffect(() => {
     if (
@@ -65,7 +64,6 @@ const CollectionList = () => {
     </div>
   )
 }
-export default errorBoundary(CollectionList)
 
 function Gap() {
   return <View style={{ height: 5 }} />

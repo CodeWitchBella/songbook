@@ -2,7 +2,6 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import SongList from '../sections/song-list/song-list'
-import { errorBoundary } from '../containers/error-boundary'
 import { useCollection } from '../store/store'
 import { useMemo, useCallback, useEffect } from 'react'
 
@@ -18,7 +17,7 @@ function useColectionWithSet(slug: string) {
   return { set, ...collection }
 }
 
-const Collection = ({ slug }: { slug: string }) => {
+export default function Collection({ slug }: { slug: string }) {
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id) => (set && set?.has(id)) || false, [set])
@@ -58,4 +57,3 @@ const Collection = ({ slug }: { slug: string }) => {
     </div>
   )
 }
-export default errorBoundary(Collection)
