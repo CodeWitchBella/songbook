@@ -13,7 +13,6 @@
     "localforage": "^1.7.3",
     "luxon": "^1.24.1",
     "monaco-editor": "^0.20.0",
-    "query-string": "^6.12.1",
     "raven-js": "^3.27.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -22,7 +21,6 @@
     "react-router-dom": "^5.2.0",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
-    "typescript": "^3.9.3",
     "workbox-window": "^4.3.1"
   },
   "scripts": {
@@ -62,6 +60,7 @@
     "eslint-plugin-react-native": "^3.8.1",
     "http-proxy": "^1.18.1",
     "prettier": "^2.0.5",
+    "typescript": "^3.9.3",
     "vite": "^2.0.5"
   }
 }

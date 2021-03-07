@@ -6,7 +6,6 @@ import * as parser from '../../utils/song-parser/song-parser'
 import styled from '@emotion/styled'
 import SongMenu from '../../components/song-look/song-menu'
 import { useLocation } from 'react-router-dom'
-import queryString from 'query-string'
 import { useAutoUpdatedSong } from '../../utils/firebase'
 import { useNavigate } from '../../utils/use-navigate'
 
@@ -65,8 +64,8 @@ export default function SongSection({
   const navigate = useNavigate()
   if (!song || !parsed) return null
 
-  const query = queryString.parse(location.search)
-  const tr = query.transposition
+  const query = new URLSearchParams(location.search)
+  const tr = query.get('transposition')
   const transposition = Number.parseInt(
     `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
     10,
@@ -92,18 +91,14 @@ export default function SongSection({
           setSpotifyVisible={setSpotifyVisible}
           showSpotify={!!song.spotify}
           transposition={transposition}
-          setTransposition={(v) =>
-            navigate(
-              queryJoin(
-                location.pathname,
-                queryString.stringify({
-                  ...query,
-                  transposition: v || undefined,
-                }),
-              ),
-              { replace: true },
-            )
-          }
+          setTransposition={(v) => {
+            const params = new URLSearchParams(location.search)
+            if (v) params.set('transposition', v + '')
+            else params.delete('transposition')
+            navigate(queryJoin(location.pathname, params.toString()), {
+              replace: true,
+            })
+          }}
         />
       )}
       {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
