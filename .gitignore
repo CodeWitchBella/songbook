@@ -26,6 +26,7 @@ frontend/bundle
 *.cache
 .now
 .env
+/dist
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
