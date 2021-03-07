@@ -9,9 +9,8 @@ import React, {
   useLayoutEffect,
 } from 'react'
 import styled from '@emotion/styled'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { css } from '@emotion/react'
-import useRouter from '../../components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { BasicButton } from '../../components/interactive/basic-button'
@@ -150,7 +149,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
   const smInnerScrollRef = useRef<HTMLDivElement>(null)
   const bigScrollRef = useRef<HTMLDivElement>()
 
-  const { location } = useRouter()
+  const location = useLocation()
 
   useLayoutEffect(() => {
     return () => {

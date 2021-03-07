@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { useUpdateAfterNavigate } from '../service-worker-status'
 
 type ButtonPropsBase<T> = PropsWithChildren<
@@ -29,7 +29,7 @@ function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
   useEffect(() => {
     text.current?.setNativeProps({ style: { cursor: 'pointer' } })
   }, [])
-  const history = useHistory()
+  const navigate = useNavigate()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return (
     <BasicButtonBase
@@ -38,7 +38,7 @@ function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
           window.open(to, '_blank', 'noopener,noreferrer')
         } else {
           updateAfterNavigate()
-          history.push(to, { canGoBack: true })
+          navigate(to, { state: { canGoBack: true } })
         }
       }}
       {...rest}

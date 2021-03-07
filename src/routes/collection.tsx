@@ -4,6 +4,7 @@ import { jsx } from '@emotion/react'
 import SongList from '../sections/song-list/song-list'
 import { useCollection } from '../store/store'
 import { useMemo, useCallback, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })
@@ -17,7 +18,10 @@ function useColectionWithSet(slug: string) {
   return { set, ...collection }
 }
 
-export default function Collection({ slug }: { slug: string }) {
+export default function Collection() {
+  const params = useParams()
+  const slug = params.slug + (params.slug2 ? '/' + params.slug2 : '')
+
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id) => (set && set?.has(id)) || false, [set])

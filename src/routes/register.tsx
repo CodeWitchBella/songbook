@@ -3,16 +3,16 @@
 import { jsx } from '@emotion/react'
 import { useState } from 'react'
 import { useLogin } from '../components/use-login'
-import { useHistory } from 'react-router'
 import { PrimaryButton } from '../components/interactive/primary-button'
 import { LargeInput } from '../components/input'
 import { BackButton, BackArrow } from '../components/back-button'
 import { LoginDone } from '../components/login-done'
+import { useNavigate } from 'react-router'
 
 export default function Register() {
   const login = useLogin()
   const [status, setStatus] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -40,7 +40,7 @@ export default function Register() {
       .register(email, password, name)
       .then((result) => {
         setStatus(result || '')
-        if (!result) history.push('/', { canGoBack: true })
+        if (!result) navigate('/', { state: { canGoBack: true } })
       })
       .catch((e) => {
         console.error(e)

@@ -14,6 +14,7 @@ import { DateTime } from 'luxon'
 import { SongTextEditor } from '../components/song-editor/song-text-editor'
 import { SongType, updateSong } from '../store/store-song'
 import { BackButton, BackArrow } from '../components/back-button'
+import { useParams } from 'react-router-dom'
 
 const Form = styled.form`
   display: flex;
@@ -490,7 +491,8 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     </Columns>
   )
 }
-export default function EditSongExport({ slug }: { slug: string }) {
+export default function EditSongExport() {
+  const { slug } = useParams()
   const { song, methods } = useSong({ slug })
   if (!song || !methods) return <div>Píseň nenalezena</div>
 

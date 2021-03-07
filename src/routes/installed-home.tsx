@@ -1,11 +1,11 @@
-import { useHistory } from 'react-router'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function InstalledHome() {
-  const history = useHistory()
+  const navigate = useNavigate()
   useEffect(() => {
-    history.replace('/')
-    history.push('/all-songs', { canGoBack: true })
+    navigate('/', { replace: true })
+    navigate('/all-songs', { state: { canGoBack: true } })
   }, [history])
   return null
 }

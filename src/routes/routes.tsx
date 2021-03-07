@@ -1,10 +1,5 @@
-import React, {
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useReducer,
-} from 'react'
-import { Switch, Route, useLocation, __RouterContext } from 'react-router'
+import React, { useEffect } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import NotFound from './not-found'
 import { getGraphqlUrl } from '../store/graphql'
 import InstalledHome from './installed-home'
@@ -57,59 +52,26 @@ function AbsoluteRedirect({ to }: { to: string }) {
   return null
 }
 
-function Routes() {
+function MyRoutes() {
   return (
-    <Switch>
-      <Route path="/" exact>
-        <Home />
-      </Route>
-      <Route path="/installed-home" exact>
-        <InstalledHome />
-      </Route>
-      <Route path="/login" exact>
-        <Login />
-      </Route>
-      <Route path="/register" exact>
-        <Register />
-      </Route>
-      <Route path="/all-songs" exact>
-        <AllSongs />
-      </Route>
-      <Route path="/collections" exact>
-        <CollectionList />
-      </Route>
-      <Route
-        path="/collections/:slug/:slug2?"
-        render={({ match }) => (
-          <Collection
-            slug={
-              match.params.slug +
-              (match.params.slug2 ? '/' + match.params.slug2 : '')
-            }
-          />
-        )}
-      />
-      <Route
-        path="/song/:slug"
-        exact
-        render={({ match }) => <Song slug={match.params.slug} />}
-      />
-      <Route path="/new" exact render={() => <CreateSong />} />
-      <Route
-        path="/edit/:slug"
-        exact
-        render={({ match }) => <EditSong slug={match.params.slug} />}
-      />
-      <Route path="/changelog" exact render={() => <Changelog />} />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/installed-home" element={<InstalledHome />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/all-songs" element={<AllSongs />} />
+      <Route path="/collections" element={<CollectionList />} />
+      <Route path="/collections/:slug/:slug2?" element={<Collection />} />
+      <Route path="/song/:slug" element={<Song />} />
+      <Route path="/new" element={<CreateSong />} />
+      <Route path="/edit/:slug" element={<EditSong />} />
+      <Route path="/changelog" element={<Changelog />} />
       <Route
         path="/graphql"
-        exact
-        render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
+        element={<AbsoluteRedirect to={getGraphqlUrl()} />}
       />
-      <Route>
-        <NotFound />
-      </Route>
-    </Switch>
+      <Route element={<NotFound />} />
+    </Routes>
   )
 }
 
@@ -127,7 +89,7 @@ export default function WrappedRoutes() {
       <RouteRenderedMarker key={location.pathname} />
       <LoadAllRoutes />
       <ErrorBoundary errorKey={location.pathname}>
-        <Routes />
+        <MyRoutes />
       </ErrorBoundary>
     </>
   )

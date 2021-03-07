@@ -3,7 +3,7 @@
 import { jsx, Interpolation } from '@emotion/react'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { Link, LinkProps, useHistory } from 'react-router-dom'
+import { Link, LinkProps, useLocation, useNavigate } from 'react-router-dom'
 import {
   PlayButton,
   Burger,
@@ -52,21 +52,8 @@ const MenuButton = (
   >,
 ) => <button type="button" css={menuStyle} {...props} />
 
-const MenuLink = (props: LinkProps) => {
-  const to = props.to
-  return (
-    <Link<any>
-      css={menuStyle}
-      {...props}
-      to={(location) => {
-        const res = typeof to === 'function' ? to(location) : to
-        const obj = typeof res === 'string' ? { pathname: res } : res
-        const prevState =
-          typeof obj.state === 'object' && obj.state ? obj.state : {}
-        return { ...obj, state: { canGoBack: true, ...prevState } }
-      }}
-    />
-  )
+const MenuLink = (props: Omit<LinkProps, 'state'>) => {
+  return <Link css={menuStyle} state={{ canGoBack: true }} {...props} />
 }
 
 function Info({ close, song }: { close: () => void; song: SongType }) {
@@ -132,7 +119,8 @@ export default function SongMenu({
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
   const [info, setInfo] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
   const getRandomSong = useGetRandomSong()
 
   return (
@@ -170,7 +158,7 @@ export default function SongMenu({
             <MenuButton
               onClick={() => {
                 const nextSong = getRandomSong(song.id)
-                const canGoBackRaw = (history.location.state as any)?.canGoBack
+                const canGoBackRaw = (location.state as any)?.canGoBack
                 let canGoBack =
                   typeof canGoBackRaw === 'number'
                     ? canGoBackRaw
@@ -178,17 +166,16 @@ export default function SongMenu({
                     ? 1
                     : 0
                 if (!canGoBack) {
-                  const location = history.location
-                  history.replace('/all-songs')
-                  history.push(
+                  navigate('/all-songs', { replace: true })
+                  navigate(
                     location.pathname + location.search + location.hash,
-                    location.state,
+                    { state: location.state },
                   )
                   canGoBack = 1
                 }
 
-                history.push('/song/' + nextSong.item.slug, {
-                  canGoBack: canGoBack + 1,
+                navigate('/song/' + nextSong.item.slug, {
+                  state: { canGoBack: canGoBack + 1 },
                 })
               }}
             >

@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
 import Song from '../sections/song/song'
 import { ScrollToTopOnMount } from '../components/scroll'
+import { useParams } from 'react-router-dom'
 
-export default function SongRoute({ slug }: { slug: string }) {
+export default function SongRoute() {
+  const { slug } = useParams()
   useWakeLock()
   return (
     <main>

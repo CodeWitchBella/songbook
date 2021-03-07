@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/react'
 import React, { Component, ErrorInfo } from 'react'
-import { __RouterContext, RouteComponentProps } from 'react-router'
 
 const Raven: any = undefined
 
@@ -28,10 +27,6 @@ type State = { errorKey: any }
 type Props = { errorKey?: any; fallback?: JSX.Element | null }
 
 export class ErrorBoundary extends Component<Props, State> {
-  context!: RouteComponentProps
-
-  static contextType = __RouterContext
-
   state: State = { errorKey: noError }
 
   static getDerivedStateFromProps(props: Props, state: State) {

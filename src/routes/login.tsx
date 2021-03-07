@@ -4,15 +4,15 @@ import { jsx } from '@emotion/react'
 import { useLogin } from '../components/use-login'
 import { PrimaryButton } from '../components/interactive/primary-button'
 import { useState } from 'react'
-import { useHistory } from 'react-router'
 import { LargeInput } from '../components/input'
 import { BackButton, BackArrow } from '../components/back-button'
 import { LoginDone } from '../components/login-done'
+import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
   const login = useLogin()
   const [status, setStatus] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -26,7 +26,7 @@ export default function Login() {
       .login(email, password)
       .then((result) => {
         setStatus(result || '')
-        if (!result) history.push('/', { canGoBack: true })
+        if (!result) navigate('/', { state: { canGoBack: true } })
       })
       .catch((e) => {
         console.error(e)

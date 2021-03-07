@@ -7,10 +7,10 @@ import styled from '@emotion/styled'
 import { useSongList } from '../../store/store'
 import { SongType } from '../../store/store-song'
 import FilteredList from './filtered-list'
-import useRouter, { useQueryParam } from '../../components/use-router'
+import { useQueryParam } from '../../components/use-router'
 import { DownloadPDF } from '../../components/pdf'
 import { BackButton, BackArrow } from '../../components/back-button'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { SearchTextInput } from '../../components/search-text-input'
 
 const TheSearch = styled.div`
@@ -147,10 +147,9 @@ const SongList = ({
     [filter, sortByAuthor, source],
   )
 
-  const router = useRouter()
-
   const [search, setSearch] = useQueryParam('q')
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
@@ -158,7 +157,7 @@ const SongList = ({
         <Search
           text={search || ''}
           onChange={(v) => {
-            const { state } = router.location
+            const { state } = location
             if (
               typeof state === 'object' &&
               state &&
@@ -167,7 +166,7 @@ const SongList = ({
               if (v) {
                 setSearch(v, { push: false })
               } else {
-                router.history.goBack()
+                navigate(-1)
               }
             } else {
               if (v) {
