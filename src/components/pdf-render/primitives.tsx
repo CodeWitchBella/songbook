@@ -46,6 +46,7 @@ function viewStyleForPDF(
       .flat()
       .map((t) => t ?? null)
       .filter(notNull)
+  // @ts-ignore
   return {
     ...st,
     transform: st.transform
@@ -58,16 +59,15 @@ function viewStyleForPDF(
   }
 }
 
+type RPDFTextStyle = PropsOf<typeof ReactPDF.Text>['style']
 // just allow it to be recursive
-type MergedTextStyle = StyleProp<ReactPDF.Style & TextStyle>
+type MergedTextStyle = StyleProp<RPDFTextStyle & TextStyle>
 
-function textStyleForPDF(
-  st: MergedTextStyle,
-): PropsOf<typeof ReactPDF.Text>['style'] {
+function textStyleForPDF(st: MergedTextStyle): RPDFTextStyle {
   if (!st) return
   if (Array.isArray(st))
     return st
-      .map((t) => textStyleForPDF(t))
+      .map((t: any) => textStyleForPDF(t))
       .flat()
       .map((t) => t ?? null)
       .filter(notNull)

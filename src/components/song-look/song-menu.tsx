@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
-import { jsx, Interpolation } from '@emotion/core'
+import { jsx, Interpolation } from '@emotion/react'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps, useHistory } from 'react-router-dom'
@@ -35,7 +35,7 @@ const MenuList = styled.ul({
   margin: 0,
 })
 
-const menuStyle: Interpolation = {
+const menuStyle = {
   all: 'unset',
   padding: 10,
   fontSize: 25,
@@ -43,7 +43,7 @@ const menuStyle: Interpolation = {
   background: 'white',
   textAlign: 'right',
   height: 32,
-}
+} as const
 
 const MenuButton = (
   props: React.DetailedHTMLProps<

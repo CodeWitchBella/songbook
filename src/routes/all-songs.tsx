@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import SongList from '../sections/song-list/song-list'
 import { ErrorBoundary } from '../containers/error-boundary'
 

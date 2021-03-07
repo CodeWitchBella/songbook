@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import { PropsWithChildren, useReducer } from 'react'
 import { Burger } from './song-look/song-menu-icons'
 

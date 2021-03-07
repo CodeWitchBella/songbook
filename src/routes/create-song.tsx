@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from '../components/input'

@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 
 import { useCollectionList } from '../store/store'
 import { useEffect } from 'react'
@@ -30,7 +30,7 @@ export default function CollectionList() {
           justifyContent: 'center',
         }}
       >
-        <BackButton css={{ display: 'flex', alignItems: 'center' }}>
+        <BackButton>
           <BackArrow />
         </BackButton>{' '}
         Seznam kolekcí

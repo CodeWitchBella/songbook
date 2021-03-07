@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import React, {
   PropsWithChildren,
   useState,
@@ -10,7 +10,7 @@ import React, {
 } from 'react'
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
-import { css } from '@emotion/core'
+import { css } from '@emotion/react'
 import useRouter from '../../components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'

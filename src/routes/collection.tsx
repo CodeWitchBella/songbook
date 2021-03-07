@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import SongList from '../sections/song-list/song-list'
 import { useCollection } from '../store/store'
 import { useMemo, useCallback, useEffect } from 'react'

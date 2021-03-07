@@ -1,10 +1,10 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import { useState, PropsWithChildren, useEffect } from 'react'
 import { Line, parseSong } from '../../utils/song-parser/song-parser'
 import { saveAs } from 'file-saver'
 import { useQueryParam } from '../use-router'
-import 'react-pdf/dist/Page/AnnotationLayer.css'
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { SongType } from '../../store/store-song'
 import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'

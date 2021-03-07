@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
 import { useIsInPDF, PDFPage as PrimitivePDFPage, View } from './primitives'
-import type ReactPDF from '@react-pdf/renderer'
 import SizerPage from '../sizer-page'
+import type { Style } from '@react-pdf/types'
 
 const margin = {
   top: (7.8 / 148) * 100,
@@ -16,7 +16,7 @@ function DefaultPage({ children }: PropsWithChildren<{}>) {
   const pdfSettings = usePDFSettings()
   if (!isInPDF) return <SizerPage>{children}</SizerPage>
   return (
-    <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}`}>
+    <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}` as any}>
       {children}
     </PrimitivePDFPage>
   )
@@ -32,7 +32,7 @@ export function PDFPage({
   style,
 }: PropsWithChildren<{
   left: boolean
-  style?: ReactPDF.Style | ReactPDF.Style[]
+  style?: Style
 }>) {
   const { vw, vh, web } = usePDFSettings()
   const { Page } = useContext(pageContext)
@@ -96,7 +96,7 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
       {realPages.map((page, i) => (
         <PrimitivePDFPage
           key={i}
-          size={`A${pageSize - 2}`}
+          size={`A${pageSize - 2}` as any}
           orientation="portrait"
           wrap={false}
         >

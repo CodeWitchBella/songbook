@@ -1,8 +1,9 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import React, { Component, ErrorInfo } from 'react'
-import { Raven } from '../utils/globals'
 import { __RouterContext, RouteComponentProps } from 'react-router'
+
+const Raven: any = undefined
 
 function DefaultFallback() {
   return (
@@ -42,14 +43,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorKey: this.props.errorKey })
-    if (Raven) {
-      Raven.captureException(error, {
-        extra: errorInfo,
-        tags: {
-          errorBoundary: 'general',
-        },
-      })
-    }
+    Raven?.captureException(error, {
+      extra: errorInfo,
+      tags: {
+        errorBoundary: 'general',
+      },
+    })
   }
 
   render() {
