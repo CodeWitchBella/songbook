@@ -61,7 +61,8 @@ function MyRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/all-songs" element={<AllSongs />} />
       <Route path="/collections" element={<CollectionList />} />
-      <Route path="/collections/:slug/:slug2?" element={<Collection />} />
+      <Route path="/collections/:slug" element={<Collection />} />
+      <Route path="/collections/:slug/:slug2" element={<Collection />} />
       <Route path="/song/:slug" element={<Song />} />
       <Route path="/new" element={<CreateSong />} />
       <Route path="/edit/:slug" element={<EditSong />} />

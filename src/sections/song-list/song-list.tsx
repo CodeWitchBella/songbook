@@ -120,7 +120,7 @@ function Loader() {
   )
 }
 
-const SongList = ({
+function SongList({
   filter,
   header,
   slug,
@@ -130,7 +130,7 @@ const SongList = ({
   header?: string | JSX.Element
   slug: string | null
   title: string | null
-}) => {
+}) {
   const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
