@@ -9,6 +9,7 @@ import { ServiceWorkerStatusProvider } from './components/service-worker-status'
 
 // workaround for something removing import React from 'react'
 ;(window as any).React = React
+;(window as any).global = window
 
 const app = document.getElementById('root')
 ReactDOM.render(
