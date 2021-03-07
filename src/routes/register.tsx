@@ -2,12 +2,12 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import { useState } from 'react'
-import { useLogin } from 'components/use-login'
+import { useLogin } from '../components/use-login'
 import { useHistory } from 'react-router'
-import { PrimaryButton } from 'components/interactive/primary-button'
-import { LargeInput } from 'components/input'
-import { BackButton, BackArrow } from 'components/back-button'
-import { LoginDone } from 'components/login-done'
+import { PrimaryButton } from '../components/interactive/primary-button'
+import { LargeInput } from '../components/input'
+import { BackButton, BackArrow } from '../components/back-button'
+import { LoginDone } from '../components/login-done'
 
 export default function Register() {
   const login = useLogin()

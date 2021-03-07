@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/core'
 import { PropsWithChildren } from 'react'
-import * as page from 'utils/page'
+import * as page from '../utils/page'
 
 const sizer = () => css`
   @media not print {

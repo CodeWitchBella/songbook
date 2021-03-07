@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useContext } from 'react'
 import { usePDFSettings } from './pdf-settings'
 import { useIsInPDF, PDFPage as PrimitivePDFPage, View } from './primitives'
 import type ReactPDF from '@react-pdf/renderer'
-import SizerPage from 'components/sizer-page'
+import SizerPage from '../sizer-page'
 
 const margin = {
   top: (7.8 / 148) * 100,

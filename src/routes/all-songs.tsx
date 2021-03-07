@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
-import SongList from 'sections/song-list/song-list'
-import { errorBoundary } from 'containers/error-boundary'
+import SongList from '../sections/song-list/song-list'
+import { errorBoundary } from '../containers/error-boundary'
 
 const Home = () => (
   <div css={{ height: '100%' }}>

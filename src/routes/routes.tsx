@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { Switch, Route, useLocation } from 'react-router'
 import NotFound from './not-found'
-import { getGraphqlUrl } from 'store/graphql'
+import { getGraphqlUrl } from '../store/graphql'
 import InstalledHome from './installed-home'
-import { RouteRenderedMarker } from 'components/service-worker-status'
+import { RouteRenderedMarker } from '../components/service-worker-status'
 
 const imports = {
   CollectionList: once(() =>

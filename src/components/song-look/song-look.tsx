@@ -1,8 +1,8 @@
 import React from 'react'
-import * as parser from 'utils/song-parser/song-parser'
-import { SongType } from 'store/store-song'
-import { PDFSongPage } from 'components/pdf-render/pdf-song-page'
-import { PDFSettingsProvider } from 'components/pdf-render/pdf-settings'
+import * as parser from '../../utils/song-parser/song-parser'
+import { SongType } from '../../store/store-song'
+import { PDFSongPage } from '../pdf-render/pdf-song-page'
+import { PDFSettingsProvider } from '../pdf-render/pdf-settings'
 
 const SongPage = ({
   song,

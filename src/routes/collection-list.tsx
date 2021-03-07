@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 
-import { errorBoundary } from 'containers/error-boundary'
-import { useCollectionList } from 'store/store'
+import { errorBoundary } from '../containers/error-boundary'
+import { useCollectionList } from '../store/store'
 import { useEffect } from 'react'
 import { DateTime } from 'luxon'
-import { BackButton, BackArrow } from 'components/back-button'
-import { ListButton } from 'components/interactive/list-button'
+import { BackButton, BackArrow } from '../components/back-button'
+import { ListButton } from '../components/interactive/list-button'
 import { View } from 'react-native'
 
 let lastRefreshThisRefresh: DateTime | null = null

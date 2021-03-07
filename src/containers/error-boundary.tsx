@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { Component } from 'react'
-import { Raven } from 'utils/globals'
+import { Raven } from '../utils/globals'
 
 const Fallback = () => {
   return (

@@ -1,9 +1,9 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import SongList from 'sections/song-list/song-list'
-import { errorBoundary } from 'containers/error-boundary'
-import { useCollection } from 'store/store'
+import SongList from '../sections/song-list/song-list'
+import { errorBoundary } from '../containers/error-boundary'
+import { useCollection } from '../store/store'
 import { useMemo, useCallback, useEffect } from 'react'
 
 function useColectionWithSet(slug: string) {

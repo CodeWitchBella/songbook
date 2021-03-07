@@ -2,12 +2,12 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
 import { View, Text } from 'react-native'
-import { PrimaryButton } from 'components/interactive/primary-button'
-import { ListButton } from 'components/interactive/list-button'
-import { useLogin } from 'components/use-login'
-import { buildData } from 'build-data'
+import { PrimaryButton } from '../components/interactive/primary-button'
+import { ListButton } from '../components/interactive/list-button'
+import { useLogin } from '../components/use-login'
+import { buildData } from '../build-data'
 import { DateTime } from 'luxon'
-import { InstallButtonLook } from 'components/install'
+import { InstallButtonLook } from '../components/install'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'

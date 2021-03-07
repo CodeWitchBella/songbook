@@ -1,14 +1,14 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { useState, useEffect } from 'react'
-import { SongLook } from 'components/song-look/song-look'
-import * as parser from 'utils/song-parser/song-parser'
+import { SongLook } from '../../components/song-look/song-look'
+import * as parser from '../../utils/song-parser/song-parser'
 import styled from '@emotion/styled'
-import SongMenu from 'components/song-look/song-menu'
+import SongMenu from '../../components/song-look/song-menu'
 import { useLocation } from 'react-router-dom'
 import queryString from 'query-string'
-import { useAutoUpdatedSong } from 'utils/firebase'
-import { useNavigate } from 'utils/use-navigate'
+import { useAutoUpdatedSong } from '../../utils/firebase'
+import { useNavigate } from '../../utils/use-navigate'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 

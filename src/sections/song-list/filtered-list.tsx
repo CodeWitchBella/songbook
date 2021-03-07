@@ -4,7 +4,7 @@ import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList, { SearchableSong } from './alg'
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import SearchWorker from 'workers-loader?inline&fallback=false!./worker'
-import { SongType } from 'store/store-song'
+import { SongType } from '../../store/store-song'
 
 const getWorker = (() => {
   let worker: null | SearchWorker = null

@@ -11,10 +11,10 @@ import React, {
 import styled from '@emotion/styled'
 import { Link } from 'react-router-dom'
 import { css } from '@emotion/core'
-import useRouter from 'components/use-router'
+import useRouter from '../../components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { BasicButton } from 'components/interactive/basic-button'
+import { BasicButton } from '../../components/interactive/basic-button'
 
 const a = css`
   color: black;
@@ -101,10 +101,7 @@ const columns = (n: number) => (p: { count: number }) => css`
 const ListContainer = styled('div')<{ count: number }>`
   display: grid;
   grid-template-columns: repeat(1, 100%);
-  grid-template-rows: repeat(
-    ${(props) => Math.ceil(props.count / 1)},
-    auto
-  );
+  grid-template-rows: repeat(${(props) => Math.ceil(props.count / 1)}, auto);
   padding-top: 10px;
 
   ${columns(2)}

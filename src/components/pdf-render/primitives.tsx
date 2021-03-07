@@ -9,7 +9,7 @@ import {
 import type ReactPDF from '@react-pdf/renderer'
 import { notNull } from '@codewitchbella/ts-utils'
 import { pdfSetup } from './pdf-setup'
-import { once } from 'utils/utils'
+import { once } from '../../utils/utils'
 
 const InPdfCtx = createContext<typeof import('@react-pdf/renderer') | null>(
   null,

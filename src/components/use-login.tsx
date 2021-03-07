@@ -1,5 +1,5 @@
-import { useViewer } from 'store/store'
-import { logout, login, register } from 'store/graphql'
+import { useViewer } from '../store/store'
+import { logout, login, register } from '../store/graphql'
 
 export function useLogin() {
   const [viewer, setViewer] = useViewer()

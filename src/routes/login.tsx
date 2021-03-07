@@ -1,13 +1,13 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import { useLogin } from 'components/use-login'
-import { PrimaryButton } from 'components/interactive/primary-button'
+import { useLogin } from '../components/use-login'
+import { PrimaryButton } from '../components/interactive/primary-button'
 import { useState } from 'react'
 import { useHistory } from 'react-router'
-import { LargeInput } from 'components/input'
-import { BackButton, BackArrow } from 'components/back-button'
-import { LoginDone } from 'components/login-done'
+import { LargeInput } from '../components/input'
+import { BackButton, BackArrow } from '../components/back-button'
+import { LoginDone } from '../components/login-done'
 
 export default function Login() {
   const login = useLogin()

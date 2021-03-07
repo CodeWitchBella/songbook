@@ -1,4 +1,4 @@
-import latinize from 'utils/latinize'
+import latinize from '../../utils/latinize'
 
 export type SearchableSong = {
   author: string

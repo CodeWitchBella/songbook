@@ -11,8 +11,8 @@ import {
   InfoButton,
   RandomButton,
 } from './song-menu-icons'
-import { SongType } from 'store/store-song'
-import { useGetRandomSong } from 'store/store'
+import { SongType } from '../../store/store-song'
+import { useGetRandomSong } from '../../store/store'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -61,7 +61,9 @@ const MenuLink = (props: LinkProps) => {
       to={(location) => {
         const res = typeof to === 'function' ? to(location) : to
         const obj = typeof res === 'string' ? { pathname: res } : res
-        return { ...obj, state: { canGoBack: true, ...obj.state } }
+        const prevState =
+          typeof obj.state === 'object' && obj.state ? obj.state : {}
+        return { ...obj, state: { canGoBack: true, ...prevState } }
       }}
     />
   )

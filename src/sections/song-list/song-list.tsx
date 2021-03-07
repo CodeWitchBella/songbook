@@ -1,17 +1,17 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 import { jsx } from '@emotion/core'
-import { useMemo, useRef, PropsWithChildren } from 'react'
-import TopMenu, { TopMenuItem } from 'components/top-menu'
+import { useMemo, PropsWithChildren } from 'react'
+import TopMenu, { TopMenuItem } from '../../components/top-menu'
 import styled from '@emotion/styled'
-import { useSongList } from 'store/store'
-import { SongType } from 'store/store-song'
+import { useSongList } from '../../store/store'
+import { SongType } from '../../store/store-song'
 import FilteredList from './filtered-list'
-import useRouter, { useQueryParam } from 'components/use-router'
-import { DownloadPDF } from 'components/pdf'
-import { BackButton, BackArrow } from 'components/back-button'
+import useRouter, { useQueryParam } from '../../components/use-router'
+import { DownloadPDF } from '../../components/pdf'
+import { BackButton, BackArrow } from '../../components/back-button'
 import { useLocation } from 'react-router'
-import { SearchTextInput } from 'components/search-text-input'
+import { SearchTextInput } from '../../components/search-text-input'
 
 const TheSearch = styled.div`
   font-size: 20px;

@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native'
 import { useHistory } from 'react-router'
-import { useUpdateAfterNavigate } from 'components/service-worker-status'
+import { useUpdateAfterNavigate } from '../service-worker-status'
 
 type ButtonPropsBase<T> = PropsWithChildren<
   {

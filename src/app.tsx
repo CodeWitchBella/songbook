@@ -1,12 +1,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core'
 import React, { Suspense } from 'react'
-import Routes from 'routes/routes'
-import { InstallProvider } from 'components/install'
+import Routes from './routes/routes'
+import { InstallProvider } from './components/install'
 import { css, Global } from '@emotion/core'
-import OutlineHandler from 'utils/outline-handler'
-import ErrorBoundary from 'containers/error-boundary'
-import { StoreProvider } from 'store/store'
+import OutlineHandler from './utils/outline-handler'
+import ErrorBoundary from './containers/error-boundary'
+import { StoreProvider } from './store/store'
 
 import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
 import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'

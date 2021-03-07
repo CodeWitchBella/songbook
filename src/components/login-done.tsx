@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { ListButton } from './interactive/list-button'
 import React from 'react'
-import { User } from 'store/graphql'
+import { User } from '../store/graphql'
 
 export function LoginDone({
   viewer,
