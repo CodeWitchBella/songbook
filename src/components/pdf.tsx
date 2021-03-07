@@ -7,7 +7,7 @@ export default PDF
 function useDelayed<T>(v: T): T {
   const [state, setState] = useState(v)
   useEffect(() => {
-    setImmediate(() => {
+    requestAnimationFrame(() => {
       setState(v)
     })
   }, [v])

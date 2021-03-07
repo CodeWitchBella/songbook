@@ -39,7 +39,7 @@ export function useQueryParam(param: string): [string | null, Setter] {
       if (scheduled.current.includes(value)) {
         scheduled.current.splice(scheduled.current.indexOf(value), 1)
       } else {
-        setImmediate(() => {
+        requestAnimationFrame(() => {
           setValue(value)
         })
       }

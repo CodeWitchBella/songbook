@@ -2,8 +2,8 @@ import React, { useEffect, useReducer } from 'react'
 import { SongList, SongListItem } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList, { SearchableSong } from './alg'
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import SearchWorker from 'workers-loader?inline&fallback=false!./worker'
+// @ts-ignore
+import SearchWorker from './worker?worker&inline'
 import { SongType } from '../../store/store-song'
 
 const getWorker = (() => {

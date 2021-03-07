@@ -17,7 +17,7 @@ function onlyCallLast(f: (arg: string) => void) {
     if (shouldRecalculate === false) {
       calculating = false
     } else {
-      setImmediate(() => {
+      requestAnimationFrame(() => {
         calculating = false
         if (shouldRecalculate) recalculate(shouldRecalculate)
       })

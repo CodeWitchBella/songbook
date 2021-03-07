@@ -64,7 +64,7 @@ function useEditorFitContent(
     if (!editor) return
     resetLayout(editor, element)
     const unsub = editor.onDidChangeModelDecorations(() => {
-      setImmediate(() => {
+      requestAnimationFrame(() => {
         resetLayout(editor, element)
       })
     })
