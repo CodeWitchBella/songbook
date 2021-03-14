@@ -34,6 +34,7 @@ const typeDefs = gql`
 
     editor: User
     insertedAt: String
+    pretranspose: Int!
   }
 
   type SongRecord {
@@ -75,6 +76,7 @@ const typeDefs = gql`
 
     extraSearchable: String
     extraNonSearchable: String
+    pretranspose: Int
   }
 
   type LoginSuccess {
@@ -274,6 +276,8 @@ const resolvers = {
       typeof src.paragraphSpace === 'number' ? src.paragraphSpace : 1,
     titleSpace: (src: any) =>
       typeof src.titleSpace === 'number' ? src.titleSpace : 1,
+    pretranspose: (src: any) =>
+      typeof src.pretranspose === 'number' ? src.pretranspose : 0,
   },
   SongRecord: {
     data: (src: any) => src.data(),
