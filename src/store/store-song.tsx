@@ -15,6 +15,7 @@ const songRecordFragment = `
       paragraphSpace
       titleSpace
       spotify
+      pretranspose
       extraSearchable
       extraNonSearchable
       editor {
@@ -37,6 +38,7 @@ type SongRecord = {
   paragraphSpace: number
   titleSpace: number
   spotify: string | null
+  pretranspose: number
   extraSearchable: string | null
   extraNonSearchable: string | null
   editor: User | null
@@ -97,6 +99,7 @@ export async function updateSong(
     extraSearchable?: string
     extraNonSearchable?: string
     spotify?: string
+    pretranspose?: number
   },
 ) {
   return graphqlFetch({
@@ -123,6 +126,7 @@ type Song<DT> = {
   paragraphSpace: number
   titleSpace: number
   spotify: string | null
+  pretranspose: number
   editor: User | null
   insertedAt: DT | null
   author: string

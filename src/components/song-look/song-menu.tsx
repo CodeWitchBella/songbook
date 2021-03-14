@@ -52,7 +52,7 @@ const MenuButton = (
   >,
 ) => <button type="button" css={menuStyle} {...props} />
 
-const MenuLink = (props: LinkProps) => {
+const MenuLink = (props: LinkProps<any>) => {
   const to = props.to
   return (
     <Link<any>

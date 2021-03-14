@@ -154,6 +154,7 @@ type State = {
   paragraphSpace: string
   titleSpace: string
   spotify: string
+  pretranspose: string
   advanced: boolean
   preview: boolean
   pdfPreview: boolean
@@ -202,6 +203,16 @@ function safeParseFloat(text: string, fallback: number) {
   return res
 }
 
+function safeParseInt(text: string, fallback: number) {
+  try {
+    const res = Number.parseInt(text, 10)
+    if (!Number.isFinite(res)) return fallback
+    return res
+  } catch {
+    return fallback
+  }
+}
+
 const getResult = (propsSong: SongType, theState: State): SongType => {
   const { author, title, textWithChords } = theState
   return {
@@ -213,6 +224,7 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
     paragraphSpace: safeParseFloat(theState.paragraphSpace, 1),
     titleSpace: safeParseFloat(theState.titleSpace, 1),
     spotify: theState.spotify || null,
+    pretranspose: safeParseInt(theState.pretranspose, 0),
 
     extraSearchable: theState.extraSearchable,
     extraNonSearchable: theState.extraNonSearchable,
@@ -230,6 +242,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     title: props.song.title,
     textWithChords: props.song.text,
     spotify: props.song.spotify || '',
+    pretranspose: props.song.pretranspose?.toFixed(0) || '',
     extraSearchable: props.song.extraSearchable,
     extraNonSearchable: props.song.extraNonSearchable,
     fontSize: props.song.fontSize.toFixed(2),
@@ -308,6 +321,12 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     if (val === '') return true
     return Number.isFinite(Number.parseFloat(val))
   }
+  const checkInt = (val: string) => {
+    // only allow - at start, only one . and otherwise numeric
+    if (!/^-?[0-9]*$/.test(val)) return false
+    if (val === '') return true
+    return Number.isSafeInteger(Number.parseFloat(val))
+  }
 
   const fontSizeChange = (val: string) => {
     if (!checkFloat(val)) return
@@ -320,6 +339,10 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   const titleSpaceChange = (val: string) => {
     if (!checkFloat(val)) return
     change({ titleSpace: val })
+  }
+  const onPretransposeChange = (val: string) => {
+    if (!checkInt(val)) return
+    change({ pretranspose: val })
   }
   const spotifyChange = (val: string) => change({ spotify: val })
   const extraSearchableChange = (val: string) =>
@@ -408,6 +431,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
                 label="Místo pod nadpisem"
                 value={state.titleSpace}
                 onChange={titleSpaceChange}
+              />
+              <Input
+                label="Předdefinovaná transpozice"
+                value={state.pretranspose}
+                onChange={onPretransposeChange}
               />
             </>
           )}

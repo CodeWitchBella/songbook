@@ -36,6 +36,7 @@ export function writeSong(song: {
     paragraphSpace: number | null
     titleSpace: number | null
     spotify: string | null
+    pretranspose: number | null
   }
 }) {
   return graphqlFetch({
@@ -55,6 +56,7 @@ export function writeSong(song: {
           'paragraphSpace',
           'titleSpace',
           'spotify',
+          'pretranspose',
         ]),
         id: song.id + '.song',
       },
