@@ -284,6 +284,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       spotify: result.spotify || '',
       extraSearchable: result.extraSearchable || '',
       extraNonSearchable: result.extraNonSearchable || '',
+      pretranspose: result.pretranspose || 0,
     })
       .then(() => props.refetch())
       .then(() => {
