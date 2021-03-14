@@ -28,13 +28,13 @@ const typeDefs = gql`
     paragraphSpace: Float!
     titleSpace: Float!
     spotify: String
+    pretranspose: Int!
 
     extraSearchable: String
     extraNonSearchable: String
 
     editor: User
     insertedAt: String
-    pretranspose: Int!
   }
 
   type SongRecord {
@@ -73,10 +73,10 @@ const typeDefs = gql`
     paragraphSpace: Float
     titleSpace: Float
     spotify: String
+    pretranspose: Int
 
     extraSearchable: String
     extraNonSearchable: String
-    pretranspose: Int
   }
 
   type LoginSuccess {
