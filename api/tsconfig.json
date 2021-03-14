@@ -3,6 +3,7 @@
     "module": "commonjs",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "lib": ["es2020"],
     "outDir": "lib",
     "rootDir": ".",
     "esModuleInterop": true,

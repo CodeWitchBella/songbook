@@ -164,13 +164,6 @@ async function randomID(length: number) {
     .replace(/=/g, '')
 }
 
-function fromEntries(entries: [string, any][]) {
-  const ret: { [key: string]: any } = {}
-  for (const [k, v] of entries) {
-    ret[k] = v
-  }
-  return ret
-}
 
 async function getViewer(context: MyContext) {
   const token = (context.sessionCookie || '').trim()
@@ -502,7 +495,7 @@ const resolvers = {
       if (!prev.exists) throw new Error('Song does not exist')
       await doc.set(
         {
-          ...fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
+          ...Object.fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
           lastModified: FieldValue.serverTimestamp(),
         },
         { merge: true },
