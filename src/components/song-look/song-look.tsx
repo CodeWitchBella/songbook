@@ -4,7 +4,7 @@ import { SongType } from 'store/store-song'
 import { PDFSongPage } from 'components/pdf-render/pdf-song-page'
 import { PDFSettingsProvider } from 'components/pdf-render/pdf-settings'
 
-const SongPage = ({
+function SongPage({
   song,
   pageNumber,
   pageData,
@@ -16,26 +16,30 @@ const SongPage = ({
   transposition?: number
   pageNumber?: number
   noBack?: boolean
-}) => (
-  <PDFSettingsProvider
-    value={{
-      transpose: transposition,
-      web: true,
-      fontSize: song.fontSize,
-      paragraphSpace: song.paragraphSpace,
-      titleSpace: song.titleSpace,
-    }}
-  >
-    <PDFSongPage
-      author={song.author}
-      footer=""
-      left={typeof pageNumber === 'number' && pageNumber % 2 === 0}
-      page={pageData}
-      title={song.title}
-      back={!noBack}
-    />
-  </PDFSettingsProvider>
-)
+}) {
+  const pretranspose =
+    typeof song.pretranspose === 'number' ? song.pretranspose : 0
+  return (
+    <PDFSettingsProvider
+      value={{
+        transpose: transposition + pretranspose,
+        web: true,
+        fontSize: song.fontSize,
+        paragraphSpace: song.paragraphSpace,
+        titleSpace: song.titleSpace,
+      }}
+    >
+      <PDFSongPage
+        author={song.author}
+        footer=""
+        left={typeof pageNumber === 'number' && pageNumber % 2 === 0}
+        page={pageData}
+        title={song.title}
+        back={!noBack}
+      />
+    </PDFSettingsProvider>
+  )
+}
 
 export const SongLook = ({
   song,
