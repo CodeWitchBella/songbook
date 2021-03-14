@@ -204,13 +204,10 @@ function safeParseFloat(text: string, fallback: number) {
 }
 
 function safeParseInt(text: string, fallback: number) {
-  try {
-    const res = Number.parseInt(text, 10)
-    if (!Number.isFinite(res)) return fallback
-    return res
-  } catch {
-    return fallback
-  }
+  const res = Number.parseFloat(text)
+  if (!Number.isFinite(res)) return fallback
+  if (!Number.isSafeInteger(res)) return fallback
+  return res
 }
 
 const getResult = (propsSong: SongType, theState: State): SongType => {
@@ -242,7 +239,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     title: props.song.title,
     textWithChords: props.song.text,
     spotify: props.song.spotify || '',
-    pretranspose: props.song.pretranspose?.toFixed(0) || '',
+    pretranspose: props.song.pretranspose?.toFixed(0) || '0',
     extraSearchable: props.song.extraSearchable,
     extraNonSearchable: props.song.extraNonSearchable,
     fontSize: props.song.fontSize.toFixed(2),
@@ -324,7 +321,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   const checkInt = (val: string) => {
     // only allow - at start, only one . and otherwise numeric
     if (!/^-?[0-9]*$/.test(val)) return false
-    if (val === '') return true
+    if (val === '' || val === '-') return true
     return Number.isSafeInteger(Number.parseFloat(val))
   }
 
