@@ -1,9 +1,8 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import { useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from 'components/input'
-import { errorBoundary } from 'containers/error-boundary'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { useNewSong } from 'store/store'
 
@@ -18,12 +17,6 @@ const Form = styled.form`
   flex-direction: column;
   font-size: 18px;
 `
-
-type State = {
-  author: string
-  title: string
-  disabled: boolean
-}
 
 function CreateSong() {
   const newSong = useNewSong()
@@ -65,4 +58,4 @@ function CreateSong() {
     </FormWrap>
   )
 }
-export default errorBoundary(CreateSong)
+export default CreateSong

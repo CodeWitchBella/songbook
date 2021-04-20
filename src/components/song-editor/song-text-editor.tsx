@@ -1,5 +1,5 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
 

@@ -1,5 +1,5 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
+/** @jsxImportSource @emotion/react */
+
 import { jsx, css } from '@emotion/react'
 import React, { useRef, PropsWithChildren, useReducer } from 'react'
 import styled from '@emotion/styled'
@@ -9,7 +9,6 @@ import * as parser from 'utils/song-parser/song-parser'
 import Checkbox from 'components/checkbox'
 import PDF from 'components/pdf'
 import Togglable from 'components/togglable'
-import { errorBoundary } from 'containers/error-boundary'
 import { useSong } from 'store/store'
 import { DateTime } from 'luxon'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
@@ -517,9 +516,9 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     </Columns>
   )
 }
-export default errorBoundary(({ slug }: { slug: string }) => {
+export default function EditSongRoute({ slug }: { slug: string }) {
   const { song, methods } = useSong({ slug })
   if (!song || !methods) return <div>Píseň nenalezena</div>
 
   return <EditSong song={song} refetch={methods.refresh} />
-})
+}

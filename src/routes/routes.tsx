@@ -4,6 +4,7 @@ import NotFound from './not-found'
 import { getGraphqlUrl } from 'store/graphql'
 import InstalledHome from './installed-home'
 import { RouteRenderedMarker } from 'components/service-worker-status'
+import ErrorBoundary from 'containers/error-boundary'
 
 const imports = {
   CollectionList: once(
@@ -53,57 +54,59 @@ function AbsoluteRedirect({ to }: { to: string }) {
 
 function Routes() {
   return (
-    <Switch>
-      <Route path="/" exact>
-        <Home />
-      </Route>
-      <Route path="/installed-home" exact>
-        <InstalledHome />
-      </Route>
-      <Route path="/login" exact>
-        <Login />
-      </Route>
-      <Route path="/register" exact>
-        <Register />
-      </Route>
-      <Route path="/all-songs" exact>
-        <AllSongs />
-      </Route>
-      <Route path="/collections" exact>
-        <CollectionList />
-      </Route>
-      <Route
-        path="/collections/:slug/:slug2?"
-        render={({ match }) => (
-          <Collection
-            slug={
-              match.params.slug +
-              (match.params.slug2 ? '/' + match.params.slug2 : '')
-            }
-          />
-        )}
-      />
-      <Route
-        path="/song/:slug"
-        exact
-        render={({ match }) => <Song slug={match.params.slug} />}
-      />
-      <Route path="/new" exact render={() => <CreateSong />} />
-      <Route
-        path="/edit/:slug"
-        exact
-        render={({ match }) => <EditSong slug={match.params.slug} />}
-      />
-      <Route path="/changelog" exact render={() => <Changelog />} />
-      <Route
-        path="/graphql"
-        exact
-        render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
-      />
-      <Route>
-        <NotFound />
-      </Route>
-    </Switch>
+    <ErrorBoundary>
+      <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
+        <Route path="/installed-home" exact>
+          <InstalledHome />
+        </Route>
+        <Route path="/login" exact>
+          <Login />
+        </Route>
+        <Route path="/register" exact>
+          <Register />
+        </Route>
+        <Route path="/all-songs" exact>
+          <AllSongs />
+        </Route>
+        <Route path="/collections" exact>
+          <CollectionList />
+        </Route>
+        <Route
+          path="/collections/:slug/:slug2?"
+          render={({ match }) => (
+            <Collection
+              slug={
+                match.params.slug +
+                (match.params.slug2 ? '/' + match.params.slug2 : '')
+              }
+            />
+          )}
+        />
+        <Route
+          path="/song/:slug"
+          exact
+          render={({ match }) => <Song slug={match.params.slug} />}
+        />
+        <Route path="/new" exact render={() => <CreateSong />} />
+        <Route
+          path="/edit/:slug"
+          exact
+          render={({ match }) => <EditSong slug={match.params.slug} />}
+        />
+        <Route path="/changelog" exact render={() => <Changelog />} />
+        <Route
+          path="/graphql"
+          exact
+          render={() => <AbsoluteRedirect to={getGraphqlUrl()} />}
+        />
+        <Route>
+          <NotFound />
+        </Route>
+      </Switch>
+    </ErrorBoundary>
   )
 }
 

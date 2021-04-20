@@ -38,7 +38,7 @@ type MergedViewStyle = StyleProp<
 
 function viewStyleForPDF(
   st: MergedViewStyle,
-): PropsOf<typeof ReactPDF.View>['style'] {
+): ReactPDF.Style | ReactPDF.Style[] | undefined {
   if (!st) return
   if (Array.isArray(st))
     return st
@@ -55,7 +55,7 @@ function viewStyleForPDF(
           .join(' '),
       )
       .join(' '),
-  }
+  } as ReactPDF.Style
 }
 
 // just allow it to be recursive

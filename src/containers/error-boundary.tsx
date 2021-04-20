@@ -1,9 +1,12 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react'
-import React, { Component } from 'react'
+/** @jsxImportSource @emotion/react */
+
+import { Component, useEffect } from 'react'
+import { useHistory } from 'react-router'
 import { Raven } from 'utils/globals'
 
-const Fallback = () => {
+const Fallback = ({ reset }: { reset: () => void }) => {
+  const history = useHistory()
+  useEffect(() => history.listen(reset), [history, reset])
   return (
     <div
       css={{
@@ -19,9 +22,7 @@ const Fallback = () => {
   )
 }
 
-export default class ErrorBoundary extends Component<{
-  fallback?: () => React.ReactNode
-}> {
+export default class ErrorBoundary extends Component {
   state = { hasError: false }
 
   static getDerivedStateFromError() {
@@ -38,21 +39,15 @@ export default class ErrorBoundary extends Component<{
       })
   }
 
+  reset = () => {
+    this.setState({ hasError: false })
+  }
+
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <Fallback />
+      return <Fallback reset={this.reset} />
     }
     return this.props.children
   }
-}
-
-export const errorBoundary = <T extends {}>(
-  Component: React.ComponentType<T>,
-): React.FC<T> => (props) => {
-  return (
-    <ErrorBoundary>
-      <Component {...props} />
-    </ErrorBoundary>
-  )
 }

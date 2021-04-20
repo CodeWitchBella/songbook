@@ -1,7 +1,5 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
 
-import { errorBoundary } from 'containers/error-boundary'
 import { useCollectionList } from 'store/store'
 import { useEffect } from 'react'
 import { DateTime } from 'luxon'
@@ -31,7 +29,7 @@ const CollectionList = () => {
           justifyContent: 'center',
         }}
       >
-        <BackButton css={{ display: 'flex', alignItems: 'center' }}>
+        <BackButton>
           <BackArrow />
         </BackButton>{' '}
         Seznam kolekcí
@@ -65,7 +63,7 @@ const CollectionList = () => {
     </div>
   )
 }
-export default errorBoundary(CollectionList)
+export default CollectionList
 
 function Gap() {
   return <View style={{ height: 5 }} />

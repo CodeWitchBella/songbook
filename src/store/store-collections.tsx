@@ -28,7 +28,7 @@ type CollectionRecord<DT = DateTime> = {
   slug: string
   name: string
   owner: User
-  songList: string[]
+  songList: readonly string[]
   insertedAt: DT
 }
 

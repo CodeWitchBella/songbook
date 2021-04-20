@@ -1,6 +1,5 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import React, { useContext, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import { PrimaryButton } from './interactive/primary-button'

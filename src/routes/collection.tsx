@@ -1,14 +1,13 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import SongList from 'sections/song-list/song-list'
-import { errorBoundary } from 'containers/error-boundary'
 import { useCollection } from 'store/store'
 import { useMemo, useCallback, useEffect } from 'react'
 
+const emptyArray: never[] = []
 function useColectionWithSet(slug: string) {
   const { collection } = useCollection({ slug })
-  const songList = collection ? collection.songList : []
+  const songList = collection ? collection.songList : emptyArray
   const set = useMemo(() => {
     const v = new Set<string>()
     for (const id of songList) v.add(id)
@@ -58,4 +57,4 @@ const Collection = ({ slug }: { slug: string }) => {
     </div>
   )
 }
-export default errorBoundary(Collection)
+export default Collection

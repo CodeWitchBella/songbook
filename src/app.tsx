@@ -1,5 +1,5 @@
-/** @jsx jsx */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import React, { Suspense } from 'react'
 import Routes from 'routes/routes'
 import { InstallProvider } from 'components/install'

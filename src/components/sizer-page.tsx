@@ -1,4 +1,4 @@
-/** @jsx jsx */
+/** @jsxImportSource @emotion/react */
 import { css, jsx } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import * as page from 'utils/page'

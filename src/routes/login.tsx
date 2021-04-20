@@ -1,6 +1,5 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import { useLogin } from 'components/use-login'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { useState } from 'react'

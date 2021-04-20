@@ -1,6 +1,7 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
-import { jsx, Interpolation } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
+import type { InterpolationPrimitive } from '@emotion/serialize/types'
+
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps, useHistory } from 'react-router-dom'
@@ -35,7 +36,7 @@ const MenuList = styled.ul({
   margin: 0,
 })
 
-const menuStyle: Interpolation = {
+const menuStyle: InterpolationPrimitive = {
   all: 'unset',
   padding: 10,
   fontSize: 25,

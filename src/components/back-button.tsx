@@ -1,4 +1,4 @@
-/** @jsx jsx */
+/** @jsxImportSource @emotion/react */
 import { jsx, keyframes } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'

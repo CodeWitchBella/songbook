@@ -1,6 +1,5 @@
-/** @jsx jsx */
-/** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/react'
+/** @jsxImportSource @emotion/react */
+
 import { useState } from 'react'
 import { useLogin } from 'components/use-login'
 import { useHistory } from 'react-router'
