@@ -1,24 +1,23 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import fetch from 'node-fetch'
+import type { APIGatewayProxyHandler } from 'aws-lambda'
 
-export default async function ultimateGuitar(
-  request: VercelRequest,
-  response: VercelResponse,
-) {
+export const handler: APIGatewayProxyHandler = async (event, context) => {
   try {
-    const id = Number.parseInt(request.query.id as any, 10)
+    const id = Number.parseInt(event.queryStringParameters?.id as any, 10)
     if (!id) {
-      response.status(400).send(JSON.stringify({ error: 'Invalid request' }))
-      return
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid request' }),
+      }
     }
     const r = await fetch(
       'https://www.ultimate-guitar.com/contribution/correct/create?id=' + id,
     )
     if (r.status !== 200) {
-      response
-        .status(424)
-        .send(JSON.stringify({ error: 'Cannot load from UG' }))
-      return
+      return {
+        statusCode: 424,
+        body: JSON.stringify({ error: 'Cannot load from UG' }),
+      }
     }
     const data = await r.text()
 
@@ -27,12 +26,15 @@ export default async function ultimateGuitar(
       '</textarea>',
     )
 
-    response.status(200).send(JSON.stringify({ text }))
-    return
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ text }),
+    }
   } catch (e) {
-    response
-      .status(500)
-      .send(JSON.stringify({ error: 'Internal server error' }))
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal server error' }),
+    }
   }
 }
 

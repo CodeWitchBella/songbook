@@ -30,7 +30,6 @@
     "@types/bcryptjs": "2.4.2",
     "@types/latinize": "0.2.15",
     "@types/luxon": "1.26.4",
-    "@vercel/node": "^1.9.1",
     "typescript": "4.2.4"
   },
   "private": true
