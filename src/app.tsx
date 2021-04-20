@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import React, { Suspense } from 'react'
 import Routes from 'routes/routes'
 import { InstallProvider } from 'components/install'
-import { css, Global } from '@emotion/core'
+import { css, Global } from '@emotion/react'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'

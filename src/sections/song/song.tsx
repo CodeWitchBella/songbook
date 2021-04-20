@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import React, { useState, useEffect } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/song-parser/song-parser'

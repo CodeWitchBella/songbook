@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 
 import { errorBoundary } from 'containers/error-boundary'
 import { useCollectionList } from 'store/store'

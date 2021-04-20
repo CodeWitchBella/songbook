@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "@codewitchbella/ts-utils": "^0.1.18",
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
+    "@emotion/css": "^11.1.3",
+    "@emotion/react": "^11.1.5",
     "@react-pdf/renderer": "^1.6.9",
     "@types/loadable__component": "^5.10.0",
     "@types/raven-js": "^3.10.0",
@@ -16,8 +16,6 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/workbox-window": "^4.3.3",
     "@typescript-eslint/parser": "^3.0.2",
-    "emotion": "^10.0.27",
-    "eslint-plugin-emotion": "^10.0.27",
     "eslint-plugin-react-hooks": "^4.0.4",
     "file-saver": "^2.0.2",
     "firebase": "^7.14.6",
@@ -58,6 +56,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@emotion/eslint-plugin": "^11.2.0",
     "@types/file-saver": "^2.0.1",
     "@types/luxon": "^1.24.0",
     "@types/react-native": "^0.62.12",

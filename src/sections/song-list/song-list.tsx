@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import { useMemo, useRef, PropsWithChildren } from 'react'
 import TopMenu, { TopMenuItem } from 'components/top-menu'
 import styled from '@emotion/styled'

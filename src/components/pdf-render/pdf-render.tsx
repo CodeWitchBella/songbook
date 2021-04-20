@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core'
+import { jsx } from '@emotion/react'
 import { useState, PropsWithChildren, useEffect } from 'react'
 import { Line, parseSong } from 'utils/song-parser/song-parser'
 import { saveAs } from 'file-saver'

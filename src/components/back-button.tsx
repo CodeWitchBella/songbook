@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx, keyframes } from '@emotion/core'
+import { jsx, keyframes } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'

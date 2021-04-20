@@ -1,6 +1,6 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
-import { jsx, Interpolation } from '@emotion/core'
+import { jsx, Interpolation } from '@emotion/react'
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps, useHistory } from 'react-router-dom'

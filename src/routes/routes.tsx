@@ -6,29 +6,30 @@ import InstalledHome from './installed-home'
 import { RouteRenderedMarker } from 'components/service-worker-status'
 
 const imports = {
-  CollectionList: once(() =>
-    import(/* webpackChunkName: "r-collection-list" */ './collection-list'),
+  CollectionList: once(
+    () =>
+      import(/* webpackChunkName: "r-collection-list" */ './collection-list'),
   ),
-  Collection: once(() =>
-    import(/* webpackChunkName: "r-collection" */ './collection'),
+  Collection: once(
+    () => import(/* webpackChunkName: "r-collection" */ './collection'),
   ),
-  AllSongs: once(() =>
-    import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
+  AllSongs: once(
+    () => import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
   ),
   Home: once(() => import(/* webpackChunkName: "r-home" */ './home')),
   Song: once(() => import(/* webpackChunkName: "r-song" */ './song')),
-  CreateSong: once(() =>
-    import(/* webpackChunkName: "r-create-song" */ './create-song'),
+  CreateSong: once(
+    () => import(/* webpackChunkName: "r-create-song" */ './create-song'),
   ),
-  EditSong: once(() =>
-    import(/* webpackChunkName: "r-edit-song" */ './edit-song'),
+  EditSong: once(
+    () => import(/* webpackChunkName: "r-edit-song" */ './edit-song'),
   ),
-  Changelog: once(() =>
-    import(/* webpackChunkName: "r-changelog" */ './changelog'),
+  Changelog: once(
+    () => import(/* webpackChunkName: "r-changelog" */ './changelog'),
   ),
   Login: once(() => import(/* webpackChunkName: "r-login" */ './login')),
-  Register: once(() =>
-    import(/* webpackChunkName: "r-register" */ './register'),
+  Register: once(
+    () => import(/* webpackChunkName: "r-register" */ './register'),
   ),
 }
 
