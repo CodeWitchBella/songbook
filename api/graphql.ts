@@ -16,7 +16,10 @@ export const config = {
   },
 }
 
-export const handler: APIGatewayProxyHandler = (event, context, callback) => {
+const server = new ApolloServer(serverConfig)
+export const handler = server.createHandler()
+
+export const handlerr: APIGatewayProxyHandler = (event, context, callback) => {
   let newSessionCookie: {
     cookie: string | null
     duration: Duration
