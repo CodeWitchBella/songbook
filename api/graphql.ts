@@ -15,7 +15,7 @@ export const config = {
   },
 }
 
-async function handlerImpl(
+export async function handler(
   event: APIGatewayProxyEvent,
   context: Context,
 ): Promise<APIGatewayProxyResult> {
@@ -87,14 +87,6 @@ async function handlerImpl(
   } catch (e) {
     return respondError(500, e.stack)
   }
-}
-
-export function handler(event: any, context: any, cb: any) {
-  console.log(event)
-  if (event.body && event.isBase64Encoded) {
-    console.log(Buffer.from(event.body, 'base64').toString())
-  }
-  return handlerImpl(event, context)
 }
 
 function allowedOrigins({ deploymentUrl }: { deploymentUrl?: string }) {
