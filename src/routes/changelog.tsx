@@ -3,6 +3,12 @@ import Entry from 'components/changelog-entry'
 
 const Changelog = () => (
   <div>
+    <Entry date="2021-05-31">
+      <li>
+        Opraveny různé problémy v aplikaci způsobené změnami provedenými AWS a
+        neobvyklou (a nezdokumentovanou) interakcí Vercelu s Apollo Serverem.
+      </li>
+    </Entry>
     <Entry date="2020-06-13">
       <li>Stejný vykreslovací kód pro PDF i web</li>
     </Entry>
