@@ -8,7 +8,6 @@ export const firestore = new Firestore({
 
 // this is here because now env pull performs weird mangling which I need to undo
 function parseCredentials(creds: string) {
-  if (creds.match(/^\{[ \n\t]*\\"/))
-    creds = creds.replace(/\\"/g, '"').replace(/\n/g, '\\n')
+  creds = creds.replace(/\n/g, '\\n')
   return JSON.parse(creds)
 }

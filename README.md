@@ -12,9 +12,9 @@ node proxy.js
 ## How to develop backend
 
 ```
-yarn global add now
+npm i -g now
 now login
-# you might need to link using `now`, you can cancel deploy once it creates .now folder
+now link
 now env pull
 now dev
 ```

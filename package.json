@@ -43,8 +43,7 @@
     "build-ci": "node build-ci.js && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint --ext ts --ext tsx --cache src",
-    "deploy": "firebase deploy --only hosting"
+    "lint": "eslint --ext ts --ext tsx --cache src"
   },
   "eslintConfig": {
     "extends": "react-app"

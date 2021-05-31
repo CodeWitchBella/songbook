@@ -1,9 +1,8 @@
 import serverConfig from './src/_server-config'
 import { ApolloServer } from 'apollo-server-lambda'
 import type {
-  APIGatewayProxyHandler,
+  Context,
   APIGatewayProxyEvent,
-  Context as APIGatewayProxyContext,
   APIGatewayProxyResult,
 } from 'aws-lambda'
 import type { MyContext } from './src/_context'
@@ -16,45 +15,40 @@ export const config = {
   },
 }
 
-const server = new ApolloServer(serverConfig)
-export const handler = server.createHandler()
-
-export const handlerr: APIGatewayProxyHandler = (event, context, callback) => {
-  let newSessionCookie: {
+async function handlerImpl(
+  event: APIGatewayProxyEvent,
+  context: Context,
+): Promise<APIGatewayProxyResult> {
+  let newSessionCookie = null as {
     cookie: string | null
     duration: Duration
-  } | null = null
+  } | null
 
-  const server = new ApolloServer({
+  const server = new ApolloServer<APIGatewayProxyEvent>({
     ...serverConfig,
-    context: ({
-      event,
-      context,
-    }: {
-      event: APIGatewayProxyEvent
-      context: APIGatewayProxyContext
-    }): MyContext => ({
-      setSessionCookie(cookie, duration) {
-        newSessionCookie = { cookie, duration }
-      },
-      sessionCookie: parseSessionCookie(event.headers['cookie']),
-    }),
-    playground: {
-      endpoint: '/api/graphql',
+    context(): MyContext {
+      return {
+        setSessionCookie(cookie, duration) {
+          newSessionCookie = { cookie, duration }
+        },
+        sessionCookie: parseSessionCookie(event.headers['cookie']),
+      }
     },
+    playground: { endpoint: '/api/graphql' },
   })
 
   const gql = server.createHandler()
 
   function respondError(code: number, body: string) {
-    callback(null, {
+    return {
       statusCode: code,
       body,
       headers: {
         'Content-Type': 'text/plain',
       },
-    })
+    }
   }
+
   const originConfig = {
     currentOrigin: getFirst(event.headers.origin) || '',
     deploymentUrl: process.env.VERCEL_URL,
@@ -68,6 +62,7 @@ export const handlerr: APIGatewayProxyHandler = (event, context, callback) => {
         allowedOrigins(originConfig),
     )
   }
+
   try {
     if (
       event.httpMethod === 'POST' &&
@@ -77,33 +72,36 @@ export const handlerr: APIGatewayProxyHandler = (event, context, callback) => {
     if (event.isBase64Encoded) {
       event.body = Buffer.from(event.body || '', 'base64').toString('utf8')
     }
-    return gql(
-      event,
-      context,
-      (
-        error?: string | Error | null | undefined,
-        result?: APIGatewayProxyResult | undefined,
-      ) => {
-        if (!result) return callback(error, result)
-        if (!newSessionCookie) return callback(error, result)
-
-        const [header, value] = createSetSessionCookieHeader(
-          newSessionCookie.cookie,
-          newSessionCookie.duration,
-        )
-
-        callback(error, {
-          ...result,
-          headers: {
-            ...result?.headers,
-            [header]: value,
-          },
-        })
-      },
+    const result = await gql(event, context, undefined)
+    if (!result) throw new Error('Missing result')
+    if (!newSessionCookie) return result
+    const [header, value] = createSetSessionCookieHeader(
+      newSessionCookie.cookie,
+      newSessionCookie.duration,
     )
+    return {
+      ...result,
+      headers: {
+        ...result?.headers,
+        [header]: value,
+      },
+    }
   } catch (e) {
     return respondError(500, e.stack)
   }
+}
+
+export function handler(event: any, context: any, cb: any) {
+  console.log(event)
+  return handlerImpl(
+    event.body
+      ? {
+          ...event,
+          body: Buffer.from(event.body, 'base64').toString(),
+        }
+      : event,
+    context,
+  )
 }
 
 function allowedOrigins({ deploymentUrl }: { deploymentUrl?: string }) {
