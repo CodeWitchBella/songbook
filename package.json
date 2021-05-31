@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "songbook-workers",
+  "version": "0.0.0",
+  "description": "New songbook backend using cloudflare workers",
+  "main": "dist/worker.production.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "Isabella Skořepová <isabella@skorepova.info>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.4",
+    "@babel/preset-typescript": "^7.13.0",
+    "@cloudflare/workers-types": "^2.2.2",
+    "babel-loader": "^8.2.2",
+    "core-js": "^3.13.1",
+    "prettier": "^1.18.2",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry",
+        "targets": { "node": "current" },
+        "corejs": 3,
+        "shippedProposals": true
+      }
+    ],
+    "@babel/preset-typescript"
+  ]
+}
