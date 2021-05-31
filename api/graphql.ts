@@ -69,9 +69,7 @@ async function handlerImpl(
       event.headers['content-type'] !== 'application/json'
     )
       return respondError(403, 'Expected application/json content-type')
-    if (event.isBase64Encoded) {
-      event.body = Buffer.from(event.body || '', 'base64').toString('utf8')
-    }
+
     const result = await gql(event, context, undefined)
     if (!result) throw new Error('Missing result')
     if (!newSessionCookie) return result
@@ -93,15 +91,10 @@ async function handlerImpl(
 
 export function handler(event: any, context: any, cb: any) {
   console.log(event)
-  return handlerImpl(
-    event.body
-      ? {
-          ...event,
-          body: Buffer.from(event.body, 'base64').toString(),
-        }
-      : event,
-    context,
-  )
+  if (event.body && event.isBase64Encoded) {
+    console.log(Buffer.from(event.body, 'base64').toString())
+  }
+  return handlerImpl(event, context)
 }
 
 function allowedOrigins({ deploymentUrl }: { deploymentUrl?: string }) {
