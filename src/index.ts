@@ -1,6 +1,6 @@
 import { ApolloServer, gql } from "apollo-server-cloudflare";
 import { handleApollo } from "./apollo";
-
+declare const FIREBASE_SERVICE_KEY: string;
 const server = new ApolloServer({
   introspection: true,
   playground: true,
@@ -13,7 +13,7 @@ const server = new ApolloServer({
   resolvers: {
     Query: {
       hello() {
-        return "world";
+        return "world " + FIREBASE_SERVICE_KEY.length;
       },
     },
   },
