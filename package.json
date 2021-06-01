@@ -29,6 +29,7 @@
   "dependencies": {
     "@codewitchbella/ts-utils": "^0.2.0",
     "@google-cloud/firestore": "^4.12.2",
+    "@sagi.io/workers-jwt": "^0.0.20",
     "apollo-server": "^2.25.0",
     "apollo-server-cloudflare": "^2.25.0",
     "bcryptjs": "^2.4.3",

@@ -1,5 +1,4 @@
 import { gql, UserInputError } from 'apollo-server-cloudflare'
-import { firestore } from './firestore'
 import latinize from 'latinize'
 import crypto from 'crypto'
 import { DateTime, Duration } from 'luxon'
