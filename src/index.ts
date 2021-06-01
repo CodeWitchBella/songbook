@@ -1,8 +1,8 @@
-import { Config } from "apollo-server-core";
-import { gql } from "apollo-server-cloudflare";
+import { ApolloServer, gql } from "apollo-server-cloudflare";
 import { handleApollo } from "./apollo";
 
-const graphQLOptions: Config = {
+const server = new ApolloServer({
+  introspection: true,
   playground: true,
   debug: true,
   typeDefs: gql`
@@ -17,14 +17,16 @@ const graphQLOptions: Config = {
       },
     },
   },
-};
+});
 
 async function handleRequest(request: Request) {
+  if (new URL(request.url).pathname === "/hello") return new Response("World");
   try {
-    return await handleApollo(request, graphQLOptions);
+    return await handleApollo(request, server);
   } catch (err) {
-    return new Response(graphQLOptions.debug ? err : "Something went wrong", {
+    return new Response(err.stack, {
       status: 500,
+      headers: { "content-type": "text/plain; charset=utf-8" },
     });
   }
 }

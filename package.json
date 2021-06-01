@@ -3,7 +3,7 @@
   "name": "songbook-workers",
   "version": "0.0.0",
   "description": "New songbook backend using cloudflare workers",
-  "main": "dist/worker.production.js",
+  "main": "dist/worker.js",
   "scripts": {
     "build": "webpack"
   },
@@ -16,6 +16,7 @@
     "@cloudflare/workers-types": "^2.2.2",
     "babel-loader": "^8.2.2",
     "core-js": "^3.13.1",
+    "graphql": "^15.5.0",
     "prettier": "^1.18.2",
     "ts-loader": "^9.2.2",
     "typescript": "^4.3.2",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "apollo-server-cloudflare": "^2.25.0",
-    "graphql": "^15.5.0"
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0"
   }
 }
