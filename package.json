@@ -14,6 +14,9 @@
     "@babel/preset-env": "^7.14.4",
     "@babel/preset-typescript": "^7.13.0",
     "@cloudflare/workers-types": "^2.2.2",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/latinize": "^0.2.15",
+    "@types/luxon": "^1.26.5",
     "babel-loader": "^8.2.2",
     "core-js": "^3.13.1",
     "graphql": "^15.5.0",
@@ -24,8 +27,14 @@
     "webpack-cli": "^4.7.0"
   },
   "dependencies": {
+    "@codewitchbella/ts-utils": "^0.2.0",
+    "@google-cloud/firestore": "^4.12.2",
+    "apollo-server": "^2.25.0",
     "apollo-server-cloudflare": "^2.25.0",
+    "bcryptjs": "^2.4.3",
     "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.0"
+    "crypto-browserify": "^3.12.0",
+    "latinize": "^0.5.0",
+    "luxon": "^1.27.0"
   }
 }

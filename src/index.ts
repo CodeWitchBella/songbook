@@ -1,23 +1,8 @@
-import { ApolloServer, gql } from "apollo-server-cloudflare";
+import { ApolloServer } from "apollo-server-cloudflare";
 import { handleApollo } from "./apollo";
-declare const FIREBASE_SERVICE_KEY: string;
-const server = new ApolloServer({
-  introspection: true,
-  playground: true,
-  debug: true,
-  typeDefs: gql`
-    type Query {
-      hello: String!
-    }
-  `,
-  resolvers: {
-    Query: {
-      hello() {
-        return "world " + FIREBASE_SERVICE_KEY.length;
-      },
-    },
-  },
-});
+import serverConfig from "./lib/server-config";
+
+const server = new ApolloServer(serverConfig);
 
 async function handleRequest(request: Request) {
   if (new URL(request.url).pathname === "/hello") return new Response("World");
