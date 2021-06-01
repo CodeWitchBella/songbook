@@ -1,18 +1,18 @@
-import { gql, UserInputError } from 'apollo-server-cloudflare'
-import latinize from 'latinize'
-import crypto from 'crypto'
-import { DateTime, Duration } from 'luxon'
-import { notNull } from '@codewitchbella/ts-utils'
-import { FieldValue } from '@google-cloud/firestore'
-import * as bcrypt from 'bcryptjs'
-import type { MyContext } from './context'
+import { gql, UserInputError } from "apollo-server-cloudflare";
+import latinize from "latinize";
+import crypto from "crypto";
+import { DateTime, Duration } from "luxon";
+import { notNull } from "@codewitchbella/ts-utils";
+import * as bcrypt from "bcryptjs";
+import { MyContext } from "./context";
+import { runQuery } from "./firestore";
 
 function slugify(part: string) {
   return latinize(part)
-    .replace(/[^a-z_0-9]/gi, ' ')
+    .replace(/[^a-z_0-9]/gi, " ")
     .trim()
-    .replace(/ +/g, '-')
-    .toLowerCase()
+    .replace(/ +/g, "-")
+    .toLowerCase();
 }
 
 // Construct a schema, using GraphQL schema language
@@ -141,179 +141,210 @@ const typeDefs = gql`
     setUpdateTimeToNowAll: String
     freshen(slug: String!): String
   }
-`
+`;
 
 async function songBySlug(slug: string) {
   const { docs } = await firestore
-    .collection('songs')
-    .where('slug', '==', slug)
+    .collection("songs")
+    .where("slug", "==", slug)
     .limit(1)
-    .get()
-  if (docs.length < 1) return null
-  const doc = docs[0]
-  if (!doc.exists) return null
-  return doc
+    .get();
+  if (docs.length < 1) return null;
+  const doc = docs[0];
+  if (!doc.exists) return null;
+  return doc;
 }
 
 async function randomID(length: number) {
   return crypto
     .randomBytes(Math.ceil((length / 3) * 2) + 1)
-    .toString('base64')
+    .toString("base64")
     .slice(0, length)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '')
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 }
 
-
 async function getViewer(context: MyContext) {
-  const token = (context.sessionCookie || '').trim()
-  if (!token) return
-  const session = firestore.doc('sessions/' + token)
-  const data = (await session.get()).data()
-  if (!data) return
-  return { viewer: firestore.doc(data.user), session }
+  const token = (context.sessionCookie || "").trim();
+  if (!token) return;
+  const session = firestore.doc("sessions/" + token);
+  const data = (await session.get()).data();
+  if (!data) return;
+  return { viewer: firestore.doc(data.user), session };
 }
 
 async function getViewerCheck(context: MyContext) {
-  const viewer = await getViewer(context)
-  if (!viewer) throw new UserInputError('Not logged in')
-  return viewer
+  const viewer = await getViewer(context);
+  if (!viewer) throw new UserInputError("Not logged in");
+  return viewer;
 }
 
-function whereModifiedAfter(path: string, modifiedAfter: string | null) {
-  const ref = firestore.collection(path)
-  if (modifiedAfter) {
-    return ref
-      .where('lastModified', '>', DateTime.fromISO(modifiedAfter).toJSDate())
-      .get()
-  }
-  return ref.where('deleted', '==', false).get()
+async function whereModifiedAfter(path: string, modifiedAfter: string | null) {
+  const res = await runQuery(path, {
+    compositeFilter: {
+      op: "AND",
+      filters: [
+        modifiedAfter
+          ? {
+              fieldFilter: {
+                field: { fieldPath: "lastModified" },
+                op: "GREATER_THAN",
+                value: { timestampValue: modifiedAfter },
+              },
+            }
+          : null,
+        {
+          fieldFilter: {
+            field: { fieldPath: "deleted" },
+            op: "EQUAL",
+            value: { booleanValue: false },
+          },
+        },
+      ].filter(Boolean),
+    },
+  });
+  const json: { document: { name: string; fields: any } }[] = await res.json();
+  const mapped = json.map(doc => ({
+    ...Object.fromEntries(
+      Object.entries(doc.document.fields).map(([k, v]) => [
+        k,
+        Object.values(v as any)[0],
+      ]),
+    ),
+    id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
+  }));
+  console.log(JSON.stringify(mapped, null, 2));
+  return mapped;
 }
 
 export const comparePassword = (password: string, hash: string) => {
   return new Promise<boolean>((resolve, reject) => {
     bcrypt.compare(password, hash, (err, res) => {
-      if (err) reject(err)
-      else resolve(res)
-    })
-  })
-}
+      if (err) reject(err);
+      else resolve(res);
+    });
+  });
+};
 
 export const hashPassword = (password: string): Promise<string> => {
   return new Promise((res, rej) =>
     bcrypt.genSalt(10, (err, salt) => {
-      if (err) rej(err)
+      if (err) rej(err);
       else {
         bcrypt.hash(password, salt, (err2, hash) => {
-          if (err2) rej(err2)
-          else res(hash)
-        })
+          if (err2) rej(err2);
+          else res(hash);
+        });
       }
     }),
-  )
-}
+  );
+};
 
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
-    hello: () => 'world',
+    hello: () => "world",
     songs: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await whereModifiedAfter('songs', modifiedAfter)
-      return docs.docs
+      const docs = await whereModifiedAfter("songs", modifiedAfter);
+      return docs;
     },
     deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }) => {
-      const docs = await whereModifiedAfter('deletedSongs', deletedAfter)
-      return docs.docs.map((d) => d.id)
+      const docs = await whereModifiedAfter("deletedSongs", deletedAfter);
+      return docs.map(d => d.id);
     },
     collections: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await whereModifiedAfter('collections', modifiedAfter)
-      return docs.docs
+      const docs = await whereModifiedAfter("collections", modifiedAfter);
+      return docs;
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
-        ...ids.map((id) => firestore.doc('songs/' + id)),
-      )
-      return songs.filter((snap) => snap.exists)
+        ...ids.map(id => firestore.doc("songs/" + id)),
+      );
+      return songs.filter(snap => snap.exists);
     },
     collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       const songs = await firestore.getAll(
-        ...ids.map((id) => firestore.doc('collections/' + id)),
-      )
-      return songs.filter((snap) => snap.exists)
+        ...ids.map(id => firestore.doc("collections/" + id)),
+      );
+      return songs.filter(snap => snap.exists);
     },
     songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
-      const songs = await Promise.all(slugs.map(songBySlug))
-      return songs.filter(notNull)
+      const songs = await Promise.all(slugs.map(songBySlug));
+      return songs.filter(notNull);
     },
     viewer: async (_: {}, _2: {}, context: MyContext) => {
-      const data = await getViewer(context)
-      if (data) return (await data.viewer.get()).data()
-      return null
+      const data = await getViewer(context);
+      if (data) return (await data.viewer.get()).data();
+      return null;
     },
   },
   Song: {
     editor: async (src: any) => {
-      if (src.editor) return (await firestore.doc(src.editor).get()).data()
-      return null
+      if (src.editor) return (await firestore.doc(src.editor).get()).data();
+      return null;
     },
     insertedAt: (src: any) =>
       !src.insertedAt
         ? null
-        : typeof src.insertedAt === 'string'
+        : typeof src.insertedAt === "string"
         ? src.insertedAt
-        : DateTime.fromJSDate(src.insertedAt.toDate()).setZone('utc').toISO(),
+        : DateTime.fromJSDate(src.insertedAt.toDate())
+            .setZone("utc")
+            .toISO(),
     fontSize: (src: any) =>
-      typeof src.fontSize === 'number' ? src.fontSize : 1,
+      typeof src.fontSize === "number" ? src.fontSize : 1,
     paragraphSpace: (src: any) =>
-      typeof src.paragraphSpace === 'number' ? src.paragraphSpace : 1,
+      typeof src.paragraphSpace === "number" ? src.paragraphSpace : 1,
     titleSpace: (src: any) =>
-      typeof src.titleSpace === 'number' ? src.titleSpace : 1,
+      typeof src.titleSpace === "number" ? src.titleSpace : 1,
     pretranspose: (src: any) =>
-      typeof src.pretranspose === 'number' ? src.pretranspose : 0,
+      typeof src.pretranspose === "number" ? src.pretranspose : 0,
   },
   SongRecord: {
     data: (src: any) => src.data(),
     lastModified: (src: any) => {
-      const data = src.data()
+      const data = src.data();
       return DateTime.fromJSDate(
         !!data.lastModified
           ? data.lastModified.toDate()
           : src.updateTime.toDate(),
       )
-        .setZone('utc')
-        .toISO()
+        .setZone("utc")
+        .toISO();
     },
   },
   CollectionRecord: {
     lastModified: (src: any) => {
-      const data = src.data()
+      const data = src.data();
       return DateTime.fromJSDate(data.lastModified.toDate())
-        .setZone('utc')
-        .toISO()
+        .setZone("utc")
+        .toISO();
     },
   },
   DeletableCollectionRecord: {
     __resolveType: (src: any) =>
-      src.data().deleted ? 'Deleted' : 'CollectionRecord',
+      src.data().deleted ? "Deleted" : "CollectionRecord",
   },
   Collection: {
     insertedAt: (src: any) =>
-      DateTime.fromJSDate(src.insertedAt.toDate()).setZone('utc').toISO(),
+      DateTime.fromJSDate(src.insertedAt.toDate())
+        .setZone("utc")
+        .toISO(),
     owner: async (src: any) => {
-      const owner = await firestore.doc(src.owner).get()
-      return owner.data()
+      const owner = await firestore.doc(src.owner).get();
+      return owner.data();
     },
     songList: async (src: any) => {
       return src.list.length < 1
         ? []
-        : firestore.getAll(...src.list.map((id: string) => firestore.doc(id)))
+        : firestore.getAll(...src.list.map((id: string) => firestore.doc(id)));
     },
   },
   LoginPayload: {
@@ -324,64 +355,64 @@ const resolvers = {
   },
   Mutation: {
     freshen: async (_: {}, { slug }: { slug: string }, context: MyContext) => {
-      const user = await getViewer(context)
-      const viewer = await user?.viewer.get()
-      if (!viewer?.data()?.admin) return 'Not admin'
+      const user = await getViewer(context);
+      const viewer = await user?.viewer.get();
+      if (!viewer?.data()?.admin) return "Not admin";
 
       const song = (
         await firestore
-          .collection('songs')
-          .where('slug', '==', slug)
+          .collection("songs")
+          .where("slug", "==", slug)
           .limit(1)
           .get()
-      ).docs[0]
-      if (!song) return 'Not found'
+      ).docs[0];
+      if (!song) return "Not found";
       song.ref.set(
         { lastModified: FieldValue.serverTimestamp() },
         { merge: true },
-      )
-      return 'done'
+      );
+      return "done";
     },
     setUpdateTimeToNowAll: async (_: {}, _2: {}, context: MyContext) => {
-      const user = await getViewer(context)
-      const viewer = await user?.viewer.get()
-      if (!viewer?.data()?.admin) return 'Not admin'
+      const user = await getViewer(context);
+      const viewer = await user?.viewer.get();
+      if (!viewer?.data()?.admin) return "Not admin";
 
-      const songs = await firestore.collection('songs').get()
+      const songs = await firestore.collection("songs").get();
       for (const song of songs.docs) {
         song.ref.set(
           { lastModified: FieldValue.serverTimestamp() },
           { merge: true },
-        )
+        );
       }
-      return 'done'
+      return "done";
     },
     setHandle: async (
       _: {},
       { handle }: { handle: string },
       context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(context)
+      const { viewer } = await getViewerCheck(context);
 
-      await viewer.set({ handle }, { merge: true })
+      await viewer.set({ handle }, { merge: true });
       const collections = await firestore
-        .collection('collections')
-        .where('owner', '==', 'users/' + viewer.id)
-        .get()
+        .collection("collections")
+        .where("owner", "==", "users/" + viewer.id)
+        .get();
       await Promise.all(
         collections.docs
-          .filter((doc) => !doc.get('global'))
-          .map((doc) =>
+          .filter(doc => !doc.get("global"))
+          .map(doc =>
             doc.ref.set(
               {
-                slug: slugify(handle) + '/' + slugify(doc.get('name')),
+                slug: slugify(handle) + "/" + slugify(doc.get("name")),
                 lastModified: FieldValue.serverTimestamp(),
               },
               { merge: true },
             ),
           ),
-      )
-      return 'success'
+      );
+      return "success";
     },
     createCollection: async (
       _: {},
@@ -391,119 +422,121 @@ const resolvers = {
       }: { name: string; global: boolean },
       context: MyContext,
     ) => {
-      const vsrc = await getViewerCheck(context)
-      const viewer = await vsrc.viewer.get()
-      if (global && !viewer.get('admin'))
-        throw new UserInputError('Only admin can create global songbooks')
+      const vsrc = await getViewerCheck(context);
+      const viewer = await vsrc.viewer.get();
+      if (global && !viewer.get("admin"))
+        throw new UserInputError("Only admin can create global songbooks");
 
       const slug =
         (global
-          ? ''
-          : slugify(viewer.get('handle') || viewer.get('name')) + '/') +
-        slugify(requestedName)
+          ? ""
+          : slugify(viewer.get("handle") || viewer.get("name")) + "/") +
+        slugify(requestedName);
       const existing = await firestore
-        .collection('collections')
-        .where('slug', '==', slug)
-        .select('slug')
+        .collection("collections")
+        .where("slug", "==", slug)
+        .select("slug")
         .limit(1)
-        .get()
+        .get();
       if (existing.docs.length > 0)
-        throw new Error('Collection with given name already exists')
+        throw new Error("Collection with given name already exists");
 
-      const doc = firestore.doc('collections/' + (await randomID(20)))
+      const doc = firestore.doc("collections/" + (await randomID(20)));
       await doc.set({
         name: requestedName,
-        owner: 'users/' + viewer.id,
+        owner: "users/" + viewer.id,
         insertedAt: FieldValue.serverTimestamp(),
         lastModified: FieldValue.serverTimestamp(),
         global,
         slug,
         deleted: false,
         list: [],
-      })
-      return doc.get()
+      });
+      return doc.get();
     },
     addToCollection: async (
       _: {},
       { song, collection }: { song: string; collection: string },
       context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(context)
-      const collectionRef = firestore.doc('collections/' + collection)
-      const collectionSnap = await collectionRef.get()
-      if (collectionSnap.get('owner') !== 'users/' + viewer.id)
-        throw new UserInputError('Not your collection')
-      const songSnap = await firestore.doc('songs/' + song).get()
-      if (!songSnap.exists) throw new UserInputError('Song does not exist')
+      const { viewer } = await getViewerCheck(context);
+      const collectionRef = firestore.doc("collections/" + collection);
+      const collectionSnap = await collectionRef.get();
+      if (collectionSnap.get("owner") !== "users/" + viewer.id)
+        throw new UserInputError("Not your collection");
+      const songSnap = await firestore.doc("songs/" + song).get();
+      if (!songSnap.exists) throw new UserInputError("Song does not exist");
 
       await collectionRef.set(
         {
-          list: FieldValue.arrayUnion('songs/' + song),
+          list: FieldValue.arrayUnion("songs/" + song),
           lastModified: FieldValue.serverTimestamp(),
         },
         { merge: true },
-      )
-      return 'Success!'
+      );
+      return "Success!";
     },
     removeFromCollection: async (
       _: {},
       { song, collection }: { song: string; collection: string },
       context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(context)
-      const collectionRef = firestore.doc('collections/' + collection)
-      const collectionSnap = await collectionRef.get()
-      if (collectionSnap.get('owner') !== 'users/' + viewer.id)
-        throw new UserInputError('Not your collection')
-      const songSnap = await firestore.doc('songs/' + song).get()
-      if (!songSnap.exists) throw new UserInputError('Song does not exist')
+      const { viewer } = await getViewerCheck(context);
+      const collectionRef = firestore.doc("collections/" + collection);
+      const collectionSnap = await collectionRef.get();
+      if (collectionSnap.get("owner") !== "users/" + viewer.id)
+        throw new UserInputError("Not your collection");
+      const songSnap = await firestore.doc("songs/" + song).get();
+      if (!songSnap.exists) throw new UserInputError("Song does not exist");
 
       await collectionRef.set(
         {
-          list: FieldValue.arrayRemove('songs/' + song),
+          list: FieldValue.arrayRemove("songs/" + song),
           lastModified: FieldValue.serverTimestamp(),
         },
         { merge: true },
-      )
-      return 'Success!'
+      );
+      return "Success!";
     },
     createSong: async (
       _: {},
       { input }: { input: { author: string; title: string } },
       context: MyContext,
     ) => {
-      const { viewer } = await getViewerCheck(context)
+      const { viewer } = await getViewerCheck(context);
 
-      const { title, author } = input
-      const slug = slugify(`${title}-${author}`)
-      const existing = await songBySlug(slug)
-      if (existing !== null) throw new UserInputError('Song already exists')
-      const doc = firestore.doc('songs/' + (await randomID(20)))
-      if ((await doc.get()).exists) throw new Error('Generated coliding id')
+      const { title, author } = input;
+      const slug = slugify(`${title}-${author}`);
+      const existing = await songBySlug(slug);
+      if (existing !== null) throw new UserInputError("Song already exists");
+      const doc = firestore.doc("songs/" + (await randomID(20)));
+      if ((await doc.get()).exists) throw new Error("Generated coliding id");
       await doc.set({
         title,
         author,
         deleted: false,
         slug,
-        text: '',
-        editor: 'users/' + viewer.id,
+        text: "",
+        editor: "users/" + viewer.id,
         insertedAt: FieldValue.serverTimestamp(),
         lastModified: FieldValue.serverTimestamp(),
-      })
-      return await doc.get()
+      });
+      return await doc.get();
     },
     updateSong: async (_: {}, { id, input }: { input: any; id: string }) => {
-      const doc = firestore.doc('songs/' + id)
-      const prev = await doc.get()
-      if (!prev.exists) throw new Error('Song does not exist')
+      const doc = firestore.doc("songs/" + id);
+      const prev = await doc.get();
+      if (!prev.exists) throw new Error("Song does not exist");
       await doc.set(
         {
-          ...Object.fromEntries(Object.entries(input).filter(([, v]) => v !== null)),
+          ...Object.fromEntries(
+            Object.entries(input).filter(([, v]) => v !== null),
+          ),
           lastModified: FieldValue.serverTimestamp(),
         },
         { merge: true },
-      )
-      return doc.get()
+      );
+      return doc.get();
     },
     async login(
       _: {},
@@ -511,36 +544,36 @@ const resolvers = {
       context: MyContext,
     ) {
       const user = await firestore
-        .collection('users')
-        .where('email', '==', email)
+        .collection("users")
+        .where("email", "==", email)
         .limit(1)
-        .get()
-      const doc = user.docs[0]
+        .get();
+      const doc = user.docs[0];
       if (!doc) {
         return {
-          __typename: 'LoginError',
-          message: 'Uživatel s daným emailem nenalezen',
-        }
+          __typename: "LoginError",
+          message: "Uživatel s daným emailem nenalezen",
+        };
       }
 
-      const passwordHash = doc.get('passwordHash')
+      const passwordHash = doc.get("passwordHash");
       if (!passwordHash) {
         doc.ref.set(
           { passwordHash: await hashPassword(password) },
           { merge: true },
-        )
+        );
       } else {
         if (!(await comparePassword(password, passwordHash))) {
-          return { __typename: 'LoginError', message: 'Chybné heslo' }
+          return { __typename: "LoginError", message: "Chybné heslo" };
         }
       }
 
-      await createSession(context, doc.id)
+      await createSession(context, doc.id);
 
       return {
-        __typename: 'LoginSuccess',
+        __typename: "LoginSuccess",
         user: await doc.data(),
-      }
+      };
     },
     async register(
       _: {},
@@ -549,52 +582,54 @@ const resolvers = {
     ) {
       if (!input.name || !input.email || !input.password)
         return {
-          __typename: 'RegisterError',
-          message: 'Všechna pole jsou povinná',
-        }
+          __typename: "RegisterError",
+          message: "Všechna pole jsou povinná",
+        };
       const user = await firestore
-        .collection('users')
-        .where('email', '==', input.email)
+        .collection("users")
+        .where("email", "==", input.email)
         .limit(1)
-        .get()
+        .get();
       if (user.docs.length > 0)
-        return { __typename: 'RegisterError', message: 'Email je již použit' }
-      const id = await randomID(30)
-      const doc = firestore.doc('users/' + id)
+        return { __typename: "RegisterError", message: "Email je již použit" };
+      const id = await randomID(30);
+      const doc = firestore.doc("users/" + id);
       await doc.set({
         name: input.name,
         passwordHash: await hashPassword(input.password),
         email: input.email,
-      })
-      await createSession(context, id)
+      });
+      await createSession(context, id);
       return {
-        __typename: 'RegisterSuccess',
+        __typename: "RegisterSuccess",
         user: (await doc.get()).data(),
-      }
+      };
     },
     logout: async (_: {}, _2: {}, context: MyContext) => {
-      const data = await getViewer(context)
+      const data = await getViewer(context);
       // make it expire
-      context.setSessionCookie('', Duration.fromObject({ second: 1 }))
+      context.setSessionCookie("", Duration.fromObject({ second: 1 }));
       if (data) {
-        await data.session.delete()
+        await data.session.delete();
       }
-      return 'Success!'
+      return "Success!";
     },
   },
-}
+};
 
 async function createSession(context: MyContext, id: string) {
-  const sessionToken = await randomID(30)
-  const session = firestore.doc('sessions/' + sessionToken)
-  const sessionDuration = Duration.fromObject({ months: 2 })
+  const sessionToken = await randomID(30);
+  const session = firestore.doc("sessions/" + sessionToken);
+  const sessionDuration = Duration.fromObject({ months: 2 });
   await session.set({
-    user: 'users/' + id,
+    user: "users/" + id,
     token: sessionToken,
-    expires: DateTime.utc().plus(sessionDuration).toISO(),
-  })
+    expires: DateTime.utc()
+      .plus(sessionDuration)
+      .toISO(),
+  });
 
-  context.setSessionCookie(sessionToken, sessionDuration)
+  context.setSessionCookie(sessionToken, sessionDuration);
 }
 
 export default {
@@ -603,4 +638,4 @@ export default {
   playground: true,
   introspection: true,
   //tracing: true,
-}
+};
