@@ -138,8 +138,6 @@ const typeDefs = gql`
     createCollection(name: String!, global: Boolean): CollectionRecord
     addToCollection(collection: String!, song: String!): String
     removeFromCollection(collection: String!, song: String!): String
-    setUpdateTimeToNowAll: String
-    freshen(slug: String!): String
   }
 `;
 
@@ -331,33 +329,6 @@ const resolvers = {
     __resolveType: (src: any) => src.__typename,
   },
   Mutation: {
-    freshen: async (_: {}, { slug }: { slug: string }, context: MyContext) => {
-      const user = await getViewer(context);
-      const viewer = await user?.viewer.get();
-      if (!viewer?.data()?.admin) return "Not admin";
-
-      const song = (await queryFieldEquals("songs", "slug", slug))[0];
-      if (!song) return "Not found";
-      song.ref.set(
-        { lastModified: FieldValue.serverTimestamp() },
-        { merge: true },
-      );
-      return "done";
-    },
-    setUpdateTimeToNowAll: async (_: {}, _2: {}, context: MyContext) => {
-      const user = await getViewer(context);
-      const viewer = await user?.viewer.get();
-      if (!viewer?.data()?.admin) return "Not admin";
-
-      const songs = await firestore.collection("songs").get();
-      for (const song of songs.docs) {
-        song.ref.set(
-          { lastModified: FieldValue.serverTimestamp() },
-          { merge: true },
-        );
-      }
-      return "done";
-    },
     setHandle: async (
       _: {},
       { handle }: { handle: string },
