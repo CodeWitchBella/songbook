@@ -11,9 +11,10 @@ jobs:
     name: Deploy
     steps:
       - uses: actions/checkout@v2
-      - uses: borales/actions-yarn@v2.0.0
+      - uses: actions/setup-node@v2
         with:
-          cmd: install # will run `yarn install` command
+          node-version: "14"
+      - run: yarn install
       - name: Publish
         uses: cloudflare/wrangler-action@1.3.0
         with:
