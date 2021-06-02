@@ -7,6 +7,7 @@ import * as bcrypt from "bcryptjs";
 import { MyContext } from "./context";
 import {
   firestoreDoc,
+  firestoreFieldTransforms,
   getAll,
   queryFieldEquals,
   runQuery,
@@ -323,7 +324,7 @@ const resolvers = {
       const collections = await queryFieldEquals(
         "collections",
         "owner",
-        "users/" + viewer.id,
+        viewer.id,
       );
       await Promise.all(
         collections
@@ -349,8 +350,9 @@ const resolvers = {
       context: MyContext,
     ) => {
       const vsrc = await getViewerCheck(context);
+      const viewerId = vsrc.viewer.id;
       const viewer = (await vsrc.viewer.get())?.data();
-      if (!viewer) throw new Error("Cannot load viewer");
+      if (!viewer || !viewerId) throw new Error("Cannot load viewer");
       if (global && !viewer.admin)
         throw new UserInputError("Only admin can create global songbooks");
 
@@ -365,7 +367,7 @@ const resolvers = {
       await doc.set(
         {
           name: requestedName,
-          owner: "users/" + viewer.id,
+          owner: viewerId,
           insertedAt: serverTimestamp(),
           lastModified: serverTimestamp(),
           global,
@@ -387,18 +389,20 @@ const resolvers = {
       const collectionSnap = await collectionRef.get();
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
-      if (collectionSnap.get("owner") !== "users/" + viewer.id)
+      if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
       const songSnap = await firestoreDoc("songs/" + song).get();
       if (!songSnap) throw new UserInputError("Song does not exist");
 
-      await collectionRef.set(
+      await firestoreFieldTransforms(collectionRef.id, [
         {
-          list: FieldValue.arrayUnion("songs/" + song),
-          lastModified: FieldValue.serverTimestamp(),
+          fieldPath: "list",
+          appendMissingElements: {
+            values: [{ stringValue: "songs/" + song }],
+          },
         },
-        { merge: true },
-      );
+        { fieldPath: "lastModified", setToServerValue: "REQUEST_TIME" },
+      ]);
       return "Success!";
     },
     removeFromCollection: async (
@@ -411,18 +415,19 @@ const resolvers = {
       const collectionSnap = await collectionRef.get();
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
-      if (collectionSnap.get("owner") !== "users/" + viewer.id)
+      if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
       const songSnap = await firestoreDoc("songs/" + song).get();
       if (!songSnap) throw new UserInputError("Song does not exist");
 
-      await collectionRef.set(
+      await firestoreFieldTransforms(collectionRef.id, [
         {
-          list: FieldValue.arrayRemove("songs/" + song),
-          lastModified: serverTimestamp(),
+          fieldPath: "list",
+          removeAllFromArray: { values: [{ stringValue: "songs/" + song }] },
         },
-        { merge: true },
-      );
+        { fieldPath: "lastModified", setToServerValue: "REQUEST_TIME" },
+      ]);
+
       return "Success!";
     },
     createSong: async (
@@ -445,7 +450,7 @@ const resolvers = {
           deleted: false,
           slug,
           text: "",
-          editor: "users/" + viewer.id,
+          editor: viewer.id,
           insertedAt: serverTimestamp(),
           lastModified: serverTimestamp(),
         },

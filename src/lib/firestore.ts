@@ -50,7 +50,7 @@ function denestValue(v: any): any {
   return kk === "mapValue"
     ? denest(vv)
     : kk === "arrayValue"
-    ? (vv as any).values.map(denestValue)
+    ? (vv as any).values?.map(denestValue) ?? []
     : vv;
 }
 function denest(doc: any): any {
@@ -92,8 +92,8 @@ export async function runQuery(collectionId: string, where: any) {
     throw new Error("query failed");
   }
   const mapped = json
-    .map(doc => (doc.document ? snap(doc.document) : null))
-    .filter(Boolean);
+    .filter(doc => doc.document)
+    .map(doc => snap(doc.document!));
   return mapped;
 }
 
@@ -145,6 +145,8 @@ export function firestoreDoc(id: string) {
                     ? { booleanValue: v }
                     : v instanceof Date
                     ? { timestampValue: v.toISOString() }
+                    : Array.isArray(v) && v.length === 0
+                    ? { arrayValue: { values: [] } }
                     : null;
                 if (!value) {
                   console.log(v, JSON.stringify(v));
@@ -165,6 +167,38 @@ export function firestoreDoc(id: string) {
       await doFetch("/" + id, { method: "DELETE" });
     },
   };
+}
+
+export async function firestoreFieldTransforms(
+  id: string,
+  fieldTransforms: readonly ({
+    fieldPath: string;
+  } & (
+    | { setToServerValue: "REQUEST_TIME" }
+    | { increment: any }
+    | { maximum: any }
+    | { minimum: any }
+    | { appendMissingElements: { values: readonly any[] } }
+    | { removeAllFromArray: { values: readonly any[] } }
+  ))[],
+) {
+  const res = await doFetch(":batchWrite", {
+    method: "POST",
+    body: JSON.stringify({
+      writes: [
+        {
+          transform: {
+            document: base + "/" + id,
+            fieldTransforms,
+          },
+        },
+      ],
+    }),
+  });
+  if (!res.ok) {
+    console.error(await res.text());
+    throw new Error("write failed");
+  }
 }
 
 export async function getAll(docs: readonly { id: string }[]) {
