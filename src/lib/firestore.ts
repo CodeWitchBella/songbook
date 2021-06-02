@@ -83,8 +83,17 @@ export async function runQuery(collectionId: string, where: any) {
       },
     }),
   });
-  const json: { document: { name: string; fields: any } }[] = await res.json();
-  const mapped = json.map(doc => snap(doc.document));
+  const json: {
+    document?: { name: string; fields: any };
+    [key: string]: any;
+  }[] = await res.json();
+  if (json.length === 1 && json[0].error) {
+    console.error(JSON.stringify(json[0], null, 2));
+    throw new Error("query failed");
+  }
+  const mapped = json
+    .map(doc => (doc.document ? snap(doc.document) : null))
+    .filter(Boolean);
   return mapped;
 }
 

@@ -9,6 +9,7 @@ async function handleRequest(request: Request) {
   try {
     return await handleApollo(request, server);
   } catch (err) {
+    console.error(err.stack);
     return new Response(err.stack, {
       status: 500,
       headers: { "content-type": "text/plain; charset=utf-8" },
