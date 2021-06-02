@@ -48,13 +48,13 @@ async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
     },
   );
 }
-function snap(doc: { document: { name: string; fields: any } }) {
+function snap(doc: { name: string; fields: any }) {
   let cache: { [key: string]: any };
   const ret = {
     data: () => {
       if (!cache)
         cache = Object.fromEntries(
-          Object.entries(doc.document.fields).map(([k, v]) => [
+          Object.entries(doc.fields).map(([k, v]) => [
             k,
             Object.values(v as any)[0],
           ]),
@@ -62,8 +62,8 @@ function snap(doc: { document: { name: string; fields: any } }) {
       return cache;
     },
     get: (key: string) => ret.data()[key],
-    id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
-    ref: firestoreDoc(doc.document.name.replace(/^.*\/documents\//, "")),
+    id: doc.name.replace(/^.*\/documents\/[^/]+\//, ""),
+    ref: firestoreDoc(doc.name.replace(/^.*\/documents\//, "")),
   };
   return ret;
 }
@@ -79,7 +79,7 @@ export async function runQuery(collectionId: string, where: any) {
     }),
   });
   const json: { document: { name: string; fields: any } }[] = await res.json();
-  const mapped = json.map(snap);
+  const mapped = json.map(doc => snap(doc.document));
   return mapped;
 }
 
@@ -100,9 +100,11 @@ export async function queryFieldEquals(
 export function firestoreDoc(id: string) {
   return {
     id,
-    // todo
-    get: async () =>
-      Math.random() > 0.5 ? snap({ document: { name: id, fields: {} } }) : null,
+    get: async () => {
+      const response = await doFetch("/" + id);
+      if (!response.ok) return null;
+      return snap(await response.json());
+    },
     // todo
     set: async (values: any, { merge }: { merge: boolean }) => {},
     // todo
