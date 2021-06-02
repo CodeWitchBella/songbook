@@ -251,7 +251,7 @@ const resolvers = {
       return docs;
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      return await getAll(ids.map(id => firestoreDoc("songs/" + id)));
+      return await getAll(ids.map(id => ({ id: "songs/" + id })));
     },
     collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
       return await getAll(ids.map(id => firestoreDoc("collections/" + id)));

@@ -35,18 +35,15 @@ const getHeaders = (() => {
   };
 })();
 
+const base = `projects/${serviceAccountJSON.project_id}/databases/(default)/documents`;
 async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
-  return fetch(
-    `https://firestore.googleapis.com/v1beta1/projects/${serviceAccountJSON.project_id}/databases/(default)/documents` +
-      path,
-    {
-      ...options,
-      headers: {
-        ...options?.headers,
-        ...(await getHeaders()),
-      },
+  return fetch(`https://firestore.googleapis.com/v1/${base}` + path, {
+    ...options,
+    headers: {
+      ...options?.headers,
+      ...(await getHeaders()),
     },
-  );
+  });
 }
 function snap(doc: { name: string; fields: any }) {
   let cache: { [key: string]: any };
@@ -113,7 +110,14 @@ export function firestoreDoc(id: string) {
 }
 
 export async function getAll(docs: readonly { id: string }[]) {
-  return [].map(snap);
+  const response = await doFetch(":batchGet", {
+    method: "POST",
+    body: JSON.stringify({
+      documents: docs.map(doc => base + "/" + doc.id),
+    }),
+  });
+  const json: any[] = await response.json();
+  return json.map(doc => (doc.found ? snap(doc.found) : null)).filter(Boolean);
 }
 
 export function serverTimestamp() {
