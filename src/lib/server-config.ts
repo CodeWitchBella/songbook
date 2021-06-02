@@ -253,10 +253,14 @@ const resolvers = {
       return docs;
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      return await getAll(ids.map(id => ({ id: "songs/" + id })));
+      const list = await getAll(ids.map(id => ({ id: "songs/" + id })));
+      return list.filter(Boolean);
     },
     collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      return await getAll(ids.map(id => firestoreDoc("collections/" + id)));
+      const list = await getAll(
+        ids.map(id => firestoreDoc("collections/" + id)),
+      );
+      return list.filter(Boolean);
     },
     songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
       const songs = await Promise.all(slugs.map(songBySlug));
@@ -302,9 +306,9 @@ const resolvers = {
       return owner?.data() ?? null;
     },
     songList: async (src: any) => {
-      return src.list.length < 1
-        ? []
-        : getAll(src.list.map((id: string) => firestoreDoc(id)));
+      if (src.list.length < 1) return [];
+      const list = await getAll(src.list.map((id: string) => firestoreDoc(id)));
+      return list.filter(Boolean);
     },
   },
   LoginPayload: {

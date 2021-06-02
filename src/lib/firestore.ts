@@ -209,7 +209,7 @@ export async function getAll(docs: readonly { id: string }[]) {
     }),
   });
   const json: any[] = await response.json();
-  return json.map(doc => (doc.found ? snap(doc.found) : null)).filter(Boolean);
+  return json.map(doc => (doc.found ? snap(doc.found) : null));
 }
 
 export function serverTimestamp() {
