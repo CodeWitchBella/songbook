@@ -48,6 +48,24 @@ async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
     },
   );
 }
+function snap(doc: { document: { name: string; fields: any } }) {
+  let cache: { [key: string]: any };
+  const ret = {
+    data: () => {
+      if (!cache)
+        cache = Object.fromEntries(
+          Object.entries(doc.document.fields).map(([k, v]) => [
+            k,
+            Object.values(v as any)[0],
+          ]),
+        );
+      return cache;
+    },
+    get: (key: string) => ret.data()[key],
+    id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
+  };
+  return ret;
+}
 
 export async function runQuery(collectionId: string, where: any) {
   const res = await doFetch(`:runQuery`, {
@@ -60,24 +78,7 @@ export async function runQuery(collectionId: string, where: any) {
     }),
   });
   const json: { document: { name: string; fields: any } }[] = await res.json();
-  const mapped = json.map(doc => {
-    let cache: { [key: string]: unknown };
-    const ret = {
-      data: () => {
-        if (!cache)
-          cache = Object.fromEntries(
-            Object.entries(doc.document.fields).map(([k, v]) => [
-              k,
-              Object.values(v as any)[0],
-            ]),
-          );
-        return cache;
-      },
-      get: (key: string) => ret.data()[key],
-      id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
-    };
-    return ret;
-  });
+  const mapped = json.map(snap);
   return mapped;
 }
 
@@ -93,4 +94,16 @@ export async function queryFieldEquals(
       value: { stringValue: value },
     },
   });
+}
+
+export function firestoreDoc(id: string) {
+  return {
+    id,
+    // todo
+    get: async () => snap({ document: { name: id, fields: {} } }),
+  };
+}
+
+export async function getAll(docs: readonly { id: string }[]) {
+  return [].map(snap);
 }
