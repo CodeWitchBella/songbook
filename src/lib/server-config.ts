@@ -232,7 +232,8 @@ export const hashPassword = (password: string): Promise<string> => {
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
-    hello: () => "world",
+    hello: (_: unknown, _2: unknown, context: MyContext) =>
+      "world " + context.url,
     songs: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },

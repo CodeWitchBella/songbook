@@ -20,6 +20,7 @@ export async function handleApollo(
     setSessionCookie: (value, duration) => {
       hdr = createSetSessionCookieHeader(value, duration);
     },
+    url: request.url,
   };
   const response = (await graphqlCloudflare(async () => ({
     ...(await server.createGraphQLServerOptions(request as any)),
