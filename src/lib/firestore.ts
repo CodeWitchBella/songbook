@@ -45,17 +45,20 @@ async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
     },
   });
 }
+function denest(doc: any): any {
+  return Object.fromEntries(
+    Object.entries(doc.fields).map(([k, v]) => {
+      const [kk, vv] = Object.entries(v as any)[0];
+      return [k, kk === "mapValue" ? denest(vv) : vv];
+    }),
+  );
+}
+
 function snap(doc: { name: string; fields: any }) {
   let cache: { [key: string]: any };
   const ret = {
     data: () => {
-      if (!cache)
-        cache = Object.fromEntries(
-          Object.entries(doc.fields).map(([k, v]) => [
-            k,
-            Object.values(v as any)[0],
-          ]),
-        );
+      if (!cache) cache = denest(doc);
       return cache;
     },
     get: (key: string) => ret.data()[key],
