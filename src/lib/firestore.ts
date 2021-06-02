@@ -105,9 +105,15 @@ export function firestoreDoc(id: string) {
       Math.random() > 0.5 ? snap({ document: { name: id, fields: {} } }) : null,
     // todo
     set: async (values: any, { merge }: { merge: boolean }) => {},
+    // todo
+    delete: async () => {},
   };
 }
 
 export async function getAll(docs: readonly { id: string }[]) {
   return [].map(snap);
+}
+
+export function serverTimestamp() {
+  return "TODO";
 }

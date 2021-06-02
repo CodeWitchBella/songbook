@@ -5,7 +5,13 @@ import { DateTime, Duration } from "luxon";
 import { notNull } from "@codewitchbella/ts-utils";
 import * as bcrypt from "bcryptjs";
 import { MyContext } from "./context";
-import { firestoreDoc, getAll, queryFieldEquals, runQuery } from "./firestore";
+import {
+  firestoreDoc,
+  getAll,
+  queryFieldEquals,
+  runQuery,
+  serverTimestamp,
+} from "./firestore";
 
 function slugify(part: string) {
   return latinize(part)
@@ -350,7 +356,7 @@ const resolvers = {
             doc.ref.set(
               {
                 slug: slugify(handle) + "/" + slugify(doc.get("name") as any),
-                lastModified: FieldValue.serverTimestamp(),
+                lastModified: serverTimestamp(),
               },
               { merge: true },
             ),
@@ -384,8 +390,8 @@ const resolvers = {
         {
           name: requestedName,
           owner: "users/" + viewer.id,
-          insertedAt: FieldValue.serverTimestamp(),
-          lastModified: FieldValue.serverTimestamp(),
+          insertedAt: serverTimestamp(),
+          lastModified: serverTimestamp(),
           global,
           slug,
           deleted: false,
@@ -437,7 +443,7 @@ const resolvers = {
       await collectionRef.set(
         {
           list: FieldValue.arrayRemove("songs/" + song),
-          lastModified: FieldValue.serverTimestamp(),
+          lastModified: serverTimestamp(),
         },
         { merge: true },
       );
@@ -464,8 +470,8 @@ const resolvers = {
           slug,
           text: "",
           editor: "users/" + viewer.id,
-          insertedAt: FieldValue.serverTimestamp(),
-          lastModified: FieldValue.serverTimestamp(),
+          insertedAt: serverTimestamp(),
+          lastModified: serverTimestamp(),
         },
         { merge: false },
       );
@@ -480,7 +486,7 @@ const resolvers = {
           ...Object.fromEntries(
             Object.entries(input).filter(([, v]) => v !== null),
           ),
-          lastModified: FieldValue.serverTimestamp(),
+          lastModified: serverTimestamp(),
         },
         { merge: true },
       );
