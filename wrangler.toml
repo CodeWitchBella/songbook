@@ -2,7 +2,7 @@ name = "songbook"
 type = "javascript"
 account_id = "cce7f3b93d1cc5016fffc6068a30a3bb"
 workers_dev = true
-route = ""
+route = "https://zpevnik.skorepova.info/api/graphql"
 zone_id = ""
 
 [build]
