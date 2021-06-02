@@ -63,6 +63,7 @@ function snap(doc: { document: { name: string; fields: any } }) {
     },
     get: (key: string) => ret.data()[key],
     id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
+    ref: firestoreDoc(doc.document.name.replace(/^.*\/documents\//, "")),
   };
   return ret;
 }
@@ -100,7 +101,10 @@ export function firestoreDoc(id: string) {
   return {
     id,
     // todo
-    get: async () => snap({ document: { name: id, fields: {} } }),
+    get: async () =>
+      Math.random() > 0.5 ? snap({ document: { name: id, fields: {} } }) : null,
+    // todo
+    set: async (values: any, { merge }: { merge: boolean }) => {},
   };
 }
 
