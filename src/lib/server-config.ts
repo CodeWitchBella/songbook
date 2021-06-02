@@ -291,24 +291,10 @@ const resolvers = {
   },
   SongRecord: {
     data: (src: any) => src.data(),
-    lastModified: (src: any) => {
-      const data = src.data();
-      return DateTime.fromJSDate(
-        !!data.lastModified
-          ? data.lastModified.toDate()
-          : src.updateTime.toDate(),
-      )
-        .setZone("utc")
-        .toISO();
-    },
+    lastModified: (src: any) => src.data().lastModified,
   },
   CollectionRecord: {
-    lastModified: (src: any) => {
-      const data = src.data();
-      return DateTime.fromJSDate(data.lastModified.toDate())
-        .setZone("utc")
-        .toISO();
-    },
+    lastModified: (src: any) => src.data().lastModified,
   },
   DeletableCollectionRecord: {
     __resolveType: (src: any) =>
