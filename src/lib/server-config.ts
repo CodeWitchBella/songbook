@@ -272,14 +272,7 @@ const resolvers = {
         return (await firestoreDoc(src.editor).get())?.data() ?? null;
       return null;
     },
-    insertedAt: (src: any) =>
-      !src.insertedAt
-        ? null
-        : typeof src.insertedAt === "string"
-        ? src.insertedAt
-        : DateTime.fromJSDate(src.insertedAt.toDate())
-            .setZone("utc")
-            .toISO(),
+    insertedAt: (src: any) => src.insertedAt || null,
     fontSize: (src: any) =>
       typeof src.fontSize === "number" ? src.fontSize : 1,
     paragraphSpace: (src: any) =>
@@ -301,10 +294,7 @@ const resolvers = {
       src.data().deleted ? "Deleted" : "CollectionRecord",
   },
   Collection: {
-    insertedAt: (src: any) =>
-      DateTime.fromJSDate(src.insertedAt.toDate())
-        .setZone("utc")
-        .toISO(),
+    insertedAt: (src: any) => src.insertedAt || null,
     owner: async (src: any) => {
       const owner = await firestoreDoc(src.owner).get();
       return owner?.data() ?? null;
