@@ -156,5 +156,5 @@ export async function getAll(docs: readonly { id: string }[]) {
 }
 
 export function serverTimestamp() {
-  return "TODO";
+  return { TODO: "todo" };
 }
