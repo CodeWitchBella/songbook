@@ -38,6 +38,8 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"],
+      setImmediate: ["setimmediate", "setImmedate"],
+      clearImmediate: ["setimmediate", "clearImmedate"],
     }),
   ],
 };

@@ -1,5 +1,6 @@
 // @ts-expect-error
 import { getTokenFromGCPServiceAccount } from "@sagi.io/workers-jwt";
+import DataLoader from "dataloader";
 
 declare const FIREBASE_SERVICE_KEY: string | undefined;
 const serviceAccountJSON = JSON.parse(FIREBASE_SERVICE_KEY || "{}");
@@ -61,12 +62,17 @@ function denest(doc: any): any {
 
 function snap(doc: { name: string; fields: any }) {
   let cache: { [key: string]: any };
-  const ret = {
+  const ret: {
+    data: () => { [key: string]: any };
+    get: (key: string) => any;
+    id: string;
+    ref: ReturnType<typeof firestoreDoc>;
+  } = {
     data: () => {
       if (!cache) cache = denest(doc);
       return cache;
     },
-    get: (key: string) => ret.data()[key],
+    get: key => ret.data()[key],
     id: doc.name.replace(/^.*\/documents\/[^/]+\//, ""),
     ref: firestoreDoc(doc.name.replace(/^.*\/documents\//, "")),
   };
@@ -111,14 +117,26 @@ export async function queryFieldEquals(
   });
 }
 
+const getLoader = new DataLoader(
+  async (ids: readonly string[]) => {
+    const res = await getAll(ids);
+    const map = new Map<string, typeof res[0]>();
+    for (const item of res) {
+      if (item) map.set(item.ref.id, item);
+    }
+    return ids.map(id => map.get(id) ?? null);
+  },
+  {
+    batchScheduleFn: cb => {
+      setTimeout(cb, 1);
+    },
+  },
+);
+
 export function firestoreDoc(id: string) {
   return {
     id,
-    get: async () => {
-      const response = await doFetch("/" + id);
-      if (!response.ok) return null;
-      return snap(await response.json());
-    },
+    get: (): Promise<ReturnType<typeof snap> | null> => getLoader.load(id),
     set: async (values: any, { merge }: { merge: boolean }) => {
       const params = new URLSearchParams();
       if (merge) {
@@ -201,11 +219,11 @@ export async function firestoreFieldTransforms(
   }
 }
 
-export async function getAll(docs: readonly { id: string }[]) {
+export async function getAll(docs: readonly string[]) {
   const response = await doFetch(":batchGet", {
     method: "POST",
     body: JSON.stringify({
-      documents: docs.map(doc => base + "/" + doc.id),
+      documents: docs.map(id => base + "/" + id),
     }),
   });
   const json: any[] = await response.json();

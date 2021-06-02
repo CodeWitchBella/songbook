@@ -1,3 +1,5 @@
+globalThis.setImmediate = undefined as any;
+
 import { ApolloServer } from "apollo-server-cloudflare";
 import { handleApollo } from "./apollo";
 import serverConfig from "./lib/server-config";
