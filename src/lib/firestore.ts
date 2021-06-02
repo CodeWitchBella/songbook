@@ -50,7 +50,7 @@ async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
 }
 
 export async function runQuery(collectionId: string, where: any) {
-  return doFetch(`:runQuery`, {
+  const res = await doFetch(`:runQuery`, {
     method: "POST",
     body: JSON.stringify({
       structuredQuery: {
@@ -58,5 +58,39 @@ export async function runQuery(collectionId: string, where: any) {
         where,
       },
     }),
+  });
+  const json: { document: { name: string; fields: any } }[] = await res.json();
+  const mapped = json.map(doc => {
+    let cache: { [key: string]: unknown };
+    const ret = {
+      data: () => {
+        if (!cache)
+          cache = Object.fromEntries(
+            Object.entries(doc.document.fields).map(([k, v]) => [
+              k,
+              Object.values(v as any)[0],
+            ]),
+          );
+        return cache;
+      },
+      get: (key: string) => ret.data()[key],
+      id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
+    };
+    return ret;
+  });
+  return mapped;
+}
+
+export async function queryFieldEquals(
+  collectionId: string,
+  field: string,
+  value: string,
+) {
+  return runQuery(collectionId, {
+    fieldFilter: {
+      field: { fieldPath: field },
+      op: "EQUAL",
+      value: { stringValue: value },
+    },
   });
 }

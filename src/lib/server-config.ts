@@ -5,7 +5,7 @@ import { DateTime, Duration } from "luxon";
 import { notNull } from "@codewitchbella/ts-utils";
 import * as bcrypt from "bcryptjs";
 import { MyContext } from "./context";
-import { runQuery } from "./firestore";
+import { queryFieldEquals, runQuery } from "./firestore";
 
 function slugify(part: string) {
   return latinize(part)
@@ -144,15 +144,10 @@ const typeDefs = gql`
 `;
 
 async function songBySlug(slug: string) {
-  const { docs } = await firestore
-    .collection("songs")
-    .where("slug", "==", slug)
-    .limit(1)
-    .get();
+  const docs = await queryFieldEquals("songs", "slug", slug);
+
   if (docs.length < 1) return null;
-  const doc = docs[0];
-  if (!doc.exists) return null;
-  return doc;
+  return docs[0];
 }
 
 async function randomID(length: number) {
@@ -181,7 +176,7 @@ async function getViewerCheck(context: MyContext) {
 }
 
 async function whereModifiedAfter(path: string, modifiedAfter: string | null) {
-  const res = await runQuery(path, {
+  return runQuery(path, {
     compositeFilter: {
       op: "AND",
       filters: [
@@ -204,18 +199,6 @@ async function whereModifiedAfter(path: string, modifiedAfter: string | null) {
       ].filter(Boolean),
     },
   });
-  const json: { document: { name: string; fields: any } }[] = await res.json();
-  const mapped = json.map(doc => ({
-    ...Object.fromEntries(
-      Object.entries(doc.document.fields).map(([k, v]) => [
-        k,
-        Object.values(v as any)[0],
-      ]),
-    ),
-    id: doc.document.name.replace(/^.*\/documents\/[^/]+\//, ""),
-  }));
-  console.log(JSON.stringify(mapped, null, 2));
-  return mapped;
 }
 
 export const comparePassword = (password: string, hash: string) => {
@@ -359,13 +342,7 @@ const resolvers = {
       const viewer = await user?.viewer.get();
       if (!viewer?.data()?.admin) return "Not admin";
 
-      const song = (
-        await firestore
-          .collection("songs")
-          .where("slug", "==", slug)
-          .limit(1)
-          .get()
-      ).docs[0];
+      const song = (await queryFieldEquals("songs", "slug", slug))[0];
       if (!song) return "Not found";
       song.ref.set(
         { lastModified: FieldValue.serverTimestamp() },
@@ -395,17 +372,18 @@ const resolvers = {
       const { viewer } = await getViewerCheck(context);
 
       await viewer.set({ handle }, { merge: true });
-      const collections = await firestore
-        .collection("collections")
-        .where("owner", "==", "users/" + viewer.id)
-        .get();
+      const collections = await queryFieldEquals(
+        "collections",
+        "owner",
+        "users/" + viewer.id,
+      );
       await Promise.all(
-        collections.docs
+        collections
           .filter(doc => !doc.get("global"))
           .map(doc =>
             doc.ref.set(
               {
-                slug: slugify(handle) + "/" + slugify(doc.get("name")),
+                slug: slugify(handle) + "/" + slugify(doc.get("name") as any),
                 lastModified: FieldValue.serverTimestamp(),
               },
               { merge: true },
@@ -432,13 +410,8 @@ const resolvers = {
           ? ""
           : slugify(viewer.get("handle") || viewer.get("name")) + "/") +
         slugify(requestedName);
-      const existing = await firestore
-        .collection("collections")
-        .where("slug", "==", slug)
-        .select("slug")
-        .limit(1)
-        .get();
-      if (existing.docs.length > 0)
+      const existing = await queryFieldEquals("collections", "slug", slug);
+      if (existing.length > 0)
         throw new Error("Collection with given name already exists");
 
       const doc = firestore.doc("collections/" + (await randomID(20)));
@@ -543,12 +516,8 @@ const resolvers = {
       { email, password }: { email: string; password: string },
       context: MyContext,
     ) {
-      const user = await firestore
-        .collection("users")
-        .where("email", "==", email)
-        .limit(1)
-        .get();
-      const doc = user.docs[0];
+      const user = await queryFieldEquals("users", "email", email);
+      const doc = user[0];
       if (!doc) {
         return {
           __typename: "LoginError",
@@ -585,12 +554,8 @@ const resolvers = {
           __typename: "RegisterError",
           message: "Všechna pole jsou povinná",
         };
-      const user = await firestore
-        .collection("users")
-        .where("email", "==", input.email)
-        .limit(1)
-        .get();
-      if (user.docs.length > 0)
+      const users = await queryFieldEquals("users", "email", input.email);
+      if (users.length > 0)
         return { __typename: "RegisterError", message: "Email je již použit" };
       const id = await randomID(30);
       const doc = firestore.doc("users/" + id);
