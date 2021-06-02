@@ -102,10 +102,45 @@ export function firestoreDoc(id: string) {
       if (!response.ok) return null;
       return snap(await response.json());
     },
-    // todo
-    set: async (values: any, { merge }: { merge: boolean }) => {},
-    // todo
-    delete: async () => {},
+    set: async (values: any, { merge }: { merge: boolean }) => {
+      const params = new URLSearchParams();
+      if (merge) {
+        for (const key of Object.keys(values)) params.append("updateMask", key);
+      }
+      const paramsString = params.toString();
+      const response = await doFetch(
+        "/" + id + (paramsString ? "?" + paramsString : ""),
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            name: base + "/" + id,
+            fields: Object.fromEntries(
+              Object.entries(values).map(([k, v]) => {
+                const value =
+                  typeof v === "string"
+                    ? { stringValue: v }
+                    : Number.isInteger(v)
+                    ? { integerValue: v }
+                    : typeof v === "number"
+                    ? { doubleValue: v }
+                    : typeof v === "boolean"
+                    ? { booleanValue: v }
+                    : null;
+                if (!value) throw new Error("Cannot discern value type");
+                return [k, value];
+              }),
+            ),
+          }),
+        },
+      );
+      if (!response.ok) {
+        console.error(await response.text());
+        throw new Error("Fail");
+      }
+    },
+    delete: async () => {
+      await doFetch("/" + id, { method: "DELETE" });
+    },
   };
 }
 
