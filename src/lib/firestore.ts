@@ -45,12 +45,17 @@ async function doFetch(path: string, options?: Parameters<typeof fetch>[1]) {
     },
   });
 }
+function denestValue(v: any): any {
+  const [kk, vv] = Object.entries(v as any)[0];
+  return kk === "mapValue"
+    ? denest(vv)
+    : kk === "arrayValue"
+    ? (vv as any).values.map(denestValue)
+    : vv;
+}
 function denest(doc: any): any {
   return Object.fromEntries(
-    Object.entries(doc.fields).map(([k, v]) => {
-      const [kk, vv] = Object.entries(v as any)[0];
-      return [k, kk === "mapValue" ? denest(vv) : vv];
-    }),
+    Object.entries(doc.fields).map(([k, v]) => [k, denestValue(v)]),
   );
 }
 
