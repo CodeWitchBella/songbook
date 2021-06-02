@@ -122,7 +122,8 @@ export function firestoreDoc(id: string) {
     set: async (values: any, { merge }: { merge: boolean }) => {
       const params = new URLSearchParams();
       if (merge) {
-        for (const key of Object.keys(values)) params.append("updateMask", key);
+        for (const key of Object.keys(values))
+          params.append("updateMask.fieldPaths", key);
       }
       const paramsString = params.toString();
       const response = await doFetch(
@@ -142,8 +143,13 @@ export function firestoreDoc(id: string) {
                     ? { doubleValue: v }
                     : typeof v === "boolean"
                     ? { booleanValue: v }
+                    : v instanceof Date
+                    ? { timestampValue: v.toISOString() }
                     : null;
-                if (!value) throw new Error("Cannot discern value type");
+                if (!value) {
+                  console.log(v, JSON.stringify(v));
+                  throw new Error("Cannot discern value type");
+                }
                 return [k, value];
               }),
             ),
@@ -173,5 +179,5 @@ export async function getAll(docs: readonly { id: string }[]) {
 }
 
 export function serverTimestamp() {
-  return { TODO: "todo" };
+  return new Date();
 }
