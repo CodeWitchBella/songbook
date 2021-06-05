@@ -154,6 +154,12 @@ async function songBySlug(slug: string) {
   if (docs.length < 1) return null;
   return docs[0];
 }
+async function collectionBySlug(slug: string) {
+  const docs = await queryFieldEquals("collections", "slug", slug);
+
+  if (docs.length < 1) return null;
+  return docs[0];
+}
 
 async function randomID(length: number) {
   let ret = nodeCrypto
@@ -403,8 +409,9 @@ const resolvers = {
       context: MyContext,
     ) => {
       const { viewer } = await getViewerCheck(context);
-      const collectionRef = firestoreDoc("collections/" + collection);
-      const collectionSnap = await collectionRef.get();
+      const collectionSnap =
+        (await firestoreDoc("collections/" + collection).get()) ||
+        (await collectionBySlug(collection));
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
@@ -412,7 +419,7 @@ const resolvers = {
       const songSnap = await firestoreDoc("songs/" + song).get();
       if (!songSnap) throw new UserInputError("Song does not exist");
 
-      await firestoreFieldTransforms(collectionRef.id, [
+      await firestoreFieldTransforms("collections/" + collectionSnap.id, [
         {
           fieldPath: "list",
           appendMissingElements: {
@@ -429,8 +436,9 @@ const resolvers = {
       context: MyContext,
     ) => {
       const { viewer } = await getViewerCheck(context);
-      const collectionRef = firestoreDoc("collections/" + collection);
-      const collectionSnap = await collectionRef.get();
+      const collectionSnap =
+        (await firestoreDoc("collections/" + collection).get()) ||
+        (await collectionBySlug(collection));
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
@@ -438,7 +446,7 @@ const resolvers = {
       const songSnap = await firestoreDoc("songs/" + song).get();
       if (!songSnap) throw new UserInputError("Song does not exist");
 
-      await firestoreFieldTransforms(collectionRef.id, [
+      await firestoreFieldTransforms("collections/" + collectionSnap.id, [
         {
           fieldPath: "list",
           removeAllFromArray: { values: [{ stringValue: "songs/" + song }] },
