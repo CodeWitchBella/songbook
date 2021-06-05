@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import queryString from 'query-string'
 import { useAutoUpdatedSong } from 'utils/firebase'
 import { useNavigate } from 'utils/use-navigate'
+import { graphqlFetch } from 'store/graphql'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -45,6 +46,25 @@ function queryJoin(path: string, query: string) {
   return path + '?' + query
 }
 
+function useSetWindowMethod(name: string, method: Function) {
+  const ref = useRef(method)
+  useEffect(() => {
+    ref.current = method
+  })
+  useEffect(() => {
+    function cur(this: any, ...args: any[]) {
+      return ref.current.apply(this, args)
+    }
+    const prev = (window as any)[name]
+    ;(window as any)[name] = cur
+    return () => {
+      if ((window as any)[name] === cur) {
+        ;(window as any)[name] = prev
+      }
+    }
+  }, [name])
+}
+
 export default function SongSection({
   slug,
   enableMenu = false,
@@ -58,9 +78,30 @@ export default function SongSection({
 
   const pageCount = parsed && parsed.length
   useEffect(() => {
-    if (song)
+    if (song) {
       console.log('song id:', song.id, 'title:', song.title, `(${pageCount})`)
+    }
   }, [pageCount, song])
+  useSetWindowMethod('addToCollection', (collection: string) => {
+    if (!song) throw new Error('No song')
+    graphqlFetch({
+      query: `mutation($collection: String! $song: String!) { addToCollection(collection: $collection song: $song) }`,
+      variables: { collection, song: song.id },
+    }).then(
+      (res) => void console.log(res),
+      (err) => void console.error(err),
+    )
+  })
+  useSetWindowMethod('removeFromCollection', (collection: string) => {
+    if (!song) throw new Error('No song')
+    graphqlFetch({
+      query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
+      variables: { collection, song: song.id },
+    }).then(
+      (res) => void console.log(res),
+      (err) => void console.error(err),
+    )
+  })
   const location = useLocation()
   const navigate = useNavigate()
   if (!song || !parsed) return null
