@@ -12,6 +12,7 @@ const server = new ApolloServer({
       setSessionCookie(cookie, duration) {
         res.set(...createSetSessionCookieHeader(cookie, duration))
       },
+      url: req.originalUrl,
     }
   },
 })
