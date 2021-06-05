@@ -70,7 +70,10 @@ export default function Home() {
       {buildData.commitTime ? (
         <View style={{ bottom: 10, right: 10, position: 'absolute' }}>
           <Text style={{ fontSize: 15 }}>
-            Verze: {format(buildData.commitTime)}
+            Verze:{' '}
+            <Text style={buildData.fallback ? { fontStyle: 'italic' } : {}}>
+              {format(buildData.commitTime)}
+            </Text>
           </Text>
         </View>
       ) : null}
