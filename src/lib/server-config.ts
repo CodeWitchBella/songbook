@@ -1,6 +1,6 @@
 import { gql, UserInputError } from "apollo-server-cloudflare";
 import latinize from "latinize";
-import crypto from "crypto";
+import nodeCrypto from "crypto";
 import { DateTime, Duration } from "luxon";
 import { notNull } from "@codewitchbella/ts-utils";
 import * as bcrypt from "bcryptjs";
@@ -156,13 +156,17 @@ async function songBySlug(slug: string) {
 }
 
 async function randomID(length: number) {
-  return crypto
-    .randomBytes(Math.ceil((length / 3) * 2) + 1)
+  let ret = nodeCrypto
+    .randomBytes(Math.ceil((length / 3) * 2) + 1 + 3)
     .toString("base64")
+    .replace(/\+/g, "")
+    .replace(/\//g, "")
     .slice(0, length)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
     .replace(/=/g, "");
+  while (ret.length < length) {
+    ret += randomID(length - ret.length);
+  }
+  return ret;
 }
 
 async function getViewer(context: MyContext) {
