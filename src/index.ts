@@ -6,14 +6,21 @@ import { forward } from "./forward";
 import serverConfig from "./lib/server-config";
 import { handleUltimateGuitar } from "./ultimate-guitar";
 
-const server = new ApolloServer(serverConfig);
+const getServer = (() => {
+  let cache: ApolloServer;
+  return () => {
+    if (!cache) cache = new ApolloServer(serverConfig);
+    return cache;
+  };
+})();
 
 async function handleRequest(request: Request) {
   try {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api")) url.pathname = url.pathname.slice(4);
     if (url.pathname === "/hello") return new Response("World");
-    if (url.pathname === "/graphql") return await handleApollo(request, server);
+    if (url.pathname === "/graphql")
+      return await handleApollo(request, getServer());
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
     if (url.pathname === "/beacon.min.js")
