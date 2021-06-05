@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const fetch = require('node-fetch')
+const { spawnSync } = require('child_process')
 
 function patch(file, patcher) {
   const content = fs.readFileSync(path.join(__dirname, file), 'utf8')
@@ -8,9 +9,12 @@ function patch(file, patcher) {
   fs.writeFileSync(path.join(__dirname, file), patched, 'utf8')
 }
 
-const commitSha = process.env.VERCEL_GITHUB_COMMIT_SHA
-const commitRepo = process.env.VERCEL_GITHUB_COMMIT_REPO
-const commitOrg = process.env.VERCEL_GITHUB_COMMIT_ORG
+const commitSha = spawnSync('git', ['rev-parse', 'HEAD'], {
+  stdio: 'pipe',
+  encoding: 'utf-8',
+}).stdout
+const commitRepo = 'songbook'
+const commitOrg = 'CodeWitchBella'
 if (commitSha && commitRepo && commitOrg) {
   const url = `https://api.github.com/repos/${commitOrg}/${commitRepo}/commits/${commitSha}`
   console.log(url)
