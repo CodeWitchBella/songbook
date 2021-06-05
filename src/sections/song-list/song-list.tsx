@@ -152,7 +152,6 @@ export default function SongList({
 
   const [search, setSearch] = useQueryParam('q')
   const location = useLocation()
-  console.log({ menu })
 
   return (
     <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
