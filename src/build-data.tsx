@@ -1,4 +1,5 @@
 export const buildData = {
   commitTime: '$COMMIT_TIME',
-  fallback: '$COMMIT_TIME_FALLBACK',
+  // @ts-ignore
+  fallback: '$COMMIT_TIME_FROM_GIT' !== 'true',
 }
