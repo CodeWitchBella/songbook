@@ -9,16 +9,6 @@ npm start
 node proxy.js
 ```
 
-## How to develop backend
-
-```
-npm i -g now
-now login
-now link
-now env pull
-now dev
-```
-
 ## How to deploy
 
-just push to master
+just push to `main`
