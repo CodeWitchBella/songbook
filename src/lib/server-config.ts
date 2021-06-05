@@ -529,6 +529,7 @@ const resolvers = {
           name: input.name,
           passwordHash: await hashPassword(input.password),
           email: input.email,
+          registeredAt: serverTimestamp(),
         },
         { merge: false },
       );
