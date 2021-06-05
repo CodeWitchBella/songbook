@@ -1,10 +1,16 @@
-import React, { PropsWithChildren, useRef, useEffect } from 'react'
+import React, {
+  PropsWithChildren,
+  useRef,
+  useEffect,
+  useState,
+  useContext,
+} from 'react'
 import {
   StyleProp,
   TextStyle,
   GestureResponderEvent,
-  TouchableOpacity,
   Text,
+  Pressable,
 } from 'react-native'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
@@ -46,6 +52,8 @@ function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
   )
 }
 
+const clickOutsideContext = React.createContext(false)
+let pressOverriden = 0
 function BasicButtonBase({
   children,
   disabled,
@@ -56,12 +64,21 @@ function BasicButtonBase({
   useEffect(() => {
     text.current?.setNativeProps({ style: { cursor: 'pointer' } })
   }, [])
+  const [hover, setHover] = useState(false)
+  const inClickOutside = useContext(clickOutsideContext)
+
   return (
-    <TouchableOpacity
+    <Pressable
       disabled={disabled}
-      onPress={
-        disabled ? undefined : 'onPress' in rest ? rest.onPress : undefined
-      }
+      onPress={(event) => {
+        if (disabled) return
+        if (pressOverriden > 0 && !inClickOutside) return
+        console.log({ pressOverriden, inClickOutside })
+        rest.onPress?.(event)
+      }}
+      // @ts-expect-error
+      onHoverIn={() => setHover(true)}
+      onHoverOut={() => setHover(false)}
       style={{
         alignItems: 'stretch',
         flexDirection: 'column',
@@ -69,14 +86,66 @@ function BasicButtonBase({
         display: 'flex',
       }}
     >
-      <Text ref={text} style={[style]}>
+      <Text
+        ref={text}
+        style={[
+          style,
+          hover && (pressOverriden <= 0 || inClickOutside)
+            ? { textDecorationLine: 'underline' }
+            : null,
+        ]}
+      >
         {children}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
 export function BasicButton(props: ButtonProps) {
   if ('to' in props) return <BasicButtonLink {...props} />
   return <BasicButtonBase {...props} />
+}
+
+export function OnClickOutside({
+  handler,
+  children,
+}: {
+  handler?: null | (() => void)
+  children: (ref: React.RefObject<HTMLDivElement>) => JSX.Element
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const handlerRef = useRef(handler)
+  useEffect(() => {
+    handlerRef.current = handler
+    if (handler) {
+      pressOverriden++
+      return () => {
+        setTimeout(() => {
+          pressOverriden--
+        }, 200)
+      }
+    }
+    return undefined
+  }, [handler])
+
+  useEffect(() => {
+    function listener(event: MouseEvent | TouchEvent) {
+      if (handlerRef.current && !ref.current?.contains(event.target as any)) {
+        event.preventDefault()
+        handlerRef.current()
+      }
+    }
+    const cfg = { capture: true, passive: false }
+    document.body.addEventListener('mousedown', listener, cfg)
+    document.body.addEventListener('touchstart', listener, cfg)
+    return () => {
+      document.body.removeEventListener('mousedown', listener)
+      document.body.removeEventListener('touchstart', listener)
+    }
+  }, [])
+  return (
+    <clickOutsideContext.Provider value={true}>
+      {children(ref)}
+    </clickOutsideContext.Provider>
+  )
 }

@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
-import { PropsWithChildren, useEffect, useReducer, useRef } from 'react'
+import { PropsWithChildren, useReducer } from 'react'
+import { OnClickOutside } from './interactive/basic-button'
 import { Burger } from './song-look/song-menu-icons'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
@@ -86,56 +87,33 @@ function MenuContent({
   onClose: () => void
 }>) {
   return (
-    <div
-      ref={useOnClickOutside(visible ? onClose : undefined)}
-      css={{
-        position: 'absolute',
-        right: 4 - 20,
-        top: 50,
-        padding: '0 20px 20px 20px',
-        overflow: 'hidden',
-      }}
-    >
-      <ul
-        css={{
-          all: 'unset',
+    <OnClickOutside handler={visible ? onClose : null}>
+      {(ref) => (
+        <div
+          ref={ref}
+          css={{
+            position: 'absolute',
+            right: 4 - 20,
+            top: 50,
+            padding: '0 20px 20px 20px',
+            overflow: 'hidden',
+          }}
+        >
+          <ul
+            css={{
+              all: 'unset',
 
-          background: 'white',
-          padding: 10,
+              background: 'white',
+              padding: 10,
 
-          boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
-          display: visible ? 'block' : 'none',
-        }}
-      >
-        {children}
-      </ul>
-    </div>
+              boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
+              display: visible ? 'block' : 'none',
+            }}
+          >
+            {children}
+          </ul>
+        </div>
+      )}
+    </OnClickOutside>
   )
-}
-
-function useOnClickOutside(handler?: null | (() => void)) {
-  const ref = useRef<HTMLDivElement>(null)
-  const handlerRef = useRef(handler)
-  useEffect(() => {
-    handlerRef.current = handler
-  })
-
-  useEffect(() => {
-    function listener(event: MouseEvent | TouchEvent) {
-      if (handlerRef.current && !ref.current?.contains(event.target as any)) {
-        event.preventDefault()
-        handlerRef.current()
-      }
-    }
-    const cfg = { capture: true, passive: false }
-    document.body.addEventListener('mousedown', listener, cfg)
-    document.body.addEventListener('touchstart', listener, cfg)
-    document.body.addEventListener('touchend', listener, cfg)
-    return () => {
-      document.body.removeEventListener('mousedown', listener)
-      document.body.removeEventListener('touchstart', listener)
-      document.body.removeEventListener('touchend', listener)
-    }
-  }, [])
-  return ref
 }
