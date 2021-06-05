@@ -6,11 +6,13 @@ const { spawnSync } = require('child_process')
 getDate().then((date) => {
   patch(path.join('src', 'build-data.tsx'), (content) => {
     if (date) {
-      content.replace(/\$COMMIT_TIME/g, date)
-      content.replace(/\$COMMIT_TIME_FALLBACK/g, 'false')
+      return content
+        .replace(/\$COMMIT_TIME_FROM_GIT/g, 'true')
+        .replace(/\$COMMIT_TIME/g, date)
     } else {
-      content.replace(/\$COMMIT_TIME/g, new Date().toISOString())
-      content.replace(/\$COMMIT_TIME_FALLBACK/g, 'true')
+      return content
+        .replace(/\$COMMIT_TIME_FROM_GIT/g, 'false')
+        .replace(/\$COMMIT_TIME/g, new Date().toISOString())
     }
   })
 })
