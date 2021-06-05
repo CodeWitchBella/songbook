@@ -5,7 +5,7 @@ import DataLoader from "dataloader";
 declare const FIREBASE_SERVICE_KEY: string | undefined;
 const serviceAccountJSON = JSON.parse(FIREBASE_SERVICE_KEY || "{}");
 
-export async function getAccessToken() {
+async function getAccessToken() {
   const jwtToken = await getTokenFromGCPServiceAccount({
     serviceAccountJSON,
     aud: "https://oauth2.googleapis.com/token",
@@ -29,10 +29,15 @@ export async function getAccessToken() {
 }
 
 const getHeaders = (() => {
-  let token: ReturnType<typeof getAccessToken>;
+  let tokenPromise: ReturnType<typeof getAccessToken>;
   return async () => {
-    if (!token) token = getAccessToken();
-    return { Authorization: `Bearer ${(await token).access_token}` };
+    if (!tokenPromise) tokenPromise = getAccessToken();
+    let token = await tokenPromise;
+    if (token.expires_in < 10) {
+      tokenPromise = getAccessToken();
+      token = await tokenPromise;
+    }
+    return { Authorization: `${token.token_type} ${token.access_token}` };
   };
 })();
 
