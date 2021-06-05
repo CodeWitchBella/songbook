@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
-import { PropsWithChildren, useReducer } from 'react'
+import { PropsWithChildren, useEffect, useReducer, useRef } from 'react'
 import { Burger } from './song-look/song-menu-icons'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
-    (st: { isOpen: boolean; wasOpen: boolean }, _action: null) => {
+    (st: { isOpen: boolean; wasOpen: boolean }, action: null | false) => {
+      if (action === false) return { isOpen: false, wasOpen: true }
       return { isOpen: !st.isOpen, wasOpen: true }
     },
     { isOpen: false, wasOpen: false },
@@ -30,7 +31,11 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
       >
         <Burger />
       </button>
-      {wasOpen && <MenuContent visible={isOpen}>{children}</MenuContent>}
+      {wasOpen && (
+        <MenuContent onClose={() => setOpen(false)} visible={isOpen}>
+          {children}
+        </MenuContent>
+      )}
     </div>
   )
 }
@@ -75,11 +80,14 @@ export function TopMenuItem({
 function MenuContent({
   visible,
   children,
+  onClose,
 }: PropsWithChildren<{
   visible: boolean
+  onClose: () => void
 }>) {
   return (
     <div
+      ref={useOnClickOutside(visible ? onClose : undefined)}
       css={{
         position: 'absolute',
         right: 4 - 20,
@@ -103,4 +111,31 @@ function MenuContent({
       </ul>
     </div>
   )
+}
+
+function useOnClickOutside(handler?: null | (() => void)) {
+  const ref = useRef<HTMLDivElement>(null)
+  const handlerRef = useRef(handler)
+  useEffect(() => {
+    handlerRef.current = handler
+  })
+
+  useEffect(() => {
+    function listener(event: MouseEvent | TouchEvent) {
+      if (handlerRef.current && !ref.current?.contains(event.target as any)) {
+        event.preventDefault()
+        handlerRef.current()
+      }
+    }
+    const cfg = { capture: true, passive: false }
+    document.body.addEventListener('mousedown', listener, cfg)
+    document.body.addEventListener('touchstart', listener, cfg)
+    document.body.addEventListener('touchend', listener, cfg)
+    return () => {
+      document.body.removeEventListener('mousedown', listener)
+      document.body.removeEventListener('touchstart', listener)
+      document.body.removeEventListener('touchend', listener)
+    }
+  }, [])
+  return ref
 }

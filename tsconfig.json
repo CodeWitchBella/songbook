@@ -3,12 +3,8 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "esnext",
-    "lib": [
-      "es2020"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["es2020", "DOM"],
+    "types": ["node"],
     "jsx": "react-jsx",
     "noEmit": true,
     "strict": true,
@@ -24,9 +20,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": [
-    "src/**/*"
-  ],
+  "include": ["src/**/*"],
   "typeAcquisition": {
     "enable": false
   }
