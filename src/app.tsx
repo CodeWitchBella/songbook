@@ -48,17 +48,19 @@ export const InjectGlobal = () => (
   />
 )
 
-export default () => (
-  <React.Fragment>
-    <OutlineHandler />
-    <StoreProvider>
-      <InstallProvider>
-        <Suspense fallback={<div>Načítám...</div>}>
-          <ErrorBoundary>
-            <Routes />
-          </ErrorBoundary>
-        </Suspense>
-      </InstallProvider>
-    </StoreProvider>
-  </React.Fragment>
-)
+export default function App() {
+  return (
+    <React.Fragment>
+      <OutlineHandler />
+      <StoreProvider>
+        <InstallProvider>
+          <Suspense fallback={<div>Načítám...</div>}>
+            <ErrorBoundary>
+              <Routes />
+            </ErrorBoundary>
+          </Suspense>
+        </InstallProvider>
+      </StoreProvider>
+    </React.Fragment>
+  )
+}
