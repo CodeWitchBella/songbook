@@ -1,19 +1,37 @@
 /** @jsxImportSource @emotion/react */
-import { jsx, keyframes } from '@emotion/react'
+import { keyframes } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
 
+function useGoBack(to = '/') {
+  const history = useHistory()
+  const location = useLocation()
+  const updateAfterNavigate = useUpdateAfterNavigate()
+  return () => {
+    const canGoBack = location.state && (location.state as any).canGoBack
+    updateAfterNavigate()
+    if (canGoBack) {
+      history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
+    } else {
+      const location = history.location
+      history.replace(to)
+      history.push(
+        location.pathname + location.search + location.hash,
+        location.state,
+      )
+      history.go(-1)
+    }
+  }
+}
+
 export function BackButton({
   children,
   to = '/',
   style,
 }: PropsWithChildren<{ to?: string; style?: StyleProp<TextStyle> }>) {
-  const history = useHistory()
-  const location = useLocation()
-  const updateAfterNavigate = useUpdateAfterNavigate()
   return (
     <BasicButton
       style={[
@@ -24,21 +42,7 @@ export function BackButton({
         },
         style,
       ]}
-      onPress={() => {
-        const canGoBack = location.state && (location.state as any).canGoBack
-        updateAfterNavigate()
-        if (canGoBack) {
-          history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
-        } else {
-          const location = history.location
-          history.replace(to)
-          history.push(
-            location.pathname + location.search + location.hash,
-            location.state,
-          )
-          history.go(-1)
-        }
-      }}
+      onPress={useGoBack(to)}
     >
       {children}
     </BasicButton>

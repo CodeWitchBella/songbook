@@ -1,8 +1,31 @@
-import React from 'react'
+/** @jsxImportSource @emotion/react */
+
 import Entry from 'components/changelog-entry'
+import { BackArrow, BackButton } from 'components/back-button'
+import { View, Text } from 'react-native'
 
 const Changelog = () => (
   <div>
+    <Head />
+    <Entry date="2021-06-05">
+      <li>
+        Backend přemigrován na{' '}
+        <NewTabLink to="https://workers.dev">Cloudflare Workers</NewTabLink>{' '}
+        (databáze je stále firestore).
+      </li>
+      <li>
+        Frontend přemigrován na{' '}
+        <NewTabLink to="https://pages.dev">Cloudflare Pages</NewTabLink>
+      </li>
+      <li>
+        Tyto dvě změny mimo jiné výrazně zrychlily načítání seznamu písní a i
+        celého zpěvníku při první návštěvě
+      </li>
+      <li>Usnadněna editace kolekcí (ale pořád žádné GUI)</li>
+      <li>Přidáno zobrazování statistik o kolekci (v menu v seznamu písní)</li>
+      <li>Menu v seznamu písní jde nyní zavřít kliknutím mimo něj</li>
+      <li>Do changelogu bylo přidáno tlačítko zpět</li>
+    </Entry>
     <Entry date="2021-05-31">
       <li>
         Opraveny různé problémy v aplikaci způsobené změnami provedenými AWS a
@@ -266,3 +289,29 @@ const Changelog = () => (
   </div>
 )
 export default Changelog
+
+function NewTabLink({ to, children }: { to: string; children: string }) {
+  return (
+    <a href={to} target="_blank" rel="noreferrer noopener">
+      {children}
+    </a>
+  )
+}
+function Head() {
+  return (
+    <View
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        padding: 16,
+        paddingBottom: 4,
+        paddingTop: 24,
+      }}
+    >
+      <BackButton>
+        <BackArrow />
+      </BackButton>
+      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Historie změn</Text>
+    </View>
+  )
+}

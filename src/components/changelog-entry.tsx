@@ -22,6 +22,7 @@ const Entry = styled.div`
   ul {
     margin-top: 0;
   }
+  max-width: 80ch;
 `
 
 const H2 = styled.h2`
