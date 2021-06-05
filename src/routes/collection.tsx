@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 import SongList from 'sections/song-list/song-list'
-import { useCollection } from 'store/store'
+import { useCollection, usePagesNum } from 'store/store'
 import { useMemo, useCallback, useEffect } from 'react'
+import { Text, View, StyleSheet } from 'react-native'
 
 const emptyArray: never[] = []
 function useColectionWithSet(slug: string) {
@@ -17,7 +18,7 @@ function useColectionWithSet(slug: string) {
   return { set, ...collection }
 }
 
-const Collection = ({ slug }: { slug: string }) => {
+export default function Collection({ slug }: { slug: string }) {
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id) => (set && set?.has(id)) || false, [set])
@@ -53,8 +54,38 @@ const Collection = ({ slug }: { slug: string }) => {
         }
         slug={collection.slug}
         title={collection.name}
+        menu={<Stats set={set} songCount={collection.songList.length} />}
       />
     </div>
   )
 }
-export default Collection
+
+function Stats({
+  set,
+  songCount,
+}: {
+  set: Set<string> | undefined
+  songCount: number
+}) {
+  const pagesNum = usePagesNum(set || null)
+  return (
+    <View style={styles.stat}>
+      <Text style={styles.statItem}>
+        {pagesNum} stran a {songCount} písní
+      </Text>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  stat: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    marginTop: 16,
+    marginBottom: 4,
+  },
+  statItem: {
+    fontSize: 18,
+  },
+})

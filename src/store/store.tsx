@@ -215,6 +215,32 @@ export function useSong(param: { slug: string } | { id: string }) {
   )
 }
 
+function readNumPages(
+  store: ReturnType<typeof useStoreContext>['store'],
+  set: Set<string> | null,
+) {
+  if (!set) return null
+  let num = 0
+  for (const item of set) {
+    num +=
+      store.readById(item)?.item.text.split('--- page break ---').length ?? 0
+  }
+  return num
+}
+
+export function usePagesNum(set: Set<string> | null) {
+  const { store } = useStoreContext()
+  const [count, setCount] = useState(() => readNumPages(store, set))
+
+  useEffect(() => {
+    setCount(readNumPages(store, set))
+    return store.onChange(() => {
+      setCount(readNumPages(store, set))
+    })
+  }, [set, store])
+  return count
+}
+
 export function useNewSong() {
   const { store } = useStoreContext()
   return async ({ author, title }: { author: string; title: string }) => {

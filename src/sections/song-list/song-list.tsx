@@ -119,17 +119,19 @@ function Loader() {
   )
 }
 
-const SongList = ({
+export default function SongList({
   filter,
   header,
   slug,
   title,
+  menu,
 }: {
   filter?: (id: string) => boolean
   header?: string | JSX.Element
   slug: string | null
   title: string | null
-}) => {
+  menu?: JSX.Element
+}) {
   const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
@@ -150,6 +152,7 @@ const SongList = ({
 
   const [search, setSearch] = useQueryParam('q')
   const location = useLocation()
+  console.log({ menu })
 
   return (
     <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
@@ -200,6 +203,7 @@ const SongList = ({
                   </TopMenuItem>
                 )}
               </DownloadPDF>
+              {menu ?? null}
             </TopMenu>
           }
         >
@@ -225,4 +229,3 @@ const SongList = ({
     </div>
   )
 }
-export default SongList

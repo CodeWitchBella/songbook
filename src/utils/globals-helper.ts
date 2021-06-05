@@ -1,5 +1,4 @@
 import { RavenStatic } from 'raven-js'
-/* global window, requestAnimationFrame, history, document, fetch, Headers, IntersectionObserver */
 
 /* eslint-disable no-underscore-dangle */
 export const window_ = typeof window !== 'undefined' ? window : null
