@@ -184,7 +184,13 @@ async function getViewerCheck(context: MyContext) {
   return viewer;
 }
 
-async function whereModifiedAfter(path: string, modifiedAfter: string | null) {
+async function whereModifiedAfter(
+  path: string,
+  {
+    filterDeleted = true,
+    modifiedAfter,
+  }: { filterDeleted?: boolean; modifiedAfter: string | null },
+) {
   return runQuery(path, {
     compositeFilter: {
       op: "AND",
@@ -198,13 +204,15 @@ async function whereModifiedAfter(path: string, modifiedAfter: string | null) {
               },
             }
           : null,
-        {
-          fieldFilter: {
-            field: { fieldPath: "deleted" },
-            op: "EQUAL",
-            value: { booleanValue: false },
-          },
-        },
+        filterDeleted
+          ? {
+              fieldFilter: {
+                field: { fieldPath: "deleted" },
+                op: "EQUAL",
+                value: { booleanValue: false },
+              },
+            }
+          : null,
       ].filter(Boolean),
     },
   });
@@ -242,18 +250,21 @@ const resolvers = {
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await whereModifiedAfter("songs", modifiedAfter);
+      const docs = await whereModifiedAfter("songs", { modifiedAfter });
       return docs;
     },
     deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }) => {
-      const docs = await whereModifiedAfter("deletedSongs", deletedAfter);
+      const docs = await whereModifiedAfter("deletedSongs", {
+        filterDeleted: false,
+        modifiedAfter: deletedAfter,
+      });
       return docs.map(d => d.id);
     },
     collections: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await whereModifiedAfter("collections", modifiedAfter);
+      const docs = await whereModifiedAfter("collections", { modifiedAfter });
       return docs;
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
