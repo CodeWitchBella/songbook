@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { View, Text } from 'react-native'
+import { View, Text, Pressable, Linking } from 'react-native'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { ListButton } from 'components/interactive/list-button'
 import { useLogin } from 'components/use-login'
@@ -71,9 +71,15 @@ export default function Home() {
         <View style={{ bottom: 10, right: 10, position: 'absolute' }}>
           <Text style={{ fontSize: 15 }}>
             Verze:{' '}
-            <Text style={buildData.fallback ? { fontStyle: 'italic' } : {}}>
-              {format(buildData.commitTime)}
-            </Text>
+            <Pressable
+              onPress={() => {
+                Linking.openURL('https://github.com/CodeWitchBella/songbook')
+              }}
+            >
+              <Text style={buildData.fallback ? { fontStyle: 'italic' } : {}}>
+                {format(buildData.commitTime)}
+              </Text>
+            </Pressable>
           </Text>
         </View>
       ) : null}

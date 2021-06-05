@@ -297,6 +297,7 @@ function NewTabLink({ to, children }: { to: string; children: string }) {
     </a>
   )
 }
+
 function Head() {
   return (
     <View
