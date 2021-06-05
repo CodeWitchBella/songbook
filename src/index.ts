@@ -2,6 +2,7 @@ globalThis.setImmediate = undefined as any;
 
 import { ApolloServer } from "apollo-server-cloudflare";
 import { handleApollo } from "./apollo";
+import { forward } from "./forward";
 import serverConfig from "./lib/server-config";
 import { handleUltimateGuitar } from "./ultimate-guitar";
 
@@ -15,6 +16,11 @@ async function handleRequest(request: Request) {
     if (url.pathname === "/graphql") return await handleApollo(request, server);
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
+    if (url.pathname === "/beacon.min.js")
+      return await forward(
+        request,
+        "https://static.cloudflareinsights.com/beacon.min.js",
+      );
     return new Response("Not found", {
       status: 404,
       headers: { "content-type": "text/plain; charset=utf-8" },
