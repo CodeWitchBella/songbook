@@ -73,7 +73,6 @@ function BasicButtonBase({
       onPress={(event) => {
         if (disabled) return
         if (pressOverriden > 0 && !inClickOutside) return
-        console.log({ pressOverriden, inClickOutside })
         rest.onPress?.(event)
       }}
       // @ts-expect-error
