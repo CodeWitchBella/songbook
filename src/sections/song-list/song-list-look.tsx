@@ -91,12 +91,13 @@ function SongItem(
   )
 }
 
-const columns = (n: number) => (p: { count: number }) => css`
-  @media (min-width: ${n * 400}px) {
-    grid-template-columns: repeat(${n}, 400px);
-    grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
-  }
-`
+const columns = (n: number) => (p: { count: number }) =>
+  css`
+    @media (min-width: ${n * 400}px) {
+      grid-template-columns: repeat(${n}, 400px);
+      grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
+    }
+  `
 
 const ListContainer = styled('div')<{ count: number }>`
   display: grid;

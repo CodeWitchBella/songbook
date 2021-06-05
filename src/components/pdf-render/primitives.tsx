@@ -15,9 +15,8 @@ const InPdfCtx = createContext<typeof import('@react-pdf/renderer') | null>(
   null,
 )
 
-export type PropsOf<
-  T extends React.ComponentType<any>
-> = T extends React.ComponentType<infer P> ? P : never
+export type PropsOf<T extends React.ComponentType<any>> =
+  T extends React.ComponentType<infer P> ? P : never
 
 type RecursiveArray<T> = T | RecursiveArray<T>[]
 type StyleProp<T> = RecursiveArray<T | undefined>

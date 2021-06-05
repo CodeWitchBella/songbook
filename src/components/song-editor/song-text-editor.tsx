@@ -82,10 +82,8 @@ export function SongTextEditor(props: {
   useEffect(setup)
   const element = useRef<HTMLDivElement>(null)
   const initialValue = useRef(props.initialValue)
-  const [
-    editor,
-    setEditor,
-  ] = useState<monaco.editor.IStandaloneCodeEditor | null>(null)
+  const [editor, setEditor] =
+    useState<monaco.editor.IStandaloneCodeEditor | null>(null)
 
   useEffect(() => {
     const editor = monaco.editor.create(element.current!, {

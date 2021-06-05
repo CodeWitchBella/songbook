@@ -11,17 +11,16 @@ export type SearchableSong = {
 function toComparable(text: string) {
   return latinize(text.toLocaleLowerCase())
 }
-const searchSong = (
-  text: string,
-  field: 'author' | 'title' | 'text' | 'extraSearchable',
-) => (song: SearchableSong) => {
-  if (!text) return true
-  return toComparable(text)
-    .split(' ')
-    .map((t) => t.trim())
-    .filter((t) => t)
-    .every((t) => toComparable(song[field] || '').includes(t))
-}
+const searchSong =
+  (text: string, field: 'author' | 'title' | 'text' | 'extraSearchable') =>
+  (song: SearchableSong) => {
+    if (!text) return true
+    return toComparable(text)
+      .split(' ')
+      .map((t) => t.trim())
+      .filter((t) => t)
+      .every((t) => toComparable(song[field] || '').includes(t))
+  }
 
 export default function getFilteredSongList(
   songs: SearchableSong[],

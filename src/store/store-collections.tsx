@@ -32,9 +32,7 @@ type CollectionRecord<DT = DateTime> = {
   insertedAt: DT
 }
 
-async function collectionQuery(
-  modifiedAfter?: DateTime,
-): Promise<{
+async function collectionQuery(modifiedAfter?: DateTime): Promise<{
   changed: CollectionRecord[]
   deleted: { id: string }[]
 }> {

@@ -2,11 +2,12 @@ import { RavenStatic } from 'raven-js'
 
 /* eslint-disable no-underscore-dangle */
 export const window_ = typeof window !== 'undefined' ? window : null
-export const requestAnimationFrame_ = (typeof requestAnimationFrame !==
-'undefined'
-  ? requestAnimationFrame
-  : // we have polyfill, eat it on ssr
-    () => {}) as typeof requestAnimationFrame
+export const requestAnimationFrame_ = (
+  typeof requestAnimationFrame !== 'undefined'
+    ? requestAnimationFrame
+    : // we have polyfill, eat it on ssr
+      () => {}
+) as typeof requestAnimationFrame
 // eslint-disable-next-line no-restricted-globals
 export const history_ = typeof history !== 'undefined' ? history : null
 export const document_ = typeof document !== 'undefined' ? document : null

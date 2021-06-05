@@ -45,9 +45,7 @@ type SongRecord = {
   insertedAt: DateTime | null
 }
 
-export async function onLoadQuery(
-  modifiedAfter?: DateTime,
-): Promise<{
+export async function onLoadQuery(modifiedAfter?: DateTime): Promise<{
   songs: SongRecord[]
   viewer: User | null
   deletedSongs: { id: string }[]
