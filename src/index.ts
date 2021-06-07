@@ -1,26 +1,22 @@
 globalThis.setImmediate = undefined as any;
 
 import { ApolloServer } from "apollo-server-cloudflare";
-import { handleApollo } from "./apollo";
+import { handleGraphql } from "./endpoints/graphql";
 import { forward } from "./forward";
 import serverConfig from "./lib/server-config";
-import { handleUltimateGuitar } from "./ultimate-guitar";
+import { handleUltimateGuitar } from "./endpoints/ultimate-guitar";
+import { contextPair, MyContext } from "./lib/context";
 
-const getServer = (() => {
-  let cache: ApolloServer;
-  return () => {
-    if (!cache) cache = new ApolloServer(serverConfig);
-    return cache;
-  };
-})();
-
-async function handleRequest(request: Request) {
+async function handleRequest(
+  request: Request,
+  createContext: () => MyContext,
+): Promise<Response> {
   try {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api")) url.pathname = url.pathname.slice(4);
     if (url.pathname === "/hello") return new Response("World");
     if (url.pathname === "/graphql")
-      return await handleApollo(request, getServer());
+      return await handleGraphql(request, createContext());
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
     if (url.pathname === "/beacon.min.js")
@@ -42,5 +38,11 @@ async function handleRequest(request: Request) {
 }
 
 addEventListener("fetch", event => {
-  event.respondWith(handleRequest(event.request));
+  const { createContext, finishContext } = contextPair(event.request);
+  event.respondWith(
+    handleRequest(event.request, createContext).then(response => {
+      finishContext(response);
+      return response;
+    }),
+  );
 });
