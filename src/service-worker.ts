@@ -37,7 +37,7 @@ registerRoute(
     }
 
     // If this is a URL that starts with /_, skip.
-    if (url.pathname.startsWith('/_')) {
+    if (url.pathname.startsWith('/api')) {
       return false
     }
 
