@@ -91,6 +91,7 @@ function Routes() {
           render={({ match }) => <Song slug={match.params.slug} />}
         />
         <Route path="/new" exact render={() => <CreateSong />} />
+        <Route path="/new/:type" exact render={() => <CreateSong />} />
         <Route
           path="/edit/:slug"
           exact
