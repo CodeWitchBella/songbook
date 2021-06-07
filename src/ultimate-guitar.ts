@@ -2,30 +2,45 @@ export async function handleUltimateGuitar(
   request: Request,
 ): Promise<Response> {
   const url = new URL(request.url);
-  const id = Number.parseInt(url.searchParams.get("id") || "0", 10);
-  if (!id) {
+  const ug = url.searchParams.get("url");
+  const begin = "https://tabs.ultimate-guitar.com/tab/";
+  if (
+    !ug ||
+    !ug.startsWith(begin) ||
+    !ug.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i)
+  ) {
     return new Response(JSON.stringify({ error: "Invalid request" }), {
       status: 400,
+      headers: { "content-type": "application/json" },
     });
   }
-  const r = await fetch(
-    "https://www.ultimate-guitar.com/contribution/correct/create?id=" + id,
-  );
+  const r = await fetch(ug);
   if (r.status !== 200) {
     return new Response(JSON.stringify({ error: "Cannot load from UG" }), {
       status: 424,
+      headers: { "content-type": "application/json" },
     });
   }
-  const data = await r.text();
+  const html = await r.text();
 
-  const title = before(after(data, "<title>"), "</title>").trim();
+  const json = before(
+    after(html, 'class="js-store" data-content="'),
+    '"',
+  ).replace(/&quot;/g, '"');
+  console.log(json);
 
-  const text = before(
-    after(after(data, '<textarea id="js-tab-text"'), ">"),
-    "</textarea>",
+  const data = JSON.parse(json);
+  const pageData = data["store"]["page"]["data"];
+  const text = pageData["tab_view"]["wiki_tab"]["content"];
+
+  return new Response(
+    JSON.stringify({
+      text,
+      author: pageData["tab"]["artist_name"],
+      title: pageData["tab"]["song_name"],
+    }),
+    { headers: { "content-type": "application/json" } },
   );
-
-  return new Response(JSON.stringify({ text, title }));
 }
 
 function after(text: string, delimiter: string) {
