@@ -18,12 +18,14 @@ export async function handleUltimateGuitar(
   }
   const data = await r.text();
 
+  const title = before(after(data, "<title>"), "</title>").trim();
+
   const text = before(
     after(after(data, '<textarea id="js-tab-text"'), ">"),
     "</textarea>",
   );
 
-  return new Response(JSON.stringify({ text }));
+  return new Response(JSON.stringify({ text, title }));
 }
 
 function after(text: string, delimiter: string) {
