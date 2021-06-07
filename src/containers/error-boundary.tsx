@@ -2,7 +2,7 @@
 
 import { Component, useEffect } from 'react'
 import { useHistory } from 'react-router'
-import { Raven } from 'utils/globals'
+let Raven: any = null
 
 const Fallback = ({ reset }: { reset: () => void }) => {
   const history = useHistory()

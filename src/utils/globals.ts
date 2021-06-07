@@ -21,4 +21,3 @@ export const document = globals.document_
 export const fetch = globals.fetch_
 export const Headers = globals.Headers_
 export const IntersectionObserver = globals.IntersectionObserver_
-export const Raven = globals.Raven_

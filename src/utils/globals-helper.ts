@@ -1,5 +1,3 @@
-import { RavenStatic } from 'raven-js'
-
 /* eslint-disable no-underscore-dangle */
 export const window_ = typeof window !== 'undefined' ? window : null
 export const requestAnimationFrame_ = (
@@ -16,7 +14,3 @@ export const Headers_ =
   typeof Headers !== 'undefined' ? Headers : function Headers() {}
 export const IntersectionObserver_ =
   typeof IntersectionObserver !== 'undefined' ? IntersectionObserver : null
-export const Raven_ =
-  window_ && typeof (window_ as any).Raven !== 'undefined'
-    ? ((window_ as any).Raven as RavenStatic)
-    : null
