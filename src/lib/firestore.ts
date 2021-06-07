@@ -25,7 +25,10 @@ async function getAccessToken() {
     })
   ).json();
 
-  return accessToken;
+  return {
+    ...accessToken,
+    expiresAt: Date.now() + accessToken.expires_in * 1000,
+  };
 }
 
 const getHeaders = (() => {
@@ -33,7 +36,7 @@ const getHeaders = (() => {
   return async () => {
     if (!tokenPromise) tokenPromise = getAccessToken();
     let token = await tokenPromise;
-    if (token.expires_in < 10) {
+    if (token.expiresAt - Date.now() < 10 * 1000) {
       tokenPromise = getAccessToken();
       token = await tokenPromise;
     }
@@ -100,6 +103,7 @@ export async function runQuery(collectionId: string, where: any) {
   }[] = await res.json();
   if (json.length === 1 && json[0].error) {
     console.error(JSON.stringify(json[0], null, 2));
+    console.error();
     throw new Error("query failed");
   }
   const mapped = json
