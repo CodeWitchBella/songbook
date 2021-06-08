@@ -56,8 +56,6 @@ const styles = StyleSheet.create({
 
 export default function CreateSong() {
   const { params } = useRouteMatch<{ type?: string }>()
-  // TODO: delete once link song creator is implemented
-  if (!params.type) return types.manual
   const type = params.type ?? 'switch'
   return (
     <View style={styles.wrap}>
@@ -133,18 +131,6 @@ function CreateSongLink() {
   return (
     <FormWrap>
       <Form onSubmit={submit}>
-        <Text
-          style={{
-            color: 'green',
-            paddingVertical: 16,
-            paddingHorizontal: 8,
-            fontSize: 16,
-            width: '43ch',
-            maxWidth: '100%',
-          }}
-        >
-          Tato funkce je ve vývoji a zatím není plně funkční
-        </Text>
         <LargeInput label="Odkaz" value={link} onChange={setLink} />
         <PrimaryButton disabled={disabled} onPress={submit}>
           Vytvořit
