@@ -48,5 +48,7 @@ export async function handleCreateSong(request: Request, context: MyContext) {
     { merge: false },
   );
   const res = await doc.get();
-  return jsonResponse({ doc: res });
+  if (!res) throw new Error("Song creation failed");
+  const data = res.data();
+  return jsonResponse({ id: res.id, slug: data.slug });
 }
