@@ -16,7 +16,12 @@ import { randomID, slugify } from "../lib/utils";
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context);
   if (request.method !== "post") return methodNotAllowedResponse();
-  const { title, author, text = "" } = await parseJsonBody(request);
+  const {
+    title,
+    author,
+    text = "",
+    extraNonSearchable = "",
+  } = await parseJsonBody(request);
 
   if (!title || !author) {
     return badRequestResponse("Title and author are required");
@@ -24,9 +29,10 @@ export async function handleCreateSong(request: Request, context: MyContext) {
   if (
     typeof title !== "string" ||
     typeof author !== "string" ||
-    typeof text !== "string"
+    typeof text !== "string" ||
+    typeof extraNonSearchable !== "string"
   ) {
-    return badRequestResponse("Title, author and text must be strings");
+    return badRequestResponse("All fields must be strings");
   }
 
   const slug = slugify(`${title}-${author}`);
@@ -42,6 +48,7 @@ export async function handleCreateSong(request: Request, context: MyContext) {
       slug,
       text,
       editor: viewer.id,
+      extraNonSearchable,
       insertedAt: serverTimestamp(),
       lastModified: serverTimestamp(),
     },
