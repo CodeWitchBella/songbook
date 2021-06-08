@@ -20,7 +20,7 @@ async function handleRequest(
       return await handleGraphql(request, createContext());
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
-    if (request.method === "post" && url.pathname === "/song")
+    if (request.method === "POST" && url.pathname === "/song")
       return await handleCreateSong(request, createContext());
     if (url.pathname === "/beacon.min.js")
       return await forward(

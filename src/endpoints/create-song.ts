@@ -15,7 +15,7 @@ import { randomID, slugify } from "../lib/utils";
 
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context);
-  if (request.method !== "post") return methodNotAllowedResponse();
+  if (request.method !== "POST") return methodNotAllowedResponse();
   const {
     title,
     author,
