@@ -126,6 +126,16 @@ export async function queryFieldEquals(
   });
 }
 
+export async function queryFieldEqualsSingle(
+  collectionId: string,
+  field: string,
+  value: string,
+) {
+  const docs = await queryFieldEquals(collectionId, field, value);
+  if (docs.length < 1) return null;
+  return docs[0];
+}
+
 const getLoader = new DataLoader(
   async (ids: readonly string[]) => {
     const res = await getAll(ids);

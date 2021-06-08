@@ -1,6 +1,5 @@
 import { gql, UserInputError } from "apollo-server-cloudflare";
-import latinize from "latinize";
-import nodeCrypto from "crypto";
+
 import { DateTime, Duration } from "luxon";
 import { notNull } from "@codewitchbella/ts-utils";
 import * as bcrypt from "bcryptjs";
@@ -13,14 +12,7 @@ import {
   runQuery,
   serverTimestamp,
 } from "./firestore";
-
-function slugify(part: string) {
-  return latinize(part)
-    .replace(/[^a-z_0-9]/gi, " ")
-    .trim()
-    .replace(/ +/g, "-")
-    .toLowerCase();
-}
+import { randomID, slugify } from "./utils";
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -161,20 +153,6 @@ async function collectionBySlug(slug: string) {
   return docs[0];
 }
 
-async function randomID(length: number) {
-  let ret = nodeCrypto
-    .randomBytes(Math.ceil((length / 3) * 2) + 1 + 3)
-    .toString("base64")
-    .replace(/\+/g, "")
-    .replace(/\//g, "")
-    .slice(0, length)
-    .replace(/=/g, "");
-  while (ret.length < length) {
-    ret += randomID(length - ret.length);
-  }
-  return ret;
-}
-
 async function getViewer(context: MyContext) {
   const token = (context.sessionCookie || "").trim();
   if (!token) return;
@@ -184,7 +162,7 @@ async function getViewer(context: MyContext) {
   return { viewer: firestoreDoc(data.user), session };
 }
 
-async function getViewerCheck(context: MyContext) {
+export async function getViewerCheck(context: MyContext) {
   const viewer = await getViewer(context);
   if (!viewer) throw new UserInputError("Not logged in");
   return viewer;

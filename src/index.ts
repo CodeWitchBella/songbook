@@ -6,6 +6,7 @@ import { forward } from "./forward";
 import serverConfig from "./lib/server-config";
 import { handleUltimateGuitar } from "./endpoints/ultimate-guitar";
 import { contextPair, MyContext } from "./lib/context";
+import { handleCreateSong } from "./endpoints/create-song";
 
 async function handleRequest(
   request: Request,
@@ -19,6 +20,8 @@ async function handleRequest(
       return await handleGraphql(request, createContext());
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
+    if (request.method === "post" && url.pathname === "/song")
+      return await handleCreateSong(request, createContext());
     if (url.pathname === "/beacon.min.js")
       return await forward(
         request,
@@ -29,6 +32,7 @@ async function handleRequest(
       headers: { "content-type": "text/plain; charset=utf-8" },
     });
   } catch (err) {
+    if (err instanceof Response) return err;
     console.error(err.stack);
     return new Response(err.stack, {
       status: 500,
