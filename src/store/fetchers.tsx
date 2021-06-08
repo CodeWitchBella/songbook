@@ -1,19 +1,30 @@
-import { graphqlFetch } from './graphql'
+import { getGraphqlUrl, graphqlFetch } from './graphql'
+
+async function jsonPost(path: string, json: any) {
+  const res = await fetch(new URL(path, getGraphqlUrl()).toString(), {
+    body: JSON.stringify(json),
+    method: 'post',
+    headers: { 'content-type': 'application/json' },
+    credentials: 'include',
+  })
+  return {
+    data:
+      res.headers.get('content-type')?.split(';')[0].trim() ===
+      'application/json'
+        ? await res.json()
+        : await res.text(),
+    success: res.status === 200,
+  }
+}
 
 export function newSong(song: {
   author: string
   title: string
-}): Promise<{ slug: string; id: string }> {
-  return graphqlFetch({
-    query: `
-      mutation($input: CreateSongInput!) {
-        createSong(input: $input) { id data{slug} }
-      }
-    `,
-    variables: { input: { author: song.author, title: song.title } },
-  }).then((v) => {
-    if (v && v.data && v.data.createSong)
-      return { slug: v.data.createSong.data.slug, id: v.data.createSong.id }
+  text?: string
+  extraNonSearchable?: string
+}): Promise<{ slug: string }> {
+  return jsonPost('/api/song', song).then((v) => {
+    if (v?.data?.slug) return v.data
     throw new Error('New song failed')
   })
 }

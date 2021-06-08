@@ -243,8 +243,18 @@ export function usePagesNum(set: Set<string> | null) {
 
 export function useNewSong() {
   const { store } = useStoreContext()
-  return async ({ author, title }: { author: string; title: string }) => {
-    const ret = await newSong({ author, title })
+  return async ({
+    author,
+    title,
+    text,
+    extraNonSearchable,
+  }: {
+    author: string
+    title: string
+    text?: string
+    extraNonSearchable?: string
+  }) => {
+    const ret = await newSong({ author, title, text, extraNonSearchable })
     await store.refresh()
     return ret
   }

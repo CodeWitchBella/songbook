@@ -120,6 +120,7 @@ function useSubmit(submitter: () => Promise<string | false>) {
 function CreateSongLink() {
   const [link, setLink] = useState('')
   const [error, setError] = useState('')
+  const newSong = useNewSong()
   const { submit, disabled } = useSubmit(async () => {
     setError('')
     const song = await songFromLink(link)
@@ -127,8 +128,7 @@ function CreateSongLink() {
       setError(song)
       return false
     }
-    console.log(song)
-    return false
+    return newSong(song).then(({ slug }) => slug)
   })
   return (
     <FormWrap>
@@ -143,7 +143,7 @@ function CreateSongLink() {
             maxWidth: '100%',
           }}
         >
-          Tato funkce je ve vývoji a zatím není funkční
+          Tato funkce je ve vývoji a zatím není plně funkční
         </Text>
         <LargeInput label="Odkaz" value={link} onChange={setLink} />
         <PrimaryButton disabled={disabled} onPress={submit}>
