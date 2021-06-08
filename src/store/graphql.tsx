@@ -7,7 +7,9 @@ const url =
     : 'https://localhost:8000/api/graphql'
 
 export function getGraphqlUrl() {
-  return url
+  if (typeof window === 'undefined')
+    throw new Error('This is only available in browser')
+  return new URL(url, window.location.toString()).toString()
 }
 
 let promise = Promise.resolve(null as any)
