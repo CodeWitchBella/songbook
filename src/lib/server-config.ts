@@ -56,11 +56,6 @@ const typeDefs = gql`
     collectionsByIds(ids: [String!]!): [CollectionRecord!]!
   }
 
-  input CreateSongInput {
-    author: String!
-    title: String!
-  }
-
   input UpdateSongInput {
     slug: String
     author: String
@@ -128,7 +123,6 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createSong(input: CreateSongInput!): SongRecord
     updateSong(id: String!, input: UpdateSongInput!): SongRecord
     login(email: String!, password: String!): LoginPayload!
     register(input: RegisterInput!): RegisterPayload!
@@ -433,34 +427,6 @@ const resolvers = {
       ]);
 
       return "Success!";
-    },
-    createSong: async (
-      _: {},
-      { input }: { input: { author: string; title: string } },
-      context: MyContext,
-    ) => {
-      const { viewer } = await getViewerCheck(context);
-
-      const { title, author } = input;
-      const slug = slugify(`${title}-${author}`);
-      const existing = await songBySlug(slug);
-      if (existing !== null) throw new UserInputError("Song already exists");
-      const doc = firestoreDoc("songs/" + (await randomID(20)));
-      if (await doc.get()) throw new Error("Generated coliding id");
-      await doc.set(
-        {
-          title,
-          author,
-          deleted: false,
-          slug,
-          text: "",
-          editor: viewer.id,
-          insertedAt: serverTimestamp(),
-          lastModified: serverTimestamp(),
-        },
-        { merge: false },
-      );
-      return await doc.get();
     },
     updateSong: async (_: {}, { id, input }: { input: any; id: string }) => {
       const doc = firestoreDoc("songs/" + id);
