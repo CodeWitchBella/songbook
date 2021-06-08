@@ -4,7 +4,7 @@ import {
   queryFieldEqualsSingle,
   serverTimestamp,
 } from "../lib/firestore";
-import { parseJsonBody } from "../lib/request";
+import { parseJsonBody, validateJsonBody } from "../lib/request";
 import {
   badRequestResponse,
   jsonResponse,
@@ -16,39 +16,22 @@ import { randomID, slugify } from "../lib/utils";
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context);
   if (request.method !== "POST") return methodNotAllowedResponse();
-  const {
-    title,
-    author,
-    text = "",
-    extraNonSearchable = "",
-  } = await parseJsonBody(request);
+  const input = await validateJsonBody(request, {
+    required: ["title", "author"],
+    optional: ["text", "extraNonSearchable"],
+  });
 
-  if (!title || !author) {
-    return badRequestResponse("Title and author are required");
-  }
-  if (
-    typeof title !== "string" ||
-    typeof author !== "string" ||
-    typeof text !== "string" ||
-    typeof extraNonSearchable !== "string"
-  ) {
-    return badRequestResponse("All fields must be strings");
-  }
-
-  const slug = slugify(`${title}-${author}`);
+  const slug = slugify(`${input.title}-${input.author}`);
   const existing = await queryFieldEqualsSingle("songs", "slug", slug);
   if (existing !== null) return badRequestResponse("Song already exists");
   const doc = firestoreDoc("songs/" + (await randomID(20)));
   if (await doc.get()) throw new Error("Generated coliding id");
   await doc.set(
     {
-      title,
-      author,
+      ...input,
       deleted: false,
       slug,
-      text,
       editor: viewer.id,
-      extraNonSearchable,
       insertedAt: serverTimestamp(),
       lastModified: serverTimestamp(),
     },
