@@ -7,11 +7,13 @@ import serverConfig from "./lib/server-config";
 import { handleUltimateGuitar } from "./endpoints/ultimate-guitar";
 import { contextPair, MyContext } from "./lib/context";
 import { handleCreateSong } from "./endpoints/create-song";
+import { handleReleases } from "./endpoints/releases";
 
 async function handleRequest(
-  request: Request,
+  event: FetchEvent,
   createContext: () => MyContext,
 ): Promise<Response> {
+  const { request } = event;
   try {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api")) url.pathname = url.pathname.slice(4);
@@ -20,6 +22,7 @@ async function handleRequest(
       return await handleGraphql(request, createContext());
     if (url.pathname === "/ultimate-guitar")
       return await handleUltimateGuitar(request);
+    if (url.pathname === "/releases") return await handleReleases(event);
     if (request.method === "POST" && url.pathname === "/song")
       return await handleCreateSong(request, createContext());
     if (url.pathname === "/beacon.min.js")
@@ -44,7 +47,7 @@ async function handleRequest(
 addEventListener("fetch", event => {
   const { createContext, finishContext } = contextPair(event.request);
   event.respondWith(
-    handleRequest(event.request, createContext).then(response => {
+    handleRequest(event, createContext).then(response => {
       finishContext(response);
       return response;
     }),
