@@ -6,11 +6,12 @@ import { DateTime } from 'luxon'
 import { BackButton, BackArrow } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { View } from 'react-native'
+import { useMemo } from 'react'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
-const CollectionList = () => {
-  const { list, refresh } = useCollectionList()
+export default function CollectionList() {
+  const { list: unsortedList, refresh } = useCollectionList()
   useEffect(() => {
     if (
       !lastRefreshThisRefresh ||
@@ -20,6 +21,10 @@ const CollectionList = () => {
       refresh()
     }
   }, [refresh])
+  const sortedList = useMemo(
+    () => [...unsortedList].sort(compare),
+    [unsortedList],
+  )
   return (
     <div css={{ minHeight: 'calc(100vh - 20px)', fontSize: 20, padding: 10 }}>
       <h2
@@ -46,7 +51,7 @@ const CollectionList = () => {
             Všechny písně
           </ListButton>
         </div>
-        {list.map(({ item: collection }) => (
+        {sortedList.map(({ item: collection }) => (
           <div key={collection.id}>
             <Gap />
             <ListButton
@@ -63,8 +68,33 @@ const CollectionList = () => {
     </div>
   )
 }
-export default CollectionList
 
 function Gap() {
   return <View style={{ height: 5 }} />
+}
+
+function prefixLength(a: string, b: string) {
+  const length = Math.min(a.length, b.length)
+  for (let i = 0; i < length; i++) {
+    if (a[i] !== b[i]) return i
+  }
+  return length
+}
+
+/**
+ * Array.prototype.sort predicate which sorts alphabetically but sorts numbers
+ * in reverse order
+ */
+function compare(
+  ai: { item: { name: string } },
+  bi: { item: { name: string } },
+) {
+  const a = ai.item.name
+  const b = bi.item.name
+  const prefix = prefixLength(a, b)
+
+  if (/[0-9]/.test(a[prefix]) && /[0-9]/.test(b[prefix])) {
+    return b.localeCompare(a)
+  }
+  return a.localeCompare(b)
 }
