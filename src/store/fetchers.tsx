@@ -7,12 +7,29 @@ async function jsonPost(path: string, json: any) {
     headers: { 'content-type': 'application/json' },
     credentials: 'include',
   })
+  return parseJsonResponse(res)
+}
+
+export async function jsonGet<SuccessBody = unknown>(path: string) {
+  const res = await fetch(new URL(path, getGraphqlUrl()).toString(), {
+    method: 'get',
+    credentials: 'include',
+  })
+  return parseJsonResponse<SuccessBody>(res)
+}
+
+async function parseJsonResponse<SuccessBody>(
+  res: Response,
+): Promise<
+  { success: true; body: SuccessBody } | { success: false; body: any }
+> {
+  const isJson =
+    res.headers.get('content-type')?.split(';')[0].trim() === 'application/json'
+  if (!isJson) {
+    return { success: false, body: await res.text() }
+  }
   return {
-    data:
-      res.headers.get('content-type')?.split(';')[0].trim() ===
-      'application/json'
-        ? await res.json()
-        : await res.text(),
+    body: await res.json(),
     success: res.status === 200,
   }
 }
@@ -24,7 +41,7 @@ export function newSong(song: {
   extraNonSearchable?: string
 }): Promise<{ slug: string }> {
   return jsonPost('/api/song', song).then((v) => {
-    if (v?.data?.slug) return v.data
+    if (v?.body?.slug) return v.body
     throw new Error('New song failed')
   })
 }
