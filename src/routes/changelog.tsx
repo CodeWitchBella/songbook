@@ -12,20 +12,10 @@ function ChangelogBody() {
   if (changelog.status === 'initializing') return null
 
   if (changelog.status === 'loading') {
-    return (
-      <div>
-        <Head />
-        <div>Načítám...</div>
-      </div>
-    )
+    return <div>Načítám...</div>
   }
   if (changelog.status === 'error') {
-    return (
-      <div>
-        <Head />
-        <div>Načítání selhalo.</div>
-      </div>
-    )
+    return <div>Načítání selhalo.</div>
   }
   return (
     <>
