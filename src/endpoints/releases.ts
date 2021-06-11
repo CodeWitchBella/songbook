@@ -75,12 +75,12 @@ export async function handleReleases(event: FetchEvent) {
         }),
         { status: 200 },
       );
-      response.headers.append(
+      response.headers.set(
         "cache-control",
         "s-maxage=60,s-stale-while-revalidate=1200",
       );
     }
-    response.headers.append("content-type", "application/json; charset=utf-8");
+    response.headers.set("content-type", "application/json; charset=utf-8");
     event.waitUntil(caches.default.put(request.url, response.clone()));
   }
   return response;
