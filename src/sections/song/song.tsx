@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { useAutoUpdatedSong } from 'utils/firebase'
 import { useNavigate } from 'utils/use-navigate'
 import { graphqlFetch } from 'store/graphql'
+import { ChordHelp } from 'components/chord-help'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -103,6 +104,8 @@ export default function SongSection({
   })
   const location = useLocation()
   const navigate = useNavigate()
+  const [chordHelp, setChordHelp] = useState('')
+
   if (!song || !parsed) return null
 
   const query = new URLSearchParams(location.search)
@@ -111,6 +114,7 @@ export default function SongSection({
     `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
     10,
   )
+
   return (
     <React.Fragment>
       <div
@@ -124,6 +128,7 @@ export default function SongSection({
           song={song}
           parsed={parser.parseSong('my', song.text)}
           transposition={transposition}
+          onChordPress={setChordHelp}
         />
       </div>
       {enableMenu && (
@@ -140,6 +145,9 @@ export default function SongSection({
         />
       )}
       {spotifyVisible && song.spotify && <Spotify link={song.spotify} />}
+      {chordHelp ? (
+        <ChordHelp chord={chordHelp} close={() => setChordHelp('')} />
+      ) : null}
     </React.Fragment>
   )
 }

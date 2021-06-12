@@ -10,12 +10,14 @@ function SongPage({
   pageData,
   noBack = false,
   transposition = 0,
+  onChordPress = null,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
   transposition?: number
   pageNumber?: number
   noBack?: boolean
+  onChordPress?: null | ((chord: string) => void)
 }) {
   const pretranspose =
     typeof song.pretranspose === 'number' ? song.pretranspose : 0
@@ -23,11 +25,7 @@ function SongPage({
     <PDFSettingsProvider
       value={{
         transpose: transposition + pretranspose,
-        web: {
-          onChordPress: (chord) => {
-            console.log(chord)
-          },
-        },
+        web: { onChordPress },
         fontSize: song.fontSize,
         paragraphSpace: song.paragraphSpace,
         titleSpace: song.titleSpace,
@@ -50,11 +48,13 @@ export function SongLook({
   parsed,
   noBack = false,
   transposition = 0,
+  onChordPress,
 }: {
   song: SongType
   parsed: parser.Paragraph[][]
   noBack?: boolean
   transposition?: number
+  onChordPress?: (chord: string) => void
 }) {
   return (
     <>
@@ -71,6 +71,7 @@ export function SongLook({
           }}
           noBack={noBack || i !== 0}
           transposition={transposition}
+          onChordPress={onChordPress}
         />
       ))}
     </>
