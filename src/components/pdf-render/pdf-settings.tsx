@@ -5,7 +5,9 @@ type CtxIn = {
   paragraphSpace: number
   titleSpace: number
   pageSize: number
-  web: boolean
+  web: null | {
+    onChordPress: null | ((chord: string) => void)
+  }
   transpose: number
 }
 type Ctx = CtxIn & {
@@ -41,7 +43,7 @@ export function PDFSettingsProvider(
     paragraphSpace = 1,
     titleSpace = 1,
     pageSize = 6,
-    web = false,
+    web = null,
     transpose = 0,
   } = {
     ...(useContext(settingsCtx) || {}),

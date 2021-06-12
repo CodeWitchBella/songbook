@@ -33,30 +33,32 @@ function DefaultStyleText(props: PropsOf<typeof Text>) {
 function ChordLine({ l }: { l: Line }) {
   const { em, vw, fontSize } = usePDFSettings()
   return (
-    <View
-      style={{ width: 0, height: em(fontSize * 2.2), flexDirection: 'row' }}
-    >
+    <View style={{ height: em(fontSize * 2.2), flexDirection: 'row' }}>
       {l.content
-        .map((cur, i) => (
-          <View style={{ width: 0 }} key={i}>
-            <DefaultStyleText style={{ width: vw(100) }} selectable={false}>
-              <Text style={{ opacity: 0, ...lineStyle }}>
-                {l.content.slice(0, i).map((t, i2) => (
-                  <Text key={i2} style={t.bold ? { fontWeight: 'bold' } : {}}>
-                    {t.text}
-                    {t.ch?.startsWith('_') ? (
-                      <Text style={{ fontWeight: 'bold' }}>
-                        <Chord>{t.ch.replace('_', '')}</Chord>
-                      </Text>
-                    ) : null}
-                  </Text>
-                ))}
-              </Text>
-              <Text style={{ fontWeight: 'bold' }}>
-                <Chord>{cur.ch.replace(/^_/, '')}</Chord>
-              </Text>
-            </DefaultStyleText>
-          </View>
+        .map((cur, i) => ({ cur, i }))
+        .reverse()
+        .map(({ cur, i }) => (
+          <DefaultStyleText
+            selectable={false}
+            key={i}
+            style={{ position: 'absolute', width: vw(100) }}
+          >
+            <Text style={{ opacity: 0, ...lineStyle }}>
+              {l.content.slice(0, i).map((t, i2) => (
+                <Text key={i2} style={t.bold ? { fontWeight: 'bold' } : {}}>
+                  {t.text}
+                  {t.ch?.startsWith('_') ? (
+                    <Text style={{ fontWeight: 'bold' }}>
+                      <Chord>{t.ch.replace('_', '')}</Chord>
+                    </Text>
+                  ) : null}
+                </Text>
+              ))}
+            </Text>
+            <Text style={{ fontWeight: 'bold', zIndex: 2 }}>
+              <Chord>{cur.ch.replace(/^_/, '')}</Chord>
+            </Text>
+          </DefaultStyleText>
         ))
         .filter(notNull)}
       <DefaultStyleText style={{ fontWeight: 'bold' }} />

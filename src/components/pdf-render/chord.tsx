@@ -1,4 +1,4 @@
-import React from 'react'
+import { Pressable, Text } from 'react-native'
 import { usePDFSettings } from './pdf-settings'
 
 const notes = [
@@ -33,14 +33,26 @@ function transposeChord(chord: string, transposition: number) {
   return chord
 }
 
-function transposeChords(tags: string, transposition: number) {
-  return tags
-    .split(/[ +]+/)
-    .map((t) => transposeChord(t, transposition))
-    .join(' ')
-}
-
 export function Chord({ children }: { children: string }) {
-  const { transpose } = usePDFSettings()
-  return <>{transposeChords(children, transpose)}</>
+  const { transpose, web } = usePDFSettings()
+  const onChordPress = web?.onChordPress
+  return (
+    <Text style={{ position: 'absolute', zIndex: 1 }}>
+      {children.split(/ /).map((chord, index) => {
+        const transposed = transposeChord(chord, transpose)
+        return (
+          <>
+            {index !== 0 ? ' ' : null}
+            {onChordPress ? (
+              <Pressable onPress={() => onChordPress(transposed)}>
+                <Text>{transposed}</Text>
+              </Pressable>
+            ) : (
+              transposed
+            )}
+          </>
+        )
+      })}
+    </Text>
+  )
 }
