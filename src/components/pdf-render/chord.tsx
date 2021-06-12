@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Pressable, Text } from 'react-native'
 import { usePDFSettings } from './pdf-settings'
 
@@ -41,7 +42,7 @@ export function Chord({ children }: { children: string }) {
       {children.split(/ /).map((chord, index) => {
         const transposed = transposeChord(chord, transpose)
         return (
-          <>
+          <Fragment key={index}>
             {index !== 0 ? ' ' : null}
             {onChordPress ? (
               <Pressable onPress={() => onChordPress(transposed)}>
@@ -50,7 +51,7 @@ export function Chord({ children }: { children: string }) {
             ) : (
               transposed
             )}
-          </>
+          </Fragment>
         )
       })}
     </Text>
