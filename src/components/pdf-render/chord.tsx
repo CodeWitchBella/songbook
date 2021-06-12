@@ -45,7 +45,15 @@ export function Chord({ children }: { children: string }) {
           <Fragment key={index}>
             {index !== 0 ? ' ' : null}
             {onChordPress ? (
-              <Pressable onPress={() => onChordPress(transposed)}>
+              <Pressable
+                onPress={() => onChordPress(transposed)}
+                style={{
+                  paddingHorizontal: 5,
+                  marginHorizontal: -5,
+                  paddingVertical: 10,
+                  marginVertical: -10,
+                }}
+              >
                 <Text>{transposed}</Text>
               </Pressable>
             ) : (
