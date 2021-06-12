@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
-import { Pressable, Text } from 'react-native'
+import { Pressable } from 'react-native'
+import { Text } from './primitives'
 import { usePDFSettings } from './pdf-settings'
 
 const notes = [
@@ -34,11 +35,17 @@ function transposeChord(chord: string, transposition: number) {
   return chord
 }
 
-export function Chord({ children }: { children: string }) {
+export function Chord({
+  children,
+  spacer = false,
+}: {
+  children: string
+  spacer?: boolean
+}) {
   const { transpose, web } = usePDFSettings()
-  const onChordPress = web?.onChordPress
+  const onChordPress = spacer ? null : web?.onChordPress
   return (
-    <Text style={{ position: 'absolute', zIndex: 1 }}>
+    <Text style={spacer ? {} : { position: 'absolute', zIndex: 1 }}>
       {children.split(/ /).map((chord, index) => {
         const transposed = transposeChord(chord, transpose)
         return (

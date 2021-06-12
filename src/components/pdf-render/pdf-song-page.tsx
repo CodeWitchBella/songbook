@@ -49,7 +49,7 @@ function ChordLine({ l }: { l: Line }) {
                   {t.text}
                   {t.ch?.startsWith('_') ? (
                     <Text style={{ fontWeight: 'bold' }}>
-                      <Chord>{t.ch.replace('_', '')}</Chord>
+                      <Chord spacer={true}>{t.ch.replace('_', '')}</Chord>
                     </Text>
                   ) : null}
                 </Text>
@@ -116,7 +116,7 @@ function LineC({ l }: { l: Line }) {
           .map((c, i) => [
             c.ch && c.ch.startsWith('_') ? (
               <Text key={i * 2} style={{ opacity: 0 }}>
-                <Chord>{c.ch.replace(/^_/, '')}</Chord>
+                <Chord spacer={true}>{c.ch.replace(/^_/, '')}</Chord>
               </Text>
             ) : null,
             c.text ? (
