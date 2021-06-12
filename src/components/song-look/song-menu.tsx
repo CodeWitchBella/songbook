@@ -14,6 +14,7 @@ import {
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
 import { useGetRandomSong } from 'store/store'
+import { DumbModal } from 'components/dumb-modal'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -70,44 +71,19 @@ const MenuLink = (props: LinkProps<any>) => {
 
 function Info({ close, song }: { close: () => void; song: SongType }) {
   return (
-    <button
-      type="button"
-      css={{
-        all: 'unset',
-        display: 'flex',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'rgba(255,255,255,0.7)',
-        pointerEvents: 'all',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      onClick={close}
-    >
-      <div
-        css={{
-          boxShadow: '10px 10px 36px -8px rgba(0,0,0,0.75)',
-          padding: '20px 10px',
-          background: 'white',
-          fontSize: 18,
-        }}
-      >
-        <div>Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}</div>
-        <div>
-          Vloženo:{' '}
-          {song.insertedAt
-            ? song.insertedAt.toFormat('dd. MM. yyyy')
-            : 'před 20. 5. 2019'}
-        </div>
-        <div>Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}</div>
-        <div css={{ fontSize: 13, marginTop: 20 }}>
-          Klikněte kdekoli pro zavření
-        </div>
+    <DumbModal close={close}>
+      <div>Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}</div>
+      <div>
+        Vloženo:{' '}
+        {song.insertedAt
+          ? song.insertedAt.toFormat('dd. MM. yyyy')
+          : 'před 20. 5. 2019'}
       </div>
-    </button>
+      <div>Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}</div>
+      <div css={{ fontSize: 13, marginTop: 20 }}>
+        Klikněte kdekoli pro zavření
+      </div>
+    </DumbModal>
   )
 }
 

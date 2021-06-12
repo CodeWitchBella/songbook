@@ -3,6 +3,7 @@
 // @ts-expect-error
 import Chord from '@tombatossals/react-chords/lib/Chord'
 import guitar from '@tombatossals/chords-db/lib/guitar.json'
+import { DumbModal } from './dumb-modal'
 
 type ChordDef = typeof guitar['chords']['A'][0]['positions'][0]
 
@@ -50,41 +51,16 @@ export function ChordHelp({
   if (!def) return null
 
   return (
-    <button
-      type="button"
-      css={{
-        all: 'unset',
-        display: 'flex',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: 'rgba(255,255,255,0.7)',
-        pointerEvents: 'all',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      onClick={close}
-    >
-      <div
-        css={{
-          boxShadow: '10px 10px 36px -8px rgba(0,0,0,0.75)',
-          padding: '20px 10px',
-          background: 'white',
-          fontSize: 18,
-        }}
-      >
-        <div css={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
-          {chord}
-        </div>
-        <div css={{ width: 300 }}>
-          <Chord chord={def} instrument={instrument} />
-        </div>
-        <div css={{ fontSize: 13, marginTop: 20 }}>
-          Klikněte kdekoli pro zavření
-        </div>
+    <DumbModal close={close}>
+      <div css={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
+        {chord}
       </div>
-    </button>
+      <div css={{ width: 300 }}>
+        <Chord chord={def} instrument={instrument} />
+      </div>
+      <div css={{ fontSize: 13, marginTop: 20 }}>
+        Klikněte kdekoli pro zavření
+      </div>
+    </DumbModal>
   )
 }
