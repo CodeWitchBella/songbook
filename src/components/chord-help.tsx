@@ -22,6 +22,7 @@ const getChordsMap = (() => {
           map.set(start, def.positions)
         } else if (def.suffix === 'minor') {
           map.set(start + 'mi', def.positions)
+          map.set(start + 'm', def.positions)
         }
       }
     }
