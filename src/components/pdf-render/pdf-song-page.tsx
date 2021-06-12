@@ -35,9 +35,7 @@ function ChordLine({ l }: { l: Line }) {
   return (
     <View style={{ height: em(fontSize * 2.2), flexDirection: 'row' }}>
       {l.content
-        .map((cur, i) => ({ cur, i }))
-        .reverse()
-        .map(({ cur, i }) => (
+        .map((cur, i) => (
           <DefaultStyleText
             selectable={false}
             key={i}
