@@ -1,5 +1,56 @@
 import { Line, Paragraph } from './song-parser'
 
+export function tokenizeLine(line_: string) {
+  type Type = 'whitespace' | 'tag' | 'text' | 'chord'
+  const ret: { type: Type; value: string }[] = []
+
+  let line = line_
+
+  function modifyAndPush(type: Type, length: number) {
+    if (length === 0) return
+    const value = line.substring(0, length)
+    if (type === 'text' && ret[ret.length - 1].type === 'text') {
+      // merge text nodes
+      ret[ret.length - 1].value += value
+    } else {
+      ret.push({ type, value })
+    }
+    line = line.substring(length)
+  }
+  modifyAndPush('whitespace', line.length - line.trimStart().length)
+
+  const rreg = /^(R[0-9]?:|S:[0-9]*)/
+  const rmatch = rreg.exec(line)
+  if (rmatch) {
+    modifyAndPush('tag', rmatch[0].length)
+  }
+
+  let counter = 0
+  while (line !== '') {
+    counter += 1
+    if (counter > 100) break
+
+    const start = line.indexOf('[')
+    if (start < 0) {
+      modifyAndPush('text', line.length)
+    } else if (start === 0) {
+      const idx = line.indexOf(']')
+      if (idx < 0) {
+        modifyAndPush('text', line.length)
+      } else {
+        modifyAndPush('chord', idx + 1)
+      }
+    } /* start > 0 */ else {
+      modifyAndPush('text', start)
+    }
+  }
+  return ret
+}
+
+export function detokenize(tokens: ReturnType<typeof tokenizeLine>) {
+  return tokens.map((t) => t.value).join('')
+}
+
 function parseLine(
   line_: string,
   pCounter: number,

@@ -473,6 +473,12 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           <p>
             Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]
           </p>
+          <p>
+            Editor umí pár chytrých funkcí, které byste nutně nečekali.
+            Například Ctrl+Z. Nejzajímavější funkce je posouvání akordů doleva a
+            doprava pomocí Ctrl+H a Ctrl+L. Další funkce jdou zobrazit kliknutím
+            pravého tlačítka myši a nebo zmáčknutím klávesy F1.
+          </p>
           <p>Hodně štěstí a díky za pomoc</p>
         </Help>
         <Help title="cheaty">
