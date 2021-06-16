@@ -6,7 +6,7 @@ export function jsonResponse(json: any, status = 200) {
 }
 
 export function badRequestResponse(error: string) {
-  return jsonResponse(JSON.stringify({ error }), 400);
+  return jsonResponse({ error }, 400);
 }
 
 export function methodNotAllowedResponse() {
