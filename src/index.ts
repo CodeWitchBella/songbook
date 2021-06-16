@@ -4,7 +4,7 @@ import { ApolloServer } from "apollo-server-cloudflare";
 import { handleGraphql } from "./endpoints/graphql";
 import { forward } from "./forward";
 import serverConfig from "./lib/server-config";
-import { handleUltimateGuitar } from "./endpoints/ultimate-guitar";
+import { handleUltimateGuitar } from "./endpoints/import";
 import { contextPair, MyContext } from "./lib/context";
 import { handleCreateSong } from "./endpoints/create-song";
 import { handleReleases } from "./endpoints/releases";
@@ -20,7 +20,7 @@ async function handleRequest(
     if (url.pathname === "/hello") return new Response("World");
     if (url.pathname === "/graphql")
       return await handleGraphql(request, createContext());
-    if (url.pathname === "/ultimate-guitar")
+    if (url.pathname === "/ultimate-guitar" || url.pathname === "/import")
       return await handleUltimateGuitar(request);
     if (url.pathname === "/releases") return await handleReleases(event);
     if (request.method === "POST" && url.pathname === "/song")
