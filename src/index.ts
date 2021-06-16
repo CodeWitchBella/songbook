@@ -1,9 +1,7 @@
 globalThis.setImmediate = undefined as any;
 
-import { ApolloServer } from "apollo-server-cloudflare";
 import { handleGraphql } from "./endpoints/graphql";
 import { forward } from "./forward";
-import serverConfig from "./lib/server-config";
 import { handleUltimateGuitar } from "./endpoints/import";
 import { contextPair, MyContext } from "./lib/context";
 import { handleCreateSong } from "./endpoints/create-song";
