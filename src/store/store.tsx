@@ -127,7 +127,7 @@ export function useGetRandomSong() {
       const songs = store.readAll()
       const withRandom = songs.map((song) => ({
         song,
-        number: random.random(),
+        number: random.generateInt32(),
       }))
       const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]

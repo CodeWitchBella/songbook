@@ -1,4 +1,8 @@
 /*
+  Modified by Isabella Skořepova 2021. I mostly deleted code I did not need.
+  See comments bellow for original authors.
+ */
+/*
   I've wrapped Makoto Matsumoto and Takuji Nishimura's code in a namespace
   so it's better encapsulated. Now you can have multiple random number generators
   and they won't stomp all over eachother's state.
@@ -74,18 +78,8 @@ export default class MersenneTwister {
   private mt = new Array(this.N) /* the array for the state vector */
   private mti = this.N + 1 /* mti==N+1 means mt[N] is not initialized */
 
-  constructor(seed?: number) {
-    if (seed === undefined) {
-      seed = new Date().getTime()
-    }
-    /* Period parameters */
-
-    this.init_genrand(seed)
-  }
-
-  /* initializes mt[N] with a seed */
-  init_genrand(s_: number) {
-    let s = s_
+  constructor(seed: number) {
+    let s = seed
     this.mt[0] = s >>> 0
     for (this.mti = 1; this.mti < this.N; this.mti++) {
       s = this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >>> 30)
@@ -102,67 +96,16 @@ export default class MersenneTwister {
     }
   }
 
-  /* initialize by an array with array-length */
-  /* init_key is the array for initializing keys */
-  /* key_length is its length */
-  /* slight change for C++, 2004/2/26 */
-  init_by_array(init_key: number[]) {
-    let key_length = init_key.length
-    this.init_genrand(19650218)
-    let i = 1
-    let j = 0
-    for (let k = this.N > key_length ? this.N : key_length; k; k--) {
-      const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
-      this.mt[i] =
-        (this.mt[i] ^
-          (((((s & 0xffff0000) >>> 16) * 1664525) << 16) +
-            (s & 0x0000ffff) * 1664525)) +
-        init_key[j] +
-        j /* non linear */
-      this.mt[i] >>>= 0 /* for WORDSIZE > 32 machines */
-      i++
-      j++
-      if (i >= this.N) {
-        this.mt[0] = this.mt[this.N - 1]
-        i = 1
-      }
-      if (j >= key_length) j = 0
-    }
-    for (let k = this.N - 1; k; k--) {
-      // eslint-disable-next-line no-redeclare
-      const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
-      this.mt[i] =
-        (this.mt[i] ^
-          (((((s & 0xffff0000) >>> 16) * 1566083941) << 16) +
-            (s & 0x0000ffff) * 1566083941)) -
-        i /* non linear */
-      this.mt[i] >>>= 0 /* for WORDSIZE > 32 machines */
-      i++
-      if (i >= this.N) {
-        this.mt[0] = this.mt[this.N - 1]
-        i = 1
-      }
-    }
-
-    this.mt[0] = 0x80000000 /* MSB is 1; assuring non-zero initial array */
-  }
-
   /* generates a random number on [0,0xffffffff]-interval */
-  genrand_int32() {
-    var y
-    var mag01 = [0x0, this.MATRIX_A]
-    /* mag01[x] = x * MATRIX_A  for x=0,1 */
+  generateInt32() {
+    let y = 0
+    const mag01 = [0x0, this.MATRIX_A]
 
     if (this.mti >= this.N) {
       /* generate N words at one time */
-      var kk
+      let kk = 0
 
-      // eslint-disable-next-line eqeqeq
-      if (this.mti == this.N + 1)
-        /* if init_genrand() has not been called, */
-        this.init_genrand(5489) /* a default initial seed is used */
-
-      for (kk = 0; kk < this.N - this.M; kk++) {
+      for (; kk < this.N - this.M; kk++) {
         y =
           (this.mt[kk] & this.UPPER_MASK) | (this.mt[kk + 1] & this.LOWER_MASK)
         this.mt[kk] = this.mt[kk + this.M] ^ (y >>> 1) ^ mag01[y & 0x1]
@@ -190,36 +133,4 @@ export default class MersenneTwister {
 
     return y >>> 0
   }
-
-  /* generates a random number on [0,0x7fffffff]-interval */
-  genrand_int31() {
-    return this.genrand_int32() >>> 1
-  }
-
-  /* generates a random number on [0,1]-real-interval */
-  genrand_real1() {
-    return this.genrand_int32() * (1.0 / 4294967295.0)
-    /* divided by 2^32-1 */
-  }
-
-  /* generates a random number on [0,1)-real-interval */
-  random() {
-    return this.genrand_int32() * (1.0 / 4294967296.0)
-    /* divided by 2^32 */
-  }
-
-  /* generates a random number on (0,1)-real-interval */
-  genrand_real3() {
-    return (this.genrand_int32() + 0.5) * (1.0 / 4294967296.0)
-    /* divided by 2^32 */
-  }
-
-  /* generates a random number on [0,1) with 53-bit resolution*/
-  genrand_res53() {
-    var a = this.genrand_int32() >>> 5,
-      b = this.genrand_int32() >>> 6
-    return (a * 67108864.0 + b) * (1.0 / 9007199254740992.0)
-  }
-
-  /* These real versions are due to Isaku Wada, 2002/01/09 added */
 }
