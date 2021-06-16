@@ -98,7 +98,8 @@ const handlers: readonly {
                 ({
                   chorus: "R: ",
                   verse: "S: ",
-                } as { [key: string]: string })[type] || `[*${type}]`;
+                } as { [key: string]: string })[type] ||
+                `[*${capitalize(type)}] `;
               if (!res) return;
               text += res;
             } else if (cls === "scs-chord") {
@@ -150,6 +151,11 @@ const handlers: readonly {
     },
   },
 ];
+
+function capitalize(text: string) {
+  if (text.length < 1) return text;
+  return text[0].toUpperCase() + text.substring(1);
+}
 
 function after(text: string, delimiter: string) {
   const index = text.indexOf(delimiter);
