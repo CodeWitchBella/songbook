@@ -11,7 +11,6 @@ import {
   GestureResponderEvent,
   Text,
   Pressable,
-  PressableProps,
 } from 'react-native'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { jsx, css } from '@emotion/react'
+import { css } from '@emotion/react'
 import React, { useRef, PropsWithChildren, useReducer } from 'react'
 import styled from '@emotion/styled'
 import Input from 'components/input'

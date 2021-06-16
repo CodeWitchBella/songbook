@@ -108,13 +108,11 @@ export default class MersenneTwister {
   /* slight change for C++, 2004/2/26 */
   init_by_array(init_key: number[]) {
     let key_length = init_key.length
-    var i, j, k
     this.init_genrand(19650218)
-    i = 1
-    j = 0
-    k = this.N > key_length ? this.N : key_length
-    for (; k; k--) {
-      var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
+    let i = 1
+    let j = 0
+    for (let k = this.N > key_length ? this.N : key_length; k; k--) {
+      const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
       this.mt[i] =
         (this.mt[i] ^
           (((((s & 0xffff0000) >>> 16) * 1664525) << 16) +
@@ -130,9 +128,9 @@ export default class MersenneTwister {
       }
       if (j >= key_length) j = 0
     }
-    for (k = this.N - 1; k; k--) {
+    for (let k = this.N - 1; k; k--) {
       // eslint-disable-next-line no-redeclare
-      var s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
+      const s = this.mt[i - 1] ^ (this.mt[i - 1] >>> 30)
       this.mt[i] =
         (this.mt[i] ^
           (((((s & 0xffff0000) >>> 16) * 1566083941) << 16) +
