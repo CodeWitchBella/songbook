@@ -11,14 +11,14 @@ const getWorker = (() => {
   return function getOrCreateWorker() {
     if (!('Worker' in window)) return null
     if (!worker) worker = new SearchWorker()
-    return worker!
+    return worker
   }
 })()
 
-type FilteredList = ReturnType<typeof getFilteredSongList>
+type FilteredSongs = ReturnType<typeof getFilteredSongList>
 const filteredToComponents = (
   showTitles: boolean,
-  filtered: FilteredList,
+  filtered: FilteredSongs,
   songItem: (id: string) => { text: string; slug: string } | null,
 ): SongListItem[] => {
   return [
@@ -43,7 +43,7 @@ const filteredToComponents = (
   ].filter(notNull)
 }
 
-export default function FilteredList({
+export function FilteredList({
   search,
   songs,
   sortByAuthor,
@@ -70,13 +70,8 @@ export default function FilteredList({
   const [list, setList] = useReducer(
     (
       _prevState: any,
-      {
-        showTitles,
-        ids,
-        tag,
-      }: { showTitles: boolean; ids: FilteredList; tag: string },
+      { showTitles, ids }: { showTitles: boolean; ids: FilteredSongs },
     ) => {
-      //console.log(`[${tag}] Setting list to`, { showTitles, ids })
       return filteredToComponents(showTitles, ids, songItem)
     },
     null,
@@ -99,7 +94,7 @@ export default function FilteredList({
             value.search === search &&
             value.sourceListLength === songs.length
           ) {
-            setList({ showTitles: !!search, ids: value.list, tag: 'from-sw' })
+            setList({ showTitles: !!search, ids: value.list })
           }
         } else {
           console.warn('Unknown message type ' + type)
@@ -137,13 +132,12 @@ export default function FilteredList({
           byText: [],
           byExtra: [],
         },
-        tag: 'short-circuit',
       })
     } else if (worker) {
       worker.postMessage({ type: 'setSearch', value: search })
     } else {
       const filtered = getFilteredSongList(songs, search)
-      setList({ showTitles: !!search, ids: filtered, tag: 'no-worker' })
+      setList({ showTitles: !!search, ids: filtered })
     }
   }, [search, songs, worker])
 

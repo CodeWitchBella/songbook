@@ -9,47 +9,23 @@ import React, {
   useLayoutEffect,
 } from 'react'
 import styled from '@emotion/styled'
-import { Link } from 'react-router-dom'
 import { css } from '@emotion/react'
 import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { BasicButton } from 'components/interactive/basic-button'
 
-const a = css`
-  color: black;
-  text-decoration: none;
-  :hover {
-    text-decoration: underline;
-  }
-`
-
 const TheSong = styled.div`
   all: unset;
   font-size: 20px;
   box-sizing: border-box;
 
-  a,
   .title {
     display: inline-block;
     padding: 10px;
     color: black;
-  }
-  a {
-    ${a};
-  }
-  .title {
     font-weight: bold;
   }
-`
-
-export const Print = styled(Link)`
-  display: flex;
-  font-size: 20px;
-  height: 100px;
-  align-items: center;
-  justify-content: center;
-  ${a};
 `
 
 function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {

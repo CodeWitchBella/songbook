@@ -11,6 +11,7 @@ import {
   GestureResponderEvent,
   Text,
   Pressable,
+  PressableProps,
 } from 'react-native'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
@@ -47,6 +48,7 @@ function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
           history.push(to, { canGoBack: true })
         }
       }}
+      href={to}
       {...rest}
     />
   )
@@ -59,11 +61,8 @@ function BasicButtonBase({
   disabled,
   style,
   ...rest
-}: ButtonPropsNonLink) {
+}: ButtonPropsNonLink & { href?: string }) {
   const text = useRef<Text>(null)
-  useEffect(() => {
-    text.current?.setNativeProps({ style: { cursor: 'pointer' } })
-  }, [])
   const [hover, setHover] = useState(false)
   const inClickOutside = useContext(clickOutsideContext)
 
@@ -75,15 +74,16 @@ function BasicButtonBase({
         if (pressOverriden > 0 && !inClickOutside) return
         rest.onPress?.(event)
       }}
-      // @ts-expect-error
-      onHoverIn={() => setHover(true)}
-      onHoverOut={() => setHover(false)}
       style={{
         alignItems: 'stretch',
         flexDirection: 'column',
         justifyContent: 'center',
         display: 'flex',
       }}
+      // @ts-expect-error
+      href={rest.href}
+      onHoverIn={() => setHover(true)}
+      onHoverOut={() => setHover(false)}
     >
       <Text
         ref={text}
