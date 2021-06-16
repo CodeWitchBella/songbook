@@ -29,6 +29,7 @@ export async function handleCreateSong(request: Request, context: MyContext) {
   await doc.set(
     {
       ...input,
+      text: input.text || "",
       deleted: false,
       slug,
       editor: viewer.id,
