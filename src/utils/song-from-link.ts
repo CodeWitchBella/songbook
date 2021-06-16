@@ -12,7 +12,7 @@ export async function songFromLink(
   ) {
     return 'Jiné odkazy než ultimate guitar nebo akordy.kytary.cz nejsou podporované'
   }
-  const url = new URL('ultimate-guitar', getGraphqlUrl())
+  const url = new URL('import', getGraphqlUrl())
   url.searchParams.set('url', link)
   const res = await fetch(url.toString())
   const json = await res.json()
