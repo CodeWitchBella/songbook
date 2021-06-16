@@ -70,6 +70,7 @@ function BasicButtonBase({
     <Pressable
       disabled={disabled}
       onPress={(event) => {
+        event.preventDefault()
         if (disabled) return
         if (pressOverriden > 0 && !inClickOutside) return
         rest.onPress?.(event)
