@@ -6,8 +6,11 @@ export async function songFromLink(
   | string
   | { author: string; title: string; text: string; extraNonSearchable: string }
 > {
-  if (!link.startsWith('https://tabs.ultimate-guitar.com/tab/')) {
-    return 'Jiné odkazy než ultimate guitar nejsou podporované'
+  if (
+    !link.startsWith('https://tabs.ultimate-guitar.com/tab/') &&
+    !link.startsWith('https://akordy.kytary.cz/song/')
+  ) {
+    return 'Jiné odkazy než ultimate guitar nebo akordy.kytary.cz nejsou podporované'
   }
   const url = new URL('ultimate-guitar', getGraphqlUrl())
   url.searchParams.set('url', link)
