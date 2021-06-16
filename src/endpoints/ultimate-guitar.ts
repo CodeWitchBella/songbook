@@ -1,4 +1,4 @@
-import { badRequestResponse } from "../lib/response";
+import { badRequestResponse, jsonResponse } from "../lib/response";
 
 export async function handleUltimateGuitar(
   request: Request,
@@ -9,7 +9,7 @@ export async function handleUltimateGuitar(
   if (!target) return badRequestResponse("Url query param is required");
   for (const handler of handlers) {
     if (handler.test(target)) {
-      return await handler.handle(target);
+      return jsonResponse(await handler.handle(target));
     }
   }
 
@@ -18,20 +18,22 @@ export async function handleUltimateGuitar(
 
 const handlers: readonly {
   test: (url: string) => boolean;
-  handle: (target: string) => Promise<Response>;
+  handle: (
+    target: string,
+  ) => Promise<{ text: string; author: string; title: string }>;
 }[] = [
   {
     test: url => {
       const begin = "https://tabs.ultimate-guitar.com/tab/";
-      return Boolean(
+      return (
         url.startsWith(begin) &&
-          url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i),
+        !!url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i)
       );
     },
     handle: async target => {
       const r = await fetch(target);
       if (r.status !== 200) {
-        return new Response(JSON.stringify({ error: "Cannot load from UG" }), {
+        throw new Response(JSON.stringify({ error: "Cannot load from UG" }), {
           status: 424,
           headers: { "content-type": "application/json" },
         });
@@ -47,14 +49,104 @@ const handlers: readonly {
       const pageData = data["store"]["page"]["data"];
       const text = pageData["tab_view"]["wiki_tab"]["content"];
 
-      return new Response(
-        JSON.stringify({
-          text,
-          author: pageData["tab"]["artist_name"],
-          title: pageData["tab"]["song_name"],
-        }),
-        { headers: { "content-type": "application/json" } },
+      return {
+        text,
+        author: pageData["tab"]["artist_name"],
+        title: pageData["tab"]["song_name"],
+      };
+    },
+  },
+  {
+    test: url => {
+      const begin = "https://akordy.kytary.cz/song/";
+      return (
+        url.startsWith(begin) &&
+        !!url.substring(begin.length).match(/^[a-z0-9-]+$/i)
       );
+    },
+    handle: async target => {
+      const r = await fetch(target);
+      if (r.status !== 200) {
+        throw new Response(
+          JSON.stringify({ error: "Cannot load from akordy.kytary" }),
+          {
+            status: 424,
+            headers: { "content-type": "application/json" },
+          },
+        );
+      }
+
+      let text = "";
+      let title = "";
+      let author = "";
+
+      let chord: "no" | "started" | "handled" = "no";
+      let firstInSection = false;
+
+      const converted = new HTMLRewriter()
+        .on("#snippet--sheetContent div, #snippet--sheetContent span", {
+          element(element) {
+            const cls = element.getAttribute("class");
+            if (cls === "scs-section") {
+              firstInSection = true;
+              const type = element.getAttribute("data-type");
+              if (text) {
+                text = text.trimEnd() + "\n\n";
+              }
+              if (!type) return;
+              const res =
+                ({
+                  chorus: "R: ",
+                  verse: "S: ",
+                } as { [key: string]: string })[type] || `[*${type}]`;
+              if (!res) return;
+              text += res;
+            } else if (cls === "scs-chord") {
+              text += "[";
+              chord = "started";
+            } else if (cls?.startsWith("scs-ch")) {
+              chord = "started";
+            }
+          },
+          text(node) {
+            if (node.text.trim()) {
+              if (chord === "handled") {
+                text = text.trimEnd() + "]";
+                chord = "no";
+              } else if (chord === "started") {
+                chord = "handled";
+              }
+            }
+            text += node.text;
+          },
+        })
+        .on("#snippet--sheetContent .scs-section > div", {
+          element() {
+            if (firstInSection) {
+              firstInSection = false;
+            } else {
+              text += "\n";
+            }
+          },
+        })
+        .on(".sheet-title", {
+          text(text) {
+            title += text.text;
+          },
+        })
+        .on(".sheet-author", {
+          text(text) {
+            author += text.text;
+          },
+        })
+        .transform(r);
+      await converted.text();
+
+      return {
+        text: text.replaceAll("&nbsp;", " "),
+        author: author.trim(),
+        title: title.trim(),
+      };
     },
   },
 ];
