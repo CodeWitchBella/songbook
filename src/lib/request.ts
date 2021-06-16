@@ -62,7 +62,9 @@ export async function validateJsonBody<
 
   // check optional
   for (const opt of config.optional) {
-    if (typeof opt === "string") {
+    if (json[opt] === undefined) {
+      // it's optional
+    } else if (typeof opt === "string") {
       if (typeof json[opt] !== "string") {
         throw badRequestResponse("Value of key " + opt + " must be string");
       }
