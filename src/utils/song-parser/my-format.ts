@@ -9,7 +9,11 @@ export function tokenizeLine(line_: string) {
   function modifyAndPush(type: Type, length: number) {
     if (length === 0) return
     const value = line.substring(0, length)
-    if (type === 'text' && ret[ret.length - 1].type === 'text') {
+    if (
+      type === 'text' &&
+      ret.length > 0 &&
+      ret[ret.length - 1].type === 'text'
+    ) {
       // merge text nodes
       ret[ret.length - 1].value += value
     } else {
