@@ -18,7 +18,9 @@ const getChordsMap = (() => {
     for (const [start, defArr] of Object.entries(guitar.chords)) {
       for (const def of defArr) {
         map.set(start + def.suffix, def.positions)
-        if (def.suffix === 'major') {
+        if (/^m[0-9]/.test(def.suffix)) {
+          map.set(start + 'mi' + def.suffix.substring(1), def.positions)
+        } else if (def.suffix === 'major') {
           map.set(start, def.positions)
         } else if (def.suffix === 'minor') {
           map.set(start + 'mi', def.positions)
