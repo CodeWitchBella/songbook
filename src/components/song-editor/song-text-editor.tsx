@@ -110,14 +110,14 @@ export function SongTextEditor(props: {
     }
   }, [props.language])
 
-  const onChange = props.onChange
+  const onChange = useLastRef(props.onChange)
   useEffect(() => {
     if (!editor) return
     let timeout: ReturnType<typeof setTimeout> | null = null
     const unsub = editor.onDidChangeModelContent(() => {
       if (timeout) clearTimeout(timeout)
       timeout = setTimeout(() => {
-        onChange(editor.getModel()!.getLinesContent().join('\n'))
+        onChange.current(editor.getModel()!.getLinesContent().join('\n'))
       }, 250)
     })
     return () => {
@@ -129,4 +129,12 @@ export function SongTextEditor(props: {
   useEditorFitContent(editor, element.current)
 
   return <div ref={element} style={{ height: 500 }} />
+}
+
+function useLastRef<T>(value: T) {
+  const ref = useRef(value)
+  useEffect(() => {
+    ref.current = value
+  })
+  return ref
 }
