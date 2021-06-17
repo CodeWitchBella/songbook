@@ -42,11 +42,12 @@ const instrument = {
 
 export function ChordHelp({
   close,
-  chord,
+  chord: chordIn,
 }: {
   close: () => void
   chord: string
 }) {
+  const chord = chordIn.replace(/^B/, 'Bb').replace(/^H/, 'B')
   const def = getChordsMap().get(chord)?.[0]
   console.log(def)
   if (!def) return null
@@ -54,7 +55,8 @@ export function ChordHelp({
   return (
     <DumbModal close={close}>
       <div css={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
-        {chord}
+        {chordIn}
+        {chordIn !== chord ? ` (${chord})` : null}
       </div>
       <div css={{ width: 300 }}>
         <Chord chord={def} instrument={instrument} />
