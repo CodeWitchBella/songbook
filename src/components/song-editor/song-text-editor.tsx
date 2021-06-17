@@ -2,7 +2,7 @@
 
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
-import { addMoveAction } from './song-editor-actions'
+import { addDeleteChordAction, addMoveAction } from './song-editor-actions'
 
 let wasSetup = false
 function setup() {
@@ -101,6 +101,7 @@ export function SongTextEditor(props: {
     })
     addMoveAction('left', editor)
     addMoveAction('right', editor)
+    addDeleteChordAction(editor)
 
     setEditor(editor)
 

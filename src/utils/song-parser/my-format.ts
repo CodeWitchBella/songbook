@@ -2,9 +2,10 @@ import { Line, Paragraph } from './song-parser'
 
 export function tokenizeLine(line_: string) {
   type Type = 'whitespace' | 'tag' | 'text' | 'chord'
-  const ret: { type: Type; value: string }[] = []
+  const ret: { type: Type; value: string; index: number }[] = []
 
   let line = line_
+  let index = 0
 
   function modifyAndPush(type: Type, length: number) {
     if (length === 0) return
@@ -17,8 +18,9 @@ export function tokenizeLine(line_: string) {
       // merge text nodes
       ret[ret.length - 1].value += value
     } else {
-      ret.push({ type, value })
+      ret.push({ type, value, index })
     }
+    index += length
     line = line.substring(length)
   }
   modifyAndPush('whitespace', line.length - line.trimStart().length)
