@@ -36,6 +36,7 @@
   "start_url": "/installed-home",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["minimal-ui"],
   "background_color": "#FFCE19",
   "theme_color": "#14CCB1",
   "orientation": "portrait"
