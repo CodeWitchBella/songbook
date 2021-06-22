@@ -113,11 +113,15 @@ export function SongTextEditor(props: {
   const onChange = useLastRef(props.onChange)
   useEffect(() => {
     if (!editor) return
+    const model = editor.getModel()
+    if (!model) return
+
     let timeout: ReturnType<typeof setTimeout> | null = null
-    const unsub = editor.onDidChangeModelContent(() => {
+    const unsub = model.onDidChangeContent((event) => {
       if (timeout) clearTimeout(timeout)
       timeout = setTimeout(() => {
-        onChange.current(editor.getModel()!.getLinesContent().join('\n'))
+        timeout = null
+        onChange.current(model.getValue(monaco.editor.EndOfLinePreference.LF))
       }, 250)
     })
     return () => {
