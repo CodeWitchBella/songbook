@@ -1,17 +1,4 @@
-import { MyContext } from "../lib/context";
-import {
-  firestoreDoc,
-  queryFieldEqualsSingle,
-  serverTimestamp,
-} from "../lib/firestore";
-import { parseJsonBody, validateJsonBody } from "../lib/request";
-import {
-  badRequestResponse,
-  jsonResponse,
-  methodNotAllowedResponse,
-} from "../lib/response";
-import { getViewerCheck } from "../lib/server-config";
-import { randomID, slugify } from "../lib/utils";
+import { methodNotAllowedResponse } from "../lib/response";
 
 type GithubResponse = {
   url: string;
