@@ -151,7 +151,7 @@ async function getViewer(context: MyContext) {
   const token = (context.sessionCookie || "").trim();
   if (!token) return;
   const session = firestoreDoc("sessions/" + token);
-  const data = (await session.get())?.data();
+  const data = (await session.get(context.loader))?.data();
   if (!data) return;
   return { viewer: firestoreDoc(data.user), session };
 }
@@ -259,14 +259,16 @@ const resolvers = {
     },
     viewer: async (_: {}, _2: {}, context: MyContext) => {
       const data = await getViewer(context);
-      if (data) return (await data.viewer.get())?.data() ?? null;
+      if (data) return (await data.viewer.get(context.loader))?.data() ?? null;
       return null;
     },
   },
   Song: {
-    editor: async (src: any) => {
+    editor: async (src: any, _: any, loader: MyContext) => {
       if (src.editor)
-        return (await firestoreDoc(src.editor).get())?.data() ?? null;
+        return (
+          (await firestoreDoc(src.editor).get(loader.loader))?.data() ?? null
+        );
       return null;
     },
     insertedAt: (src: any) => src.insertedAt || null,
@@ -292,8 +294,8 @@ const resolvers = {
   },
   Collection: {
     insertedAt: (src: any) => src.insertedAt || null,
-    owner: async (src: any) => {
-      const owner = await firestoreDoc(src.owner).get();
+    owner: async (src: any, _: any, context: MyContext) => {
+      const owner = await firestoreDoc(src.owner).get(context.loader);
       return owner?.data() ?? null;
     },
     songList: async (src: any) => {
@@ -347,7 +349,7 @@ const resolvers = {
     ) => {
       const vsrc = await getViewerCheck(context);
       const viewerId = vsrc.viewer.id;
-      const viewer = (await vsrc.viewer.get())?.data();
+      const viewer = (await vsrc.viewer.get(context.loader))?.data();
       if (!viewer || !viewerId) throw new Error("Cannot load viewer");
       if (global && !viewer.admin)
         throw new UserInputError("Only admin can create global songbooks");
@@ -373,7 +375,7 @@ const resolvers = {
         },
         { merge: false },
       );
-      return doc.get();
+      return doc.get(context.loader);
     },
     addToCollection: async (
       _: {},
@@ -382,13 +384,13 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context);
       const collectionSnap =
-        (await firestoreDoc("collections/" + collection).get()) ||
+        (await firestoreDoc("collections/" + collection).get(context.loader)) ||
         (await collectionBySlug(collection));
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
-      const songSnap = await firestoreDoc("songs/" + song).get();
+      const songSnap = await firestoreDoc("songs/" + song).get(context.loader);
       if (!songSnap) throw new UserInputError("Song does not exist");
 
       await firestoreFieldTransforms("collections/" + collectionSnap.id, [
@@ -409,13 +411,13 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context);
       const collectionSnap =
-        (await firestoreDoc("collections/" + collection).get()) ||
+        (await firestoreDoc("collections/" + collection).get(context.loader)) ||
         (await collectionBySlug(collection));
       if (!collectionSnap)
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
-      const songSnap = await firestoreDoc("songs/" + song).get();
+      const songSnap = await firestoreDoc("songs/" + song).get(context.loader);
       if (!songSnap) throw new UserInputError("Song does not exist");
 
       await firestoreFieldTransforms("collections/" + collectionSnap.id, [
@@ -428,9 +430,13 @@ const resolvers = {
 
       return "Success!";
     },
-    updateSong: async (_: {}, { id, input }: { input: any; id: string }) => {
+    updateSong: async (
+      _: {},
+      { id, input }: { input: any; id: string },
+      context: MyContext,
+    ) => {
       const doc = firestoreDoc("songs/" + id);
-      const prev = await doc.get();
+      const prev = await doc.get(context.loader);
       if (!prev) throw new Error("Song does not exist");
       await doc.set(
         {
@@ -441,7 +447,7 @@ const resolvers = {
         },
         { merge: true },
       );
-      return doc.get();
+      return doc.get(context.loader);
     },
     async login(
       _: {},
@@ -503,7 +509,7 @@ const resolvers = {
       await createSession(context, id);
       return {
         __typename: "RegisterSuccess",
-        user: (await doc.get())?.data(),
+        user: (await doc.get(context.loader))?.data(),
       };
     },
     logout: async (_: {}, _2: {}, context: MyContext) => {

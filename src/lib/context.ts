@@ -1,10 +1,12 @@
 import type { Duration } from 'luxon'
 import { createSetSessionCookieHeader, parseSessionCookie } from './cookie';
+import { getLoader, LoaderType } from './firestore';
 
 export type MyContext = {
   sessionCookie?: string
   setSessionCookie(cookie: string | null, duration: Duration): void
   url: string
+  loader: LoaderType
 }
 
 export function contextPair(request: Request) {
@@ -16,6 +18,7 @@ export function contextPair(request: Request) {
         hdr = createSetSessionCookieHeader(value, duration);
       },
       url: request.url,
+      loader: getLoader(),
     }),
     finishContext: (response: Response)  => {
       if (hdr) response.headers.set(hdr[0], hdr[1]);

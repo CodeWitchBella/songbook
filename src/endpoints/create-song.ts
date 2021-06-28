@@ -25,7 +25,7 @@ export async function handleCreateSong(request: Request, context: MyContext) {
   const existing = await queryFieldEqualsSingle("songs", "slug", slug);
   if (existing !== null) return badRequestResponse("Song already exists");
   const doc = firestoreDoc("songs/" + (await randomID(20)));
-  if (await doc.get()) throw new Error("Generated coliding id");
+  if (await doc.get(context.loader)) throw new Error("Generated coliding id");
   await doc.set(
     {
       ...input,

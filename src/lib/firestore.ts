@@ -136,26 +136,29 @@ export async function queryFieldEqualsSingle(
   return docs[0];
 }
 
-const getLoader = new DataLoader(
-  async (ids: readonly string[]) => {
-    const res = await getAll(ids);
-    const map = new Map<string, typeof res[0]>();
-    for (const item of res) {
-      if (item) map.set(item.ref.id, item);
-    }
-    return ids.map(id => map.get(id) ?? null);
-  },
-  {
-    batchScheduleFn: cb => {
-      setTimeout(cb, 1);
+export const getLoader = () =>
+  new DataLoader(
+    async (ids: readonly string[]): Promise<any[]> => {
+      const res = await getAll(ids);
+      const map = new Map<string, typeof res[0]>();
+      for (const item of res) {
+        if (item) map.set(item.ref.id, item);
+      }
+      return ids.map(id => map.get(id) ?? null);
     },
-  },
-);
+    {
+      batchScheduleFn: cb => {
+        setTimeout(cb, 1);
+      },
+    },
+  );
+export type LoaderType = ReturnType<typeof getLoader>;
 
 export function firestoreDoc(id: string) {
   return {
     id,
-    get: (): Promise<ReturnType<typeof snap> | null> => getLoader.load(id),
+    get: (loader: LoaderType): Promise<ReturnType<typeof snap> | null> =>
+      loader.load(id),
     set: async (values: any, { merge }: { merge: boolean }) => {
       const params = new URLSearchParams();
       if (merge) {
