@@ -101,8 +101,8 @@ export function Image(
   > & { source: string },
 ) {
   const pdf = useContext(InPdfCtx)
-  if (pdf) return <pdf.Image {...props} />
   const { source, ...rest } = props
+  if (pdf) return <pdf.Image src={source} {...rest} />
   return <RNImage source={{ uri: source }} {...rest} />
 }
 

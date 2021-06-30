@@ -1,5 +1,9 @@
 import { DateTime } from 'luxon'
 
+import deti21 from './deti21.png'
+import vedouci21 from './vedouci21.png'
+import extra21 from './extra21.png'
+
 const titleMap: {
   [key: string]: {
     title: string
@@ -9,6 +13,7 @@ const titleMap: {
     imageViewPaddingTop: number
     imageWidth?: number
     imageOnly: boolean
+    image?: string
   }
 } = {
   'Kačlehy 2020 Děti': {
@@ -28,6 +33,36 @@ const titleMap: {
     imageViewPaddingTop: 0,
     imageWidth: undefined,
     imageOnly: true,
+  },
+  'Kačlehy 2021 Děti': {
+    title: 'Zpěvy ASAP',
+    subtitle: 'v2.0.21',
+    footer: 'Zpěvy ARGO Akademie™ v2.0.21',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: deti21,
+  },
+  'Kačlehy 2021 Vedoucí': {
+    title: 'Vesmírné zpěvy',
+    subtitle: 'v2.0.21',
+    footer: 'ARGO™ zpěvy v2.0.21',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: vedouci21,
+  },
+  'Kačlehy 2021 Extra': {
+    title: 'Krákorání',
+    subtitle: 'v2.0.21',
+    footer: 'Krákorání v2.0.21',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: extra21,
   },
 }
 

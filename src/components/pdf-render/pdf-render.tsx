@@ -251,7 +251,7 @@ export function PDFDownload({
     }
   }
 
-  const pageSize = 6
+  const pageSize = 5
 
   const pages = [
     <PDFTitlePage title={title} key="title" />,

@@ -3,12 +3,13 @@ import { usePDFSettings } from './pdf-settings'
 import { View, Image, Text } from './primitives'
 import { DateTime } from 'luxon'
 import { PDFPage } from './pdf-page'
-import image from './cross.png'
+import img from './cross.png'
 import { getSongbookMeta } from './songbook-meta'
 
 export function PDFTitlePage({ title }: { title: string }) {
   const { em, vh } = usePDFSettings()
   const meta = getSongbookMeta(title, DateTime.utc())
+  const image = meta.image || img
   if (meta.imageOnly) {
     return (
       <PDFPage left={false}>
