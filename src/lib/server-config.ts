@@ -132,6 +132,7 @@ const typeDefs = gql`
     setHandle(handle: String!): String
     createCollection(name: String!, global: Boolean): CollectionRecord
     addToCollection(collection: String!, song: String!): String
+    lockCollection(collection: String!): String
     removeFromCollection(collection: String!, song: String!): String
   }
 `;
@@ -408,6 +409,28 @@ const resolvers = {
             values: [{ stringValue: "songs/" + song }],
           },
         },
+        { fieldPath: "lastModified", setToServerValue: "REQUEST_TIME" },
+      ]);
+      return "Success!";
+    },
+    lockCollection: async (
+      _: {},
+      { collection }: { collection: string },
+      context: MyContext,
+    ) => {
+      const vsrc = await getViewerCheck(context);
+      const viewer = (await vsrc.viewer.get(context.loader))?.data();
+      if (!viewer?.admin)
+        throw new UserInputError("Only admin can lock collections");
+
+      const collectionSnap =
+        (await firestoreDoc("collections/" + collection).get(context.loader)) ||
+        (await collectionBySlug(collection));
+      if (!collectionSnap)
+        throw new UserInputError("Collection does not exist");
+
+      await collectionSnap.ref.set({ locked: true }, { merge: true });
+      await firestoreFieldTransforms("collections/" + collectionSnap.id, [
         { fieldPath: "lastModified", setToServerValue: "REQUEST_TIME" },
       ]);
       return "Success!";

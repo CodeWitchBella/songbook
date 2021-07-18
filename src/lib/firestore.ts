@@ -209,31 +209,58 @@ export function firestoreDoc(id: string) {
   };
 }
 
+type FieldTransform = {
+  fieldPath: string;
+} & (
+  | { setToServerValue: "REQUEST_TIME" }
+  | { increment: any }
+  | { maximum: any }
+  | { minimum: any }
+  | { appendMissingElements: { values: readonly any[] } }
+  | { removeAllFromArray: { values: readonly any[] } }
+);
+
+export function firestoreIdentifier(id: string) {
+  return base + "/" + id;
+}
+
 export async function firestoreFieldTransforms(
   id: string,
-  fieldTransforms: readonly ({
-    fieldPath: string;
-  } & (
-    | { setToServerValue: "REQUEST_TIME" }
-    | { increment: any }
-    | { maximum: any }
-    | { minimum: any }
-    | { appendMissingElements: { values: readonly any[] } }
-    | { removeAllFromArray: { values: readonly any[] } }
-  ))[],
+  fieldTransforms: readonly FieldTransform[],
 ) {
+  return firestoreBatchWrite([
+    { transform: { document: firestoreIdentifier(id), fieldTransforms } },
+  ]);
+}
+
+type Write =
+  | {
+      update: {
+        name: string;
+        fields: {
+          [key: string]:
+            | { nullValue: null }
+            | { booleanValue: boolean }
+            | { integerValue: string }
+            | { doubleValue: number }
+            | { timestampValue: string }
+            | { stringValue: string }
+            | { bytesValue: string }
+            | { referenceValue: string };
+        };
+      };
+    }
+  | {
+      transform: {
+        document: string;
+        fieldTransforms: readonly FieldTransform[];
+      };
+    };
+
+export async function firestoreBatchWrite(writes: readonly Write[]) {
   const res = await doFetch(":batchWrite", {
     method: "POST",
-    body: JSON.stringify({
-      writes: [
-        {
-          transform: {
-            document: base + "/" + id,
-            fieldTransforms,
-          },
-        },
-      ],
-    }),
+    body: JSON.stringify({ writes }),
   });
   if (!res.ok) {
     console.error(await res.text());
