@@ -30,16 +30,13 @@ export default function AddToCollection() {
   if (!song) {
     return <ErrorPage text="Píseň nenalezena." />
   }
-  if (!viewer) {
-    return <ErrorPage text="Pro přidání písně do kolekce musíš mít účet." />
-  }
 
   const addable: typeof list = []
   const removable: typeof list = []
   const locked: typeof list = []
   for (const c of list) {
     const isInCollection = c.item.songList.includes(song.id)
-    const editable = !c.item.locked && c.item.owner.name === viewer.name
+    const editable = !c.item.locked && c.item.owner.name === viewer?.name
     if (editable) {
       if (isInCollection) {
         removable.push(c)
@@ -49,6 +46,33 @@ export default function AddToCollection() {
     } else if (isInCollection) {
       locked.push(c)
     }
+  }
+
+  if (!viewer) {
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          paddingTop: 32,
+          flexDirection: 'row',
+        }}
+      >
+        <View>
+          <Title
+            text="Pro přidání písně do kolekce musíš mít účet."
+            first={true}
+          />
+          <View style={{ paddingTop: 16 }} />
+          <ListButton to="/login">Přihlásit se</ListButton>
+          <View style={{ paddingTop: 8 }} />
+          <ListButton to="/register">Vytvořit účet</ListButton>
+          {locked.length > 0 ? (
+            <Title text="Píseň je v kolekcích" first={false} />
+          ) : null}
+          <CollectionList list={locked.sort(collectionCompare)} />
+        </View>
+      </View>
+    )
   }
 
   return (
@@ -117,7 +141,9 @@ export default function AddToCollection() {
             )
           }}
         />
-        <Title first={false} text="Píseň je také v kolekcích" />
+        {locked.length > 0 ? (
+          <Title first={false} text="Píseň je také v kolekcích" />
+        ) : null}
         <CollectionList list={locked.sort(collectionCompare)} />
       </View>
     </View>

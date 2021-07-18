@@ -172,14 +172,12 @@ export default function SongMenu({
             >
               <RandomButton />
             </MenuButton>
-            {viewer?.admin ? (
-              <MenuLink
-                css={{ textAlign: 'center', fontWeight: 'bold' }}
-                to={'/add-to-collection/' + slug}
-              >
-                <AddToCollection />
-              </MenuLink>
-            ) : null}
+            <MenuLink
+              css={{ textAlign: 'center', fontWeight: 'bold' }}
+              to={'/add-to-collection/' + slug}
+            >
+              <AddToCollection />
+            </MenuLink>
           </>
         ) : null}
         <MenuButton onClick={() => setOpen((o) => !o)}>
