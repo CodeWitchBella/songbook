@@ -98,6 +98,7 @@ const typeDefs = gql`
     name: String!
     picture: UserPicture
     handle: String
+    admin: Boolean!
   }
 
   type Collection {
