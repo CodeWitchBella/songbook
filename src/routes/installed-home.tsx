@@ -5,7 +5,7 @@ export default function InstalledHome() {
   const history = useHistory()
   useEffect(() => {
     history.replace('/')
-    history.push('/all-songs', { canGoBack: true })
+    // history.push('/all-songs', { canGoBack: true })
   }, [history])
   return null
 }
