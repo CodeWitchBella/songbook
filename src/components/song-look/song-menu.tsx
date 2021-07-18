@@ -13,7 +13,7 @@ import {
   RandomButton,
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
-import { useGetRandomSong } from 'store/store'
+import { useGetRandomSong, useViewer } from 'store/store'
 import { DumbModal } from 'components/dumb-modal'
 
 const MenuWrap = styled.div({
@@ -110,6 +110,8 @@ export default function SongMenu({
   const history = useHistory()
   const getRandomSong = useGetRandomSong()
 
+  const [viewer] = useViewer()
+
   return (
     <MenuWrap>
       <MenuList>
@@ -169,6 +171,14 @@ export default function SongMenu({
             >
               <RandomButton />
             </MenuButton>
+            {viewer?.admin ? (
+              <MenuLink
+                css={{ textAlign: 'center', fontWeight: 'bold' }}
+                to={'/add-to-collection/' + slug}
+              >
+                +
+              </MenuLink>
+            ) : null}
           </>
         ) : null}
         <MenuButton onClick={() => setOpen((o) => !o)}>

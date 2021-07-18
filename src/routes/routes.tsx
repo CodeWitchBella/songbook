@@ -19,6 +19,9 @@ const imports = {
   ),
   Home: once(() => import(/* webpackChunkName: "r-home" */ './home')),
   Song: once(() => import(/* webpackChunkName: "r-song" */ './song')),
+  AddToCollection: once(
+    () => import(/* webpackChunkName: "r-song" */ './add-to-collection'),
+  ),
   CreateSong: once(
     () => import(/* webpackChunkName: "r-create-song" */ './create-song'),
   ),
@@ -44,6 +47,7 @@ const EditSong = React.lazy(imports.EditSong)
 const Changelog = React.lazy(imports.Changelog)
 const Login = React.lazy(imports.Login)
 const Register = React.lazy(imports.Register)
+const AddToCollection = React.lazy(imports.AddToCollection)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -71,9 +75,13 @@ function Routes() {
         <Route path="/all-songs" exact>
           <AllSongs />
         </Route>
+        <Route path="/add-to-collection/:slug">
+          <AddToCollection />
+        </Route>
         <Route path="/collections" exact>
           <CollectionList />
         </Route>
+
         <Route
           path="/collections/:slug/:slug2?"
           render={({ match }) => (
