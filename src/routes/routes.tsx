@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { Switch, Route, useLocation } from 'react-router'
-import NotFound from './not-found'
 import { getGraphqlUrl } from 'store/graphql'
 import InstalledHome from './installed-home'
 import { RouteRenderedMarker } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
+import { NotFound } from 'components/error-page'
 
 const imports = {
   CollectionList: once(
@@ -35,6 +35,7 @@ const imports = {
   Register: once(
     () => import(/* webpackChunkName: "r-register" */ './register'),
   ),
+  Credits: once(() => import(/* webpackChunkName: "r-credits" */ './credits')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)
@@ -48,6 +49,7 @@ const Changelog = React.lazy(imports.Changelog)
 const Login = React.lazy(imports.Login)
 const Register = React.lazy(imports.Register)
 const AddToCollection = React.lazy(imports.AddToCollection)
+const Credits = React.lazy(imports.Credits)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -74,6 +76,9 @@ function Routes() {
         </Route>
         <Route path="/all-songs" exact>
           <AllSongs />
+        </Route>
+        <Route path="/credits" exact>
+          <Credits />
         </Route>
         <Route path="/add-to-collection/:slug">
           <AddToCollection />

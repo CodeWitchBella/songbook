@@ -6,7 +6,7 @@ import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
 
-function useGoBack(to = '/') {
+export function useGoBack(to = '/') {
   const history = useHistory()
   const location = useLocation()
   const updateAfterNavigate = useUpdateAfterNavigate()

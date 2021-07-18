@@ -50,6 +50,7 @@ export function graphqlFetch<V = any>({
 export type User = {
   name: string
   admin: boolean
+  handle?: string
   picture: {
     url: string
     width: number
@@ -61,6 +62,7 @@ export const userFragment = `
   fragment user on User {
     name
     admin
+    handle
     picture {
       url
       width

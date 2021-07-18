@@ -61,6 +61,8 @@ export default function Home() {
         <Gap />
         <ListButton to="/changelog">Seznam změn</ListButton>
         <Gap />
+        <ListButton to="/credits">Credits</ListButton>
+        <Gap />
       </View>
       <View style={{ maxWidth: 400 }}>
         <InstallButtonLook>

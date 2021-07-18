@@ -16,6 +16,7 @@ const collectionRecordFragment = `
         id
       }
       insertedAt
+      locked
     }
   }
   ${userFragment}
@@ -30,6 +31,7 @@ type CollectionRecord<DT = DateTime> = {
   owner: User
   songList: readonly string[]
   insertedAt: DT
+  locked: boolean
 }
 
 async function collectionQuery(modifiedAfter?: DateTime): Promise<{

@@ -7,9 +7,9 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { BasicButton } from 'components/interactive/basic-button'
 import { useNewSong } from 'store/store'
 import { useRouteMatch } from 'react-router-dom'
-import NotFound from './not-found'
 import { View, StyleSheet, Text } from 'react-native'
 import { songFromLink } from 'utils/song-from-link'
+import { NotFound } from 'components/error-page'
 
 const FormWrap = styled.div({
   display: 'flex',

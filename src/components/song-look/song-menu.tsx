@@ -11,6 +11,7 @@ import {
   EditButton,
   InfoButton,
   RandomButton,
+  AddToCollection,
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
 import { useGetRandomSong, useViewer } from 'store/store'
@@ -176,7 +177,7 @@ export default function SongMenu({
                 css={{ textAlign: 'center', fontWeight: 'bold' }}
                 to={'/add-to-collection/' + slug}
               >
-                +
+                <AddToCollection />
               </MenuLink>
             ) : null}
           </>
