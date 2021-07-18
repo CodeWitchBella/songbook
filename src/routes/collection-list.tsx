@@ -7,6 +7,7 @@ import { BackButton, BackArrow } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { View } from 'react-native'
 import { useMemo } from 'react'
+import { collectionCompare } from 'utils/utils'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
@@ -22,7 +23,7 @@ export default function CollectionList() {
     }
   }, [refresh])
   const sortedList = useMemo(
-    () => [...unsortedList].sort(compare),
+    () => [...unsortedList].sort(collectionCompare),
     [unsortedList],
   )
   return (
@@ -71,30 +72,4 @@ export default function CollectionList() {
 
 function Gap() {
   return <View style={{ height: 5 }} />
-}
-
-function prefixLength(a: string, b: string) {
-  const length = Math.min(a.length, b.length)
-  for (let i = 0; i < length; i++) {
-    if (a[i] !== b[i]) return i
-  }
-  return length
-}
-
-/**
- * Array.prototype.sort predicate which sorts alphabetically but sorts numbers
- * in reverse order
- */
-function compare(
-  ai: { item: { name: string } },
-  bi: { item: { name: string } },
-) {
-  const a = ai.item.name
-  const b = bi.item.name
-  const prefix = prefixLength(a, b)
-
-  if (/[0-9]/.test(a[prefix]) && /[0-9]/.test(b[prefix])) {
-    return b.localeCompare(a)
-  }
-  return a.localeCompare(b)
 }

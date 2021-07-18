@@ -11,6 +11,7 @@ import { WithMethods } from 'store/generic-store'
 import { graphqlFetch } from 'store/graphql'
 import { useCollectionList, useSong, useViewer } from 'store/store'
 import { CollectionType } from 'store/store-collections'
+import { collectionCompare } from 'utils/utils'
 
 export default function AddToCollection() {
   const { refresh, list } = useCollectionList()
@@ -60,8 +61,9 @@ export default function AddToCollection() {
     >
       <View style={{ maxWidth: 800 }}>
         <CollectionList
-          list={addable}
+          list={addable.sort(collectionCompare)}
           error={error}
+          title="Přidat píseň do kolekce"
           onPress={(collectionId) => {
             setError('')
             addToCollection(song.id, collectionId)
@@ -78,9 +80,10 @@ export default function AddToCollection() {
           }}
         />
         <CollectionList
-          list={removable}
+          list={removable.sort(collectionCompare)}
           error={error}
           showBack={addable.length < 1}
+          title="Odebrat píseň z kolekce"
           onPress={(collectionId) => {
             setError('')
             removeFromCollection(song.id, collectionId)
@@ -106,11 +109,13 @@ function CollectionList({
   list,
   onPress,
   showBack = true,
+  title,
 }: {
   error: string
   list: readonly WithMethods<CollectionType>[]
   onPress: (id: string) => void
   showBack?: boolean
+  title: string
 }) {
   if (list.length < 1) return null
   return (
@@ -121,7 +126,7 @@ function CollectionList({
             <BackArrow />
           </BackButton>
         ) : null}
-        <Text style={{ fontSize: 24 }}>Přidat píseň do kolekce</Text>
+        <Text style={{ fontSize: 24 }}>{title}</Text>
       </View>
       {error ? (
         <Text style={{ color: 'red', fontSize: 16 }}>{error}</Text>
