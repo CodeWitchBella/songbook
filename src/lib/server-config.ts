@@ -245,7 +245,10 @@ const resolvers = {
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
     ) => {
-      const docs = await whereModifiedAfter("collections", { modifiedAfter });
+      const docs = await whereModifiedAfter("collections", {
+        modifiedAfter,
+        filterDeleted: !modifiedAfter, // only include deleted if asking for updates
+      });
       return docs;
     },
     songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
