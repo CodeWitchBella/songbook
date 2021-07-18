@@ -107,6 +107,7 @@ const typeDefs = gql`
     owner: User!
     songList: [SongRecord!]!
     insertedAt: String!
+    locked: Boolean!
   }
 
   type CollectionRecord {
@@ -304,12 +305,16 @@ const resolvers = {
       const list = await getAll(src.list);
       return list.filter(Boolean);
     },
+    locked: (src: any) => !!src.locked,
   },
   LoginPayload: {
     __resolveType: (src: any) => src.__typename,
   },
   RegisterPayload: {
     __resolveType: (src: any) => src.__typename,
+  },
+  User: {
+    admin: (self: any) => !!self.admin,
   },
   Mutation: {
     setHandle: async (
@@ -391,6 +396,8 @@ const resolvers = {
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
+      if (collectionSnap.get("locked"))
+        throw new UserInputError("Collection is locked");
       const songSnap = await firestoreDoc("songs/" + song).get(context.loader);
       if (!songSnap) throw new UserInputError("Song does not exist");
 
@@ -418,6 +425,8 @@ const resolvers = {
         throw new UserInputError("Collection does not exist");
       if (collectionSnap.get("owner") !== viewer.id)
         throw new UserInputError("Not your collection");
+      if (collectionSnap.get("locked"))
+        throw new UserInputError("Collection is locked");
       const songSnap = await firestoreDoc("songs/" + song).get(context.loader);
       if (!songSnap) throw new UserInputError("Song does not exist");
 
