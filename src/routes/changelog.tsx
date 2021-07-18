@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import Entry from 'components/changelog-entry'
+import { ChangelogEntry } from 'components/changelog-entry'
 import { BackArrow, BackButton } from 'components/back-button'
 import { View, Text } from 'react-native'
 
@@ -20,12 +20,12 @@ function ChangelogBody() {
   return (
     <>
       {changelog.data.map((entry) => (
-        <Entry key={entry.cz.tagName} date={entry.cz.tagName.slice(1)}>
+        <ChangelogEntry key={entry.cz.tagName} date={entry.cz.tagName.slice(1)}>
           <LangTitle first>Česky</LangTitle>
           <ChangeBody body={entry.cz.body} />
           <LangTitle first={false}>English</LangTitle>
           <ChangeBody body={entry.en.body} />
-        </Entry>
+        </ChangelogEntry>
       ))}
     </>
   )
@@ -55,7 +55,7 @@ function ChangeBody({ body }: { body: string }) {
       items.push(
         <li key={key++}>
           <Linkified line={line.substring(2)} />
-          {prevLines.length > 1 ? (
+          {prevLines.length >= 1 ? (
             <ul key={key++}>{prevLines.reverse()}</ul>
           ) : null}
         </li>,
