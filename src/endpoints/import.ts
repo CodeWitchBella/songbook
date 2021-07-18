@@ -23,6 +23,47 @@ const handlers: readonly {
   ) => Promise<{ text: string; author: string; title: string }>;
 }[] = [
   {
+    test: url =>
+      url.startsWith("https://supermusic.cz") ||
+      url.startsWith("https://supermusic.sk"),
+    handle: async link => {
+      const id = new URL(link).searchParams.get("idpiesne");
+      if (!id) throw jsonResponse({ error: "Unknown supermusic url" }, 400);
+
+      const [text, meta] = await Promise.all([getBody(id), getMeta(id)]);
+      return {
+        ...meta,
+        text: text.replaceAll(/\r\n/g, "\n"),
+      };
+
+      async function getMeta(id: string) {
+        const url = new URL("https://supermusic.cz/skupina.php?action=piesen");
+        url.searchParams.set("idpiesne", id);
+        const r = await fetch(url.toString());
+        if (r.status !== 200)
+          throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
+        const text = await r.text();
+        const title = before(after(text, "<title").slice(1), "</title>");
+
+        return {
+          author: before(title, "-").trim(),
+          title: before(after(title, "-"), "[").trim(),
+        };
+      }
+      async function getBody(id: string) {
+        const target = new URL(
+          "https://supermusic.cz/export.php?typ=TXT&stiahni=1",
+        );
+        target.searchParams.set("idpiesne", id);
+        const r = await fetch(target.toString());
+        if (r.status !== 200)
+          throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
+        const text = await r.text();
+        return after(text, "\n").trim();
+      }
+    },
+  },
+  {
     test: url => {
       const begin = "https://tabs.ultimate-guitar.com/tab/";
       return (
@@ -167,4 +208,10 @@ function before(text: string, delimiter: string) {
   const index = text.indexOf(delimiter);
   if (index < 0) return "";
   return text.substring(0, index);
+}
+
+function splitOnce(text: string, delimiter: string): readonly [string, string] {
+  const index = text.indexOf(delimiter);
+  if (index < 0) return [text, ""];
+  return [text.substring(0, index), text.substring(index + delimiter.length)];
 }
