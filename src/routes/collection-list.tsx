@@ -7,7 +7,7 @@ import { BackButton, BackArrow } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { View } from 'react-native'
 import { useMemo } from 'react'
-import { collectionCompare } from 'utils/utils'
+import { collectionCompare, collectionFullName } from 'utils/utils'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
@@ -59,9 +59,7 @@ export default function CollectionList() {
               to={`/collections/${collection.slug}`}
               style={{ borderWidth: 0 }}
             >
-              {(collection.slug.includes('/')
-                ? (collection.owner.handle || collection.owner.name) + ' > '
-                : '') + collection.name}
+              {collectionFullName(collection)}
             </ListButton>
           </div>
         ))}

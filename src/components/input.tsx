@@ -49,7 +49,7 @@ export const LargeInput = ({
   <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
     <div>{label}</div>
     <input
-      css={{ fontSize: 24, border: '2px solid', padding: 10 }}
+      css={{ fontSize: 24, border: '1px solid', padding: 10 }}
       type={type}
       value={value}
       onChange={(evt) => {

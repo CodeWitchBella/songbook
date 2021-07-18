@@ -46,25 +46,6 @@ function queryJoin(path: string, query: string) {
   return path + '?' + query
 }
 
-function useSetWindowMethod(name: string, method: Function) {
-  const ref = useRef(method)
-  useEffect(() => {
-    ref.current = method
-  })
-  useEffect(() => {
-    function cur(this: any, ...args: any[]) {
-      return ref.current.apply(this, args)
-    }
-    const prev = (window as any)[name]
-    ;(window as any)[name] = cur
-    return () => {
-      if ((window as any)[name] === cur) {
-        ;(window as any)[name] = prev
-      }
-    }
-  }, [name])
-}
-
 export default function SongSection({
   slug,
   enableMenu = false,
@@ -76,32 +57,6 @@ export default function SongSection({
   const [spotifyVisible, setSpotifyVisible] = useState(false)
   const parsed = song ? parser.parseSong('my', song.text) : null
 
-  const pageCount = parsed && parsed.length
-  useEffect(() => {
-    if (song) {
-      console.log('song id:', song.id, 'title:', song.title, `(${pageCount})`)
-    }
-  }, [pageCount, song])
-  useSetWindowMethod('addToCollection', (collection: string) => {
-    if (!song) throw new Error('No song')
-    graphqlFetch({
-      query: `mutation($collection: String! $song: String!) { addToCollection(collection: $collection song: $song) }`,
-      variables: { collection, song: song.id },
-    }).then(
-      (res) => void console.log(res),
-      (err) => void console.error(err),
-    )
-  })
-  useSetWindowMethod('removeFromCollection', (collection: string) => {
-    if (!song) throw new Error('No song')
-    graphqlFetch({
-      query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
-      variables: { collection, song: song.id },
-    }).then(
-      (res) => void console.log(res),
-      (err) => void console.error(err),
-    )
-  })
   const location = useLocation()
   const navigate = useNavigate()
   const [chordHelp, setChordHelp] = useState('')

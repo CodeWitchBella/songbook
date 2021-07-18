@@ -76,6 +76,7 @@ export type CollectionType = CollectionRecord<DateTime>
 export function createCollectionStore() {
   return new GenericStore<CollectionType, CollectionRecord<string>>({
     cacheKey: 'collections',
+    version: 2,
     serialize: (item) => {
       return {
         ...item,

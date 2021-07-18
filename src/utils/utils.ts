@@ -35,3 +35,15 @@ export function collectionCompare(
   }
   return a.localeCompare(b)
 }
+
+export function collectionFullName(collection: {
+  slug: string
+  owner: { handle?: string; name: string }
+  name: string
+}) {
+  return (
+    (collection.slug.includes('/')
+      ? (collection.owner.handle || collection.owner.name) + ' > '
+      : '') + collection.name
+  )
+}

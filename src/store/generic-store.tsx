@@ -21,9 +21,10 @@ type Config<Item extends MinItem, Serialized> = {
   cacheKey: string
   onLoadedFromCache?: () => void
   onLoadingChange?: (v: boolean) => void
+  version?: number
 }
 
-type Cache<Serialized> = { items: Serialized[] }
+type Cache<Serialized> = { items: Serialized[]; version?: number }
 
 // FullItem = ItemBase & ExtensionInitial & ExtensionFull
 export class GenericStore<Item extends MinItem, Serialized> {
@@ -81,7 +82,9 @@ export class GenericStore<Item extends MinItem, Serialized> {
     return storage
       .getItem<Cache<Serialized> | null>(this._config.cacheKey)
       .then((cached) => {
-        const items = (cached ? cached.items : []).map(this._config.deserialize)
+        const items = (
+          cached && cached.version === this._config.version ? cached.items : []
+        ).map(this._config.deserialize)
 
         for (const item of items) {
           this._setItem(item, { save: false })
@@ -169,6 +172,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
         items: this.readAll()
           .map((v) => v.item)
           .map(this._config.serialize),
+        version: this._config.version,
       }
       storage
         .setItem(this._config.cacheKey, cached)

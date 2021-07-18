@@ -2,6 +2,8 @@
 
 import { BackArrow, BackButton, useGoBack } from 'components/back-button'
 import { ErrorPage } from 'components/error-page'
+import { LargeInput } from 'components/input'
+import { BasicButton } from 'components/interactive/basic-button'
 import { ListButton } from 'components/interactive/list-button'
 import { useEffect } from 'react'
 import { useState } from 'react'
@@ -11,7 +13,7 @@ import { WithMethods } from 'store/generic-store'
 import { graphqlFetch } from 'store/graphql'
 import { useCollectionList, useSong, useViewer } from 'store/store'
 import { CollectionType } from 'store/store-collections'
-import { collectionCompare } from 'utils/utils'
+import { collectionCompare, collectionFullName } from 'utils/utils'
 
 export default function AddToCollection() {
   const { refresh, list } = useCollectionList()
@@ -34,25 +36,19 @@ export default function AddToCollection() {
 
   const addable: typeof list = []
   const removable: typeof list = []
+  const locked: typeof list = []
   for (const c of list) {
-    if (c.item.locked) continue
-    if (c.item.owner.name !== viewer.name) continue
-
-    if (c.item.songList.includes(song.id)) {
-      removable.push(c)
-    } else {
-      addable.push(c)
+    const isInCollection = c.item.songList.includes(song.id)
+    const editable = !c.item.locked && c.item.owner.name === viewer.name
+    if (editable) {
+      if (isInCollection) {
+        removable.push(c)
+      } else {
+        addable.push(c)
+      }
+    } else if (isInCollection) {
+      locked.push(c)
     }
-  }
-
-  if (addable.length < 1 && removable.length < 1) {
-    return (
-      <ErrorPage text="Neexistuje žádná kolekce, kterou můžeš editovat">
-        <Text style={{ fontSize: 18 }}>
-          Vytváření nových kolekcí není v současné době možné
-        </Text>
-      </ErrorPage>
-    )
   }
 
   return (
@@ -60,88 +56,173 @@ export default function AddToCollection() {
       style={{ justifyContent: 'center', paddingTop: 32, flexDirection: 'row' }}
     >
       <View style={{ maxWidth: 800 }}>
+        {addable.length > 0 ? (
+          <Title first={true} text="Přidat píseň do kolekce" error={error} />
+        ) : null}
         <CollectionList
           list={addable.sort(collectionCompare)}
-          error={error}
-          title="Přidat píseň do kolekce"
           onPress={(collectionId) => {
             setError('')
-            addToCollection(song.id, collectionId)
-              .then(refresh)
-              .then(
-                () => {
-                  goBack()
-                },
-                (err) => {
-                  setError('Něco se pokazilo')
-                  console.error(err)
-                },
-              )
+            addToCollection(song.id, collectionId).then(
+              () => {
+                refresh()
+                goBack()
+              },
+              (err) => {
+                setError('Něco se pokazilo')
+                console.error(err)
+              },
+            )
           }}
         />
+        {removable.length > 0 ? (
+          <Title
+            first={addable.length < 1}
+            text="Odebrat píseň z kolekce"
+            error={error}
+          />
+        ) : null}
         <CollectionList
           list={removable.sort(collectionCompare)}
-          error={error}
-          showBack={addable.length < 1}
-          title="Odebrat píseň z kolekce"
           onPress={(collectionId) => {
             setError('')
-            removeFromCollection(song.id, collectionId)
-              .then(refresh)
-              .then(
-                () => {
-                  goBack()
-                },
-                (err) => {
-                  setError('Něco se pokazilo')
-                  console.error(err)
-                },
-              )
+            removeFromCollection(song.id, collectionId).then(
+              () => {
+                refresh()
+                goBack()
+              },
+              (err) => {
+                setError('Něco se pokazilo')
+                console.error(err)
+              },
+            )
           }}
         />
+        <Title
+          first={addable.length < 1 && removable.length < 1}
+          text="Vytvořit novou kolekci"
+        />
+        <NewCollection
+          onDone={(collectionId) => {
+            setError('')
+            addToCollection(song.id, collectionId).then(
+              () => {
+                refresh()
+                goBack()
+              },
+              (err) => {
+                console.error(err)
+                setError('Něco se pokazilo')
+              },
+            )
+          }}
+        />
+        <Title first={false} text="Píseň je také v kolekcích" />
+        <CollectionList list={locked.sort(collectionCompare)} />
       </View>
     </View>
   )
 }
 
-function CollectionList({
+function Title({
+  first,
+  text,
   error,
-  list,
-  onPress,
-  showBack = true,
-  title,
 }: {
-  error: string
-  list: readonly WithMethods<CollectionType>[]
-  onPress: (id: string) => void
-  showBack?: boolean
-  title: string
+  first: boolean
+  text: string
+  error?: string | null
 }) {
-  if (list.length < 1) return null
   return (
     <>
       <View style={{ flexDirection: 'row', marginTop: 32 }}>
-        {showBack ? (
+        {first ? (
           <BackButton>
             <BackArrow />
           </BackButton>
         ) : null}
-        <Text style={{ fontSize: 24 }}>{title}</Text>
+        <Text style={{ fontSize: 24 }}>{text}</Text>
       </View>
+      {error && first ? (
+        <Text style={{ color: 'red', fontSize: 16, marginTop: 8 }}>
+          {error}
+        </Text>
+      ) : null}
+    </>
+  )
+}
+
+function NewCollection({ onDone }: { onDone: (id: string) => void }) {
+  const [name, setName] = useState('')
+  const [disabled, setDisabled] = useState(false)
+  const [error, setError] = useState('')
+  const submit = (event: { preventDefault(): any }) => {
+    event.preventDefault()
+    if (disabled) return
+    setDisabled(true)
+    setError('')
+    createCollection(name).then(
+      (id) => {
+        setDisabled(false)
+        onDone(id)
+      },
+      (err) => {
+        setDisabled(false)
+        console.error(err)
+        setError('Něco se pokazilo')
+      },
+    )
+  }
+  return (
+    <form onSubmit={submit} css={{ fontSize: 16, marginTop: 16 }}>
+      <LargeInput label="Název kolekce" value={name} onChange={setName} />
+      <BasicButton
+        disabled={disabled}
+        style={{
+          borderWidth: 1,
+          paddingBottom: 6,
+          paddingTop: 8,
+          paddingHorizontal: 8,
+        }}
+        onPress={submit}
+      >
+        Vytvořit kolekci a přidat do ní píseň
+      </BasicButton>
       {error ? (
         <Text style={{ color: 'red', fontSize: 16 }}>{error}</Text>
       ) : null}
-      {list.map((item) => (
-        <ListButton
-          key={item.item.id}
-          onPress={() => {
-            onPress(item.item.id)
-          }}
-          style={{ marginTop: 8 }}
-        >
-          <Text>{item.item.name}</Text>
-        </ListButton>
-      ))}
+      <button css={{ display: 'none' }} disabled={disabled} />
+    </form>
+  )
+}
+
+function CollectionList({
+  list,
+  onPress,
+}: {
+  list: readonly WithMethods<CollectionType>[]
+  onPress?: (id: string) => void
+}) {
+  if (list.length < 1) return null
+  return (
+    <>
+      {onPress
+        ? list.map((item) => (
+            <ListButton
+              key={item.item.id}
+              onPress={() => {
+                onPress(item.item.id)
+              }}
+              style={{ marginTop: 8 }}
+            >
+              <Text>{collectionFullName(item.item)}</Text>
+            </ListButton>
+          ))
+        : list.map((item) => (
+            <Text key={item.item.id} style={{ marginTop: 8 }}>
+              {collectionFullName(item.item)}
+            </Text>
+          ))}
     </>
   )
 }
@@ -156,5 +237,19 @@ function removeFromCollection(song: string, collection: string) {
   return graphqlFetch({
     query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
     variables: { collection, song },
+  })
+}
+
+function createCollection(name: string): Promise<string> {
+  return graphqlFetch({
+    query: `mutation($name: String!) { createCollection(name: $name) { id } }`,
+    variables: { name },
+  }).then((v) => {
+    const id = v.data.createCollection.id
+    if (!id) {
+      console.log(v)
+      throw new Error('Failed to create collection')
+    }
+    return id
   })
 }
