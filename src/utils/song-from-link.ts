@@ -7,8 +7,15 @@ export async function songFromLink(
   | { author: string; title: string; text: string; extraNonSearchable: string }
 > {
   const ug = link.startsWith('https://tabs.ultimate-guitar.com/tab/')
-  if (!ug && !link.startsWith('https://akordy.kytary.cz/song/')) {
-    return 'Jiné odkazy než ultimate guitar nebo akordy.kytary.cz nejsou podporované'
+  const supermusic =
+    link.startsWith('https://supermusic.cz') ||
+    link.startsWith('https://supermusic.sk')
+  if (
+    !ug &&
+    !supermusic &&
+    !link.startsWith('https://akordy.kytary.cz/song/')
+  ) {
+    return 'Jiné odkazy než ultimate guitar, supermusic nebo akordy.kytary.cz nejsou podporované'
   }
   const url = new URL('import', getGraphqlUrl())
   url.searchParams.set('url', link)
@@ -22,12 +29,12 @@ export async function songFromLink(
   return {
     author,
     title,
-    text: ug ? convertBody(text) : text,
+    text: ug ? convertUltimateGuitarBody(text) : text,
     extraNonSearchable: link + '\n',
   }
 }
 
-function convertBody(text: string) {
+function convertUltimateGuitarBody(text: string) {
   const lines = text
     .replace(/\r\n/g, '\n')
     .replace(/\[\/?tab\]/g, '')
