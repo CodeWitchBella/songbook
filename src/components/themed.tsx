@@ -18,7 +18,7 @@ export function DarkModeProvider({
 }) {
   return (
     <darkModeContext.Provider
-      value={useMediaQuery('(prefers-color-scheme: dark)')}
+      value={useMediaQuery('(prefers-color-scheme: dark)') && false}
     >
       {children}
     </darkModeContext.Provider>
