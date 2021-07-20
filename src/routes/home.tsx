@@ -62,7 +62,7 @@ export default function Home() {
         <Gap />
         <ListButton to={googleDoc}>Návrhy</ListButton>
         <Gap />
-        <ListButton to="/changelog">Seznam změn</ListButton>
+        <ListButton to="/changelog">Historie změn</ListButton>
         <Gap />
         <ListButton to="/credits">Credits</ListButton>
         <Gap />
