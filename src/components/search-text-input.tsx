@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { View, TextInput, StyleSheet } from 'react-native'
 import { BasicButton } from './interactive/basic-button'
 import { Svg, Path } from 'react-native-svg'
+import { useBasicStyle } from './themed'
 
 export function SearchTextInput({
   value,
@@ -23,7 +24,7 @@ export function SearchTextInput({
         }}
         returnKeyType="search"
         accessibilityLabel="Vyhledávání"
-        style={styles.input}
+        style={[styles.input, useBasicStyle()]}
       />
       <ClearButton onPress={() => onChange('')} />
     </View>

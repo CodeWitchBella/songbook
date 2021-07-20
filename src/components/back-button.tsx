@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
+import { useDarkMode } from './themed'
 
 export function useGoBack(to = '/') {
   const history = useHistory()
@@ -76,7 +77,12 @@ export function BackArrow() {
         },
       }}
     >
-      <g fill="none" stroke="#000" strokeWidth=".7" strokeLinecap="round">
+      <g
+        fill="none"
+        stroke={useDarkMode() ? 'white' : 'black'}
+        strokeWidth=".7"
+        strokeLinecap="round"
+      >
         <path d="M.907 2.346h4.236" />
         <path d="M2.276.3L.3 2.346l1.976 2.046" strokeLinejoin="round" />
       </g>

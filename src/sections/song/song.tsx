@@ -10,6 +10,7 @@ import { useAutoUpdatedSong } from 'utils/firebase'
 import { useNavigate } from 'utils/use-navigate'
 import { graphqlFetch } from 'store/graphql'
 import { ChordHelp } from 'components/chord-help'
+import { useBasicStyle } from 'components/themed'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -60,6 +61,7 @@ export default function SongSection({
   const location = useLocation()
   const navigate = useNavigate()
   const [chordHelp, setChordHelp] = useState('')
+  const basicStyle = useBasicStyle()
 
   if (!song || !parsed) return null
 
@@ -77,6 +79,7 @@ export default function SongSection({
           display: 'flex',
           flexWrap: 'wrap',
           justifyContent: 'center',
+          ...basicStyle,
         }}
       >
         <SongLook

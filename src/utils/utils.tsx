@@ -68,22 +68,3 @@ export function useMediaQuery(query: string) {
 
   return !!match
 }
-
-const darkModeContext = createContext(false)
-export function DarkModeProvider({
-  children,
-}: {
-  children: JSX.Element | readonly JSX.Element[]
-}) {
-  return (
-    <darkModeContext.Provider
-      value={useMediaQuery('(prefers-color-scheme: dark)')}
-    >
-      {children}
-    </darkModeContext.Provider>
-  )
-}
-
-export function useDarkMode() {
-  return useContext(darkModeContext)
-}

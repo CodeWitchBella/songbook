@@ -5,9 +5,10 @@ import { ErrorPage } from 'components/error-page'
 import { LargeInput } from 'components/input'
 import { BasicButton } from 'components/interactive/basic-button'
 import { ListButton } from 'components/interactive/list-button'
+import { RootView, TText } from 'components/themed'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import { useParams } from 'react-router-dom'
 import { WithMethods } from 'store/generic-store'
 import { graphqlFetch } from 'store/graphql'
@@ -50,7 +51,7 @@ export default function AddToCollection() {
 
   if (!viewer) {
     return (
-      <View
+      <RootView
         style={{
           justifyContent: 'center',
           paddingTop: 32,
@@ -71,12 +72,12 @@ export default function AddToCollection() {
           ) : null}
           <CollectionList list={locked.sort(collectionCompare)} />
         </View>
-      </View>
+      </RootView>
     )
   }
 
   return (
-    <View
+    <RootView
       style={{ justifyContent: 'center', paddingTop: 32, flexDirection: 'row' }}
     >
       <View style={{ maxWidth: 800 }}>
@@ -146,7 +147,7 @@ export default function AddToCollection() {
         ) : null}
         <CollectionList list={locked.sort(collectionCompare)} />
       </View>
-    </View>
+    </RootView>
   )
 }
 
@@ -167,12 +168,12 @@ function Title({
             <BackArrow />
           </BackButton>
         ) : null}
-        <Text style={{ fontSize: 24 }}>{text}</Text>
+        <TText style={{ fontSize: 24 }}>{text}</TText>
       </View>
       {error && first ? (
-        <Text style={{ color: 'red', fontSize: 16, marginTop: 8 }}>
+        <TText style={{ color: 'red', fontSize: 16, marginTop: 8 }}>
           {error}
-        </Text>
+        </TText>
       ) : null}
     </>
   )
@@ -215,7 +216,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
         Vytvořit kolekci a přidat do ní píseň
       </BasicButton>
       {error ? (
-        <Text style={{ color: 'red', fontSize: 16 }}>{error}</Text>
+        <TText style={{ color: 'red', fontSize: 16 }}>{error}</TText>
       ) : null}
       <button css={{ display: 'none' }} disabled={disabled} />
     </form>
@@ -241,13 +242,13 @@ function CollectionList({
               }}
               style={{ marginTop: 8 }}
             >
-              <Text>{collectionFullName(item.item)}</Text>
+              <TText>{collectionFullName(item.item)}</TText>
             </ListButton>
           ))
         : list.map((item) => (
-            <Text key={item.item.id} style={{ marginTop: 8 }}>
+            <TText key={item.item.id} style={{ marginTop: 8 }}>
               {collectionFullName(item.item)}
-            </Text>
+            </TText>
           ))}
     </>
   )

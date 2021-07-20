@@ -7,9 +7,10 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { BasicButton } from 'components/interactive/basic-button'
 import { useNewSong } from 'store/store'
 import { useRouteMatch } from 'react-router-dom'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { songFromLink } from 'utils/song-from-link'
 import { NotFound } from 'components/error-page'
+import { RootView, TText } from 'components/themed'
 
 const FormWrap = styled.div({
   display: 'flex',
@@ -58,12 +59,12 @@ export default function CreateSong() {
   const { params } = useRouteMatch<{ type?: string }>()
   const type = params.type ?? 'switch'
   return (
-    <View style={styles.wrap}>
+    <RootView style={styles.wrap}>
       <View style={styles.wrap2}>
         <CreateSongSwitch />
         {types[type] || <NotFound />}
       </View>
-    </View>
+    </RootView>
   )
 }
 
@@ -136,7 +137,7 @@ function CreateSongLink() {
           Vytvořit
         </PrimaryButton>
         <button css={{ display: 'none' }} />
-        <Text
+        <TText
           style={{
             color: 'red',
             paddingVertical: 16,
@@ -147,7 +148,7 @@ function CreateSongLink() {
           }}
         >
           {error}
-        </Text>
+        </TText>
       </Form>
     </FormWrap>
   )

@@ -1,5 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
+import { useDarkMode } from './themed'
+
 const Input = ({
   label,
   value,
@@ -31,7 +33,7 @@ const Input = ({
 
 export default Input
 
-export const LargeInput = ({
+export function LargeInput({
   label,
   value,
   onChange,
@@ -45,19 +47,31 @@ export const LargeInput = ({
   type?: string
   disabled?: boolean
   name?: string
-}) => (
-  <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
-    <div>{label}</div>
-    <input
-      css={{ fontSize: 24, border: '1px solid', padding: 10 }}
-      type={type}
-      value={value}
-      onChange={(evt) => {
-        evt.preventDefault()
-        onChange(evt.target.value)
-      }}
-      disabled={disabled}
-      name={name}
-    />
-  </label>
-)
+}) {
+  const dark = useDarkMode()
+  return (
+    <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
+      <div css={dark ? { color: 'white' } : { color: 'black' }}>{label}</div>
+      <input
+        css={{
+          fontSize: 24,
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: 'currentColor',
+          color: dark ? 'white' : 'black',
+          background: dark ? 'black' : 'white',
+
+          padding: 10,
+        }}
+        type={type}
+        value={value}
+        onChange={(evt) => {
+          evt.preventDefault()
+          onChange(evt.target.value)
+        }}
+        disabled={disabled}
+        name={name}
+      />
+    </label>
+  )
+}

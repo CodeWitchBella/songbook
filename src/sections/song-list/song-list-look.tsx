@@ -26,6 +26,11 @@ const TheSong = styled.div`
     color: black;
     font-weight: bold;
   }
+  @media screen and (prefers-color-scheme: dark) {
+    .title {
+      color: white;
+    }
+  }
 `
 
 function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
@@ -33,7 +38,6 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   return (
     <BasicButton
       style={{
-        color: 'black',
         textDecorationLine: 'none',
         padding: 10,
         fontSize: 20,

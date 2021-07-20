@@ -1,13 +1,13 @@
 /** @jsxImportSource @emotion/react */
 
-import { View, Text, Pressable, Linking } from 'react-native'
+import { View, Pressable, Linking } from 'react-native'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { ListButton } from 'components/interactive/list-button'
 import { useLogin } from 'components/use-login'
 import { buildData } from 'build-data'
 import { DateTime } from 'luxon'
 import { InstallButtonLook } from 'components/install'
-import { useDarkMode } from 'utils/utils'
+import { TText, useDarkMode } from 'components/themed'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
@@ -37,14 +37,14 @@ export default function Home() {
         <Gap height={22} />
         {login.viewer ? (
           <>
-            <Text
+            <TText
               style={{
                 justifyContent: 'center',
                 fontSize: 16,
               }}
             >
               {login.viewer.name}
-            </Text>
+            </TText>
             <Gap />
             <ListButton to="/new">Přidat píseň</ListButton>
             <Gap />
@@ -74,18 +74,18 @@ export default function Home() {
       </View>
       {buildData.commitTime ? (
         <View style={{ bottom: 10, right: 10, position: 'absolute' }}>
-          <Text style={{ fontSize: 15 }}>
+          <TText style={{ fontSize: 15 }}>
             Verze:{' '}
             <Pressable
               onPress={() => {
                 Linking.openURL('https://github.com/CodeWitchBella/songbook')
               }}
             >
-              <Text style={buildData.fallback ? { fontStyle: 'italic' } : {}}>
+              <TText style={buildData.fallback ? { fontStyle: 'italic' } : {}}>
                 {format(buildData.commitTime)}
-              </Text>
+              </TText>
             </Pressable>
-          </Text>
+          </TText>
         </View>
       ) : null}
     </View>

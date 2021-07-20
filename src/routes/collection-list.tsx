@@ -8,6 +8,7 @@ import { ListButton } from 'components/interactive/list-button'
 import { View } from 'react-native'
 import { useMemo } from 'react'
 import { collectionCompare, collectionFullName } from 'utils/utils'
+import { RootView, useDarkMode } from 'components/themed'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
@@ -27,12 +28,14 @@ export default function CollectionList() {
     [unsortedList],
   )
   return (
-    <div css={{ minHeight: 'calc(100vh - 20px)', fontSize: 20, padding: 10 }}>
+    <RootView style={{ padding: 10 }}>
       <h2
         css={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          fontSize: 22,
+          color: useDarkMode() ? 'white' : 'black',
         }}
       >
         <BackButton>
@@ -64,7 +67,7 @@ export default function CollectionList() {
           </div>
         ))}
       </View>
-    </div>
+    </RootView>
   )
 }
 

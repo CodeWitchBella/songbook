@@ -9,11 +9,11 @@ import {
   StyleProp,
   TextStyle,
   GestureResponderEvent,
-  Text,
   Pressable,
 } from 'react-native'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
+import { TText, useDarkMode } from 'components/themed'
 
 type ButtonPropsBase<T> = PropsWithChildren<
   {
@@ -31,10 +31,6 @@ type ButtonPropsLink = ButtonPropsBase<{ to: string }>
 export type ButtonProps = ButtonPropsLink | ButtonPropsNonLink
 
 function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
-  const text = useRef<Text>(null)
-  useEffect(() => {
-    text.current?.setNativeProps({ style: { cursor: 'pointer' } })
-  }, [])
   const history = useHistory()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return (
@@ -61,7 +57,6 @@ function BasicButtonBase({
   style,
   ...rest
 }: ButtonPropsNonLink & { href?: string }) {
-  const text = useRef<Text>(null)
   const [hover, setHover] = useState(false)
   const inClickOutside = useContext(clickOutsideContext)
 
@@ -85,9 +80,9 @@ function BasicButtonBase({
       onHoverIn={() => setHover(true)}
       onHoverOut={() => setHover(false)}
     >
-      <Text
-        ref={text}
+      <TText
         style={[
+          { borderColor: useDarkMode() ? 'white' : 'black' },
           style,
           hover && (pressOverriden <= 0 || inClickOutside)
             ? { textDecorationLine: 'underline' }
@@ -95,7 +90,7 @@ function BasicButtonBase({
         ]}
       >
         {children}
-      </Text>
+      </TText>
     </Pressable>
   )
 }

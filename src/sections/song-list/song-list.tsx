@@ -2,7 +2,6 @@
 
 import { useMemo, PropsWithChildren } from 'react'
 import TopMenu, { TopMenuItem } from 'components/top-menu'
-import styled from '@emotion/styled'
 import { useSongList } from 'store/store'
 import { SongType } from 'store/store-song'
 import { FilteredList } from './filtered-list'
@@ -11,14 +10,11 @@ import { DownloadPDF } from 'components/pdf'
 import { BackButton, BackArrow } from 'components/back-button'
 import { useLocation } from 'react-router'
 import { SearchTextInput } from 'components/search-text-input'
-
-const TheSearch = styled.div`
-  font-size: 20px;
-  display: block;
-  flex-shrink: 0;
-`
+import { RootView, useDarkMode } from 'components/themed'
+import { View } from 'react-native'
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
+  const dark = useDarkMode()
   return (
     <div
       css={{
@@ -28,8 +24,10 @@ function SearchContainer({ children }: PropsWithChildren<{}>) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'white',
-        boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
+        background: dark ? 'black' : 'white',
+        borderColor: dark ? 'white' : 'black',
+        borderBottomWidth: 1,
+        borderBottomStyle: 'solid',
         zIndex: 1,
       }}
     >
@@ -154,8 +152,8 @@ export default function SongList({
   const location = useLocation()
 
   return (
-    <div css={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
-      <TheSearch>
+    <RootView>
+      <View style={{ flexShrink: 0 }}>
         <Search
           text={search || ''}
           onChange={(v) => {
@@ -212,7 +210,7 @@ export default function SongList({
             </div>
           ) : null}
         </Search>
-      </TheSearch>
+      </View>
       <div css={{ flexGrow: 1 }}>
         {songs.length !== 0 ? (
           <FilteredList
@@ -225,6 +223,6 @@ export default function SongList({
           <Loader />
         ) : null}
       </div>
-    </div>
+    </RootView>
   )
 }

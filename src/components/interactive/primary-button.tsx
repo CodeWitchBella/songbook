@@ -1,5 +1,5 @@
-import { useBasicStyle } from '../use-basic-style'
 import { BasicButton, ButtonProps } from './basic-button'
+import { useBasicStyle } from '../themed'
 export type { ButtonProps } from './basic-button'
 
 export function PrimaryButton({ style, children, ...rest }: ButtonProps) {

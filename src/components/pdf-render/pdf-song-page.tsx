@@ -6,6 +6,7 @@ import { View, Text, PropsOf } from './primitives'
 import { notNull } from '@codewitchbella/ts-utils'
 import { Chord } from './chord'
 import { BackButton, BackArrow } from 'components/back-button'
+import { useBasicStyle } from 'components/themed'
 
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
