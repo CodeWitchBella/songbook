@@ -1,15 +1,14 @@
-import React from 'react'
+import { useBasicStyle } from '../use-basic-style'
 import { BasicButton, ButtonProps } from './basic-button'
 
 export function ListButton({ style, children, ...rest }: ButtonProps) {
   return (
     <BasicButton
       style={[
+        useBasicStyle(),
         {
           borderWidth: 1,
-          borderColor: 'black',
           borderStyle: 'solid',
-          backgroundColor: 'white',
           padding: 10,
           fontSize: 15,
 

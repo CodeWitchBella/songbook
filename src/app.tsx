@@ -12,6 +12,7 @@ import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
 import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
 import cantarellBoldWoff from './webfonts/cantarell-bold.woff'
 import cantarellBoldWoff2 from './webfonts/cantarell-bold.woff2'
+import { DarkModeProvider } from 'utils/utils'
 
 export const InjectGlobal = () => (
   <Global
@@ -54,11 +55,13 @@ export default function App() {
       <OutlineHandler />
       <StoreProvider>
         <InstallProvider>
-          <Suspense fallback={<div>Načítám...</div>}>
-            <ErrorBoundary>
-              <Routes />
-            </ErrorBoundary>
-          </Suspense>
+          <DarkModeProvider>
+            <Suspense fallback={<div>Načítám...</div>}>
+              <ErrorBoundary>
+                <Routes />
+              </ErrorBoundary>
+            </Suspense>
+          </DarkModeProvider>
         </InstallProvider>
       </StoreProvider>
     </React.Fragment>

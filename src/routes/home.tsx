@@ -7,18 +7,21 @@ import { useLogin } from 'components/use-login'
 import { buildData } from 'build-data'
 import { DateTime } from 'luxon'
 import { InstallButtonLook } from 'components/install'
+import { useDarkMode } from 'utils/utils'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
 export default function Home() {
   const login = useLogin()
+  const dark = useDarkMode()
   return (
     <View
       style={{
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100%',
+        backgroundColor: dark ? 'black' : 'white',
       }}
     >
       <View
