@@ -39,5 +39,10 @@
   "display_override": ["minimal-ui"],
   "background_color": "#FFCE19",
   "theme_color": "#14CCB1",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "share_target": {
+    "action": "/new/link",
+    "method": "GET",
+    "params": { "url": "url" }
+  }
 }

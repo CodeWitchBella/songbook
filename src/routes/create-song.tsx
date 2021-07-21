@@ -6,7 +6,7 @@ import { LargeInput } from 'components/input'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { BasicButton } from 'components/interactive/basic-button'
 import { useNewSong } from 'store/store'
-import { useRouteMatch } from 'react-router-dom'
+import { useLocation, useRouteMatch } from 'react-router-dom'
 import { View, StyleSheet } from 'react-native'
 import { songFromLink } from 'utils/song-from-link'
 import { NotFound } from 'components/error-page'
@@ -117,7 +117,10 @@ function useSubmit(submitter: () => Promise<string | false>) {
 }
 
 function CreateSongLink() {
-  const [link, setLink] = useState('')
+  const location = useLocation()
+  const [link, setLink] = useState(
+    new URLSearchParams(location.search).get('url') || '',
+  )
   const [error, setError] = useState('')
   const newSong = useNewSong()
   const { submit, disabled } = useSubmit(async () => {
