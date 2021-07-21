@@ -22,11 +22,14 @@ type ButtonPropsNonLink = ButtonPropsBase<{
   onPress?: (event: GestureResponderEvent) => void
 }>
 
-type ButtonPropsLink = ButtonPropsBase<{ to: string }>
+type ButtonPropsLink = ButtonPropsBase<{ to: string; replace?: boolean }>
 
 export type ButtonProps = ButtonPropsLink | ButtonPropsNonLink
 
-export function useLinkOnPress(to: string) {
+export function useLinkOnPress(
+  to: string,
+  { replace = false }: { replace?: boolean } = {},
+) {
   const history = useHistory()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return useCallback(
@@ -36,10 +39,14 @@ export function useLinkOnPress(to: string) {
         window.open(to, '_blank', 'noopener,noreferrer')
       } else {
         updateAfterNavigate()
-        history.push(to, { canGoBack: true })
+        if (replace) {
+          history.replace(to, { canGoBack: true })
+        } else {
+          history.push(to, { canGoBack: true })
+        }
       }
     },
-    [history, to, updateAfterNavigate],
+    [history, replace, to, updateAfterNavigate],
   )
 }
 
@@ -87,8 +94,14 @@ function BasicButtonBase({
   )
 }
 
-function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
-  return <BasicButtonBase onPress={useLinkOnPress(to)} href={to} {...rest} />
+function BasicButtonLink({ to, replace, ...rest }: ButtonPropsLink) {
+  return (
+    <BasicButtonBase
+      onPress={useLinkOnPress(to, { replace })}
+      href={to}
+      {...rest}
+    />
+  )
 }
 
 export function BasicButton(props: ButtonProps) {

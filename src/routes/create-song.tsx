@@ -75,6 +75,7 @@ function SwitchButton({ type, children }: { type: string; children: string }) {
     <BasicButton
       style={[styles.button, activeType === type ? styles.active : undefined]}
       to={'/new/' + type}
+      replace={true}
     >
       {children}
     </BasicButton>
