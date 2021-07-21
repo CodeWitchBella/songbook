@@ -36,8 +36,6 @@ export const InjectGlobal = () => (
       html,
       body,
       #root {
-        font-family: Cantarell;
-        font-size: 2.542mm;
         margin: 0;
         padding: 0;
         @media not print {

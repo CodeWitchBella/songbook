@@ -1,4 +1,11 @@
-import { createContext, useContext, useEffect, useRef } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react'
+import { View } from 'react-native'
 
 const clickOutsideContext = createContext(false)
 let pressOverriden = 0
@@ -11,16 +18,17 @@ export function useInPressOutside() {
   return useContext(clickOutsideContext)
 }
 
+let idCounter = 0
+
 export function OnPressOutside({
   onPressOutside,
   children,
 }: {
   onPressOutside: (() => void) | null
   children: (
-    ref: React.RefObject<HTMLDivElement>,
+    ref: (view: View | null) => void,
   ) => null | JSX.Element | readonly JSX.Element[]
 }) {
-  const ref = useRef<HTMLDivElement>(null)
   const handlerRef = useRef(onPressOutside)
   useEffect(() => {
     handlerRef.current = onPressOutside
@@ -35,16 +43,22 @@ export function OnPressOutside({
     return undefined
   }, [onPressOutside])
 
+  const id = useRef(0)
+
   useEffect(() => {
     function listener(event: MouseEvent | TouchEvent) {
-      if (handlerRef.current && !ref.current?.contains(event.target as any)) {
+      if (
+        handlerRef.current &&
+        !document
+          .querySelector(`[data-press-outside-id="${id.current}"]`)
+          ?.contains(event.target as any)
+      ) {
         event.preventDefault()
         handlerRef.current()
       }
     }
-    const cfg = { capture: true, passive: false }
-    document.body.addEventListener('mousedown', listener, cfg)
-    document.body.addEventListener('touchstart', listener, cfg)
+    document.body.addEventListener('mousedown', listener)
+    document.body.addEventListener('touchstart', listener)
     return () => {
       document.body.removeEventListener('mousedown', listener)
       document.body.removeEventListener('touchstart', listener)
@@ -52,7 +66,19 @@ export function OnPressOutside({
   }, [])
   return (
     <clickOutsideContext.Provider value={true}>
-      {children(ref)}
+      {children(
+        useCallback((view) => {
+          if (view) {
+            if (id.current === 0) {
+              idCounter += 1
+              id.current = idCounter
+            }
+            view.setNativeProps({ 'data-press-outside-id': id.current })
+          } else {
+            id.current = 0
+          }
+        }, []),
+      )}
     </clickOutsideContext.Provider>
   )
 }

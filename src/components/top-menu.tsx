@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 
 import { PropsWithChildren, useReducer } from 'react'
+import { View } from 'react-native'
 import { OnPressOutside } from './interactive/press-outside'
 import { Burger } from './song-look/song-menu-icons'
+import { useDarkMode } from './themed'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -12,6 +14,7 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
     },
     { isOpen: false, wasOpen: false },
   )
+  const dark = useDarkMode()
   return (
     <div css={{ width: 40 }}>
       <button
@@ -25,7 +28,8 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'white',
+          backgroundColor: dark ? 'black' : 'white',
+          color: dark ? 'white' : 'black',
           position: 'relative',
         }}
         onClick={() => setOpen(null)}
@@ -86,33 +90,30 @@ function MenuContent({
   visible: boolean
   onClose: () => void
 }>) {
+  const dark = useDarkMode()
   return (
     <OnPressOutside onPressOutside={visible ? onClose : null}>
       {(ref) => (
-        <div
+        <View
           ref={ref}
-          css={{
+          style={{
             position: 'absolute',
-            right: 4 - 20,
-            top: 50,
-            padding: '0 20px 20px 20px',
-            overflow: 'hidden',
+            right: 4,
+            marginTop: 2,
+
+            backgroundColor: dark ? 'black' : 'white',
+            borderWidth: 1,
+            borderColor: dark ? 'white' : 'black',
+            borderStyle: 'solid',
+
+            padding: 10,
+
+            display: visible ? 'flex' : 'none',
+            flexDirection: 'column',
           }}
         >
-          <ul
-            css={{
-              all: 'unset',
-
-              background: 'white',
-              padding: 10,
-
-              boxShadow: '0px 0px 12px 5px rgba(0,0,0,0.51)',
-              display: visible ? 'block' : 'none',
-            }}
-          >
-            {children}
-          </ul>
-        </div>
+          {children}
+        </View>
       )}
     </OnPressOutside>
   )

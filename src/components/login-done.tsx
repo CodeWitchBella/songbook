@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
-import { ListButton } from './interactive/list-button'
-import React from 'react'
+import { View } from 'react-native'
 import { User } from 'store/graphql'
+import { TText } from './themed'
+import { PrimaryButton } from './interactive/primary-button'
 
 export function LoginDone({
   viewer,
@@ -12,12 +12,12 @@ export function LoginDone({
 }) {
   return (
     <View>
-      <Text style={{ fontSize: 16 }}>Hotovo! 🎉</Text>
-      <Text style={{ fontSize: 16 }}>Tvé jméno: {viewer.name}</Text>
+      <TText style={{ fontSize: 16 }}>Hotovo! 🎉</TText>
+      <TText style={{ fontSize: 16 }}>Tvé jméno: {viewer.name}</TText>
       <View style={{ height: 12 }} />
-      <ListButton style={{ maxWidth: 130 }} onPress={logout}>
+      <PrimaryButton style={{ maxWidth: 200 }} onPress={logout}>
         Odhlásit se
-      </ListButton>
+      </PrimaryButton>
     </View>
   )
 }

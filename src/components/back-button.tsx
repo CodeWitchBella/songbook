@@ -36,7 +36,6 @@ export function BackButton({
     <BasicButton
       style={[
         {
-          color: 'white',
           marginRight: '10px',
           textDecorationLine: 'underline',
         },

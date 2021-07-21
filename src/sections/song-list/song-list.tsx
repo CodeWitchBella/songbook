@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { useMemo, PropsWithChildren } from 'react'
-import TopMenu, { TopMenuItem } from 'components/top-menu'
+import TopMenu from 'components/top-menu'
 import { useSongList } from 'store/store'
 import { SongType } from 'store/store-song'
 import { FilteredList } from './filtered-list'
@@ -12,13 +12,13 @@ import { useLocation } from 'react-router'
 import { SearchTextInput } from 'components/search-text-input'
 import { RootView, useDarkMode } from 'components/themed'
 import { View } from 'react-native'
+import { ListButton } from 'components/interactive/list-button'
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   const dark = useDarkMode()
   return (
     <div
       css={{
-        position: 'fixed',
         left: 0,
         right: 0,
         display: 'flex',
@@ -80,8 +80,6 @@ function Search({
           {topMenu}
         </div>
       </SearchContainer>
-      <div>{children}</div>
-      <div css={{ height: 60 }} />
     </>
   )
 }
@@ -153,64 +151,58 @@ export default function SongList({
 
   return (
     <RootView>
-      <View style={{ flexShrink: 0 }}>
-        <Search
-          text={search || ''}
-          onChange={(v) => {
-            const { state } = router.location
-            if (
-              typeof state === 'object' &&
-              state &&
-              (state as any).goBackOnClear
-            ) {
-              if (v) {
-                setSearch(v, { push: false })
-              } else {
-                router.history.goBack()
-              }
+      <Search
+        text={search || ''}
+        onChange={(v) => {
+          const { state } = router.location
+          if (
+            typeof state === 'object' &&
+            state &&
+            (state as any).goBackOnClear
+          ) {
+            if (v) {
+              setSearch(v, { push: false })
             } else {
-              if (v) {
-                setSearch(v, {
-                  push: true,
-                  state: {
-                    goBackOnClear: true,
-                    canGoBack: (location.state as any)?.canGoBack
-                      ? 2
-                      : undefined,
-                  },
-                })
-              } else {
-                setSearch(null)
-              }
+              router.history.goBack()
             }
-          }}
-          topMenu={
-            <TopMenu>
-              <TopMenuItem
-                as="button"
-                onClick={() => setSortByAuthor(sortByAuthor ? null : 'yes')}
-                first
-              >
-                Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
-              </TopMenuItem>
-              <DownloadPDF list={songs} slug={slug} title={title || 'Zpěvník'}>
-                {(text, onClick) => (
-                  <TopMenuItem as="button" onClick={onClick}>
-                    {text}
-                  </TopMenuItem>
-                )}
-              </DownloadPDF>
-              {menu ?? null}
-            </TopMenu>
+          } else {
+            if (v) {
+              setSearch(v, {
+                push: true,
+                state: {
+                  goBackOnClear: true,
+                  canGoBack: (location.state as any)?.canGoBack ? 2 : undefined,
+                },
+              })
+            } else {
+              setSearch(null)
+            }
           }
-        >
-          {header ? (
-            <div css={{ textAlign: 'center', padding: '5px 0 0 0' }}>
-              {header}
-            </div>
-          ) : null}
-        </Search>
-      </View>
+        }}
+        topMenu={
+          <TopMenu>
+            <ListButton
+              onPress={() => {
+                setSortByAuthor(sortByAuthor ? null : 'yes')
+              }}
+              style={{ textAlign: 'left' }}
+            >
+              Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
+            </ListButton>
+            <Gap />
+            <DownloadPDF list={songs} slug={slug} title={title || 'Zpěvník'}>
+              {(text, onClick) => (
+                <ListButton onPress={onClick} style={{ textAlign: 'left' }}>
+                  {text}
+                </ListButton>
+              )}
+            </DownloadPDF>
+            {menu ?? null}
+          </TopMenu>
+        }
+      >
+        {header ?? null}
+      </Search>
       <div css={{ flexGrow: 1 }}>
         {songs.length !== 0 ? (
           <FilteredList
@@ -225,4 +217,8 @@ export default function SongList({
       </div>
     </RootView>
   )
+}
+
+function Gap() {
+  return <View style={{ height: 8 }} />
 }

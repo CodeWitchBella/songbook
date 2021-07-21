@@ -3,7 +3,8 @@
 import SongList from 'sections/song-list/song-list'
 import { useCollection, usePagesNum } from 'store/store'
 import { useMemo, useCallback, useEffect } from 'react'
-import { Text, View, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { TText } from 'components/themed'
 
 const emptyArray: never[] = []
 function useColectionWithSet(slug: string) {
@@ -46,11 +47,15 @@ export default function Collection({ slug }: { slug: string }) {
       <SongList
         filter={filter}
         header={
-          <>
-            {(collection.slug.includes('/')
-              ? (collection.owner.handle || collection.owner.name) + ' > '
-              : '') + collection.name}
-          </>
+          <View style={{ paddingTop: 12 }}>
+            <TText
+              style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}
+            >
+              {(collection.slug.includes('/')
+                ? (collection.owner.handle || collection.owner.name) + ' > '
+                : '') + collection.name}
+            </TText>
+          </View>
         }
         slug={collection.slug}
         title={collection.name}
@@ -70,9 +75,9 @@ function Stats({
   const pagesNum = usePagesNum(set || null)
   return (
     <View style={styles.stat}>
-      <Text style={styles.statItem}>
+      <TText style={styles.statItem}>
         {pagesNum} stran a {songCount} písní
-      </Text>
+      </TText>
     </View>
   )
 }

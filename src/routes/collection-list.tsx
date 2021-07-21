@@ -8,7 +8,7 @@ import { ListButton } from 'components/interactive/list-button'
 import { View } from 'react-native'
 import { useMemo } from 'react'
 import { collectionCompare, collectionFullName } from 'utils/utils'
-import { RootView, useDarkMode } from 'components/themed'
+import { RootView, TH2 } from 'components/themed'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
@@ -29,20 +29,18 @@ export default function CollectionList() {
   )
   return (
     <RootView style={{ padding: 10 }}>
-      <h2
-        css={{
+      <TH2
+        style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 22,
-          color: useDarkMode() ? 'white' : 'black',
         }}
       >
         <BackButton>
           <BackArrow />
         </BackButton>{' '}
         Seznam kolekcí
-      </h2>
+      </TH2>
 
       <View
         style={{
