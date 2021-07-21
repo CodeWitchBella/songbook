@@ -43,6 +43,6 @@
   "share_target": {
     "action": "/new/link",
     "method": "GET",
-    "params": { "url": "url" }
+    "params": { "url": "url", "text": "text", "title": "title" }
   }
 }

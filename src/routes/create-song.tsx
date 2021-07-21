@@ -116,11 +116,33 @@ function useSubmit(submitter: () => Promise<string | false>) {
   return { submit, disabled }
 }
 
+function getURLFromSearch(search: string) {
+  function parse(input: string | undefined | null) {
+    try {
+      if (!input) return ''
+      const match = /https?:[^ \n\t]+/.exec(input)
+      if (!match) return ''
+      const url = new URL(match[0], 'file:///')
+      return url.protocol === 'http:' || url.protocol === 'https:'
+        ? match[0]
+        : ''
+    } catch {
+      return ''
+    }
+  }
+
+  const params = new URLSearchParams(search)
+  return (
+    parse(params.get('url')) ||
+    parse(params.get('text')) ||
+    parse(params.get('title')) ||
+    ''
+  )
+}
+
 function CreateSongLink() {
   const location = useLocation()
-  const [link, setLink] = useState(
-    new URLSearchParams(location.search).get('url') || '',
-  )
+  const [link, setLink] = useState(getURLFromSearch(location.search))
   const [error, setError] = useState('')
   const newSong = useNewSong()
   const { submit, disabled } = useSubmit(async () => {
