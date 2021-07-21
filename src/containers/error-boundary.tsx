@@ -1,24 +1,23 @@
 /** @jsxImportSource @emotion/react */
 
+import { RootView, TText } from 'components/themed'
 import { Component, useEffect } from 'react'
 import { useHistory } from 'react-router'
 let Raven: any = null
 
-const Fallback = ({ reset }: { reset: () => void }) => {
+function Fallback({ reset }: { reset: () => void }) {
   const history = useHistory()
   useEffect(() => history.listen(reset), [history, reset])
   return (
-    <div
-      css={{
-        width: '100%',
-        height: '100%',
+    <RootView
+      style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
-      <div css={{ fontSize: 30 }}>Něco se pokazilo</div>
-    </div>
+      <TText style={{ fontSize: 30 }}>Něco se pokazilo</TText>
+    </RootView>
   )
 }
 
@@ -45,7 +44,6 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
       return <Fallback reset={this.reset} />
     }
     return this.props.children
