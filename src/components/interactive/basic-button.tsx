@@ -1,10 +1,4 @@
-import React, {
-  PropsWithChildren,
-  useRef,
-  useEffect,
-  useState,
-  useContext,
-} from 'react'
+import React, { PropsWithChildren, useState } from 'react'
 import {
   StyleProp,
   TextStyle,
@@ -14,6 +8,8 @@ import {
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
 import { TText, useDarkMode } from 'components/themed'
+import { isPressOverriden, useInPressOutside } from './press-outside'
+import { useCallback } from 'react'
 
 type ButtonPropsBase<T> = PropsWithChildren<
   {
@@ -30,27 +26,23 @@ type ButtonPropsLink = ButtonPropsBase<{ to: string }>
 
 export type ButtonProps = ButtonPropsLink | ButtonPropsNonLink
 
-function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
+export function useLinkOnPress(to: string) {
   const history = useHistory()
   const updateAfterNavigate = useUpdateAfterNavigate()
-  return (
-    <BasicButtonBase
-      onPress={() => {
-        if (to.startsWith('http://') || to.startsWith('https://')) {
-          window.open(to, '_blank', 'noopener,noreferrer')
-        } else {
-          updateAfterNavigate()
-          history.push(to, { canGoBack: true })
-        }
-      }}
-      href={to}
-      {...rest}
-    />
+  return useCallback(
+    (event?: { preventDefault?: () => any }) => {
+      event?.preventDefault?.()
+      if (to.startsWith('http://') || to.startsWith('https://')) {
+        window.open(to, '_blank', 'noopener,noreferrer')
+      } else {
+        updateAfterNavigate()
+        history.push(to, { canGoBack: true })
+      }
+    },
+    [history, to, updateAfterNavigate],
   )
 }
 
-const clickOutsideContext = React.createContext(false)
-let pressOverriden = 0
 function BasicButtonBase({
   children,
   disabled,
@@ -58,7 +50,7 @@ function BasicButtonBase({
   ...rest
 }: ButtonPropsNonLink & { href?: string }) {
   const [hover, setHover] = useState(false)
-  const inClickOutside = useContext(clickOutsideContext)
+  const inPressOutside = useInPressOutside()
 
   return (
     <Pressable
@@ -66,7 +58,7 @@ function BasicButtonBase({
       onPress={(event) => {
         event.preventDefault()
         if (disabled) return
-        if (pressOverriden > 0 && !inClickOutside) return
+        if (isPressOverriden() && !inPressOutside) return
         rest.onPress?.(event)
       }}
       style={{
@@ -84,7 +76,7 @@ function BasicButtonBase({
         style={[
           { borderColor: useDarkMode() ? 'white' : 'black' },
           style,
-          hover && (pressOverriden <= 0 || inClickOutside)
+          hover && (!isPressOverriden() || inPressOutside)
             ? { textDecorationLine: 'underline' }
             : null,
         ]}
@@ -95,51 +87,11 @@ function BasicButtonBase({
   )
 }
 
+function BasicButtonLink({ to, ...rest }: ButtonPropsLink) {
+  return <BasicButtonBase onPress={useLinkOnPress(to)} href={to} {...rest} />
+}
+
 export function BasicButton(props: ButtonProps) {
   if ('to' in props) return <BasicButtonLink {...props} />
   return <BasicButtonBase {...props} />
-}
-
-export function OnClickOutside({
-  handler,
-  children,
-}: {
-  handler?: null | (() => void)
-  children: (ref: React.RefObject<HTMLDivElement>) => JSX.Element
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  const handlerRef = useRef(handler)
-  useEffect(() => {
-    handlerRef.current = handler
-    if (handler) {
-      pressOverriden++
-      return () => {
-        setTimeout(() => {
-          pressOverriden--
-        }, 200)
-      }
-    }
-    return undefined
-  }, [handler])
-
-  useEffect(() => {
-    function listener(event: MouseEvent | TouchEvent) {
-      if (handlerRef.current && !ref.current?.contains(event.target as any)) {
-        event.preventDefault()
-        handlerRef.current()
-      }
-    }
-    const cfg = { capture: true, passive: false }
-    document.body.addEventListener('mousedown', listener, cfg)
-    document.body.addEventListener('touchstart', listener, cfg)
-    return () => {
-      document.body.removeEventListener('mousedown', listener)
-      document.body.removeEventListener('touchstart', listener)
-    }
-  }, [])
-  return (
-    <clickOutsideContext.Provider value={true}>
-      {children(ref)}
-    </clickOutsideContext.Provider>
-  )
 }

@@ -2,20 +2,22 @@
 
 import { ChangelogEntry } from 'components/changelog-entry'
 import { BackArrow, BackButton } from 'components/back-button'
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 
 import { useChangelog } from 'utils/use-changelog'
 import { Fragment } from 'react'
+import { RootView, TText } from 'components/themed'
+import { InlineLink } from 'components/interactive/inline-link'
 
 function ChangelogBody() {
   const changelog = useChangelog()
   if (changelog.status === 'initializing') return null
 
   if (changelog.status === 'loading') {
-    return <div>Načítám...</div>
+    return <TText>Načítám...</TText>
   }
   if (changelog.status === 'error') {
-    return <div>Načítání selhalo.</div>
+    return <TText>Načítání selhalo.</TText>
   }
   return (
     <>
@@ -33,16 +35,16 @@ function ChangelogBody() {
 
 function LangTitle({ children, first }: { children: string; first: boolean }) {
   return (
-    <div
-      css={{
-        fontSize: 20,
+    <TText
+      style={{
+        fontSize: 18,
         fontWeight: 'bold',
-        marginLeft: -38,
+        marginLeft: -32,
         marginTop: first ? 0 : 30,
       }}
     >
       {children}
-    </div>
+    </TText>
   )
 }
 
@@ -54,10 +56,12 @@ function ChangeBody({ body }: { body: string }) {
     if (line.startsWith('- ')) {
       items.push(
         <li key={key++}>
-          <Linkified line={line.substring(2)} />
-          {prevLines.length >= 1 ? (
-            <ul key={key++}>{prevLines.reverse()}</ul>
-          ) : null}
+          <TText>
+            <Linkified line={line.substring(2)} />
+            {prevLines.length >= 1 ? (
+              <ul key={key++}>{prevLines.reverse()}</ul>
+            ) : null}
+          </TText>
         </li>,
       )
       prevLines = []
@@ -93,9 +97,9 @@ function Linkified({ line }: { line: string }) {
     line = line.substring(match.index + text.length + link.length + 4)
     res.push(<Fragment key={key++}>{pre}</Fragment>)
     res.push(
-      <NewTabLink to={link} key={key++}>
+      <InlineLink to={link} key={key++}>
         {text}
-      </NewTabLink>,
+      </InlineLink>,
     )
   }
   res.push(<Fragment key={key++}>{line}</Fragment>)
@@ -104,17 +108,10 @@ function Linkified({ line }: { line: string }) {
 
 export default function Changelog() {
   return (
-    <div>
+    <RootView>
       <Head />
       <ChangelogBody />
-    </div>
-  )
-}
-function NewTabLink({ to, children }: { to: string; children: string }) {
-  return (
-    <a href={to} target="_blank" rel="noreferrer noopener">
-      {children}
-    </a>
+    </RootView>
   )
 }
 
@@ -132,7 +129,7 @@ function Head() {
       <BackButton>
         <BackArrow />
       </BackButton>
-      <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Historie změn</Text>
+      <TText style={{ fontSize: 30, fontWeight: 'bold' }}>Historie změn</TText>
     </View>
   )
 }

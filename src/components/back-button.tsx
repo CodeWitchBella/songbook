@@ -37,7 +37,7 @@ export function BackButton({
     <BasicButton
       style={[
         {
-          color: 'darkblue',
+          color: 'white',
           marginRight: '10px',
           textDecorationLine: 'underline',
         },
@@ -79,7 +79,7 @@ export function BackArrow() {
     >
       <g
         fill="none"
-        stroke={useDarkMode() ? 'white' : 'black'}
+        stroke="currentColor"
         strokeWidth=".7"
         strokeLinecap="round"
       >

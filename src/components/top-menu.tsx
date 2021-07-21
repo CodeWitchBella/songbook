@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { PropsWithChildren, useReducer } from 'react'
-import { OnClickOutside } from './interactive/basic-button'
+import { OnPressOutside } from './interactive/press-outside'
 import { Burger } from './song-look/song-menu-icons'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
@@ -87,7 +87,7 @@ function MenuContent({
   onClose: () => void
 }>) {
   return (
-    <OnClickOutside handler={visible ? onClose : null}>
+    <OnPressOutside onPressOutside={visible ? onClose : null}>
       {(ref) => (
         <div
           ref={ref}
@@ -114,6 +114,6 @@ function MenuContent({
           </ul>
         </div>
       )}
-    </OnClickOutside>
+    </OnPressOutside>
   )
 }

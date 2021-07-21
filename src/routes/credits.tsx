@@ -1,33 +1,34 @@
 import { BackArrow, BackButton } from 'components/back-button'
 import { AddToCollection } from 'components/song-look/song-menu-icons'
-import { View, Text, StyleSheet } from 'react-native'
+import { RootView, TText } from 'components/themed'
+import { View, StyleSheet } from 'react-native'
 
 export default function Credits() {
   return (
-    <View style={{ alignItems: 'center', marginTop: 32 }}>
+    <RootView style={{ alignItems: 'center', paddingTop: 32 }}>
       <View style={{ maxWidth: 500 }}>
         <View style={{ flexDirection: 'row' }}>
           <BackButton>
             <BackArrow />
           </BackButton>
-          <Text style={styles.head}>Credits</Text>
+          <TText style={styles.head}>Credits</TText>
         </View>
-        <Text style={styles.text}>
+        <TText style={styles.text}>
           Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně
           vytvořila{' '}
           <NewTabLink to="https://isbl.cz">Isabella Skořepová</NewTabLink>
-        </Text>
+        </TText>
 
-        <Text style={styles.text}>
+        <TText style={styles.text}>
           Ikonku přidání do kolekce <AddToCollection /> jsem převzala od{' '}
           <NewTabLink to="https://smashicons.com/">Smashicons</NewTabLink>
-        </Text>
-        <Text style={styles.text}>
+        </TText>
+        <TText style={styles.text}>
           Některé jiné ikonky jsem převzala odněkud a už si bohužel nepamatuji
           odkud. Ani už nevím, které jsem dělala já a které jsou převzaté :-(
-        </Text>
+        </TText>
       </View>
-    </View>
+    </RootView>
   )
 }
 

@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
+import { TText } from './themed'
+import { View } from 'react-native'
 
 const months = [
   'ledna',
@@ -25,14 +27,9 @@ const Entry = styled.div`
   max-width: 80ch;
 `
 
-const H2 = styled.h2`
-  margin: 10px 0 0 0;
-`
-
-const Padding = styled.div`
-  padding-left: 10px;
-  padding-top: 10px;
-`
+function Padding({ children }: PropsWithChildren<{}>) {
+  return <View style={{ paddingLeft: 10, paddingTop: 10 }}>{children}</View>
+}
 
 export function ChangelogEntry({
   date,
@@ -43,12 +40,12 @@ export function ChangelogEntry({
 }) {
   return (
     <Entry>
-      <H2>
+      <TText style={{ marginTop: 10, fontSize: 20, fontWeight: 'bold' }}>
         {(() => {
           const parts = date.split('-').map((n) => Number.parseInt(n, 10))
           return `${parts[2]}. ${months[parts[1] - 1]} ${parts[0]}`
         })()}
-      </H2>
+      </TText>
       <Padding>
         <ul>{children}</ul>
       </Padding>

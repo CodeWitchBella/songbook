@@ -195,7 +195,11 @@ function SongHeaderWithBack({
             paddingTop: em(0.2),
           }}
         >
-          <BackButton>
+          <BackButton
+            style={{
+              color: 'black',
+            }}
+          >
             <BackArrow />
           </BackButton>
         </View>
