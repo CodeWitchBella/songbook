@@ -372,7 +372,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     <Columns number={state.preview ? 2 : 1}>
       <div>
         <Form onSubmit={submit}>
-          <BackButton style={{ paddingBottom: 10 }}>
+          <BackButton style={{ paddingBottom: 10, color: 'black' }}>
             <BackArrow />
           </BackButton>
           <InputLine>
@@ -526,5 +526,11 @@ export default function EditSongRoute({ slug }: { slug: string }) {
   const { song, methods } = useSong({ slug })
   if (!song || !methods) return <div>Píseň nenalezena</div>
 
-  return <EditSong song={song} refetch={methods.refresh} />
+  return (
+    <div
+      style={{ backgroundColor: 'white', minHeight: '100%', color: 'black' }}
+    >
+      <EditSong song={song} refetch={methods.refresh} />
+    </div>
+  )
 }

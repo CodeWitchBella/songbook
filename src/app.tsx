@@ -7,7 +7,7 @@ import { css, Global } from '@emotion/react'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
-import { DarkModeProvider } from 'components/themed'
+import { DarkModeProvider, RootView, TText } from 'components/themed'
 
 import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
 import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
@@ -49,19 +49,25 @@ export const InjectGlobal = () => (
 
 export default function App() {
   return (
-    <React.Fragment>
+    <DarkModeProvider>
       <OutlineHandler />
       <StoreProvider>
         <InstallProvider>
-          <DarkModeProvider>
-            <Suspense fallback={<div>Načítám...</div>}>
-              <ErrorBoundary>
-                <Routes />
-              </ErrorBoundary>
-            </Suspense>
-          </DarkModeProvider>
+          <Suspense
+            fallback={
+              <RootView
+                style={{ alignItems: 'center', justifyContent: 'center' }}
+              >
+                <TText style={{ fontSize: 24 }}>Načítám...</TText>
+              </RootView>
+            }
+          >
+            <ErrorBoundary>
+              <Routes />
+            </ErrorBoundary>
+          </Suspense>
         </InstallProvider>
       </StoreProvider>
-    </React.Fragment>
+    </DarkModeProvider>
   )
 }
