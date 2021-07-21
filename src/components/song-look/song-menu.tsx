@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
 
-import type { InterpolationPrimitive } from '@emotion/serialize/types'
-
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
 import { Link, LinkProps, useHistory } from 'react-router-dom'
@@ -14,8 +12,10 @@ import {
   AddToCollection,
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
-import { useGetRandomSong, useViewer } from 'store/store'
+import { useGetRandomSong } from 'store/store'
 import { DumbModal } from 'components/dumb-modal'
+import { TText, useDarkMode } from 'components/themed'
+import { StyleSheet } from 'react-native'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -38,28 +38,36 @@ const MenuList = styled.ul({
   margin: 0,
 })
 
-const menuStyle: InterpolationPrimitive = {
-  all: 'unset',
-  padding: 10,
-  fontSize: 25,
-  border: '1px solid black',
-  background: 'white',
-  textAlign: 'right',
-  height: 32,
+function useMenuStyle() {
+  const dark = useDarkMode()
+  return {
+    all: 'unset',
+    padding: 10,
+    fontSize: 25,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: dark ? 'white' : 'black',
+    color: dark ? 'white' : 'black',
+    background: dark ? 'black' : 'white',
+    textAlign: 'right',
+    height: 32,
+  } as const
 }
 
-const MenuButton = (
+function MenuButton(
   props: React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   >,
-) => <button type="button" css={menuStyle} {...props} />
+) {
+  return <button type="button" css={useMenuStyle()} {...props} />
+}
 
-const MenuLink = (props: LinkProps<any>) => {
+function MenuLink(props: LinkProps<any>) {
   const to = props.to
   return (
     <Link<any>
-      css={menuStyle}
+      css={useMenuStyle()}
       {...props}
       to={(location) => {
         const res = typeof to === 'function' ? to(location) : to
@@ -70,20 +78,29 @@ const MenuLink = (props: LinkProps<any>) => {
   )
 }
 
+const style = StyleSheet.create({
+  modalText: { fontSize: 22 },
+  modalCloseInfo: { fontSize: 13, marginTop: 20 },
+})
+
 function Info({ close, song }: { close: () => void; song: SongType }) {
   return (
     <DumbModal close={close}>
-      <div>Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}</div>
-      <div>
+      <TText style={style.modalText}>
+        Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}
+      </TText>
+      <TText style={style.modalText}>
         Vloženo:{' '}
         {song.insertedAt
           ? song.insertedAt.toFormat('dd. MM. yyyy')
           : 'před 20. 5. 2019'}
-      </div>
-      <div>Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}</div>
-      <div css={{ fontSize: 13, marginTop: 20 }}>
+      </TText>
+      <TText style={style.modalText}>
+        Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}
+      </TText>
+      <TText style={[style.modalText, style.modalCloseInfo]}>
         Klikněte kdekoli pro zavření
-      </div>
+      </TText>
     </DumbModal>
   )
 }
@@ -110,8 +127,7 @@ export default function SongMenu({
   const [info, setInfo] = useState(false)
   const history = useHistory()
   const getRandomSong = useGetRandomSong()
-
-  const [viewer] = useViewer()
+  const menuStyle = useMenuStyle()
 
   return (
     <MenuWrap>
@@ -119,10 +135,10 @@ export default function SongMenu({
         {open ? (
           <>
             {transposition ? (
-              <div css={[menuStyle, { border: 0 }]}>
+              <TText style={[menuStyle, { borderWidth: 0 }]}>
                 {transposition > 0 ? '+' : ''}
                 {transposition}
-              </div>
+              </TText>
             ) : null}
             <MenuButton onClick={() => setTransposition(transposition + 1)}>
               +1

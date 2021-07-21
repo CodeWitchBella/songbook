@@ -1,5 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
+import { View } from 'react-native'
+import { useDarkMode } from './themed'
+
 export function DumbModal({
   close,
   children,
@@ -7,6 +10,7 @@ export function DumbModal({
   close: () => void
   children: JSX.Element | readonly JSX.Element[]
 }) {
+  const dark = useDarkMode()
   return (
     <button
       type="button"
@@ -18,23 +22,25 @@ export function DumbModal({
         left: 0,
         width: '100vw',
         height: '100vh',
-        background: 'rgba(255,255,255,0.7)',
+        background: dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)',
         pointerEvents: 'all',
         alignItems: 'center',
         justifyContent: 'center',
       }}
       onClick={close}
     >
-      <div
-        css={{
-          boxShadow: '10px 10px 36px -8px rgba(0,0,0,0.75)',
-          padding: '20px 10px',
-          background: 'white',
-          fontSize: 18,
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 24,
+          backgroundColor: dark ? 'black' : 'white',
+          borderColor: dark ? 'white' : 'black',
+          borderWidth: 1,
+          borderStyle: 'solid',
         }}
       >
         {children}
-      </div>
+      </View>
     </button>
   )
 }
