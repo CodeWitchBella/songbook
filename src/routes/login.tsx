@@ -7,6 +7,7 @@ import { useHistory } from 'react-router'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
+import { RootView, TH2, TText } from 'components/themed'
 
 export default function Login() {
   const login = useLogin()
@@ -33,43 +34,45 @@ export default function Login() {
       })
   }
   return (
-    <form
-      onSubmit={submit}
-      css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
-    >
-      <h2 css={{ display: 'flex', flexDirection: 'row' }}>
-        <BackButton>
-          <BackArrow />
-        </BackButton>
-        Přihlášení
-      </h2>
-      {login.viewer ? (
-        <LoginDone viewer={login.viewer} logout={login.logout} />
-      ) : (
-        <>
-          <div>{status !== 'loading' && status}</div>
-          <LargeInput
-            label="Email"
-            value={email}
-            onChange={setEmail}
-            disabled={status === 'loading'}
-            type="email"
-            name="email"
-          />
-          <LargeInput
-            label="Heslo"
-            value={password}
-            onChange={setPassword}
-            disabled={status === 'loading'}
-            type="password"
-            name="password"
-          />
-          <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-            Přihlásit se
-          </PrimaryButton>
-          <button style={{ display: 'none' }} />
-        </>
-      )}
-    </form>
+    <RootView>
+      <form
+        onSubmit={submit}
+        css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
+      >
+        <TH2>
+          <BackButton>
+            <BackArrow />
+          </BackButton>
+          Přihlášení
+        </TH2>
+        {login.viewer ? (
+          <LoginDone viewer={login.viewer} logout={login.logout} />
+        ) : (
+          <>
+            <TText>{status !== 'loading' && status}</TText>
+            <LargeInput
+              label="Email"
+              value={email}
+              onChange={setEmail}
+              disabled={status === 'loading'}
+              type="email"
+              name="email"
+            />
+            <LargeInput
+              label="Heslo"
+              value={password}
+              onChange={setPassword}
+              disabled={status === 'loading'}
+              type="password"
+              name="password"
+            />
+            <PrimaryButton onPress={submit} disabled={status === 'loading'}>
+              Přihlásit se
+            </PrimaryButton>
+            <button style={{ display: 'none' }} />
+          </>
+        )}
+      </form>
+    </RootView>
   )
 }

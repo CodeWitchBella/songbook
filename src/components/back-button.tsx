@@ -5,7 +5,6 @@ import { useHistory, useLocation } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
-import { useDarkMode } from './themed'
 
 export function useGoBack(to = '/') {
   const history = useHistory()

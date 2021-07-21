@@ -1,6 +1,7 @@
 import React, { createContext, useContext, PropsWithChildren } from 'react'
 import {
   View as RNView,
+  // eslint-disable-next-line no-restricted-imports
   Text as RNText,
   Image as RNImage,
   ViewStyle,
@@ -10,6 +11,7 @@ import type ReactPDF from '@react-pdf/renderer'
 import { notNull } from '@codewitchbella/ts-utils'
 import { pdfSetup } from './pdf-setup'
 import { once } from 'utils/utils'
+import { useDarkMode } from 'components/themed'
 
 const InPdfCtx = createContext<typeof import('@react-pdf/renderer') | null>(
   null,
@@ -90,7 +92,12 @@ export function Text({
   style?: MergedTextStyle
 }) {
   const pdf = useContext(InPdfCtx)
-  if (!pdf) return <RNText {...rest} style={style} />
+  const dark = useDarkMode()
+  if (!pdf) {
+    return (
+      <RNText {...rest} style={[{ color: dark ? 'white' : 'black' }, style]} />
+    )
+  }
   return <pdf.Text {...rest} style={textStyleForPDF(style)} />
 }
 

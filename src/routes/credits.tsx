@@ -1,4 +1,5 @@
 import { BackArrow, BackButton } from 'components/back-button'
+import { InlineLink } from 'components/interactive/inline-link'
 import { AddToCollection } from 'components/song-look/song-menu-icons'
 import { RootView, TText } from 'components/themed'
 import { View, StyleSheet } from 'react-native'
@@ -16,12 +17,12 @@ export default function Credits() {
         <TText style={styles.text}>
           Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně
           vytvořila{' '}
-          <NewTabLink to="https://isbl.cz">Isabella Skořepová</NewTabLink>
+          <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
         </TText>
 
         <TText style={styles.text}>
           Ikonku přidání do kolekce <AddToCollection /> jsem převzala od{' '}
-          <NewTabLink to="https://smashicons.com/">Smashicons</NewTabLink>
+          <InlineLink to="https://smashicons.com/">Smashicons</InlineLink>
         </TText>
         <TText style={styles.text}>
           Některé jiné ikonky jsem převzala odněkud a už si bohužel nepamatuji
@@ -41,11 +42,3 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 })
-
-function NewTabLink({ to, children }: { to: string; children: string }) {
-  return (
-    <a href={to} target="_blank" rel="noreferrer noopener">
-      {children}
-    </a>
-  )
-}

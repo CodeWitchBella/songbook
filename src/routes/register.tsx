@@ -7,6 +7,7 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
+import { RootView, TH2 } from 'components/themed'
 
 export default function Register() {
   const login = useLogin()
@@ -48,52 +49,54 @@ export default function Register() {
   }
 
   return (
-    <form
-      onSubmit={submit}
-      css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
-    >
-      <h2 css={{ display: 'flex', flexDirection: 'row' }}>
-        <BackButton>
-          <BackArrow />
-        </BackButton>
-        Vytvořit účet
-      </h2>
-      {login.viewer ? (
-        <LoginDone viewer={login.viewer} logout={login.logout} />
-      ) : (
-        <>
-          <div>{status !== 'loading' && status}</div>
-          <LargeInput
-            label="Zobrazované jméno"
-            type="text"
-            name="name"
-            disabled={status === 'loading'}
-            value={name}
-            onChange={setName}
-          />
-          <LargeInput
-            label="Email"
-            value={email}
-            onChange={setEmail}
-            disabled={status === 'loading'}
-            type="email"
-            name="email"
-          />
-          <LargeInput
-            label="Heslo"
-            value={password}
-            onChange={setPassword}
-            disabled={status === 'loading'}
-            type="password"
-            name="password"
-          />
+    <RootView>
+      <form
+        onSubmit={submit}
+        css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
+      >
+        <TH2>
+          <BackButton>
+            <BackArrow />
+          </BackButton>
+          Vytvořit účet
+        </TH2>
+        {login.viewer ? (
+          <LoginDone viewer={login.viewer} logout={login.logout} />
+        ) : (
+          <>
+            <div>{status !== 'loading' && status}</div>
+            <LargeInput
+              label="Zobrazované jméno"
+              type="text"
+              name="name"
+              disabled={status === 'loading'}
+              value={name}
+              onChange={setName}
+            />
+            <LargeInput
+              label="Email"
+              value={email}
+              onChange={setEmail}
+              disabled={status === 'loading'}
+              type="email"
+              name="email"
+            />
+            <LargeInput
+              label="Heslo"
+              value={password}
+              onChange={setPassword}
+              disabled={status === 'loading'}
+              type="password"
+              name="password"
+            />
 
-          <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-            Vytvořit účet
-          </PrimaryButton>
-          <button style={{ display: 'none' }} />
-        </>
-      )}
-    </form>
+            <PrimaryButton onPress={submit} disabled={status === 'loading'}>
+              Vytvořit účet
+            </PrimaryButton>
+            <button style={{ display: 'none' }} />
+          </>
+        )}
+      </form>
+    </RootView>
   )
 }

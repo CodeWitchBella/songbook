@@ -2,6 +2,7 @@
 import { css } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import * as page from 'utils/page'
+import { useDarkMode } from './themed'
 
 const sizer = () => css`
   @media not print {
@@ -20,7 +21,6 @@ const height = `calc(
 
 const songClass = (left: boolean) => css`
   position: relative;
-  background: white;
 
   width: ${width};
   height: ${height};
@@ -54,10 +54,21 @@ export default function SizerPage({
   children,
   left,
 }: PropsWithChildren<{ left?: boolean }>) {
+  const dark = useDarkMode()
   return (
     <section css={sizer()}>
       <div css={marginDisplay}>
-        <div css={songClass(!!left)}>{children}</div>
+        <div
+          css={[
+            songClass(!!left),
+            {
+              backgroundColor: dark ? 'black' : 'white',
+              color: dark ? 'white' : 'black',
+            },
+          ]}
+        >
+          {children}
+        </div>
       </div>
     </section>
   )

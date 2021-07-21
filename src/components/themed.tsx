@@ -10,6 +10,24 @@ export function TText({ style, ...rest }: PropsWithChildren<TextProps>) {
   )
 }
 
+export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
+  return (
+    <TText
+      style={[
+        {
+          fontSize: 20,
+          flexDirection: 'row',
+          display: 'flex',
+          marginBottom: 16,
+          marginTop: 32,
+        },
+        style,
+      ]}
+      {...rest}
+    />
+  )
+}
+
 const darkModeContext = createContext(false)
 export function DarkModeProvider({
   children,
@@ -18,7 +36,7 @@ export function DarkModeProvider({
 }) {
   return (
     <darkModeContext.Provider
-      value={useMediaQuery('(prefers-color-scheme: dark)') && false}
+      value={useMediaQuery('(prefers-color-scheme: dark)')}
     >
       {children}
     </darkModeContext.Provider>
