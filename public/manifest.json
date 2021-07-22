@@ -3,37 +3,37 @@
   "short_name": "Zpěvník",
   "icons": [
     {
-      "src": "/static/android-launchericon-48-48.png",
+      "src": "/static/android-launchericon-48-48-v2.png",
       "type": "image/png",
       "sizes": "48x48",
       "purpose": "any"
     },
     {
-      "src": "/static/android-launchericon-72-72.png",
+      "src": "/static/android-launchericon-72-72-v2.png",
       "type": "image/png",
       "sizes": "72x72",
       "purpose": "any"
     },
     {
-      "src": "/static/android-launchericon-96-96.png",
+      "src": "/static/android-launchericon-96-96-v2.png",
       "type": "image/png",
       "sizes": "96x96",
       "purpose": "any"
     },
     {
-      "src": "/static/android-launchericon-144-144.png",
+      "src": "/static/android-launchericon-144-144-v2.png",
       "type": "image/png",
       "sizes": "144x144",
       "purpose": "any"
     },
     {
-      "src": "/static/android-launchericon-192-192.png",
+      "src": "/static/android-launchericon-192-192-v2.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "/static/android-launchericon-512-512.png",
+      "src": "/static/android-launchericon-512-512-v2.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
