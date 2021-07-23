@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState } from 'react'
 import { SongLook } from 'components/song-look/song-look'
 import * as parser from 'utils/song-parser/song-parser'
 import styled from '@emotion/styled'
@@ -8,7 +8,6 @@ import SongMenu from 'components/song-look/song-menu'
 import { useLocation } from 'react-router-dom'
 import { useAutoUpdatedSong } from 'utils/firebase'
 import { useNavigate } from 'utils/use-navigate'
-import { graphqlFetch } from 'store/graphql'
 import { ChordHelp } from 'components/chord-help'
 import { useBasicStyle } from 'components/themed'
 
