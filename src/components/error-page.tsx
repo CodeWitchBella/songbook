@@ -1,5 +1,5 @@
 import { BackButton } from 'components/back-button'
-import { View, Text } from 'react-native'
+import { RootView, TText } from './themed'
 
 export function ErrorPage({
   text,
@@ -9,7 +9,7 @@ export function ErrorPage({
   children?: JSX.Element
 }) {
   return (
-    <View
+    <RootView
       style={{
         alignItems: 'center',
         justifyContent: 'center',
@@ -20,12 +20,12 @@ export function ErrorPage({
         right: 0,
       }}
     >
-      <Text style={{ fontSize: 42 }}>{text}</Text>
+      <TText style={{ fontSize: 42 }}>{text}</TText>
       {children || null}
       <BackButton style={{ marginTop: 16 }}>
-        <Text style={{ fontSize: 22 }}>Vrátit se zpět</Text>
+        <TText style={{ fontSize: 22 }}>Vrátit se zpět</TText>
       </BackButton>
-    </View>
+    </RootView>
   )
 }
 
