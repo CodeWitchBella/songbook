@@ -79,8 +79,8 @@
   "scope": "/",
   "display": "standalone",
   "display_override": ["minimal-ui"],
-  "background_color": "#FFCE19",
-  "theme_color": "#14CCB1",
+  "background_color": "#FFFFFF",
+  "theme_color": "#9917da",
   "orientation": "portrait",
   "share_target": {
     "action": "/new/link",
