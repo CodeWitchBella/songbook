@@ -7,7 +7,9 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
-import { RootView, TH2 } from 'components/themed'
+import { RootView, TH2, TText } from 'components/themed'
+import { InlineLink } from 'components/interactive/inline-link'
+import { View } from 'components/pdf-render/primitives'
 
 export default function Register() {
   const login = useLogin()
@@ -94,6 +96,11 @@ export default function Register() {
               Vytvořit účet
             </PrimaryButton>
             <button style={{ display: 'none' }} />
+            <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
+              <TText style={{ fontSize: 16 }}>
+                Už mám účet, <InlineLink to="login">přihlásit se</InlineLink>
+              </TText>
+            </View>
           </>
         )}
       </form>

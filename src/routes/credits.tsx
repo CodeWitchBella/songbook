@@ -12,7 +12,7 @@ export default function Credits() {
           <BackButton>
             <BackArrow />
           </BackButton>
-          <TText style={styles.head}>Credits</TText>
+          <TText style={styles.head}>Zdroje assetů</TText>
         </View>
         <TText style={styles.text}>
           Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně

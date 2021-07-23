@@ -9,8 +9,10 @@ import { useNewSong } from 'store/store'
 import { useLocation, useRouteMatch } from 'react-router-dom'
 import { View, StyleSheet } from 'react-native'
 import { songFromLink } from 'utils/song-from-link'
-import { NotFound } from 'components/error-page'
+import { ErrorPage, NotFound } from 'components/error-page'
 import { RootView, TText } from 'components/themed'
+import { useLogin } from 'components/use-login'
+import { ListButton } from 'components/interactive/list-button'
 
 const FormWrap = styled.div({
   display: 'flex',
@@ -58,6 +60,18 @@ const styles = StyleSheet.create({
 export default function CreateSong() {
   const { params } = useRouteMatch<{ type?: string }>()
   const type = params.type ?? 'switch'
+  const login = useLogin()
+  if (!login.viewer) {
+    return (
+      <ErrorPage text="Pro vytvoření písně musíš mít účet">
+        <View style={{ flexDirection: 'row', marginTop: 8, marginBottom: 4 }}>
+          <ListButton to="login">Přihlásit se</ListButton>
+          <View style={{ width: 16 }} />
+          <ListButton to="register">Vytvořit účet</ListButton>
+        </View>
+      </ErrorPage>
+    )
+  }
   return (
     <RootView style={styles.wrap}>
       <View style={styles.wrap2}>

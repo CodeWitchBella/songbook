@@ -8,6 +8,8 @@ import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
 import { RootView, TH2, TText } from 'components/themed'
+import { InlineLink } from 'components/interactive/inline-link'
+import { View } from 'react-native'
 
 export default function Login() {
   const login = useLogin()
@@ -70,6 +72,11 @@ export default function Login() {
               Přihlásit se
             </PrimaryButton>
             <button style={{ display: 'none' }} />
+            <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
+              <TText style={{ fontSize: 16 }}>
+                Nemám účet, <InlineLink to="register">vytvořit nový</InlineLink>
+              </TText>
+            </View>
           </>
         )}
       </form>

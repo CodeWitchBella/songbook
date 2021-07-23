@@ -36,6 +36,7 @@ const imports = {
     () => import(/* webpackChunkName: "r-register" */ './register'),
   ),
   Credits: once(() => import(/* webpackChunkName: "r-credits" */ './credits')),
+  About: once(() => import(/* webpackChunkName: "r-about" */ './about')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)
@@ -50,6 +51,7 @@ const Login = React.lazy(imports.Login)
 const Register = React.lazy(imports.Register)
 const AddToCollection = React.lazy(imports.AddToCollection)
 const Credits = React.lazy(imports.Credits)
+const About = React.lazy(imports.About)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -79,6 +81,9 @@ function Routes() {
         </Route>
         <Route path="/credits" exact>
           <Credits />
+        </Route>
+        <Route path="/about" exact>
+          <About />
         </Route>
         <Route path="/add-to-collection/:slug">
           <AddToCollection />

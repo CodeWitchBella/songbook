@@ -1,14 +1,22 @@
+import { forwardRef } from 'react'
 import { createContext, PropsWithChildren, useContext } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
 import { useMediaQuery } from 'utils/utils'
 
-export function TText({ style, ...rest }: PropsWithChildren<TextProps>) {
-  const dark = useDarkMode()
-  return (
-    <RNText style={[{ color: dark ? 'white' : 'black' }, style]} {...rest} />
-  )
-}
+export type TextRef = RNText
+export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
+  ({ style, ...rest }, ref) => {
+    const dark = useDarkMode()
+    return (
+      <RNText
+        ref={ref}
+        style={[{ color: dark ? 'white' : 'black' }, style]}
+        {...rest}
+      />
+    )
+  },
+)
 
 export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
   return (
