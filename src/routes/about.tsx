@@ -1,6 +1,7 @@
 import { BackButton, BackArrow } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
 import { ListButton } from 'components/interactive/list-button'
+import { DarkModeSettings } from 'components/settings/dark-mode'
 import { RootView, TH2, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { Version } from 'components/version'
@@ -27,6 +28,8 @@ export default function About() {
         <ListButton to={googleDoc}>Návrhy</ListButton>
         <TH2>Můj účet</TH2>
         <User />
+        <TH2>Tmavý mód</TH2>
+        <DarkModeSettings />
         <TH2>Informace o aplikaci</TH2>
         <View>
           <TText style={style.infoText}>

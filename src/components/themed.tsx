@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, useMemo, useState } from 'react'
 import { createContext, PropsWithChildren, useContext } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
@@ -36,23 +36,48 @@ export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
   )
 }
 
-const darkModeContext = createContext(false)
+type DarkModeSetting = 'automatic' | 'light' | 'dark'
+const darkModeContext = createContext<{
+  value: boolean
+  setting: DarkModeSetting
+  setSetting: (v: DarkModeSetting) => void
+}>({ value: false, setting: 'light', setSetting: () => {} })
 export function DarkModeProvider({
   children,
 }: {
   children: JSX.Element | readonly JSX.Element[]
 }) {
+  const [setting, setSetting] = useState(() =>
+    localStorage.getItem('dark-mode-setting'),
+  )
+  const value = useMediaQuery('(prefers-color-scheme: dark)')
   return (
     <darkModeContext.Provider
-      value={useMediaQuery('(prefers-color-scheme: dark)')}
+      value={useMemo(
+        () => ({
+          value: setting === 'automatic' ? value : setting === 'dark',
+          setting: (setting as any) || 'automatic',
+          setSetting: (value) => {
+            setSetting(value)
+            if (value === 'automatic') {
+              localStorage.removeItem('dark-mode-setting')
+            } else {
+              localStorage.setItem('dark-mode-setting', value)
+            }
+          },
+        }),
+        [setting, value],
+      )}
     >
       {children}
     </darkModeContext.Provider>
   )
 }
-
-export function useDarkMode() {
+export function useDarkModeSetting() {
   return useContext(darkModeContext)
+}
+export function useDarkMode() {
+  return useDarkModeSetting().value
 }
 
 export function useBasicStyle() {
