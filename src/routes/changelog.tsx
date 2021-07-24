@@ -8,6 +8,11 @@ import { useChangelog } from 'utils/use-changelog'
 import { Fragment } from 'react'
 import { RootView, TText } from 'components/themed'
 import { InlineLink } from 'components/interactive/inline-link'
+import * as React from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { createContext } from 'react'
+import { useContext } from 'react'
 
 function ChangelogBody() {
   const changelog = useChangelog()
@@ -39,8 +44,8 @@ function LangTitle({ children, first }: { children: string; first: boolean }) {
       style={{
         fontSize: 18,
         fontWeight: 'bold',
-        marginLeft: -32,
-        marginTop: first ? 0 : 30,
+        marginLeft: 16,
+        marginVertical: 8,
       }}
     >
       {children}
@@ -48,69 +53,50 @@ function LangTitle({ children, first }: { children: string; first: boolean }) {
   )
 }
 
+function Link({ href, children }: { href?: string; children: any }) {
+  if (!href) return <TText>{children}</TText>
+  return <InlineLink to={href}>{children}</InlineLink>
+}
+
+const depthCtx = createContext(0)
+function Ul({ children, depth }: { children: any; depth: number }) {
+  return (
+    <depthCtx.Provider value={depth}>
+      <View>{children.filter((child: any) => typeof child !== 'string')}</View>
+    </depthCtx.Provider>
+  )
+}
+function Li({ children }: { children: any }) {
+  const depth = useContext(depthCtx)
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <TText style={{ fontWeight: 'bold', marginRight: 4 }}>
+        {depth === 1 ? '-' : '•'}{' '}
+      </TText>
+      <TText>{children}</TText>
+    </View>
+  )
+}
+
 function ChangeBody({ body }: { body: string }) {
-  const items = []
-  let prevLines: JSX.Element[] = []
-  let key = 0
-  for (const line of body.split('\n').reverse()) {
-    if (line.startsWith('- ')) {
-      items.push(
-        <li key={key++}>
-          <TText>
-            <Linkified line={line.substring(2)} />
-            {prevLines.length >= 1 ? (
-              <ul key={key++}>{prevLines.reverse()}</ul>
-            ) : null}
-          </TText>
-        </li>,
-      )
-      prevLines = []
-    } else {
-      const subbullet = /^ +- /
-      if (line.match(subbullet)) {
-        prevLines.push(
-          <li key={key++}>
-            <Linkified line={line.replace(subbullet, '')} />
-          </li>,
-        )
-      } else {
-        prevLines.push(<Linkified key={key++} line={line} />)
-      }
-    }
-  }
-  return <>{items.reverse()}</>
+  return (
+    <View style={{ marginLeft: 32 }}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{ a: Link, text: TText, ul: Ul, li: Li }}
+      >
+        {body}
+      </ReactMarkdown>
+    </View>
+  )
 }
-
-function Linkified({ line }: { line: string }) {
-  let match: RegExpMatchArray | null = null
-  const res: (JSX.Element | string)[] = []
-  let key = 0
-  while (
-    line &&
-    (match = line.match(/\[([^\]]+)\]\(([^)]+)\)/)) &&
-    typeof match.index === 'number'
-  ) {
-    if (!match) continue
-    const pre = line.substring(0, match.index)
-    const text = match[1]
-    const link = match[2]
-    line = line.substring(match.index + text.length + link.length + 4)
-    res.push(<Fragment key={key++}>{pre}</Fragment>)
-    res.push(
-      <InlineLink to={link} key={key++}>
-        {text}
-      </InlineLink>,
-    )
-  }
-  res.push(<Fragment key={key++}>{line}</Fragment>)
-  return <>{res}</>
-}
-
 export default function Changelog() {
   return (
-    <RootView>
-      <Head />
-      <ChangelogBody />
+    <RootView style={{ alignItems: 'center' }}>
+      <View style={{ maxWidth: 800 }}>
+        <Head />
+        <ChangelogBody />
+      </View>
     </RootView>
   )
 }
@@ -124,6 +110,7 @@ function Head() {
         padding: 16,
         paddingBottom: 4,
         paddingTop: 24,
+        paddingLeft: 12,
       }}
     >
       <BackButton>
