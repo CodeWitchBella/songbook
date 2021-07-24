@@ -65,7 +65,7 @@ export function DarkModeProvider({
     <darkModeContext.Provider
       value={useMemo(
         () => ({
-          value: !setting || setting === 'automatic' ? value : setting === 'dark',
+          value: !setting ? value : setting === 'dark',
           setting: (setting as any) || 'automatic',
           setSetting: (value) => {
             setSetting(value)
