@@ -68,7 +68,7 @@ export function DarkModeProvider({
           value: !setting ? value : setting === 'dark',
           setting: (setting as any) || 'automatic',
           setSetting: (value) => {
-            setSetting(value)
+            setSetting(value === 'automatic' ? undefined : value)
             document.documentElement.classList.remove(
               'dark',
               'light',
