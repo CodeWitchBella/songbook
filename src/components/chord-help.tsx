@@ -4,6 +4,7 @@
 import Chord from '@tombatossals/react-chords/lib/Chord'
 import guitar from '@tombatossals/chords-db/lib/guitar.json'
 import { DumbModal } from './dumb-modal'
+import { TText, useDarkMode } from './themed'
 
 type ChordDef = typeof guitar['chords']['A'][0]['positions'][0]
 
@@ -51,21 +52,27 @@ export function ChordHelp({
 }) {
   const chord = chordIn.replace(/^B/, 'Bb').replace(/^H/, 'B')
   const def = getChordsMap().get(chord)?.[0]
-  console.log(def)
+  const dark = useDarkMode()
   if (!def) return null
 
   return (
     <DumbModal close={close}>
-      <div css={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
+      <TText style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
         {chordIn}
         {chordIn !== chord ? ` (${chord})` : null}
-      </div>
-      <div css={{ width: 300 }}>
+      </TText>
+      <div
+        css={{
+          width: 300,
+          backgroundColor: 'white',
+          filter: dark ? 'invert(1) brightness(2)' : undefined,
+        }}
+      >
         <Chord chord={def} instrument={instrument} />
       </div>
-      <div css={{ fontSize: 13, marginTop: 20 }}>
+      <TText style={{ fontSize: 13, marginTop: 20 }}>
         Klikněte kdekoli pro zavření
-      </div>
+      </TText>
     </DumbModal>
   )
 }
