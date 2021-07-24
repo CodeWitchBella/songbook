@@ -15,12 +15,27 @@
     />
     <title>Zpěvník</title>
     <style>
+      body.dark {
+        background-color: black;
+      }
+      body.automatic,
+      body.light {
+        background-color: white;
+      }
       @media screen and (prefers-color-scheme: dark) {
-        :root {
+        body.automatic {
           background-color: black;
         }
       }
     </style>
+    <script>
+      ;(function () {
+        var mode = localStorage.getItem('dark-mode-setting')
+        document.documentElement.classList.add(
+          mode === 'dark' || mode === 'light' ? mode : 'automatic',
+        )
+      })()
+    </script>
   </head>
   <body>
     <noscript> You need to enable JavaScript to run this app. </noscript>

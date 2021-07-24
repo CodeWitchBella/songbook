@@ -1,4 +1,5 @@
 import { forwardRef, useMemo, useState } from 'react'
+import { useEffect } from 'react'
 import { createContext, PropsWithChildren, useContext } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
@@ -51,6 +52,15 @@ export function DarkModeProvider({
     localStorage.getItem('dark-mode-setting'),
   )
   const value = useMediaQuery('(prefers-color-scheme: dark)')
+  useEffect(() => {
+    window.addEventListener('storage', listener)
+    return () => {
+      window.removeEventListener('storage', listener)
+    }
+    function listener(event: StorageEvent) {
+      if (event.key === 'dark-mode-setting') setSetting(event.newValue)
+    }
+  }, [])
   return (
     <darkModeContext.Provider
       value={useMemo(
@@ -59,6 +69,12 @@ export function DarkModeProvider({
           setting: (setting as any) || 'automatic',
           setSetting: (value) => {
             setSetting(value)
+            document.documentElement.classList.remove(
+              'dark',
+              'light',
+              'automatic',
+            )
+            document.documentElement.classList.add(value)
             if (value === 'automatic') {
               localStorage.removeItem('dark-mode-setting')
             } else {
