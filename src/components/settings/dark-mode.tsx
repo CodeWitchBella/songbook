@@ -3,7 +3,8 @@ import { Pressable, View } from 'react-native'
 import dark from './dark.svg'
 import light from './light.svg'
 import automatic from './automatic.svg'
-import { TText, useDarkMode, useDarkModeSetting } from 'components/themed'
+import { TText, useDarkMode } from 'components/themed'
+import { useDarkModeSetting } from 'components/dark-mode'
 
 export function DarkModeSettings() {
   const s = useDarkModeSetting()

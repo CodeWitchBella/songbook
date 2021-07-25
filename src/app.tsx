@@ -7,12 +7,13 @@ import { css, Global } from '@emotion/react'
 import OutlineHandler from 'utils/outline-handler'
 import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
-import { DarkModeProvider, RootView, TText } from 'components/themed'
+import { RootView, TText } from 'components/themed'
 
 import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
 import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
 import cantarellBoldWoff from './webfonts/cantarell-bold.woff'
 import cantarellBoldWoff2 from './webfonts/cantarell-bold.woff2'
+import { DarkModeProvider } from 'components/dark-mode'
 
 export const InjectGlobal = () => (
   <Global

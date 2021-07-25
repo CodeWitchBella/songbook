@@ -1,9 +1,9 @@
-import { forwardRef, useMemo, useState } from 'react'
-import { useEffect } from 'react'
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { forwardRef } from 'react'
+import { PropsWithChildren } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
-import { useMediaQuery } from 'utils/utils'
+import { useDarkMode } from './dark-mode'
+export { useDarkMode } from './dark-mode'
 
 export type TextRef = RNText
 export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
@@ -35,65 +35,6 @@ export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
       {...rest}
     />
   )
-}
-
-type DarkModeSetting = 'automatic' | 'light' | 'dark'
-const darkModeContext = createContext<{
-  value: boolean
-  setting: DarkModeSetting
-  setSetting: (v: DarkModeSetting) => void
-}>({ value: false, setting: 'light', setSetting: () => {} })
-export function DarkModeProvider({
-  children,
-}: {
-  children: JSX.Element | readonly JSX.Element[]
-}) {
-  const [setting, setSetting] = useState(() =>
-    localStorage.getItem('dark-mode-setting'),
-  )
-  const value = useMediaQuery('(prefers-color-scheme: dark)')
-  useEffect(() => {
-    window.addEventListener('storage', listener)
-    return () => {
-      window.removeEventListener('storage', listener)
-    }
-    function listener(event: StorageEvent) {
-      if (event.key === 'dark-mode-setting') setSetting(event.newValue)
-    }
-  }, [])
-  return (
-    <darkModeContext.Provider
-      value={useMemo(
-        () => ({
-          value: !setting ? value : setting === 'dark',
-          setting: (setting as any) || 'automatic',
-          setSetting: (value) => {
-            setSetting(value === 'automatic' ? null : value)
-            document.documentElement.classList.remove(
-              'dark',
-              'light',
-              'automatic',
-            )
-            document.documentElement.classList.add(value)
-            if (value === 'automatic') {
-              localStorage.removeItem('dark-mode-setting')
-            } else {
-              localStorage.setItem('dark-mode-setting', value)
-            }
-          },
-        }),
-        [setting, value],
-      )}
-    >
-      {children}
-    </darkModeContext.Provider>
-  )
-}
-export function useDarkModeSetting() {
-  return useContext(darkModeContext)
-}
-export function useDarkMode() {
-  return useDarkModeSetting().value
 }
 
 export function useBasicStyle() {
