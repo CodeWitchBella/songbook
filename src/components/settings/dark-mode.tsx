@@ -62,7 +62,7 @@ function Option({
         padding: 4,
       }}
     >
-      <img src={src} css={{ width: '100%' }} />
+      <img src={src} css={{ width: '100%' }} alt="" />
       <TText style={{ textAlign: 'center' }}>{text}</TText>
     </Pressable>
   )
