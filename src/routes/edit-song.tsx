@@ -448,11 +448,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             vyplnění údajů o songu.
           </p>
           <p>
-            Pod tím je pole na vyplnění songu. Do něj píšete text písně a pokud
-            chcete začít psát akord tak ho napíšete do hranatých závorek [A].
+            Pod tím je pole na vyplnění songu. Do něj píšeš text písně a pokud
+            chceš začít psát akord tak ho napiš do hranatých závorek [A].
           </p>
           <p>
-            Změny se automaticky ukládají, nebo je můžete uložit ručně kliknutím
+            Změny se automaticky ukládají, nebo je můžeš uložit ručně kliknutím
             na tlačítko uložit. Současný stav je:{' '}
             <i>{translateStatus(state.saveStatus, true)}</i>
           </p>
@@ -463,7 +463,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             refrénů víc <b>R1:</b>, <b>R2:</b> atd
           </p>
           <p>
-            Pokud potřebujete udělat oddělovač stran tak napište{' '}
+            Pokud potřebuješ udělat oddělovač stran tak napiš{' '}
             <b>---&nbsp;page&nbsp;break&nbsp;---</b>
           </p>
           <p>
@@ -474,10 +474,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]
           </p>
           <p>
-            Editor umí pár chytrých funkcí, které byste nutně nečekali.
-            Například Ctrl+Z. Nejzajímavější funkce je posouvání akordů doleva a
-            doprava pomocí Ctrl+H a Ctrl+L. Další funkce jdou zobrazit kliknutím
-            pravého tlačítka myši a nebo zmáčknutím klávesy F1.
+            Editor umí pár chytrých funkcí, které bys nutně nečekal. Například
+            Ctrl+Z. Nejzajímavější funkce je posouvání akordů doleva a doprava
+            pomocí Ctrl+H a Ctrl+L. Další funkce jako mazání akordů ve vybrané
+            sekci jdou zobrazit kliknutím pravého tlačítka myši a nebo
+            zmáčknutím klávesy F1.
           </p>
           <p>Hodně štěstí a díky za pomoc</p>
         </Help>

@@ -99,7 +99,7 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
         Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}
       </TText>
       <TText style={[style.modalText, style.modalCloseInfo]}>
-        Klikněte kdekoli pro zavření
+        Klikni kdekoli pro zavření
       </TText>
     </DumbModal>
   )

@@ -71,7 +71,7 @@ export function ChordHelp({
         <Chord chord={def} instrument={instrument} />
       </div>
       <TText style={{ fontSize: 13, marginTop: 20 }}>
-        Klikněte kdekoli pro zavření
+        Klikni kdekoli pro zavření
       </TText>
     </DumbModal>
   )
