@@ -5,9 +5,11 @@ import light from './light.svg'
 import automatic from './automatic.svg'
 import { TText, useDarkMode } from 'components/themed'
 import { useDarkModeSetting } from 'components/dark-mode'
+import { useTranslation } from 'react-i18next'
 
 export function DarkModeSettings() {
   const s = useDarkModeSetting()
+  const [t] = useTranslation()
   return (
     <View
       style={{
@@ -19,19 +21,19 @@ export function DarkModeSettings() {
     >
       <Option
         src={light}
-        text="Světlý"
+        text={t('Light')}
         selected={s.setting === 'light'}
         onSelect={() => s.setSetting('light')}
       />
       <Option
         src={dark}
-        text="Tmavý"
+        text={t('Dark')}
         selected={s.setting === 'dark'}
         onSelect={() => s.setSetting('dark')}
       />
       <Option
         src={automatic}
-        text="Automatický"
+        text={t('Automatic')}
         selected={s.setting === 'automatic'}
         onSelect={() => s.setSetting('automatic')}
       />

@@ -2,15 +2,18 @@ import { BackButton, BackArrow } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
 import { ListButton } from 'components/interactive/list-button'
 import { DarkModeSettings } from 'components/settings/dark-mode'
+import { LanguageSettings } from 'components/settings/language-settings'
 import { RootView, TH2, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { Version } from 'components/version'
+import { Trans, useTranslation } from 'react-i18next'
 import { View, StyleSheet } from 'react-native'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
 
 export default function About() {
+  const { t } = useTranslation()
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
       <View style={{ maxWidth: 500 }}>
@@ -18,24 +21,28 @@ export default function About() {
           <BackButton>
             <BackArrow />
           </BackButton>
-          Nastavení a info
+          {t('Settings and about')}
         </TH2>
 
-        <ListButton to="/credits">Zdroje assetů</ListButton>
+        <ListButton to="/credits">{t('Asset credits')}</ListButton>
         <Gap />
-        <ListButton to="/changelog">Historie změn</ListButton>
+        <ListButton to="/changelog">{t('Changelog')}</ListButton>
         <Gap />
-        <ListButton to={googleDoc}>Návrhy</ListButton>
-        <TH2>Můj účet</TH2>
+        <ListButton to={googleDoc}>{t('Suggestions')}</ListButton>
+        <TH2>{t('My account')}</TH2>
         <User />
-        <TH2>Tmavý mód</TH2>
+        <TH2>{t('Appearance')}</TH2>
         <DarkModeSettings />
-        <TH2>Informace o aplikaci</TH2>
+        <TH2>{t('Language')}</TH2>
+        <LanguageSettings />
+        <TH2>{t('About the app')}</TH2>
         <View>
           <TText style={style.infoText}>
-            Vytvořila{' '}
-            <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>{' '}
-            2018{endash}2021
+            <Trans>
+              Created by{' '}
+              <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
+            </Trans>
+            {` 2018${endash}2021`}
           </TText>
         </View>
         <Gap />
@@ -47,6 +54,7 @@ export default function About() {
 
 function User() {
   const login = useLogin()
+  const [t] = useTranslation()
   return login.viewer ? (
     <>
       <TText
@@ -62,9 +70,9 @@ function User() {
     </>
   ) : (
     <>
-      <ListButton to="/login">Přihlásit se</ListButton>
+      <ListButton to="/login">{t('Login')}</ListButton>
       <Gap />
-      <ListButton to="/register">Vytvořit účet</ListButton>
+      <ListButton to="/register">{t('Register')}</ListButton>
     </>
   )
 }

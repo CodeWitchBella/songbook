@@ -1,12 +1,15 @@
 import { buildData } from 'build-data'
 import { DateTime } from 'luxon'
+import { useTranslation } from 'react-i18next'
 import { Pressable, Linking } from 'react-native'
 import { TText } from './themed'
 
 export function Version() {
+  const [t] = useTranslation()
   return (
     <TText>
-      Aktuální verze:{' '}
+      {t('Current version')}
+      {': '}
       <Pressable
         onPress={() => {
           Linking.openURL('https://github.com/CodeWitchBella/songbook')

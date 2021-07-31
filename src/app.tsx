@@ -14,6 +14,7 @@ import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
 import cantarellBoldWoff from './webfonts/cantarell-bold.woff'
 import cantarellBoldWoff2 from './webfonts/cantarell-bold.woff2'
 import { DarkModeProvider } from 'components/dark-mode'
+import { LanguageProvider } from 'components/localisation'
 
 export const InjectGlobal = () => (
   <Global
@@ -51,24 +52,26 @@ export const InjectGlobal = () => (
 export default function App() {
   return (
     <DarkModeProvider>
-      <OutlineHandler />
-      <StoreProvider>
-        <InstallProvider>
-          <Suspense
-            fallback={
-              <RootView
-                style={{ alignItems: 'center', justifyContent: 'center' }}
-              >
-                <TText style={{ fontSize: 24 }}>Načítám...</TText>
-              </RootView>
-            }
-          >
-            <ErrorBoundary>
-              <Routes />
-            </ErrorBoundary>
-          </Suspense>
-        </InstallProvider>
-      </StoreProvider>
+      <LanguageProvider>
+        <OutlineHandler />
+        <StoreProvider>
+          <InstallProvider>
+            <Suspense
+              fallback={
+                <RootView
+                  style={{ alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <TText style={{ fontSize: 24 }}>Načítám...</TText>
+                </RootView>
+              }
+            >
+              <ErrorBoundary>
+                <Routes />
+              </ErrorBoundary>
+            </Suspense>
+          </InstallProvider>
+        </StoreProvider>
+      </LanguageProvider>
     </DarkModeProvider>
   )
 }
