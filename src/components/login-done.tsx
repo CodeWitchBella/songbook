@@ -1,25 +1,19 @@
 import { View } from 'react-native'
 import { User } from 'store/graphql'
 import { TText } from './themed'
-import { PrimaryButton } from './interactive/primary-button'
 import { useTranslation } from 'react-i18next'
+import { InlineLink } from './interactive/inline-link'
 
-export function LoginDone({
-  viewer,
-  logout,
-}: {
-  viewer: User
-  logout: () => void
-}) {
+export function LoginDone({ viewer }: { viewer: User }) {
   const { t } = useTranslation()
   return (
     <View>
-      <TText style={{ fontSize: 16 }}>Hotovo! 🎉</TText>
-      <TText style={{ fontSize: 16 }}>Tvé jméno: {viewer.name}</TText>
+      <TText style={{ fontSize: 16 }}>{t('login.complete')}</TText>
+      <TText style={{ fontSize: 16 }}>
+        {t('login.Your name: {{name}}', { name: viewer.name })}
+      </TText>
       <View style={{ height: 12 }} />
-      <PrimaryButton style={{ maxWidth: 200 }} onPress={logout}>
-        {t('Log out')}
-      </PrimaryButton>
+      <InlineLink to="/">{t('login.back-to-homepage')}</InlineLink>
     </View>
   )
 }

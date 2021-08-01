@@ -3,7 +3,6 @@
 import { useLogin } from 'components/use-login'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { useState } from 'react'
-import { useHistory } from 'react-router'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
 import { LoginDone } from 'components/login-done'
@@ -16,7 +15,6 @@ export default function Login() {
   const { t } = useTranslation()
   const login = useLogin()
   const [status, setStatus] = useState('')
-  const history = useHistory()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -30,7 +28,6 @@ export default function Login() {
       .login(email, password)
       .then((result) => {
         setStatus(result || '')
-        if (!result) history.push('/', { canGoBack: true })
       })
       .catch((e) => {
         console.error(e)
@@ -50,7 +47,7 @@ export default function Login() {
           {t('login-screen-title')}
         </TH2>
         {login.viewer ? (
-          <LoginDone viewer={login.viewer} logout={login.logout} />
+          <LoginDone viewer={login.viewer} />
         ) : (
           <>
             <TText>{status !== 'loading' && status}</TText>

@@ -7,6 +7,14 @@
   "Automatic": "Automatic",
   "Changelog": "Changelog",
   "Click anywhere to close this": "Click anywhere to close this",
+  "collection": {
+    "Add song to collection": "Add song to collection",
+    "Collection name": "Collection name",
+    "Create collection and add song to it": "Create collection and add song to it",
+    "Create new collection": "Create new collection",
+    "Remove song from collection": "Remove song from collection",
+    "Song is also in collections": "Song is also in collections"
+  },
   "Collections": "Collections",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) and $t(count-pages-songs_pages, {\"count\": {{pagesNum}} })",
   "Create account": "Create account",
@@ -34,6 +42,11 @@
   "Log in": "Log in",
   "Log out": "Log out",
   "login-screen-title": "Log in",
+  "login": {
+    "back-to-homepage": "Back to home page",
+    "complete": "You are logged in! 🎉",
+    "Your name: {{name}}": "Your name: {{name}}"
+  },
   "My account": "My account",
   "Name has to be at least four characters long": "Name has to be at least four characters long",
   "other-icons": "Some other icons are taken from other sources, but I unfortunately don't remember from where and neither do I remember which I made :-(",

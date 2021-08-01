@@ -7,6 +7,14 @@
   "Automatic": "Automatický",
   "Changelog": "Historie změn",
   "Click anywhere to close this": "Klikni kdekoli pro zavření",
+  "collection": {
+    "Add song to collection": "Přidat píseň do kolekce",
+    "Collection name": "Název kolekce",
+    "Create collection and add song to it": "Vytvořit kolekci a přidat do ní píseň",
+    "Create new collection": "Vytvořit novou kolekci",
+    "Remove song from collection": "Odebrat píseň z kolekce",
+    "Song is also in collections": "Píseň je také v kolekcích"
+  },
   "Collections": "Seznam kolekcí",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) a $t(count-pages-songs_page, {\"count\": {{pagesNum}} })",
   "Create account": "Vytvořit účet",
@@ -34,6 +42,11 @@
   "Log in": "Přihlásit se",
   "Log out": "Odhlásit se",
   "login-screen-title": "Přihlášení",
+  "login": {
+    "back-to-homepage": "Zpět na hlavní stránku",
+    "complete": "Jsi přihlášen/a! 🎉",
+    "Your name: {{name}}": "Tvé jméno: {{name}}"
+  },
   "My account": "Můj účet",
   "Name has to be at least four characters long": "Jméno musí mít aspoň 4 znaky",
   "other-icons": "Některé jiné ikonky jsem převzala odněkud a už si bohužel nepamatuji odkud. Ani už nevím, které jsem dělala já a které jsou převzaté :-(",

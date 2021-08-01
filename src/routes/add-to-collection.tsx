@@ -8,6 +8,7 @@ import { ListButton } from 'components/interactive/list-button'
 import { RootView, TText } from 'components/themed'
 import { useEffect } from 'react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { useParams } from 'react-router-dom'
 import { WithMethods } from 'store/generic-store'
@@ -17,6 +18,7 @@ import { CollectionType } from 'store/store-collections'
 import { collectionCompare, collectionFullName } from 'utils/utils'
 
 export default function AddToCollection() {
+  const { t } = useTranslation()
   const { refresh, list } = useCollectionList()
   const params = useParams<{ slug: string }>()
   const { song } = useSong({ slug: params.slug })
@@ -82,7 +84,11 @@ export default function AddToCollection() {
     >
       <View style={{ maxWidth: 800 }}>
         {addable.length > 0 ? (
-          <Title first={true} text="Přidat píseň do kolekce" error={error} />
+          <Title
+            first={true}
+            text={t('collection.Add song to collection')}
+            error={error}
+          />
         ) : null}
         <CollectionList
           list={addable.sort(collectionCompare)}
@@ -103,7 +109,7 @@ export default function AddToCollection() {
         {removable.length > 0 ? (
           <Title
             first={addable.length < 1}
-            text="Odebrat píseň z kolekce"
+            text={t('collection.Remove song from collection')}
             error={error}
           />
         ) : null}
@@ -117,7 +123,7 @@ export default function AddToCollection() {
                 goBack()
               },
               (err) => {
-                setError('Něco se pokazilo')
+                setError(t('Something went wrong'))
                 console.error(err)
               },
             )
@@ -125,7 +131,7 @@ export default function AddToCollection() {
         />
         <Title
           first={addable.length < 1 && removable.length < 1}
-          text="Vytvořit novou kolekci"
+          text={t('collection.Create new collection')}
         />
         <NewCollection
           onDone={(collectionId) => {
@@ -137,13 +143,16 @@ export default function AddToCollection() {
               },
               (err) => {
                 console.error(err)
-                setError('Něco se pokazilo')
+                setError(t('Something went wrong'))
               },
             )
           }}
         />
         {locked.length > 0 ? (
-          <Title first={false} text="Píseň je také v kolekcích" />
+          <Title
+            first={false}
+            text={t('collection.Song is also in collections')}
+          />
         ) : null}
         <CollectionList list={locked.sort(collectionCompare)} />
       </View>
@@ -196,13 +205,18 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
       (err) => {
         setDisabled(false)
         console.error(err)
-        setError('Něco se pokazilo')
+        setError(t('Something went wrong'))
       },
     )
   }
+  const { t } = useTranslation()
   return (
     <form onSubmit={submit} css={{ fontSize: 16, marginTop: 16 }}>
-      <LargeInput label="Název kolekce" value={name} onChange={setName} />
+      <LargeInput
+        label={t('collection.Collection name')}
+        value={name}
+        onChange={setName}
+      />
       <BasicButton
         disabled={disabled}
         style={{
@@ -213,7 +227,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
         }}
         onPress={submit}
       >
-        Vytvořit kolekci a přidat do ní píseň
+        {t('collection.Create collection and add song to it')}
       </BasicButton>
       {error ? (
         <TText style={{ color: 'red', fontSize: 16 }}>{error}</TText>

@@ -44,7 +44,7 @@ export default function Register() {
       .register(email, password, name)
       .then((result) => {
         setStatus(result || '')
-        if (!result) history.push('/', { canGoBack: true })
+        if (!result) history.replace('/login', { canGoBack: true })
       })
       .catch((e) => {
         console.error(e)
@@ -65,7 +65,7 @@ export default function Register() {
           {t('Register')}
         </TH2>
         {login.viewer ? (
-          <LoginDone viewer={login.viewer} logout={login.logout} />
+          <LoginDone viewer={login.viewer} />
         ) : (
           <>
             <div>{status !== 'loading' && status}</div>
