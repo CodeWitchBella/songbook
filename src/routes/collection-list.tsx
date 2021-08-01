@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { useCollectionList } from 'store/store'
 import { useEffect } from 'react'
 import { DateTime } from 'luxon'

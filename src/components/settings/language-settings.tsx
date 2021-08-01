@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { Pressable, View } from 'react-native'
 import { TText, useDarkMode } from 'components/themed'
 import { useLanguage } from 'components/localisation'

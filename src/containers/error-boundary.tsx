@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { RootView, TText } from 'components/themed'
 import { Component, useEffect } from 'react'
 import { useHistory } from 'react-router'

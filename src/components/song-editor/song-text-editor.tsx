@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { useDarkMode } from 'components/dark-mode'
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'

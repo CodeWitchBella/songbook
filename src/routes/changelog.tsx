@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { ChangelogEntry } from 'components/changelog-entry'
 import { BackArrow, BackButton } from 'components/back-button'
 import { View } from 'react-native'

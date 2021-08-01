@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { View } from 'react-native'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { ListButton } from 'components/interactive/list-button'

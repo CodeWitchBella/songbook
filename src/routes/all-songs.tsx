@@ -1,11 +1,10 @@
-/** @jsxImportSource @emotion/react */
-
+import { View } from 'react-native'
 import SongList from 'sections/song-list/song-list'
 
-export default function Home() {
+export default function AllSongs() {
   return (
-    <div css={{ height: '100%' }}>
+    <View style={{ height: '100%' }}>
       <SongList slug={null} title={null} />
-    </div>
+    </View>
   )
 }
