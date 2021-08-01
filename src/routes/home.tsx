@@ -7,10 +7,12 @@ import { useLogin } from 'components/use-login'
 import { InstallButtonLook } from 'components/install'
 import { useDarkMode } from 'components/themed'
 import { Version } from 'components/version'
+import { useTranslation } from 'react-i18next'
 
 export default function Home() {
   const login = useLogin()
   const dark = useDarkMode()
+  const { t } = useTranslation()
   return (
     <View
       style={{
@@ -29,21 +31,21 @@ export default function Home() {
           paddingBottom: 40,
         }}
       >
-        <PrimaryButton to="/all-songs">Všechny písně</PrimaryButton>
+        <PrimaryButton to="/all-songs">{t('All songs')}</PrimaryButton>
         <Gap height={8} />
         {login.viewer ? null : (
           <>
             <Gap />
-            <ListButton to="/login">Přihlásit se</ListButton>
+            <ListButton to="/login">{t('Log in')}</ListButton>
           </>
         )}
         <Gap />
-        <ListButton to="/new">Přidat píseň</ListButton>
+        <ListButton to="/new">{t('Add song')}</ListButton>
         <Gap />
-        <ListButton to="/collections">Kolekce písní</ListButton>
+        <ListButton to="/collections">{t('Song collections')}</ListButton>
         <Gap />
 
-        <ListButton to="/about">Nastavení a info</ListButton>
+        <ListButton to="/about">{t('Settings and about')}</ListButton>
         <Gap />
       </View>
       <View style={{ maxWidth: 400 }}>

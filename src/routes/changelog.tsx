@@ -13,6 +13,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { createContext } from 'react'
 import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function ChangelogBody() {
   const changelog = useChangelog()
@@ -102,6 +103,7 @@ export default function Changelog() {
 }
 
 function Head() {
+  const { t } = useTranslation()
   return (
     <View
       style={{
@@ -116,7 +118,9 @@ function Head() {
       <BackButton>
         <BackArrow />
       </BackButton>
-      <TText style={{ fontSize: 30, fontWeight: 'bold' }}>Historie změn</TText>
+      <TText style={{ fontSize: 30, fontWeight: 'bold' }}>
+        {t('Changelog')}
+      </TText>
     </View>
   )
 }

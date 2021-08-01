@@ -2,9 +2,11 @@ import { BackArrow, BackButton } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
 import { AddToCollection } from 'components/song-look/song-menu-icons'
 import { RootView, TText } from 'components/themed'
+import { Trans, useTranslation } from 'react-i18next'
 import { View, StyleSheet } from 'react-native'
 
 export default function Credits() {
+  const { t } = useTranslation()
   return (
     <RootView style={{ alignItems: 'center', paddingTop: 32 }}>
       <View style={{ maxWidth: 500 }}>
@@ -12,22 +14,21 @@ export default function Credits() {
           <BackButton>
             <BackArrow />
           </BackButton>
-          <TText style={styles.head}>Zdroje assetů</TText>
+          <TText style={styles.head}>{t('Asset credits')}</TText>
         </View>
         <TText style={styles.text}>
-          Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně
-          vytvořila{' '}
-          <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
+          <Trans>
+            credits-blurp <InlineLink to="https://isbl.cz">author</InlineLink>
+          </Trans>
         </TText>
 
         <TText style={styles.text}>
-          Ikonku přidání do kolekce <AddToCollection /> jsem převzala od{' '}
-          <InlineLink to="https://smashicons.com/">Smashicons</InlineLink>
+          <Trans>
+            Icon for adding to collection <AddToCollection /> is taken from{' '}
+            <InlineLink to="https://smashicons.com/">Smashicons</InlineLink>
+          </Trans>
         </TText>
-        <TText style={styles.text}>
-          Některé jiné ikonky jsem převzala odněkud a už si bohužel nepamatuji
-          odkud. Ani už nevím, které jsem dělala já a které jsou převzaté :-(
-        </TText>
+        <TText style={styles.text}>{t('other-icons')}</TText>
       </View>
     </RootView>
   )

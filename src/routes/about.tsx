@@ -66,11 +66,11 @@ function User() {
         {login.viewer.name}
       </TText>
       <Gap />
-      <ListButton onPress={login.logout}>Odhlásit se</ListButton>
+      <ListButton onPress={login.logout}>{t('Log out')}</ListButton>
     </>
   ) : (
     <>
-      <ListButton to="/login">{t('Login')}</ListButton>
+      <ListButton to="/login">{t('Log in')}</ListButton>
       <Gap />
       <ListButton to="/register">{t('Register')}</ListButton>
     </>
