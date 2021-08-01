@@ -10,8 +10,10 @@ import { LoginDone } from 'components/login-done'
 import { RootView, TH2, TText } from 'components/themed'
 import { InlineLink } from 'components/interactive/inline-link'
 import { View } from 'components/pdf-render/primitives'
+import { Trans, useTranslation } from 'react-i18next'
 
 export default function Register() {
+  const { t } = useTranslation()
   const login = useLogin()
   const [status, setStatus] = useState('')
   const history = useHistory()
@@ -23,19 +25,19 @@ export default function Register() {
     evt.preventDefault()
     setStatus('loading')
     if (!email) {
-      setStatus('Email nesmí být prázdný')
+      setStatus(t('Email must not be empty'))
       return
     }
     if (!(email + '').includes('@')) {
-      setStatus('Neplatný email')
+      setStatus(t('Invalid email'))
       return
     }
     if ((password + '').length < 6) {
-      setStatus('Heslo musí mít aspoň 6 znaků')
+      setStatus(t('Password has to be at least 6 characters long'))
       return
     }
     if ((name + '').length < 4) {
-      setStatus('Jméno musí mít aspoň 4 znaky')
+      setStatus(t('Name has to be at least four characters long'))
       return
     }
     login
@@ -46,7 +48,7 @@ export default function Register() {
       })
       .catch((e) => {
         console.error(e)
-        setStatus('Něco se pokazilo')
+        setStatus(t('Something went wrong'))
       })
   }
 
@@ -60,7 +62,7 @@ export default function Register() {
           <BackButton>
             <BackArrow />
           </BackButton>
-          Vytvořit účet
+          {t('Register')}
         </TH2>
         {login.viewer ? (
           <LoginDone viewer={login.viewer} logout={login.logout} />
@@ -68,7 +70,7 @@ export default function Register() {
           <>
             <div>{status !== 'loading' && status}</div>
             <LargeInput
-              label="Zobrazované jméno"
+              label={t('Display name')}
               type="text"
               name="name"
               disabled={status === 'loading'}
@@ -76,7 +78,7 @@ export default function Register() {
               onChange={setName}
             />
             <LargeInput
-              label="Email"
+              label={t('Email')}
               value={email}
               onChange={setEmail}
               disabled={status === 'loading'}
@@ -84,7 +86,7 @@ export default function Register() {
               name="email"
             />
             <LargeInput
-              label="Heslo"
+              label={t('Password')}
               value={password}
               onChange={setPassword}
               disabled={status === 'loading'}
@@ -93,12 +95,15 @@ export default function Register() {
             />
 
             <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-              Vytvořit účet
+              {t('Create account')}
             </PrimaryButton>
             <button style={{ display: 'none' }} />
             <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
               <TText style={{ fontSize: 16 }}>
-                Už mám účet, <InlineLink to="login">přihlásit se</InlineLink>
+                <Trans>
+                  I already have account,{' '}
+                  <InlineLink to="login">log in</InlineLink>
+                </Trans>
               </TText>
             </View>
           </>

@@ -10,8 +10,10 @@ import { LoginDone } from 'components/login-done'
 import { RootView, TH2, TText } from 'components/themed'
 import { InlineLink } from 'components/interactive/inline-link'
 import { View } from 'react-native'
+import { Trans, useTranslation } from 'react-i18next'
 
 export default function Login() {
+  const { t } = useTranslation()
   const login = useLogin()
   const [status, setStatus] = useState('')
   const history = useHistory()
@@ -22,7 +24,7 @@ export default function Login() {
     evt.preventDefault()
     setStatus('loading')
     if (!email) {
-      setStatus('Email nesmí být prázdný')
+      setStatus(t('Email must not be empty'))
     }
     login
       .login(email, password)
@@ -32,7 +34,7 @@ export default function Login() {
       })
       .catch((e) => {
         console.error(e)
-        setStatus('Něco se pokazilo')
+        setStatus(t('Something went wrong'))
       })
   }
   return (
@@ -45,7 +47,7 @@ export default function Login() {
           <BackButton>
             <BackArrow />
           </BackButton>
-          Přihlášení
+          {t('login-screen-title')}
         </TH2>
         {login.viewer ? (
           <LoginDone viewer={login.viewer} logout={login.logout} />
@@ -53,7 +55,7 @@ export default function Login() {
           <>
             <TText>{status !== 'loading' && status}</TText>
             <LargeInput
-              label="Email"
+              label={t('Email')}
               value={email}
               onChange={setEmail}
               disabled={status === 'loading'}
@@ -61,7 +63,7 @@ export default function Login() {
               name="email"
             />
             <LargeInput
-              label="Heslo"
+              label={t('Password')}
               value={password}
               onChange={setPassword}
               disabled={status === 'loading'}
@@ -69,12 +71,15 @@ export default function Login() {
               name="password"
             />
             <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-              Přihlásit se
+              {t('Log in')}
             </PrimaryButton>
             <button style={{ display: 'none' }} />
             <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
               <TText style={{ fontSize: 16 }}>
-                Nemám účet, <InlineLink to="register">vytvořit nový</InlineLink>
+                <Trans>
+                  I don't have account,{' '}
+                  <InlineLink to="register">register</InlineLink>
+                </Trans>
               </TText>
             </View>
           </>
