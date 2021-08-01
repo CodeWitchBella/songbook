@@ -17,7 +17,7 @@ export async function randomID(length: number) {
     .slice(0, length)
     .replace(/=/g, "");
   while (ret.length < length) {
-    ret += randomID(length - ret.length);
+    ret += await randomID(length - ret.length);
   }
   return ret;
 }
