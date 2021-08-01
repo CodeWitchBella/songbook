@@ -9,10 +9,12 @@ import { View } from 'react-native'
 import { useMemo } from 'react'
 import { collectionCompare, collectionFullName } from 'utils/utils'
 import { RootView, TH2 } from 'components/themed'
+import { useTranslation } from 'react-i18next'
 
 let lastRefreshThisRefresh: DateTime | null = null
 
 export default function CollectionList() {
+  const { t } = useTranslation()
   const { list: unsortedList, refresh } = useCollectionList()
   useEffect(() => {
     if (
@@ -39,7 +41,7 @@ export default function CollectionList() {
         <BackButton>
           <BackArrow />
         </BackButton>{' '}
-        Seznam kolekcí
+        {t('Collections')}
       </TH2>
 
       <View
@@ -50,7 +52,7 @@ export default function CollectionList() {
       >
         <div>
           <ListButton to="/all-songs" style={{ borderWidth: 0 }}>
-            Všechny písně
+            {t('All songs')}
           </ListButton>
         </div>
         {sortedList.map(({ item: collection }) => (

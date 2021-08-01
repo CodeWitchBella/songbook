@@ -13,6 +13,7 @@ import { ErrorPage, NotFound } from 'components/error-page'
 import { RootView, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { ListButton } from 'components/interactive/list-button'
+import { useTranslation } from 'react-i18next'
 
 const FormWrap = styled.div({
   display: 'flex',
@@ -59,15 +60,16 @@ const styles = StyleSheet.create({
 
 export default function CreateSong() {
   const { params } = useRouteMatch<{ type?: string }>()
+  const { t } = useTranslation()
   const type = params.type ?? 'switch'
   const login = useLogin()
   if (!login.viewer) {
     return (
-      <ErrorPage text="Pro vytvoření písně musíš mít účet">
+      <ErrorPage text={t('You have to be logged in to add a song')}>
         <View style={{ flexDirection: 'row', marginTop: 8, marginBottom: 4 }}>
-          <ListButton to="login">Přihlásit se</ListButton>
+          <ListButton to="login">{t('Log in')}</ListButton>
           <View style={{ width: 16 }} />
-          <ListButton to="register">Vytvořit účet</ListButton>
+          <ListButton to="register">{t('Register')}</ListButton>
         </View>
       </ErrorPage>
     )

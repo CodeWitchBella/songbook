@@ -5,6 +5,7 @@ import { useCollection, usePagesNum } from 'store/store'
 import { useMemo, useCallback, useEffect } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { TText } from 'components/themed'
+import { useTranslation } from 'react-i18next'
 
 const emptyArray: never[] = []
 function useColectionWithSet(slug: string) {
@@ -73,10 +74,11 @@ function Stats({
   songCount: number
 }) {
   const pagesNum = usePagesNum(set || null)
+  const { t } = useTranslation()
   return (
     <View style={styles.stat}>
       <TText style={styles.statItem}>
-        {pagesNum} stran a {songCount} písní
+        {t('count-pages-songs', { pagesNum, songCount })}
       </TText>
     </View>
   )

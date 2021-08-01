@@ -1,6 +1,7 @@
-import React, { useState, useCallback, Suspense, useEffect } from 'react'
+import { useState, useCallback, Suspense, useEffect } from 'react'
 import { PDFRenderMultipleSongsProps } from './pdf-render/pdf-render'
 import PDF, { PDFDownload } from './pdf-render/pdf-render'
+import { useTranslation } from 'react-i18next'
 
 export default PDF
 
@@ -20,24 +21,25 @@ export function DownloadPDF({
 }: PDFRenderMultipleSongsProps & {
   children: (status: string, onClick: () => void) => JSX.Element
 }) {
+  const { t } = useTranslation()
   const [status, setStatus] = useState<
     'idle' | 'generating' | 'generated' | 'error'
   >('idle')
   const onDone = useCallback(() => setStatus('generated'), [])
 
   return (
-    <Suspense fallback={children('Načítám generátor...', () => {})}>
+    <Suspense fallback={children(t('pdf-gen.Loading'), () => {})}>
       {useDelayed(status) === 'generating' ? (
         <PDFDownload {...props} onDone={onDone} />
       ) : null}
       {children(
         status === 'idle'
-          ? 'Stáhnout PDF'
+          ? t('pdf-gen.Download PDF')
           : status === 'generating'
-          ? 'Generuji PDF...'
+          ? t('pdf-gen.Generating PDF')
           : status === 'error'
-          ? 'Nastala chyba'
-          : 'Hotovo!',
+          ? t('pdf-gen.Something went wrong')
+          : t('pdf-gen.complete'),
         () => {
           if (status === 'generating') return
           setStatus('generating')

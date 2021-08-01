@@ -16,6 +16,7 @@ import { useGetRandomSong } from 'store/store'
 import { DumbModal } from 'components/dumb-modal'
 import { TText, useDarkMode } from 'components/themed'
 import { StyleSheet } from 'react-native'
+import { useTranslation } from 'react-i18next'
 
 const MenuWrap = styled.div({
   display: 'flex',
@@ -84,22 +85,30 @@ const style = StyleSheet.create({
 })
 
 function Info({ close, song }: { close: () => void; song: SongType }) {
+  const { t } = useTranslation()
+  const unknownEditor = t('info.editor-unknown')
+  const unknownDate = t('info.inserted-before-2019-05-20')
   return (
     <DumbModal close={close}>
       <TText style={style.modalText}>
-        Vložil/a: {song.editor ? song.editor.name : 'neznámo kdo'}
+        {t('info.Inserted by: {{editor}}', {
+          editor: song.editor?.name || unknownEditor,
+        })}
       </TText>
       <TText style={style.modalText}>
-        Vloženo:{' '}
-        {song.insertedAt
-          ? song.insertedAt.toFormat('dd. MM. yyyy')
-          : 'před 20. 5. 2019'}
+        {t('info.Inserted: {{date}}', {
+          date: song.insertedAt
+            ? song.insertedAt.toFormat('dd. MM. yyyy')
+            : unknownDate,
+        })}
       </TText>
       <TText style={style.modalText}>
-        Poslední úprava: {song.lastModified.toFormat('dd. MM. yyyy')}
+        {t('info.Last edit: {{date}}', {
+          date: song.lastModified.toFormat('dd. MM. yyyy'),
+        })}
       </TText>
       <TText style={[style.modalText, style.modalCloseInfo]}>
-        Klikni kdekoli pro zavření
+        {t('Click anywhere to close this')}
       </TText>
     </DumbModal>
   )

@@ -13,6 +13,7 @@ import { SearchTextInput } from 'components/search-text-input'
 import { RootView, useDarkMode } from 'components/themed'
 import { View } from 'react-native'
 import { ListButton } from 'components/interactive/list-button'
+import { useTranslation } from 'react-i18next'
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   const dark = useDarkMode()
@@ -128,6 +129,7 @@ export default function SongList({
   title: string | null
   menu?: JSX.Element
 }) {
+  const { t } = useTranslation()
   const { songs: source, initing, loading, getSongById } = useSongList()
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam('sortByAuthor')
   const sortByAuthor = sortByAuthorSrc === 'yes'
@@ -187,7 +189,7 @@ export default function SongList({
               }}
               style={{ textAlign: 'left' }}
             >
-              Řadit podle {sortByAuthor ? 'názvu' : 'interpreta'}
+              {sortByAuthor ? t('Sort by name') : t('Sort by interpret')}
             </ListButton>
             <Gap />
             <DownloadPDF list={songs} slug={slug} title={title || 'Zpěvník'}>

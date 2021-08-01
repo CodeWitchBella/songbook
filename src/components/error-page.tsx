@@ -1,4 +1,5 @@
 import { BackButton } from 'components/back-button'
+import { useTranslation } from 'react-i18next'
 import { RootView, TText } from './themed'
 
 export function ErrorPage({
@@ -8,6 +9,7 @@ export function ErrorPage({
   text: string
   children?: JSX.Element
 }) {
+  const { t } = useTranslation()
   return (
     <RootView
       style={{
@@ -23,12 +25,13 @@ export function ErrorPage({
       <TText style={{ fontSize: 42 }}>{text}</TText>
       {children || null}
       <BackButton style={{ marginTop: 16 }}>
-        <TText style={{ fontSize: 22 }}>Vrátit se zpět</TText>
+        <TText style={{ fontSize: 22 }}>{t('Go back')}</TText>
       </BackButton>
     </RootView>
   )
 }
 
 export function NotFound() {
-  return <ErrorPage text="Zadaná cesta nebyla nalezena" />
+  const { t } = useTranslation()
+  return <ErrorPage text={t('Page not found')} />
 }

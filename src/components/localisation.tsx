@@ -53,6 +53,7 @@ export function LanguageProvider({ children }: PropsWithChildren<{}>) {
       interpolation: {
         escapeValue: false,
       },
+      nsSeparator: '~',
     })
     ;(window as any)['setLng'] = setLng
     ;(window as any)['toggleLng'] = () => {
