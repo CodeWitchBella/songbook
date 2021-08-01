@@ -15,6 +15,7 @@ import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { BasicButton } from 'components/interactive/basic-button'
 import { useTranslation } from 'react-i18next'
+import { TText } from 'components/themed'
 
 const TheSong = styled.div`
   all: unset;
@@ -24,13 +25,6 @@ const TheSong = styled.div`
   .title {
     display: inline-block;
     padding: 10px;
-    color: black;
-    font-weight: bold;
-  }
-  @media screen and (prefers-color-scheme: dark) {
-    .title {
-      color: white;
-    }
   }
 `
 
@@ -77,7 +71,11 @@ function SongItem(
   return (
     <TheSong style={props.style}>
       {'header' in props ? (
-        <span className="title">{translateHeader(props.t, props.header)}</span>
+        <span className="title">
+          <TText style={{ fontSize: 18, fontWeight: 'bold' }}>
+            {translateHeader(props.t, props.header)}
+          </TText>
+        </span>
       ) : (
         <LinkToSong id={props.slug}>{props.text}</LinkToSong>
       )}
