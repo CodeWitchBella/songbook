@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 
 import en from '../locales/translation-en.json'
 import cs from '../locales/translation-cs.json'
+import { useReducer } from 'react'
 
 type Language = 'cs' | 'en'
 const context = createContext<readonly [Language, (lng: Language) => void]>([
@@ -25,8 +26,15 @@ function parseLanguage(lng: string | null): Language {
   return 'cs'
 }
 
+function reducer(
+  state: Language,
+  lng: Language | ((l: Language) => Language),
+): Language {
+  return parseLanguage(typeof lng === 'function' ? lng(state) : lng)
+}
+
 export function LanguageProvider({ children }: PropsWithChildren<{}>) {
-  const tuple = useState(init)
+  const tuple = useReducer(reducer, undefined, init)
   const [lng, setLng] = tuple
   useEffect(() => {
     function listener(evt: StorageEvent) {
@@ -46,7 +54,15 @@ export function LanguageProvider({ children }: PropsWithChildren<{}>) {
         escapeValue: false,
       },
     })
-  }, [])
+    ;(window as any)['setLng'] = setLng
+    ;(window as any)['toggleLng'] = () => {
+      setLng((prev) => (prev === 'en' ? 'cs' : 'en'))
+    }
+    return () => {
+      delete (window as any)['setLng']
+      delete (window as any)['toggleLng']
+    }
+  }, [setLng])
   useEffect(() => {
     i18n.changeLanguage(lng)
     if (lng === 'cs') localStorage.removeItem('language')
