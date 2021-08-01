@@ -34,6 +34,47 @@ function ChangelogBody() {
           <ChangeBody body={lng === 'en' ? entry.en.body : entry.cz.body} />
         </ChangelogEntry>
       ))}
+      <ChangelogEntry date="2018-06-23">
+        <ChangeBody body={lng === 'en' ? '- Fixed print version' : ''} />
+      </ChangelogEntry>
+      <ChangelogEntry date="2018-06-16">
+        <ChangeBody
+          body={
+            lng === 'en'
+              ? `- First complete version
+                 - Song editing
+                   - WYSIWYG editor
+                 - Song creation
+                 - Song viewing
+                 - Printable version
+                   - With toggleable preview
+                   - Including table of contents
+                 - Works offline`.replace(/\n[ \t]+/g, '\n')
+              : `- První kompletní verze
+                 - Editace písní
+                   - WYSIWYG editor
+                 - Vytváření písní
+                 - Zobrazování písní
+                 - Tisknutelná verze
+                   - Spolu s preview a obsahem
+                 - Funkční offline`.replace(/\n[ \t]+/g, '\n')
+          }
+        />
+      </ChangelogEntry>
+      <ChangelogEntry date="2016-08-03">
+        <ChangeBody
+          body={
+            lng === 'en'
+              ? `- Before web version there was LaTeX version
+                 - Date is only a guess from memory, I did not version this in git
+                 `.replace(/\n[ \t]+/g, '\n')
+              : `- Před tímto zpěvníkem jsem měla systém založený na LaTeXu
+                 - Datum je pouze odhad po paměti - toto jsem neukládala do gitu
+                 `.replace(/\n[ \t]+/g, '\n')
+          }
+        />
+      </ChangelogEntry>
+      <View style={{ height: 16 }} />
     </>
   )
 }

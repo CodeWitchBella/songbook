@@ -42,7 +42,7 @@ export default function About() {
               Created by{' '}
               <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
             </Trans>
-            {` 2018${endash}2021`}
+            {` 2016${endash}2021`}
           </TText>
         </View>
         <Gap />
