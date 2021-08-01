@@ -37,6 +37,37 @@ export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
   )
 }
 
+export function TH3({ style, ...rest }: PropsWithChildren<TextProps>) {
+  return (
+    <TText
+      style={[
+        {
+          display: 'flex',
+          fontSize: 16,
+          marginBottom: 8,
+          marginTop: 16,
+          fontWeight: 'bold',
+        },
+        style,
+      ]}
+      {...rest}
+    />
+  )
+}
+
+export function TP({ children, ...rest }: PropsWithChildren<TextProps>) {
+  return (
+    <View style={{ marginTop: 8 }}>
+      <TText {...rest}>
+        <TText>
+          <View style={{ width: 8 }} />
+        </TText>
+        {children}
+      </TText>
+    </View>
+  )
+}
+
 export function useBasicStyle() {
   const dark = useDarkMode()
   return {

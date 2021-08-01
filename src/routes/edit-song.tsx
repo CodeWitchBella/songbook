@@ -14,6 +14,7 @@ import { DateTime } from 'luxon'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongType, updateSong } from 'store/store-song'
 import { BackButton, BackArrow } from 'components/back-button'
+import { RootView, TH2, TH3, TP, TText } from 'components/themed'
 
 const Form = styled.form`
   display: flex;
@@ -97,28 +98,6 @@ const HideHelpButton = styled.button`
   display: block;
 `
 
-const Code = ({ text }: { text: string }) => {
-  const ref = useRef<HTMLTextAreaElement>(null)
-  return (
-    <code
-      onClick={() => {
-        const area = ref.current
-        if (area) {
-          area.select()
-          document.execCommand('copy')
-        }
-      }}
-    >
-      <textarea
-        ref={ref}
-        value={text}
-        readOnly
-        css={{ width: '100%', border: 0 }}
-      />
-    </code>
-  )
-}
-
 const Help: React.SFC<{ title?: string }> = ({ children, title }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
@@ -178,22 +157,6 @@ const IFrameSizer = styled.div`
     width: 100%;
     height: 100%;
   }
-`
-
-const nakytarushonzou = `
-var content = document.querySelector('.pisnicka_content')
-Array.from(content.querySelectorAll('sup')).forEach(sup => sup.outerHTML = '['+sup.innerText+']')
-copy(content.innerText)
-`.trim()
-
-const akordykytary = `
-var theCopy = typeof copy === 'function' ? copy : console.log.bind(console)
-theCopy(Array.from(document.querySelector('#snippet--sheetContent').children).map(sec => ({
-  type: sec.dataset.type,
-  content: Array.from(sec.children).map(line => 
-    Array.from(line.childNodes).map(atom => atom.className === 'scs-chord' ? '['+atom.textContent+']' : atom.textContent).join('')
-  ).join('\\n'),
-})).map(sec => (sec.type === 'chorus' ? 'R: ' : 'S: ') + sec.content).join('\\n\\n'))
 `
 
 function safeParseFloat(text: string, fallback: number) {
@@ -442,64 +405,55 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           <i>{translateStatus(state.saveStatus)}</i>
         </Form>
         <Help>
-          <h3>Jak se tahle věc ovládá?</h3>
-          <p>
+          <TH2>Jak se tahle věc ovládá?</TH2>
+          <TP>
             Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
             vyplnění údajů o songu.
-          </p>
-          <p>
+          </TP>
+          <TP>
             Pod tím je pole na vyplnění songu. Do něj píšeš text písně a pokud
             chceš začít psát akord tak ho napiš do hranatých závorek [A].
-          </p>
-          <p>
+          </TP>
+          <TP>
             Změny se automaticky ukládají, nebo je můžeš uložit ručně kliknutím
             na tlačítko uložit. Současný stav je:{' '}
             <i>{translateStatus(state.saveStatus, true)}</i>
-          </p>
-          <p>
+          </TP>
+          <TP>
             Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
             sloka stejná jako jiná sloka tak stačí napsat <b>S:2</b>. Pro
             označení refrénu se používá <b>R:</b> nebo alternativně, pokud je
             refrénů víc <b>R1:</b>, <b>R2:</b> atd
-          </p>
-          <p>
+          </TP>
+          <TP>
             Pokud potřebuješ udělat oddělovač stran tak napiš{' '}
             <b>---&nbsp;page&nbsp;break&nbsp;---</b>
-          </p>
-          <p>
+          </TP>
+          <TP>
             Tučný text (například pro označení speciálních sekcí) se píše takto:
             [*tučný text]
-          </p>
-          <p>
+          </TP>
+          <TP>
             Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]
-          </p>
-          <p>
+          </TP>
+          <TP>
             Editor umí pár chytrých funkcí, které bys nutně nečekal. Například
             Ctrl+Z. Nejzajímavější funkce je posouvání akordů doleva a doprava
             pomocí Ctrl+H a Ctrl+L. Další funkce jako mazání akordů ve vybrané
             sekci jdou zobrazit kliknutím pravého tlačítka myši a nebo
             zmáčknutím klávesy F1.
-          </p>
-          <p>Hodně štěstí a díky za pomoc</p>
-        </Help>
-        <Help title="cheaty">
-          Script pro extrakci textu z{' '}
-          <a href="https://na-kytaru-s-honzou.cz/">na-kytaru-s-honzou.cz</a>
-          <br />
-          <Code text={nakytarushonzou} />
-          <br />
-          Script pro extrakci textu z{' '}
-          <a href="https://akordy.kytary.cz/">akordy.kytary.cz</a>
-          <br />
-          <Code text={akordykytary} />
+          </TP>
+          <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
         <Help title="Extra info o této písni">
-          <h3>Vyhledatelná</h3>
-          Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také dalo
-          použít při vyhledávání
+          <TH3>Vyhledatelná</TH3>
+          <TText>
+            Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také
+            dalo použít při vyhledávání
+          </TText>
           {editor('none', state.extraSearchable || '', extraSearchableChange)}
-          <h3>NE-Vyhledatelná</h3>
-          Např: odkaz na ultimate guitar
+          <TH3>NE-Vyhledatelná</TH3>
+          <TText>Např: odkaz na ultimate guitar</TText>
           {editor(
             'none',
             state.extraNonSearchable || '',
@@ -528,10 +482,8 @@ export default function EditSongRoute({ slug }: { slug: string }) {
   if (!song || !methods) return <div>Píseň nenalezena</div>
 
   return (
-    <div
-      style={{ backgroundColor: 'white', minHeight: '100%', color: 'black' }}
-    >
+    <RootView>
       <EditSong song={song} refetch={methods.refresh} />
-    </div>
+    </RootView>
   )
 }

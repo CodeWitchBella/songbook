@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
+import { useDarkMode } from 'components/dark-mode'
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
 import { addDeleteChordAction, addMoveAction } from './song-editor-actions'
@@ -34,6 +35,16 @@ function setup() {
     colors: {},
     rules: [
       { token: 'chord', foreground: '000088', background: '00ff00' },
+      { token: 'label', fontStyle: 'bold' },
+      { token: 'page-break', fontStyle: 'italic bold' },
+    ],
+  })
+  monaco.editor.defineTheme('song-theme-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    colors: {},
+    rules: [
+      { token: 'chord', foreground: '8888ff', background: 'ff88ff' },
       { token: 'label', fontStyle: 'bold' },
       { token: 'page-break', fontStyle: 'italic bold' },
     ],
@@ -80,6 +91,7 @@ export function SongTextEditor(props: {
   onChange: (v: string) => void
   language: 'song' | 'none'
 }) {
+  const dark = useDarkMode()
   useEffect(setup)
   const element = useRef<HTMLDivElement>(null)
   const initialValue = useRef(props.initialValue)
@@ -109,6 +121,10 @@ export function SongTextEditor(props: {
       editor.dispose()
     }
   }, [props.language])
+
+  useEffect(() => {
+    editor?.updateOptions({ theme: dark ? 'song-theme-dark' : 'song-theme' })
+  }, [dark, editor])
 
   const onChange = useLastRef(props.onChange)
   useEffect(() => {
