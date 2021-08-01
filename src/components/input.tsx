@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { useDarkMode } from './themed'
+import { TText, useDarkMode } from './themed'
 
 const Input = ({
   label,
@@ -51,7 +51,7 @@ export function LargeInput({
   const dark = useDarkMode()
   return (
     <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
-      <div css={dark ? { color: 'white' } : { color: 'black' }}>{label}</div>
+      <TText style={{ fontSize: 16 }}>{label}</TText>
       <input
         css={{
           fontSize: 24,

@@ -14,6 +14,7 @@ import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { BasicButton } from 'components/interactive/basic-button'
+import { useTranslation } from 'react-i18next'
 
 const TheSong = styled.div`
   all: unset;
@@ -50,20 +51,33 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   )
 }
 
+function translateHeader(
+  t: ReturnType<typeof useTranslation>['t'],
+  hdr: 'title' | 'author' | 'text' | 'other',
+) {
+  if (hdr === 'title') return t('search.title')
+  if (hdr === 'author') return t('search.author')
+  if (hdr === 'text') return t('search.text')
+  if (hdr === 'other') return t('search.other')
+  throw new Error('Unknown header')
+}
+export type HeaderType = Parameters<typeof translateHeader>[1]
+
 export type SongListItem =
   | { slug: string; text: string }
-  | { header: string }
+  | { header: HeaderType }
   | null
 
 function SongItem(
-  props: ({ text: string; slug: string } | { header: string }) & {
+  props: ({ text: string; slug: string } | { header: HeaderType }) & {
     style?: React.CSSProperties
+    t: ReturnType<typeof useTranslation>['t']
   },
 ) {
   return (
     <TheSong style={props.style}>
       {'header' in props ? (
-        <span className="title">{props.header}</span>
+        <span className="title">{translateHeader(props.t, props.header)}</span>
       ) : (
         <LinkToSong id={props.slug}>{props.text}</LinkToSong>
       )}
@@ -116,6 +130,7 @@ function useWindowWidth() {
 }
 
 export function SongList({ list }: { list: SongListItem[] }) {
+  const { t } = useTranslation()
   const windowWidth = useWindowWidth()
 
   const big = windowWidth >= 800
@@ -203,7 +218,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
     const item = list[index - 1]
     if (!item) return null
     if ('header' in item)
-      return <SongItem style={style} header={item.header} key={index} />
+      return <SongItem style={style} header={item.header} key={index} t={t} />
 
     return (
       <SongItem
@@ -211,6 +226,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
         slug={item.slug}
         text={item.text}
         key={item.slug}
+        t={t}
       />
     )
   }

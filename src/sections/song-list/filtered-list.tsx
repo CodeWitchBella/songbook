@@ -23,21 +23,21 @@ const filteredToComponents = (
 ): SongListItem[] => {
   return [
     showTitles && filtered.byTitle.length > 0
-      ? { header: 'Podle názvu' }
+      ? { header: 'title' as const }
       : null,
     ...filtered.byTitle.map(songItem),
 
     showTitles && filtered.byAuthor.length > 0
-      ? { header: 'Podle autora' }
+      ? { header: 'author' as const }
       : null,
     ...filtered.byAuthor.map(songItem),
 
     showTitles && filtered.byText.length > 0
-      ? { header: 'Text obsahuje' }
+      ? { header: 'text' as const }
       : null,
     ...filtered.byText.map(songItem),
     showTitles && filtered.byExtra.length > 0
-      ? { header: 'Další související písně' }
+      ? { header: 'other' as const }
       : null,
     ...filtered.byExtra.map(songItem),
   ].filter(notNull)

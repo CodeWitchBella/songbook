@@ -61,6 +61,12 @@
     "Something went wrong": "Nastala chyba"
   },
   "Register": "Vytvořit účet",
+  "search": {
+    "author": "Podle autora",
+    "other": "Další související písně",
+    "text": "Text obsahuje",
+    "title": "Podle názvu"
+  },
   "Settings and about": "Nastavení a info",
   "Something went wrong": "Něco se pokazilo",
   "Song collections": "Kolekce písní",

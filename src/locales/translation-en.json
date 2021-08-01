@@ -61,6 +61,12 @@
     "Something went wrong": "Something went wrong"
   },
   "Register": "Register",
+  "search": {
+    "author": "By author",
+    "other": "Other related songs",
+    "text": "Text contains",
+    "title": "By name"
+  },
   "Settings and about": "Settings and about",
   "Something went wrong": "Something went wrong",
   "Song collections": "Song collections",
