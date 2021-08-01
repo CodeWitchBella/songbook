@@ -14,9 +14,11 @@ import remarkGfm from 'remark-gfm'
 import { createContext } from 'react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useLanguage } from 'components/localisation'
 
 function ChangelogBody() {
   const changelog = useChangelog()
+  const [lng] = useLanguage()
   if (changelog.status === 'initializing') return null
 
   if (changelog.status === 'loading') {
@@ -29,28 +31,10 @@ function ChangelogBody() {
     <>
       {changelog.data.map((entry) => (
         <ChangelogEntry key={entry.cz.tagName} date={entry.cz.tagName.slice(1)}>
-          <LangTitle first>Česky</LangTitle>
-          <ChangeBody body={entry.cz.body} />
-          <LangTitle first={false}>English</LangTitle>
-          <ChangeBody body={entry.en.body} />
+          <ChangeBody body={lng === 'en' ? entry.en.body : entry.cz.body} />
         </ChangelogEntry>
       ))}
     </>
-  )
-}
-
-function LangTitle({ children, first }: { children: string; first: boolean }) {
-  return (
-    <TText
-      style={{
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginLeft: 16,
-        marginVertical: 8,
-      }}
-    >
-      {children}
-    </TText>
   )
 }
 
@@ -81,7 +65,7 @@ function Li({ children }: { children: any }) {
 
 function ChangeBody({ body }: { body: string }) {
   return (
-    <View style={{ marginLeft: 32 }}>
+    <View style={{ marginLeft: 8, marginTop: 4 }}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{ a: Link, text: TText, ul: Ul, li: Li }}
