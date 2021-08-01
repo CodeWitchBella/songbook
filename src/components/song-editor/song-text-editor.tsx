@@ -92,6 +92,7 @@ export function SongTextEditor(props: {
   language: 'song' | 'none'
 }) {
   const dark = useDarkMode()
+  const initialDark = useRef(dark)
   useEffect(setup)
   const element = useRef<HTMLDivElement>(null)
   const initialValue = useRef(props.initialValue)
@@ -100,7 +101,7 @@ export function SongTextEditor(props: {
 
   useEffect(() => {
     const editor = monaco.editor.create(element.current!, {
-      theme: 'song-theme',
+      theme: initialDark.current ? 'song-theme-dark' : 'song-theme',
       value: initialValue.current,
       language: props.language,
       minimap: { enabled: false },

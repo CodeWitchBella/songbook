@@ -12,24 +12,30 @@ const Input = ({
   value: string
   onChange: (v: string) => any
   type?: string
-}) => (
-  <label>
-    {label}:{' '}
-    <input
-      type={type}
-      value={value}
-      css={{
-        background: '#eee',
-        color: 'black',
-        padding: '3px 7px',
-      }}
-      onChange={(evt) => {
-        evt.preventDefault()
-        onChange(evt.target.value)
-      }}
-    />
-  </label>
-)
+}) => {
+  const dark = useDarkMode()
+  return (
+    <label>
+      <TText style={{ fontSize: 16 }}>{label}: </TText>
+      <input
+        type={type}
+        value={value}
+        css={{
+          background: dark ? '#111' : 'white',
+          color: dark ? 'white' : 'black',
+          padding: '3px 7px',
+          borderWidth: 1,
+          borderStyle: 'solid',
+          borderColor: dark ? 'white' : 'black',
+        }}
+        onChange={(evt) => {
+          evt.preventDefault()
+          onChange(evt.target.value)
+        }}
+      />
+    </label>
+  )
+}
 
 export default Input
 

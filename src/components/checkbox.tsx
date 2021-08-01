@@ -1,4 +1,4 @@
-import React from 'react'
+import { TText } from './themed'
 
 const Checkbox = ({
   label,
@@ -10,7 +10,7 @@ const Checkbox = ({
   onChange: (v: boolean) => any
 }) => (
   <label>
-    {label}:{' '}
+    <TText style={{ fontSize: 16 }}>{label}: </TText>
     <input
       type="checkbox"
       checked={checked}

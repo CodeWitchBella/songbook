@@ -15,6 +15,7 @@ import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongType, updateSong } from 'store/store-song'
 import { BackButton, BackArrow } from 'components/back-button'
 import { RootView, TH2, TH3, TP, TText } from 'components/themed'
+import { ListButton } from 'components/interactive/list-button'
 
 const Form = styled.form`
   display: flex;
@@ -30,9 +31,16 @@ const TextAreaC = styled.textarea`
   max-width: 100%;
   min-width: 100%;
   height: 30em;
+  padding: 5px;
+
+  border: 1px solid black;
   background: #eee;
   color: black;
-  padding: 5px;
+  @media screen and (prefers-color-scheme: dark) {
+    background-color: #222;
+    color: white;
+    border: 1px solid white;
+  }
 `
 
 const Textarea = ({
@@ -93,18 +101,13 @@ const HelpWrap = styled.div`
   margin: 40px auto 0 auto;
 `
 
-const HideHelpButton = styled.button`
-  margin: 0 auto;
-  display: block;
-`
-
 const Help: React.SFC<{ title?: string }> = ({ children, title }) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
       <HelpWrap>
-        <HideHelpButton onClick={toggle}>
+        <ListButton onPress={toggle}>
           {toggled ? 'Skrýt' : 'Zobrazit'} {title || 'nápovědu'}
-        </HideHelpButton>
+        </ListButton>
         {toggled && children}
       </HelpWrap>
     )}
