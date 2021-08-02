@@ -3,6 +3,8 @@ import { View, TextInput, StyleSheet } from 'react-native'
 import { BasicButton } from './interactive/basic-button'
 import { Svg, Path } from 'react-native-svg'
 import { useBasicStyle } from './themed'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export function SearchTextInput({
   value,
@@ -12,13 +14,43 @@ export function SearchTextInput({
   onChange: (value: string) => void
 }) {
   const ref = useRef<TextInput>(null)
+  const prevValue = useRef(value)
+  useEffect(() => {
+    prevValue.current = value
+  })
+  useEffect(() => {
+    const body = document.body
+    body.addEventListener('keydown', listener)
+    return () => {
+      body.removeEventListener('keydown', listener)
+    }
+
+    function listener(event: KeyboardEvent) {
+      // ignore shortcuts
+      if (event.metaKey || event.ctrlKey || event.altKey) return
+      const focused = ref.current?.isFocused()
+      if (event.key.length === 1) {
+        onChange(prevValue.current + event.key)
+        setTimeout(() => {
+          ref.current?.focus()
+        }, 0)
+      }
+      if (event.key === 'Escape' && focused) {
+        ref.current?.blur()
+      }
+    }
+  }, [onChange, value])
+  const { t } = useTranslation()
   return (
     <View style={{ position: 'relative', flexGrow: 1 }}>
       <TextInput
         ref={ref}
         value={value}
-        onChangeText={onChange}
-        placeholder="Vyhledávání"
+        onChange={(event) => {
+          event.stopPropagation()
+          onChange(event.nativeEvent.text)
+        }}
+        placeholder={t('Type to search')}
         onSubmitEditing={() => {
           ref.current?.blur()
         }}
