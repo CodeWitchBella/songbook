@@ -64,9 +64,10 @@ export function SearchTextInput({
 }
 
 function ClearButton({ onPress }: { onPress: () => void }) {
+  const { t } = useTranslation()
   return (
     <BasicButton
-      aria-label="Vyčistit vyhledávání"
+      aria-label={t('Clear search')}
       style={{
         position: 'absolute',
         right: 5,
