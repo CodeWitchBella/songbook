@@ -33,7 +33,11 @@ function ChangelogBody() {
         </ChangelogEntry>
       ))}
       <ChangelogEntry date="2018-06-23">
-        <ChangeBody body={lng === 'en' ? '- Fixed print version' : ''} />
+        <ChangeBody
+          body={
+            lng === 'en' ? '- Fixed print version' : '- Opravena verze pro tisk'
+          }
+        />
       </ChangelogEntry>
       <ChangelogEntry date="2018-06-16">
         <ChangeBody
