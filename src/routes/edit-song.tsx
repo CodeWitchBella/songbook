@@ -16,6 +16,7 @@ import { SongType, updateSong } from 'store/store-song'
 import { BackButton, BackArrow } from 'components/back-button'
 import { RootView, TH2, TH3, TP, TText } from 'components/themed'
 import { ListButton } from 'components/interactive/list-button'
+import { useTranslation } from 'react-i18next'
 
 const Form = styled.form`
   display: flex;
@@ -101,12 +102,16 @@ const HelpWrap = styled.div`
   margin: 40px auto 0 auto;
 `
 
-const Help: React.SFC<{ title?: string }> = ({ children, title }) => (
+const Help: React.SFC<{ title: string; hiddenTitle: string }> = ({
+  children,
+  title,
+  hiddenTitle,
+}) => (
   <Togglable defaultState={false}>
     {({ toggled, toggle }) => (
       <HelpWrap>
         <ListButton onPress={toggle}>
-          {toggled ? 'Skrýt' : 'Zobrazit'} {title || 'nápovědu'}
+          {toggled ? title : hiddenTitle}
         </ListButton>
         {toggled && children}
       </HelpWrap>
@@ -199,6 +204,7 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
 }
 
 function EditSong(props: { song: SongType; refetch: () => void }) {
+  const { t } = useTranslation()
   const initialState: State = {
     author: props.song.author,
     title: props.song.title,
@@ -338,65 +344,68 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     <Columns number={state.preview ? 2 : 1}>
       <div>
         <Form onSubmit={submit}>
-          <BackButton style={{ paddingBottom: 10, color: 'black' }}>
-            <BackArrow />
-          </BackButton>
+          <TH2>
+            <BackButton style={{ paddingBottom: 10 }}>
+              <BackArrow />
+            </BackButton>
+            {t('edit.Edit song')}
+          </TH2>
           <InputLine>
             <Input label="Autor" value={state.author} onChange={authorChange} />
             <Input
-              label="Jméno songu"
+              label={t('edit.Song name')}
               value={state.title}
               onChange={titleChange}
             />
           </InputLine>
           <Input
-            label="Spotify odkaz"
+            label={t('edit.Spotify link')}
             value={state.spotify}
             onChange={spotifyChange}
           />
           <InputLine>
             <Checkbox
-              label="Náhled"
+              label={t('edit.Show preview')}
               checked={state.preview}
               onChange={previewChange}
             />
             {state.preview && (
               <Checkbox
-                label="PDF"
+                label={t('edit.PDF preview')}
                 checked={state.pdfPreview}
                 onChange={pdfPreviewChange}
               />
             )}
           </InputLine>
           <Checkbox
-            label="Zjednodušený editor (vhodné pro mobily)"
+            label={t('edit.Simplified editor (use this on phones)')}
             checked={state.simpleEditor}
             onChange={simpleEditorChange}
           />
           <Checkbox
-            label="Pokročilá nastavení"
+            label={t('edit.Advanced settings')}
             checked={state.advanced}
             onChange={advancedChange}
           />
           {state.advanced && (
             <>
               <Input
-                label="Velikost písma"
+                label={t('edit.Font size')}
                 value={state.fontSize}
                 onChange={fontSizeChange}
               />
               <Input
-                label="Místo mezi odstavci"
+                label={t('edit.Space between paragraphs')}
                 value={state.paragraphSpace}
                 onChange={paragraphSpaceChange}
               />
               <Input
-                label="Místo pod nadpisem"
+                label={t('edit.Space below title')}
                 value={state.titleSpace}
                 onChange={titleSpaceChange}
               />
               <Input
-                label="Předdefinovaná transpozice"
+                label={t('edit.Predefined transposition')}
                 value={state.pretranspose}
                 onChange={onPretransposeChange}
               />
@@ -404,10 +413,12 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           )}
           {editor('song', state.textWithChords, textWithChordsChange)}
 
-          {state.saveStatus === 'FAILED' && <button>Uložit</button>}
+          {state.saveStatus === 'FAILED' && (
+            <button>{t('edit.Save changes')}</button>
+          )}
           <i>{translateStatus(state.saveStatus)}</i>
         </Form>
-        <Help>
+        <Help title={t('edit.Hide help')} hiddenTitle={t('edit.Show help')}>
           <TH2>Jak se tahle věc ovládá?</TH2>
           <TP>
             Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
@@ -448,14 +459,17 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           </TP>
           <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
-        <Help title="Extra info o této písni">
-          <TH3>Vyhledatelná</TH3>
+        <Help
+          title={t('edit.Hide extra information')}
+          hiddenTitle={t('edit.Show extra information')}
+        >
+          <TH3>{t('edit.Searchable')}</TH3>
           <TText>
             Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také
             dalo použít při vyhledávání
           </TText>
           {editor('none', state.extraSearchable || '', extraSearchableChange)}
-          <TH3>NE-Vyhledatelná</TH3>
+          <TH3>{t('edit.Non-searchable')}</TH3>
           <TText>Např: odkaz na ultimate guitar</TText>
           {editor(
             'none',
