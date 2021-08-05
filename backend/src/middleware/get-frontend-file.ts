@@ -23,8 +23,8 @@ export default async function getFrontendFile<T extends string | null>(
       return data as any
     }
 
-    const url = `http://${pkg.root.name}-frontend${
-      ssr ? '-ssr:4001' : ':4000'
+    const url = `http://localhost${
+      ssr ? ':4001' : ':4000'
     }${fname}`
     const response = (await promisify(request)(
       {

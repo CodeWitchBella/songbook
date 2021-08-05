@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "docker": "npm i && node node_modules/docker-start/lib/docker-run",
-    "tmux": "npm i && node node_modules/docker-start/lib/in-tmux"
+    "docker": "yarn && docker-start",
+    "tmux": "yarn && in-tmux"
   },
   "nodeVersion": "10.4.1",
   "configurations": {
@@ -52,7 +52,7 @@
       "npm run docker -- install",
       "npm run docker -- backend-build"
     ],
-    "devel": [
+    "devel": {"panes":[
       {
         "name": "BE run",
         "dir": "backend",
@@ -73,9 +73,9 @@
         "dir": "frontend",
         "cmd": "npm run docker -- frontend-ssr"
       }
-    ]
+    ]}
   },
   "dependencies": {
-    "docker-start": "0.0.8"
+    "@isbl/docker-start": "^0.9.1" 
   }
 }
