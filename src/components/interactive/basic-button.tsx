@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { useHistory } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
-import { TText, useDarkMode } from 'components/themed'
+import { TText, useColors } from 'components/themed'
 import { isPressOverriden, useInPressOutside } from './press-outside'
 import { useCallback } from 'react'
 
@@ -81,7 +81,7 @@ function BasicButtonBase({
     >
       <TText
         style={[
-          { borderColor: useDarkMode() ? 'white' : 'black' },
+          { borderColor: useColors().borders },
           style,
           hover && (!isPressOverriden() || inPressOutside)
             ? { textDecorationLine: 'underline' }

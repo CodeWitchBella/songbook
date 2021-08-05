@@ -1,4 +1,4 @@
-import { useDarkMode } from 'components/dark-mode'
+import { useColors } from 'components/themed'
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
 import { addDeleteChordAction, addMoveAction } from './song-editor-actions'
@@ -89,7 +89,7 @@ export function SongTextEditor(props: {
   onChange: (v: string) => void
   language: 'song' | 'none'
 }) {
-  const dark = useDarkMode()
+  const { dark } = useColors()
   const initialDark = useRef(dark)
   useEffect(setup)
   const element = useRef<HTMLDivElement>(null)

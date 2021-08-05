@@ -1,5 +1,5 @@
 import { Pressable, View } from 'react-native'
-import { TText, useDarkMode } from 'components/themed'
+import { TText, useColors } from 'components/themed'
 import { useLanguage } from 'components/localisation'
 
 export function LanguageSettings() {
@@ -41,7 +41,7 @@ function Option({
   selected: boolean
   onSelect: () => void
 }) {
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <Pressable
       onPress={onSelect}
@@ -50,7 +50,7 @@ function Option({
         width: 150,
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: !selected ? 'transparent' : dark ? 'white' : 'black',
+        borderColor: !selected ? 'transparent' : colors.borders,
         padding: 4,
       }}
     >

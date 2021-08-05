@@ -1,4 +1,4 @@
-import { TextRef, TText, useDarkMode } from 'components/themed'
+import { TextRef, TText, useColors } from 'components/themed'
 import { PropsWithChildren, useRef, useState } from 'react'
 import { TextStyle } from 'react-native'
 import { useLinkOnPress } from './basic-button'
@@ -21,7 +21,7 @@ export function InlineLink({
       ref={ref}
       style={[
         {
-          borderColor: useDarkMode() ? 'white' : 'black',
+          borderColor: useColors().borders,
           textDecorationLine: 'underline',
         },
         style,

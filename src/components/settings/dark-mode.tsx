@@ -3,7 +3,7 @@ import { Pressable, View } from 'react-native'
 import dark from './dark.svg'
 import light from './light.svg'
 import automatic from './automatic.svg'
-import { TText, useDarkMode } from 'components/themed'
+import { TText, useColors } from 'components/themed'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { useTranslation } from 'react-i18next'
 
@@ -52,7 +52,7 @@ function Option({
   selected: boolean
   onSelect: () => void
 }) {
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <Pressable
       onPress={onSelect}
@@ -60,7 +60,7 @@ function Option({
         width: '33%',
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: !selected ? 'transparent' : dark ? 'white' : 'black',
+        borderColor: !selected ? 'transparent' : colors.borders,
         padding: 4,
       }}
     >

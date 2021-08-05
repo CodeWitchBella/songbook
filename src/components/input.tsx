@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { TText, useDarkMode } from './themed'
+import { TText, useBasicStyle, useColors } from './themed'
 
 const Input = ({
   label,
@@ -13,7 +13,7 @@ const Input = ({
   onChange: (v: string) => any
   type?: string
 }) => {
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <label>
       <TText style={{ fontSize: 16 }}>{label}: </TText>
@@ -21,12 +21,12 @@ const Input = ({
         type={type}
         value={value}
         css={{
-          background: dark ? '#111' : 'white',
-          color: dark ? 'white' : 'black',
+          background: colors.inputBackground,
+          color: colors.text,
           padding: '3px 7px',
           borderWidth: 1,
           borderStyle: 'solid',
-          borderColor: dark ? 'white' : 'black',
+          borderColor: colors.borders,
         }}
         onChange={(evt) => {
           evt.preventDefault()
@@ -54,21 +54,19 @@ export function LargeInput({
   disabled?: boolean
   name?: string
 }) {
-  const dark = useDarkMode()
   return (
     <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
       <TText style={{ fontSize: 16 }}>{label}</TText>
       <input
-        css={{
-          fontSize: 24,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-          borderColor: 'currentColor',
-          color: dark ? 'white' : 'black',
-          background: dark ? 'black' : 'white',
-
-          padding: 10,
-        }}
+        css={[
+          useBasicStyle(),
+          {
+            fontSize: 24,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            padding: 10,
+          },
+        ]}
         type={type}
         value={value}
         onChange={(evt) => {

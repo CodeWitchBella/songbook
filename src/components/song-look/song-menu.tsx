@@ -14,7 +14,7 @@ import {
 import { SongType } from 'store/store-song'
 import { useGetRandomSong } from 'store/store'
 import { DumbModal } from 'components/dumb-modal'
-import { TText, useDarkMode } from 'components/themed'
+import { TText, useColors } from 'components/themed'
 import { StyleSheet } from 'react-native'
 import { useTranslation } from 'react-i18next'
 
@@ -40,16 +40,16 @@ const MenuList = styled.ul({
 })
 
 function useMenuStyle() {
-  const dark = useDarkMode()
+  const colors = useColors()
   return {
     all: 'unset',
     padding: 10,
     fontSize: 25,
     borderWidth: 1,
     borderStyle: 'solid',
-    borderColor: dark ? 'white' : 'black',
-    color: dark ? 'white' : 'black',
-    background: dark ? 'black' : 'white',
+    borderColor: colors.borders,
+    color: colors.text,
+    background: colors.background,
     textAlign: 'right',
     height: 32,
   } as const

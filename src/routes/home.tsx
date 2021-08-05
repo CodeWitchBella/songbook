@@ -3,13 +3,13 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { ListButton } from 'components/interactive/list-button'
 import { useLogin } from 'components/use-login'
 import { InstallButtonLook } from 'components/install'
-import { useDarkMode } from 'components/themed'
+import { useColors } from 'components/themed'
 import { Version } from 'components/version'
 import { useTranslation } from 'react-i18next'
 
 export default function Home() {
   const login = useLogin()
-  const dark = useDarkMode()
+  const colors = useColors()
   const { t } = useTranslation()
   return (
     <View
@@ -17,7 +17,7 @@ export default function Home() {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100%',
-        backgroundColor: dark ? 'black' : 'white',
+        backgroundColor: colors.background,
       }}
     >
       <View

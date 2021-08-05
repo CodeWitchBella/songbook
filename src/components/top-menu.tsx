@@ -4,7 +4,7 @@ import { PropsWithChildren, useReducer } from 'react'
 import { View } from 'react-native'
 import { OnPressOutside } from './interactive/press-outside'
 import { Burger } from './song-look/song-menu-icons'
-import { useDarkMode } from './themed'
+import { useColors } from './themed'
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -14,7 +14,7 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
     },
     { isOpen: false, wasOpen: false },
   )
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <div css={{ width: 40 }}>
       <button
@@ -28,8 +28,8 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: dark ? 'black' : 'white',
-          color: dark ? 'white' : 'black',
+          backgroundColor: colors.background,
+          color: colors.text,
           position: 'relative',
         }}
         onClick={() => setOpen(null)}
@@ -90,7 +90,7 @@ function MenuContent({
   visible: boolean
   onClose: () => void
 }>) {
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <OnPressOutside onPressOutside={visible ? onClose : null}>
       {(ref) => (
@@ -101,9 +101,9 @@ function MenuContent({
             right: 4,
             marginTop: 2,
 
-            backgroundColor: dark ? 'black' : 'white',
+            backgroundColor: colors.background,
             borderWidth: 1,
-            borderColor: dark ? 'white' : 'black',
+            borderColor: colors.borders,
             borderStyle: 'solid',
 
             padding: 10,

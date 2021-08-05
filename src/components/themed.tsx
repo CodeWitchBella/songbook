@@ -2,19 +2,38 @@ import { forwardRef } from 'react'
 import { PropsWithChildren } from 'react'
 // eslint-disable-next-line no-restricted-imports
 import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
-import { useDarkMode } from './dark-mode'
-export { useDarkMode } from './dark-mode'
+import { useDarkModeSetting } from './dark-mode'
+
+const colors = {
+  dark: {
+    background: 'black',
+    text: 'white',
+    borders: 'white',
+    dark: true,
+    inputBackground: '#111',
+  },
+  light: {
+    background: 'white',
+    text: 'black',
+    borders: 'black',
+    dark: false,
+    inputBackground: 'white',
+  },
+}
+export function getColors(dark: boolean) {
+  return dark ? colors.dark : colors.light
+}
+
+export function useColors() {
+  return getColors(useDarkModeSetting().value)
+}
 
 export type TextRef = RNText
 export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
   ({ style, ...rest }, ref) => {
-    const dark = useDarkMode()
+    const colors = useColors()
     return (
-      <RNText
-        ref={ref}
-        style={[{ color: dark ? 'white' : 'black' }, style]}
-        {...rest}
-      />
+      <RNText ref={ref} style={[{ color: colors.text }, style]} {...rest} />
     )
   },
 )
@@ -69,11 +88,11 @@ export function TP({ children, ...rest }: PropsWithChildren<TextProps>) {
 }
 
 export function useBasicStyle() {
-  const dark = useDarkMode()
+  const colors = useColors()
   return {
-    borderColor: dark ? 'white' : 'black',
-    backgroundColor: dark ? 'black' : 'white',
-    color: dark ? 'white' : 'black',
+    borderColor: colors.borders,
+    backgroundColor: colors.background,
+    color: colors.text,
   }
 }
 
@@ -81,13 +100,10 @@ export function RootView({
   children,
   style,
 }: PropsWithChildren<{ style?: ViewProps['style'] }>) {
-  const dark = useDarkMode()
+  const colors = useColors()
   return (
     <View
-      style={[
-        { backgroundColor: dark ? 'black' : 'white', minHeight: '100%' },
-        style,
-      ]}
+      style={[{ backgroundColor: colors.background, minHeight: '100%' }, style]}
     >
       {children}
     </View>

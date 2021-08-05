@@ -68,6 +68,3 @@ export function DarkModeProvider({
 export function useDarkModeSetting() {
   return useContext(darkModeContext)
 }
-export function useDarkMode() {
-  return useDarkModeSetting().value
-}

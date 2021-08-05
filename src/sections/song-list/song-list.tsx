@@ -10,27 +10,27 @@ import { DownloadPDF } from 'components/pdf'
 import { BackButton, BackArrow } from 'components/back-button'
 import { useLocation } from 'react-router'
 import { SearchTextInput } from 'components/search-text-input'
-import { RootView, useDarkMode } from 'components/themed'
+import { RootView, useBasicStyle } from 'components/themed'
 import { View } from 'react-native'
 import { ListButton } from 'components/interactive/list-button'
 import { useTranslation } from 'react-i18next'
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
-  const dark = useDarkMode()
   return (
     <div
-      css={{
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        background: dark ? 'black' : 'white',
-        borderColor: dark ? 'white' : 'black',
-        borderBottomWidth: 1,
-        borderBottomStyle: 'solid',
-        zIndex: 1,
-      }}
+      css={[
+        useBasicStyle(),
+        {
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderBottomWidth: 1,
+          borderBottomStyle: 'solid',
+          zIndex: 1,
+        },
+      ]}
     >
       <div
         css={{
