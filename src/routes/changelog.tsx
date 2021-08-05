@@ -13,6 +13,7 @@ import { createContext } from 'react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLanguage } from 'components/localisation'
+import { LanguageSettings } from 'components/settings/language-settings'
 
 function ChangelogBody() {
   const changelog = useChangelog()
@@ -109,6 +110,7 @@ function Head() {
         paddingBottom: 4,
         paddingTop: 24,
         paddingLeft: 12,
+        flexWrap: 'wrap',
       }}
     >
       <BackButton>
@@ -117,6 +119,8 @@ function Head() {
       <TText style={{ fontSize: 30, fontWeight: 'bold' }}>
         {t('Changelog')}
       </TText>
+      <View style={{ flexGrow: 1 }} />
+      <LanguageSettings compact={true} />
     </View>
   )
 }
