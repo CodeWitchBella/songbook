@@ -4,7 +4,7 @@ import { View } from 'react-native'
 
 import { useChangelog } from 'utils/use-changelog'
 import { Fragment } from 'react'
-import { RootView, TText } from 'components/themed'
+import { RootView, TP, TText } from 'components/themed'
 import { InlineLink } from 'components/interactive/inline-link'
 import * as React from 'react'
 import ReactMarkdown from 'react-markdown'
@@ -80,7 +80,7 @@ function ChangeBody({ body }: { body: string }) {
     <View style={{ marginLeft: 8, marginTop: 4 }}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        components={{ a: Link, text: TText, ul: Ul, li: Li }}
+        components={{ a: Link, text: TText, ul: Ul, li: Li, p: TP }}
       >
         {body}
       </ReactMarkdown>
