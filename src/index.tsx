@@ -8,6 +8,8 @@ import Loadable from 'react-loadable'
 import App, { InjectGlobal } from './app'
 import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
 
+import 'inter-ui/inter.css'
+
 // workaround for something removing import React from 'react'
 ;(window as any).React = React
 

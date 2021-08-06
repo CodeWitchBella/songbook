@@ -33,7 +33,18 @@ export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
   ({ style, ...rest }, ref) => {
     const colors = useColors()
     return (
-      <RNText ref={ref} style={[{ color: colors.text }, style]} {...rest} />
+      <RNText
+        ref={ref}
+        style={[
+          {
+            color: colors.text,
+            fontFamily: 'inherit',
+            fontWeight: '400' as any,
+          },
+          style,
+        ]}
+        {...rest}
+      />
     )
   },
 )
