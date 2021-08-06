@@ -194,9 +194,11 @@ function SongHeaderWithBack({
             paddingTop: em(0.2),
           }}
         >
-          <BackButton>
-            <BackArrow />
-          </BackButton>
+          <DefaultStyleText>
+            <BackButton style={{ marginRight: em(0.4) }}>
+              <BackArrow height={em(0.75)} />
+            </BackButton>
+          </DefaultStyleText>
         </View>
       ) : null}
       <SongHeader title={title} author={author} />

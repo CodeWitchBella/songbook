@@ -60,11 +60,11 @@ const float = keyframes`
   }
 `
 
-export function BackArrow() {
+export function BackArrow({ height }: { height?: number | string }) {
   return (
     <svg
       viewBox="0 0 5.443 4.692"
-      height="13"
+      height={height ?? '13'}
       css={{
         transform: 'translatey(0px)',
         ':hover': {

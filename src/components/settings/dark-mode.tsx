@@ -57,14 +57,15 @@ function Option({
     <Pressable
       onPress={onSelect}
       style={{
-        width: '33%',
+        maxWidth: '33%',
+        width: 512,
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: !selected ? 'transparent' : colors.borders,
         padding: 4,
       }}
     >
-      <img src={src} css={{ width: '100%' }} alt="" />
+      <img src={src} css={{ width: '100%', aspectRatio: '1 / 1' }} alt="" />
       <TText style={{ textAlign: 'center' }}>{text}</TText>
     </Pressable>
   )
