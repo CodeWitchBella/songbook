@@ -15,11 +15,12 @@ export async function songFromLink(
   if (
     !ug &&
     !supermusic &&
-    !link.startsWith('https://akordy.kytary.cz/song/')
+    !link.startsWith('https://akordy.kytary.cz/song/') &&
+    !link.startsWith('https://pisnicky-akordy.cz/')
   ) {
     const services = t('create.{{a}}, or {{b}}', {
       replace: {
-        a: 'ultimate guitar, supermusic',
+        a: 'pisnicky-akordy.cz, ultimate guitar, supermusic',
         b: 'akordy.kytary.cz',
       },
     })
