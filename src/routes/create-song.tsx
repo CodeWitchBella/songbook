@@ -99,10 +99,11 @@ function SwitchButton({ type, children }: { type: string; children: string }) {
 }
 
 function CreateSongSwitch() {
+  const { t } = useTranslation()
   return (
     <View style={styles.switch}>
-      <SwitchButton type="link">Z odkazu</SwitchButton>
-      <SwitchButton type="manual">Ručně</SwitchButton>
+      <SwitchButton type="link">{t('create.Using link')}</SwitchButton>
+      <SwitchButton type="manual">{t('create.Manually')}</SwitchButton>
     </View>
   )
 }
@@ -162,9 +163,10 @@ function CreateSongLink() {
   const [link, setLink] = useState(getURLFromSearch(location.search))
   const [error, setError] = useState('')
   const newSong = useNewSong()
+  const { t } = useTranslation()
   const { submit, disabled } = useSubmit(async () => {
     setError('')
-    const song = await songFromLink(link)
+    const song = await songFromLink(link, t)
     if (typeof song === 'string') {
       setError(song)
       return false
@@ -174,9 +176,9 @@ function CreateSongLink() {
   return (
     <FormWrap>
       <Form onSubmit={submit}>
-        <LargeInput label="Odkaz" value={link} onChange={setLink} />
+        <LargeInput label={t('create.Link')} value={link} onChange={setLink} />
         <PrimaryButton disabled={disabled} onPress={submit}>
-          Vytvořit
+          {t('create.Create')}
         </PrimaryButton>
         <button css={{ display: 'none' }} />
         <TText
@@ -206,14 +208,23 @@ function CreateSongManual() {
       title,
     }).then(({ slug }) => slug),
   )
+  const { t } = useTranslation()
 
   return (
     <FormWrap>
       <Form onSubmit={submit}>
-        <LargeInput label="Autor písně" value={author} onChange={setAuthor} />
-        <LargeInput label="Jméno písně" value={title} onChange={setTitle} />
+        <LargeInput
+          label={t('create.Song author')}
+          value={author}
+          onChange={setAuthor}
+        />
+        <LargeInput
+          label={t('create.Song name')}
+          value={title}
+          onChange={setTitle}
+        />
         <PrimaryButton disabled={disabled} onPress={submit}>
-          Vytvořit
+          {t('create.Create')}
         </PrimaryButton>
         <button css={{ display: 'none' }} />
       </Form>

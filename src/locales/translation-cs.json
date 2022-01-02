@@ -19,6 +19,16 @@
   "Collections": "Seznam kolekcí",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) a $t(count-pages-songs_page, {\"count\": {{pagesNum}} })",
   "Create account": "Vytvořit účet",
+  "create": {
+    "{{a}}, or {{b}}": "{{a}} nebo {{b}}",
+    "Create": "Vytvořit",
+    "Link": "Odkaz",
+    "Links other than {{services}} are not supported": "Jiné odkazy než {{services}} nejsou podporované",
+    "Manually": "Ručně",
+    "Song author": "Autor písně",
+    "Song name": "Jméno písně",
+    "Using link": "Z odkazu"
+  },
   "Created by <2>Isabella Skořepová</2>": "Vytvořila <2>Isabella Skořepová</2>",
   "credits-blurp <1>author</1>": "Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně vytvořila <1>Isabella Skořepová</1>",
   "Current version": "Aktuální verze",

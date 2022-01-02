@@ -19,6 +19,16 @@
   "Collections": "Collections",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) and $t(count-pages-songs_pages, {\"count\": {{pagesNum}} })",
   "Create account": "Create account",
+  "create": {
+    "{{a}}, or {{b}}": "{{a}}, or {{b}}",
+    "Create": "Create",
+    "Link": "Link",
+    "Links other than {{services}} are not supported": "Links other than {{services}} are not supported",
+    "Manually": "Manually",
+    "Song author": "Song author",
+    "Song name": "Song name",
+    "Using link": "Using link"
+  },
   "Created by <2>Isabella Skořepová</2>": "Created by <2>Isabella Skořepová</2>",
   "credits-blurp <1>author</1>": "Most songbook functionality including, but not limited to PDF export, song editing, song display and transposition was implemented by <1>Isabella Skořepová</1>",
   "Current version": "Current version",

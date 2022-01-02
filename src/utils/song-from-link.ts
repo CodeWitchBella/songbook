@@ -1,7 +1,9 @@
+import type { TFunction } from 'react-i18next'
 import { getGraphqlUrl } from 'store/graphql'
 
 export async function songFromLink(
   link: string,
+  t: TFunction<'translation'>,
 ): Promise<
   | string
   | { author: string; title: string; text: string; extraNonSearchable: string }
@@ -15,7 +17,15 @@ export async function songFromLink(
     !supermusic &&
     !link.startsWith('https://akordy.kytary.cz/song/')
   ) {
-    return 'Jiné odkazy než ultimate guitar, supermusic nebo akordy.kytary.cz nejsou podporované'
+    const services = t('create.{{a}}, or {{b}}', {
+      replace: {
+        a: 'ultimate guitar, supermusic',
+        b: 'akordy.kytary.cz',
+      },
+    })
+    return t('create.Links other than {{services}} are not supported', {
+      replace: { services },
+    })
   }
   const url = new URL('import', getGraphqlUrl())
   url.searchParams.set('url', link)
