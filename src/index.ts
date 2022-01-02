@@ -2,7 +2,7 @@ globalThis.setImmediate = undefined as any;
 
 import { handleGraphql } from "./endpoints/graphql";
 import { forward } from "./forward";
-import { handleUltimateGuitar } from "./endpoints/import";
+import { handleImport } from "./endpoints/import";
 import { contextPair, MyContext } from "./lib/context";
 import { handleCreateSong } from "./endpoints/create-song";
 import { handleReleases } from "./endpoints/releases";
@@ -19,7 +19,7 @@ async function handleRequest(
     if (url.pathname === "/graphql")
       return await handleGraphql(request, createContext());
     if (url.pathname === "/ultimate-guitar" || url.pathname === "/import")
-      return await handleUltimateGuitar(request);
+      return await handleImport(request);
     if (url.pathname === "/releases") return await handleReleases(event);
     if (request.method === "POST" && url.pathname === "/song")
       return await handleCreateSong(request, createContext());

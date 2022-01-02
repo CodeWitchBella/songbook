@@ -1,8 +1,6 @@
 import { badRequestResponse, jsonResponse } from "../lib/response";
 
-export async function handleUltimateGuitar(
-  request: Request,
-): Promise<Response> {
+export async function handleImport(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const target = url.searchParams.get("url");
 
@@ -94,6 +92,55 @@ const handlers: readonly {
         text,
         author: pageData["tab"]["artist_name"],
         title: pageData["tab"]["song_name"],
+      };
+    },
+  },
+  {
+    test: url => {
+      const begin = "https://pisnicky-akordy.cz/";
+      return (
+        url.startsWith(begin) &&
+        !!url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i)
+      );
+    },
+    handle: async target => {
+      const r = await fetch(target + "?tmpl=component&print=1&layout=default");
+      if (r.status !== 200) {
+        throw new Response(
+          JSON.stringify({ error: "Cannot load from pisnicky-akordy" }),
+          {
+            status: 424,
+            headers: { "content-type": "application/json" },
+          },
+        );
+      }
+      const html = await r.text();
+
+      const title = extractSimpleTagTextContent(html, "h1");
+      const author = extractSimpleTagTextContent(html, "h2");
+
+      let text = "";
+      let lines = before(after(html, "<pre>"), "</pre>")
+        .trim()
+        .replace(/<\/el>/g, "")
+        .split("\n")
+        .reverse();
+      while (lines.length) {
+        const line = lines.pop()!;
+        if (!line.startsWith("<")) {
+          text += line;
+        } else if (lines.length) {
+          text += mergeChordsInto(line.replace(/<[^>]+>/g, ""), lines.pop()!);
+        } else {
+          text += line.replace(/<[^>]+>/g, "");
+        }
+        text += "\n";
+      }
+
+      return {
+        text,
+        author,
+        title,
       };
     },
   },
@@ -192,6 +239,25 @@ const handlers: readonly {
     },
   },
 ];
+
+function extractSimpleTagTextContent(html: string, tag: string) {
+  return before(after(html, `<${tag}>`), `</${tag}>`).replace(/<[^>]+>/g, "");
+}
+
+function mergeChordsInto(chordsText: string, text: string) {
+  const chords: { index: number; chord: string }[] = [];
+  for (let i = 0; i < chordsText.length; i++) {
+    if (chordsText[i] === " ") continue;
+    if (chords.length === 0 || chordsText[i - 1] === " ")
+      chords.push({ index: i, chord: chordsText[i] });
+    else chords[chords.length - 1].chord += chordsText[i];
+  }
+  chords.reverse();
+  for (const { chord, index } of chords) {
+    text = text.substring(0, index) + `[${chord}]` + text.substring(index);
+  }
+  return text;
+}
 
 function capitalize(text: string) {
   if (text.length < 1) return text;
