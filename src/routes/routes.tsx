@@ -18,6 +18,7 @@ const imports = {
     () => import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
   ),
   Home: once(() => import(/* webpackChunkName: "r-home" */ './home')),
+  Logo: once(() => import(/* webpackChunkName: "r-logo" */ './logo')),
   Song: once(() => import(/* webpackChunkName: "r-song" */ './song')),
   AddToCollection: once(
     () => import(/* webpackChunkName: "r-song" */ './add-to-collection'),
@@ -43,6 +44,7 @@ const CollectionList = React.lazy(imports.CollectionList)
 const Collection = React.lazy(imports.Collection)
 const AllSongs = React.lazy(imports.AllSongs)
 const Home = React.lazy(imports.Home)
+const Logo = React.lazy(imports.Logo)
 const Song = React.lazy(imports.Song)
 const CreateSong = React.lazy(imports.CreateSong)
 const EditSong = React.lazy(imports.EditSong)
@@ -66,6 +68,9 @@ function Routes() {
       <Switch>
         <Route path="/" exact>
           <Home />
+        </Route>
+        <Route path="/logo" exact>
+          <Logo />
         </Route>
         <Route path="/installed-home" exact>
           <InstalledHome />

@@ -22,7 +22,7 @@ export function ErrorPage({
         right: 0,
       }}
     >
-      <TText style={{ fontSize: 42 }}>{text}</TText>
+      <TText style={{ fontSize: 42, textAlign: 'center' }}>{text}</TText>
       {children || null}
       <BackButton style={{ marginTop: 16 }}>
         <TText style={{ fontSize: 22 }}>{t('Go back')}</TText>

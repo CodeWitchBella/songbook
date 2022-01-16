@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { View, Image } from 'react-native'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { ListButton } from 'components/interactive/list-button'
 import { useLogin } from 'components/use-login'
@@ -6,6 +6,7 @@ import { InstallButtonLook } from 'components/install'
 import { useColors } from 'components/themed'
 import { Version } from 'components/version'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 export default function Home() {
   const login = useLogin()
@@ -29,6 +30,18 @@ export default function Home() {
           paddingBottom: 40,
         }}
       >
+        <Link to="/logo">
+          <Image
+            source={{ uri: '/static/full.svg' }}
+            width={512}
+            height={512}
+            style={{
+              width: '100%',
+              paddingBottom: '100%',
+              marginBottom: '16px',
+            }}
+          />
+        </Link>
         <PrimaryButton to="/all-songs">{t('All songs')}</PrimaryButton>
         <Gap height={8} />
         {login.viewer ? null : (
