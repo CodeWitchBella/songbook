@@ -16,7 +16,14 @@ export default function About() {
   const { t } = useTranslation()
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <View style={{ maxWidth: 500 }}>
+      <View
+        style={{
+          width: 500,
+          maxWidth: '100%',
+          paddingHorizontal: 4,
+          paddingBottom: 8,
+        }}
+      >
         <TH2>
           <BackButton>
             <BackArrow />
