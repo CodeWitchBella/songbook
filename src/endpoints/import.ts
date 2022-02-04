@@ -241,7 +241,10 @@ const handlers: readonly {
 ];
 
 function extractSimpleTagTextContent(html: string, tag: string) {
-  return before(after(html, `<${tag}>`), `</${tag}>`).replace(/<[^>]+>/g, "");
+  return before(after(after(html, `<${tag}`), ">"), `</${tag}>`).replace(
+    /<[^>]+>/g,
+    "",
+  );
 }
 
 function mergeChordsInto(chordsText: string, text: string) {
