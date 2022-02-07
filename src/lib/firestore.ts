@@ -3,7 +3,11 @@ import { getTokenFromGCPServiceAccount } from "@sagi.io/workers-jwt";
 import DataLoader from "dataloader";
 
 declare const FIREBASE_SERVICE_KEY: string | undefined;
-const serviceAccountJSON = JSON.parse(FIREBASE_SERVICE_KEY || "{}");
+const serviceAccountJSON = JSON.parse(
+  (typeof FIREBASE_SERVICE_KEY !== "undefined"
+    ? FIREBASE_SERVICE_KEY
+    : undefined) || "{}",
+);
 
 async function getAccessToken() {
   const jwtToken = await getTokenFromGCPServiceAccount({
