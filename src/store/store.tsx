@@ -13,7 +13,7 @@ import { createSongStore } from './store-song'
 import { User } from './graphql'
 import { createCollectionStore } from './store-collections'
 import { GenericStore, MinItem } from './generic-store'
-import Random from './mersenne-twister-19937'
+import xorshift from 'xorshift'
 import { DateTime } from 'luxon'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
@@ -121,13 +121,16 @@ export function useGetRandomSong() {
     (currentSongId: string) => {
       const nowReal = DateTime.utc()
       const now = nowReal.get('hour') < 3 ? nowReal.minus({ day: 1 }) : nowReal
-      const random = new Random(
-        now.get('day') + 100 * (now.get('month') + 100 * now.get('year')),
-      )
+      const random = new xorshift.constructor([
+        now.get('day'),
+        now.get('month'),
+        now.get('year'),
+        0,
+      ])
       const songs = store.readAll()
       const withRandom = songs.map((song) => ({
         song,
-        number: random.generateInt32(),
+        number: random.random(),
       }))
       const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
