@@ -1,7 +1,13 @@
 import { forwardRef } from 'react'
 import { PropsWithChildren } from 'react'
-// eslint-disable-next-line no-restricted-imports
-import { Text as RNText, TextProps, View, ViewProps } from 'react-native'
+import {
+  // eslint-disable-next-line no-restricted-imports
+  Text as RNText,
+  TextProps,
+  TextStyle,
+  View,
+  ViewProps,
+} from 'react-native'
 import { useDarkModeSetting } from './dark-mode'
 
 const colors = {
@@ -28,10 +34,43 @@ export function useColors() {
   return getColors(useDarkModeSetting().value)
 }
 
+type TStyleProp<T> = undefined | T | TStyleProp<T>[]
+type TTextProps = Omit<TextProps, 'style'> & {
+  style?: TStyleProp<TextStyle & { fontSize?: string | number }>
+}
+
+// performs deep array mapping and makes sure there is no extra allocation if
+// mapping function does not change anything
+// anys are inevitable in this case because there is no way to actually type this
+// if this were a professional software I would write tests for this but :meh:
+function mapStyle<In, Out>(
+  style: TStyleProp<In>,
+  mapper: (v: In) => Out,
+): TStyleProp<Out> {
+  if (!Array.isArray(style)) return mapper(style as any)
+
+  let result: any | undefined = undefined
+  let i = 0
+  for (const item of style as any) {
+    ++i
+    const out = mapper(item)
+    if (!result && out !== item) result = style.slice(0, i)
+    if (result) result.push(out)
+  }
+  return result || style
+}
+
 export type TextRef = RNText
-export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
+export const TText = forwardRef<TextRef, TTextProps>(
   ({ style, ...rest }, ref) => {
     const colors = useColors()
+    const fixedStyle = mapStyle(
+      style,
+      (v): TextStyle =>
+        typeof v === 'object' && v.fontSize
+          ? { ...v, fontSize: +v.fontSize }
+          : v,
+    )
     return (
       <RNText
         ref={ref}
@@ -41,7 +80,7 @@ export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
             fontFamily: 'inherit',
             fontWeight: '400' as any,
           },
-          style,
+          fixedStyle,
         ]}
         {...rest}
       />
@@ -49,7 +88,7 @@ export const TText = forwardRef<TextRef, PropsWithChildren<TextProps>>(
   },
 )
 
-export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
+export function TH2({ style, ...rest }: TTextProps) {
   return (
     <TText
       style={[
@@ -67,7 +106,7 @@ export function TH2({ style, ...rest }: PropsWithChildren<TextProps>) {
   )
 }
 
-export function TH3({ style, ...rest }: PropsWithChildren<TextProps>) {
+export function TH3({ style, ...rest }: TTextProps) {
   return (
     <TText
       style={[
@@ -85,7 +124,7 @@ export function TH3({ style, ...rest }: PropsWithChildren<TextProps>) {
   )
 }
 
-export function TP({ children, ...rest }: PropsWithChildren<TextProps>) {
+export function TP({ children, ...rest }: TTextProps) {
   return (
     <View style={{ marginTop: 8 }}>
       <TText {...rest}>

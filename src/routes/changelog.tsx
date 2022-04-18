@@ -81,7 +81,8 @@ function ChangeBody({ body }: { body: string }) {
     <View style={{ marginLeft: 8, marginTop: 4 }}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        components={{ a: Link, text: TText, ul: Ul, li: Li, p: TP }}
+        // slight typing mismatches are almost inevitable
+        components={{ a: Link, text: TText, ul: Ul, li: Li, p: TP } as any}
       >
         {body}
       </ReactMarkdown>

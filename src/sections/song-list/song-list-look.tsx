@@ -14,7 +14,7 @@ import useRouter from 'components/use-router'
 import { VariableSizeList } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { BasicButton } from 'components/interactive/basic-button'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, TFunction } from 'react-i18next'
 import { TText } from 'components/themed'
 
 const TheSong = styled.div`
@@ -46,7 +46,7 @@ function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
 }
 
 function translateHeader(
-  t: ReturnType<typeof useTranslation>['t'],
+  t: TFunction,
   hdr: 'title' | 'author' | 'text' | 'other',
 ) {
   if (hdr === 'title') return t('search.title')
@@ -65,7 +65,7 @@ export type SongListItem =
 function SongItem(
   props: ({ text: string; slug: string } | { header: HeaderType }) & {
     style?: React.CSSProperties
-    t: ReturnType<typeof useTranslation>['t']
+    t: TFunction
   },
 ) {
   return (

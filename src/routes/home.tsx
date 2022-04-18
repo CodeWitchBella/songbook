@@ -33,10 +33,9 @@ export default function Home() {
         <Link to="/logo">
           <Image
             source={{ uri: '/static/full.svg' }}
-            width={512}
-            height={512}
             style={{
               width: '100%',
+              aspectRatio: 1,
               paddingBottom: '100%',
               marginBottom: '16px',
             }}

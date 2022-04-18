@@ -102,22 +102,28 @@ const HelpWrap = styled.div`
   margin: 40px auto 0 auto;
 `
 
-const Help: React.SFC<{ title: string; hiddenTitle: string }> = ({
+function Help({
   children,
   title,
   hiddenTitle,
-}) => (
-  <Togglable defaultState={false}>
-    {({ toggled, toggle }) => (
-      <HelpWrap>
-        <ListButton onPress={toggle}>
-          {toggled ? title : hiddenTitle}
-        </ListButton>
-        {toggled && children}
-      </HelpWrap>
-    )}
-  </Togglable>
-)
+}: {
+  title: string
+  hiddenTitle: string
+  children: React.ReactNode
+}) {
+  return (
+    <Togglable defaultState={false}>
+      {({ toggled, toggle }) => (
+        <HelpWrap>
+          <ListButton onPress={toggle}>
+            {toggled ? title : hiddenTitle}
+          </ListButton>
+          {toggled && children}
+        </HelpWrap>
+      )}
+    </Togglable>
+  )
+}
 
 const InputLine = styled.div`
   display: flex;

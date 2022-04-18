@@ -7,9 +7,13 @@ const context = React.createContext({
   routeRendered: () => {},
 })
 
-export const ServiceWorkerStatusProvider: React.FC<{
+export function ServiceWorkerStatusProvider({
+  children,
+  register,
+}: {
+  children: React.ReactNode
   register: (config?: ServiceWorkerRegisterConfig) => void
-}> = ({ children, register }) => {
+}) {
   const updatedRef = useRef(null as null | Workbox)
   const updateAfterNavigate = useRef(false)
 

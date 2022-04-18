@@ -1,5 +1,5 @@
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/firestore'
 import { useEffect } from 'react'
 import { useSong } from 'store/store'
 import { DateTime } from 'luxon'
