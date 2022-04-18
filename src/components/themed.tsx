@@ -67,7 +67,7 @@ export const TText = forwardRef<TextRef, TTextProps>(
     const fixedStyle = mapStyle(
       style,
       (v): TextStyle =>
-        typeof v === 'object' && v.fontSize
+        typeof v === 'object' && v?.fontSize
           ? { ...v, fontSize: +v.fontSize }
           : v,
     )

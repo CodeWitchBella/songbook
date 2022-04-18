@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { Pressable, View } from 'react-native'
-import dark from './dark.svg'
-import light from './light.svg'
-import automatic from './automatic.svg'
 import { TText, useColors } from 'components/themed'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { useTranslation } from 'react-i18next'
+
+const dark = new URL('./dark.svg', import.meta.url).href
+const light = new URL('./light.svg', import.meta.url).href
+const automatic = new URL('./automatic.svg', import.meta.url).href
 
 export function DarkModeSettings() {
   const s = useDarkModeSetting()

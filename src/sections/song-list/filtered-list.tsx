@@ -2,15 +2,15 @@ import React, { useEffect, useReducer } from 'react'
 import { SongList, SongListItem } from './song-list-look'
 import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList, { SearchableSong } from './alg'
-// eslint-disable-next-line import/no-webpack-loader-syntax
-import SearchWorker from 'workers-loader?inline&fallback=false!./worker'
 import { SongType } from 'store/store-song'
 
+const SearchWorker = () => new Worker(new URL('./worker', import.meta.url))
+
 const getWorker = (() => {
-  let worker: null | SearchWorker = null
+  let worker: null | ReturnType<typeof SearchWorker> = null
   return function getOrCreateWorker() {
     if (!('Worker' in window)) return null
-    if (!worker) worker = new SearchWorker()
+    if (!worker) worker = SearchWorker()
     return worker
   }
 })()

@@ -1,5 +1,3 @@
-'use strict'
-
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'development'
 process.env.NODE_ENV = 'development'
@@ -10,9 +8,6 @@ process.env.NODE_ENV = 'development'
 process.on('unhandledRejection', (err) => {
   throw err
 })
-
-// Ensure environment variables are read.
-require('../config/env')
 
 const fs = require('fs')
 const chalk = require('react-dev-utils/chalk')
@@ -31,10 +26,8 @@ const semver = require('semver')
 const paths = require('../config/paths')
 const configFactory = require('../config/webpack.config')
 const createDevServerConfig = require('../config/webpackDevServer.config')
-const getClientEnvironment = require('../config/env')
 const react = require(require.resolve('react', { paths: [paths.appPath] }))
 
-const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1))
 const useYarn = fs.existsSync(paths.yarnLockFile)
 const isInteractive = process.stdout.isTTY
 
@@ -119,18 +112,9 @@ checkBrowsers(paths.appPath, isInteractive)
         clearConsole()
       }
 
-      if (env.raw.FAST_REFRESH && semver.lt(react.version, '16.10.0')) {
-        console.log(
-          chalk.yellow(
-            `Fast Refresh requires React 16.10 or higher. You are using React ${react.version}.`,
-          ),
-        )
-      }
-
       console.log(chalk.cyan('Starting the development server...\n'))
       openBrowser(urls.localUrlForBrowser)
     })
-
     ;['SIGINT', 'SIGTERM'].forEach(function (sig) {
       process.on(sig, function () {
         devServer.close()

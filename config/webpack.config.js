@@ -11,17 +11,11 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent')
 const ESLintPlugin = require('eslint-webpack-plugin')
 const paths = require('./paths')
 const modules = require('./modules')
-const getClientEnvironment = require('./env')
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
-const ForkTsCheckerWebpackPlugin =
-  process.env.TSC_COMPILE_ON_ERROR === 'true'
-    ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
-    : require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash')
@@ -94,13 +88,7 @@ module.exports = function (webpackEnv) {
   const isEnvProductionProfile =
     isEnvProduction && process.argv.includes('--profile')
 
-  // We will provide `paths.publicUrlOrPath` to our app
-  // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-  // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-  // Get environment variables to inject into our app.
-  const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1))
-
-  const shouldUseReactRefresh = env.raw.FAST_REFRESH
+  const shouldUseReactRefresh = true
 
   // common function to get style loaders
   const getStyleLoaders = (cssOptions, preProcessor) => {
@@ -227,10 +215,11 @@ module.exports = function (webpackEnv) {
         : isEnvDevelopment &&
           ((info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+      hashFunction: 'xxhash64',
     },
     cache: {
       type: 'filesystem',
-      version: createEnvironmentHash(env.raw),
+      version: '1',
       cacheDirectory: paths.appWebpackCache,
       store: 'pack',
       buildDependencies: {
@@ -319,21 +308,14 @@ module.exports = function (webpackEnv) {
         }),
         ...(modules.webpackAliases || {}),
       },
-      plugins: [
-        // Prevents users from importing files from outside of src/ (or node_modules/).
-        // This often causes confusion because we only process files within src/ with babel.
-        // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
-        // please link the files into your node_modules/ and let module-resolution kick in.
-        // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.appSrc, [
-          paths.appPackageJson,
-          reactRefreshRuntimeEntry,
-          reactRefreshWebpackPluginRuntimeEntry,
-          babelRuntimeEntry,
-          babelRuntimeEntryHelpers,
-          babelRuntimeRegenerator,
-        ]),
-      ],
+      fallback: {
+        process: require.resolve('process/browser'),
+        zlib: require.resolve('browserify-zlib'),
+        stream: require.resolve('stream-browserify'),
+        util: require.resolve('util'),
+        buffer: require.resolve('buffer'),
+        asset: require.resolve('assert'),
+      },
     },
     module: {
       strictExportPresence: true,
@@ -372,32 +354,6 @@ module.exports = function (webpackEnv) {
                 dataUrlCondition: {
                   maxSize: imageInlineSizeLimit,
                 },
-              },
-            },
-            {
-              test: /\.svg$/,
-              use: [
-                {
-                  loader: require.resolve('@svgr/webpack'),
-                  options: {
-                    prettier: false,
-                    svgo: false,
-                    svgoConfig: {
-                      plugins: [{ removeViewBox: false }],
-                    },
-                    titleProp: true,
-                    ref: true,
-                  },
-                },
-                {
-                  loader: require.resolve('file-loader'),
-                  options: {
-                    name: 'static/media/[name].[hash].[ext]',
-                  },
-                },
-              ],
-              issuer: {
-                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
               },
             },
             // Process application JS with Babel.
@@ -594,21 +550,9 @@ module.exports = function (webpackEnv) {
       isEnvProduction &&
         shouldInlineRuntimeChunk &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
-      // Makes some environment variables available in index.html.
-      // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
-      // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
-      // It will be an empty string unless you specify "homepage"
-      // in `package.json`, in which case it will be the pathname of that URL.
-      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
       // This gives some necessary context to module not found errors, such as
       // the requesting resource.
       new ModuleNotFoundPlugin(paths.appPath),
-      // Makes some environment variables available to the JS code, for example:
-      // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
-      // It is absolutely essential that NODE_ENV is set to production
-      // during a production build.
-      // Otherwise React will be compiled in the very slow development mode.
-      new webpack.DefinePlugin(env.stringified),
       // Experimental hot reloading for React .
       // https://github.com/facebook/react/tree/main/packages/react-refresh
       isEnvDevelopment &&
@@ -672,54 +616,6 @@ module.exports = function (webpackEnv) {
           // to make lazy-loading failure scenarios less likely.
           // See https://github.com/cra-template/pwa/issues/13#issuecomment-722667270
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        }),
-      // TypeScript type checking
-      useTypeScript &&
-        new ForkTsCheckerWebpackPlugin({
-          async: isEnvDevelopment,
-          typescript: {
-            typescriptPath: resolve.sync('typescript', {
-              basedir: paths.appNodeModules,
-            }),
-            configOverwrite: {
-              compilerOptions: {
-                sourceMap: isEnvProduction
-                  ? shouldUseSourceMap
-                  : isEnvDevelopment,
-                skipLibCheck: true,
-                inlineSourceMap: false,
-                declarationMap: false,
-                noEmit: true,
-                incremental: true,
-                tsBuildInfoFile: paths.appTsBuildInfoFile,
-              },
-            },
-            context: paths.appPath,
-            diagnosticOptions: {
-              syntactic: true,
-            },
-            mode: 'write-references',
-            // profile: true,
-          },
-          issue: {
-            // This one is specifically to match during CI tests,
-            // as micromatch doesn't match
-            // '../cra-template-typescript/template/src/App.tsx'
-            // otherwise.
-            include: [
-              { file: '../**/src/**/*.{ts,tsx}' },
-              { file: '**/src/**/*.{ts,tsx}' },
-            ],
-            exclude: [
-              { file: '**/src/**/__tests__/**' },
-              { file: '**/src/**/?(*.){spec|test}.*' },
-              { file: '**/src/setupProxy.*' },
-              { file: '**/src/setupTests.*' },
-            ],
-          },
-          logger: {
-            infrastructure: 'silent',
-          },
         }),
       !disableESLintPlugin &&
         new ESLintPlugin({
