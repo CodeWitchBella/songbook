@@ -31,9 +31,11 @@ export function ServiceWorkerStatusProvider({
       value={useMemo(
         () => ({
           updateAfterNavigate: () => {
+            console.log('ServiceWorkerStatusProvider:updateAfterNavigate')
             updateAfterNavigate.current = true
           },
           routeRendered: () => {
+            console.log('ServiceWorkerStatusProvider:routeRendered')
             const updated = updatedRef.current
             if (updated) {
               setTimeout(() => {
