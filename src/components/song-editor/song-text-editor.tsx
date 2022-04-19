@@ -74,7 +74,7 @@ function useEditorFitContent(
     if (!editor) return
     resetLayout(editor, element)
     const unsub = editor.onDidChangeModelDecorations(() => {
-      setImmediate(() => {
+      Promise.resolve().then(() => {
         resetLayout(editor, element)
       })
     })

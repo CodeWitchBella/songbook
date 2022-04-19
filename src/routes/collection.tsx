@@ -23,7 +23,7 @@ function useColectionWithSet(slug: string) {
 export default function Collection({ slug }: { slug: string }) {
   const collection = useColectionWithSet(slug)
   const set = collection?.set
-  const filter = useCallback((id) => (set && set?.has(id)) || false, [set])
+  const filter = useCallback((id: string) => set?.has(id) || false, [set])
 
   const collectionId = collection?.id
   useEffect(() => {

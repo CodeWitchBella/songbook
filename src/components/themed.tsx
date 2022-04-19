@@ -34,9 +34,10 @@ export function useColors() {
   return getColors(useDarkModeSetting().value)
 }
 
-type TStyleProp<T> = undefined | T | TStyleProp<T>[]
-type TTextProps = Omit<TextProps, 'style'> & {
+type TStyleProp<T> = undefined | null | T | TStyleProp<T>[]
+export type TTextProps = Omit<TextProps, 'style'> & {
   style?: TStyleProp<TextStyle & { fontSize?: string | number }>
+  children?: React.ReactNode
 }
 
 // performs deep array mapping and makes sure there is no extra allocation if

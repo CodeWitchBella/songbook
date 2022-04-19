@@ -17,7 +17,7 @@ function onlyCallLast(f: (arg: string) => void) {
     if (shouldRecalculate === false) {
       calculating = false
     } else {
-      setImmediate(() => {
+      Promise.resolve().then(() => {
         calculating = false
         if (shouldRecalculate) recalculate(shouldRecalculate)
       })

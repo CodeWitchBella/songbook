@@ -176,8 +176,13 @@ export default function PDFRender({ song }: Props) {
     >
       <PDFProvider>
         <PDFBlobProvider document={doc}>
-          {({ url }) =>
-            !url ? <div>Generuji PDF...</div> : <PDFDoc url={url} />
+          {
+            (({ url }: $FixMe) =>
+              !url ? (
+                <div>Generuji PDF...</div>
+              ) : (
+                <PDFDoc url={url} />
+              )) as $FixMe
           }
         </PDFBlobProvider>
       </PDFProvider>

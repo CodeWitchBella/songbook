@@ -81,7 +81,7 @@ export function addMoveAction(
     label: 'Move chord ' + dir,
     keybindings: [
       monaco.KeyMod.CtrlCmd |
-        (dir === 'left' ? monaco.KeyCode.KEY_H : monaco.KeyCode.KEY_L),
+        (dir === 'left' ? monaco.KeyCode.KeyH : monaco.KeyCode.KeyL),
     ],
 
     contextMenuGroupId: 'navigation',
@@ -138,7 +138,7 @@ export function addDeleteChordAction(
   editor.addAction({
     id: 'delete-chord',
     label: 'Delete chord',
-    keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_D],
+    keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyD],
 
     contextMenuGroupId: 'navigation',
     contextMenuOrder: 1.5,

@@ -1,6 +1,5 @@
-import { TextRef, TText, useColors } from 'components/themed'
+import { TextRef, TText, TTextProps, useColors } from 'components/themed'
 import { PropsWithChildren, useRef, useState } from 'react'
-import { TextStyle } from 'react-native'
 import { useLinkOnPress } from './basic-button'
 import { isPressOverriden, useInPressOutside } from './press-outside'
 
@@ -9,7 +8,7 @@ export function InlineLink({
   style,
   to,
 }: PropsWithChildren<{
-  style?: TextStyle
+  style?: TTextProps
   to: string
 }>) {
   const [hover, setHover] = useState<readonly [number, number] | null>(null)
@@ -34,8 +33,8 @@ export function InlineLink({
           : null,
       ]}
       onPress={useLinkOnPress(to)}
-      // @ts-expect-error
       href={to}
+      // @ts-expect-error FIXME
       onMouseEnter={() => {
         ref.current?.measure((x, y, width, height) => {
           setHover([width, height])

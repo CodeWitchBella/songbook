@@ -1,6 +1,6 @@
 import * as serviceWorker from './serviceWorker'
 
-import ReactDOM from 'react-dom'
+import * as ReactDOM from 'react-dom/client'
 import React from 'react'
 import ErrorBoundary from 'containers/error-boundary'
 import { BrowserRouter } from 'react-router-dom'
@@ -14,11 +14,13 @@ import 'inter-ui/inter.css'
 ;(window as any).React = React
 
 Loadable.preloadReady().then(() => {
-  const app = document.getElementById('root')
-  ReactDOM.render(
+  const app = document.getElementById('root')!
+  const root = ReactDOM.createRoot(app)
+  root.render(
     <React.Fragment>
       <InjectGlobal />
       <ErrorBoundary>
+        {/* @ts-expect-error FIXME */}
         <BrowserRouter>
           <ServiceWorkerStatusProvider register={serviceWorker.register}>
             <App />
@@ -26,6 +28,5 @@ Loadable.preloadReady().then(() => {
         </BrowserRouter>
       </ErrorBoundary>
     </React.Fragment>,
-    app,
   )
 })

@@ -1,4 +1,9 @@
-import React, { createContext, useContext, PropsWithChildren } from 'react'
+import React, {
+  createContext,
+  useContext,
+  PropsWithChildren,
+  ComponentProps,
+} from 'react'
 import {
   View as RNView,
   // eslint-disable-next-line no-restricted-imports
@@ -8,6 +13,7 @@ import {
   TextStyle,
 } from 'react-native'
 import type ReactPDF from '@react-pdf/renderer'
+import type ReactPDFTypes from '@react-pdf/types/style'
 import { notNull } from '@codewitchbella/ts-utils'
 import { pdfSetup } from './pdf-setup'
 import { once } from 'utils/utils'
@@ -39,7 +45,7 @@ type MergedViewStyle = StyleProp<
 
 function viewStyleForPDF(
   st: MergedViewStyle,
-): ReactPDF.Style | ReactPDF.Style[] | undefined {
+): ReactPDFTypes.Style | ReactPDFTypes.Style[] | undefined {
   if (!st) return
   if (Array.isArray(st))
     return st
@@ -56,15 +62,15 @@ function viewStyleForPDF(
           .join(' '),
       )
       .join(' '),
-  } as ReactPDF.Style
+  } as ReactPDFTypes.Style
 }
 
 // just allow it to be recursive
-type MergedTextStyle = StyleProp<ReactPDF.Style & TextStyle>
+type MergedTextStyle = StyleProp<ReactPDFTypes.Style & TextStyle>
 
 function textStyleForPDF(
   st: MergedTextStyle,
-): PropsOf<typeof ReactPDF.Text>['style'] {
+): ReactPDFTypes.Style | ReactPDFTypes.Style[] | undefined {
   if (!st) return
   if (Array.isArray(st))
     return st
@@ -127,7 +133,7 @@ export function PDFPage(
 export function PDFBlobProvider({
   children,
   document,
-}: PropsWithChildren<PropsOf<typeof ReactPDF.BlobProvider>>) {
+}: ComponentProps<typeof ReactPDF.BlobProvider>) {
   const pdf = usePDF()
   return (
     <pdf.BlobProvider

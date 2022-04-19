@@ -150,7 +150,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
 
   private _lastEmittedChange = -1
   private _triggerOnChange(save = true) {
-    setImmediate(() => {
+    Promise.resolve().then(() => {
       if (this._lastEmittedChange === this._changeCounter) return
       this._lastEmittedChange = this._changeCounter
       if (save) this._save()
@@ -164,7 +164,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
   private _lastSavedChange = -1
   private _saving = false
   private _save() {
-    setImmediate(() => {
+    Promise.resolve().then(() => {
       if (this._lastSavedChange === this._changeCounter || this._saving) return
       this._saving = true
 

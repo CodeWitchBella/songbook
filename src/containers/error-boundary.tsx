@@ -1,5 +1,5 @@
 import { RootView, TText } from 'components/themed'
-import { Component, useEffect } from 'react'
+import React, { Component, useEffect } from 'react'
 import { useHistory } from 'react-router'
 let Raven: any = null
 
@@ -19,7 +19,9 @@ function Fallback({ reset }: { reset: () => void }) {
   )
 }
 
-export default class ErrorBoundary extends Component {
+export default class ErrorBoundary extends Component<{
+  children: React.ReactNode
+}> {
   state = { hasError: false }
 
   static getDerivedStateFromError() {
