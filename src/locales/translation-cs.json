@@ -26,12 +26,17 @@
   "count-pages-songs_songs_2": "{{count}} písní",
   "create": {
     "{{a}}, or {{b}}": "{{a}} nebo {{b}}",
+    "Cancel": "Zrušit",
+    "Confirm": "Budiž",
     "Create": "Vytvořit",
+    "Download": "Stáhnout",
+    "Failed to save the song": "Uložení písně selhalo.",
     "Link": "Odkaz",
     "Links other than {{services}} are not supported": "Jiné odkazy než {{services}} nejsou podporované",
     "Manually": "Ručně",
     "Song author": "Autor písně",
     "Song name": "Jméno písně",
+    "Text": "Text",
     "Using link": "Z odkazu"
   },
   "Create account": "Vytvořit účet",

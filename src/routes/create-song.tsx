@@ -19,12 +19,16 @@ const FormWrap = styled.div({
   display: 'flex',
   justifyContent: 'center',
   marginTop: '50px',
+  maxWidth: '100%',
 })
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   font-size: 18px;
+  max-width: calc(100% - 16px);
+  width: 43ch;
+  padding: 8px;
 `
 
 const types: { [type: string]: JSX.Element } = {
@@ -55,6 +59,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     minHeight: 350,
+    maxWidth: '100%',
   },
 })
 
@@ -158,42 +163,102 @@ function getURLFromSearch(search: string) {
   )
 }
 
+const createStyles = StyleSheet.create({
+  label: {
+    fontWeight: 'bold',
+  },
+  line: {
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+  },
+  error: {
+    color: 'red',
+    paddingVertical: 16,
+    fontSize: 16,
+  },
+})
+
 function CreateSongLink() {
   const location = useLocation()
   const [link, setLink] = useState(getURLFromSearch(location.search))
   const [error, setError] = useState('')
   const newSong = useNewSong()
   const { t } = useTranslation()
-  const { submit, disabled } = useSubmit(async () => {
+  const [downloadedSong, setDownloadedSong] = useState<{
+    author: string
+    title: string
+    text: string
+    extraNonSearchable: string
+  } | null>(null)
+  const form1 = useSubmit(async () => {
     setError('')
     const song = await songFromLink(link, t)
     if (typeof song === 'string') {
       setError(song)
       return false
     }
-    return newSong(song).then(({ slug }) => slug)
+    setDownloadedSong(song)
+    return false
+  })
+
+  const form2 = useSubmit(async () => {
+    setError('')
+    if (!downloadedSong) return false
+    return newSong(downloadedSong).then(
+      ({ slug }) => slug,
+      () => {
+        setError(t('create.Failed to save the song'))
+        return false
+      },
+    )
   })
   return (
     <FormWrap>
-      <Form onSubmit={submit}>
-        <LargeInput label={t('create.Link')} value={link} onChange={setLink} />
-        <PrimaryButton disabled={disabled} onPress={submit}>
-          {t('create.Create')}
-        </PrimaryButton>
-        <button css={{ display: 'none' }} />
-        <TText
-          style={{
-            color: 'red',
-            paddingVertical: 16,
-            paddingHorizontal: 8,
-            fontSize: 16,
-            width: '43ch',
-            maxWidth: '100%',
-          }}
-        >
-          {error}
-        </TText>
-      </Form>
+      {downloadedSong ? (
+        <Form onSubmit={form2.submit}>
+          <TText style={createStyles.error}>{error}</TText>
+          <TText style={createStyles.line}>
+            <TText style={createStyles.label}>{t('create.Song name')}:</TText>{' '}
+            {downloadedSong.title}
+          </TText>
+          <TText style={createStyles.line}>
+            <TText style={createStyles.label}>{t('create.Song author')}:</TText>{' '}
+            {downloadedSong.author}
+          </TText>
+          <TText style={createStyles.line}>
+            <TText style={createStyles.label}>{t('create.Text')}:</TText>{' '}
+          </TText>
+          <TText style={createStyles.text}>{downloadedSong.text}</TText>
+          <button disabled={form2.disabled} css={{ display: 'none' }} />
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <PrimaryButton disabled={form2.disabled}>
+              {t('create.Cancel')}
+            </PrimaryButton>
+            <PrimaryButton
+              disabled={form2.disabled}
+              onPress={form2.submit}
+              style={{ marginLeft: 8 }}
+            >
+              {t('create.Confirm')}
+            </PrimaryButton>
+          </View>
+        </Form>
+      ) : (
+        <Form onSubmit={form1.submit}>
+          <LargeInput
+            label={t('create.Link')}
+            value={link}
+            onChange={setLink}
+          />
+          <PrimaryButton disabled={form1.disabled} onPress={form1.submit}>
+            {t('create.Download')}
+          </PrimaryButton>
+          <button disabled={form1.disabled} css={{ display: 'none' }} />
+          <TText style={createStyles.error}>{error}</TText>
+        </Form>
+      )}
     </FormWrap>
   )
 }

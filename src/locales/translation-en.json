@@ -24,12 +24,17 @@
   "count-pages-songs_songs_other": "{{count}} songs",
   "create": {
     "{{a}}, or {{b}}": "{{a}}, or {{b}}",
+    "Cancel": "Cancel",
+    "Confirm": "Confirm",
     "Create": "Create",
+    "Download": "Download",
+    "Failed to save the song": "Failed to save the song",
     "Link": "Link",
     "Links other than {{services}} are not supported": "Links other than {{services}} are not supported",
     "Manually": "Manually",
     "Song author": "Song author",
     "Song name": "Song name",
+    "Text": "Text",
     "Using link": "Using link"
   },
   "Create account": "Create account",
