@@ -13,6 +13,11 @@ export default defineConfig({
     shimReactPdf(),
     VitePWA({
       strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'service-worker.ts',
+      injectManifest: {
+        maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
+      },
     }),
   ],
   resolve: {
