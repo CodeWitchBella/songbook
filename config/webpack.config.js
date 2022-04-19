@@ -295,7 +295,7 @@ module.exports = function (webpackEnv) {
         stream: require.resolve('stream-browserify'),
         util: require.resolve('util'),
         buffer: require.resolve('buffer'),
-        asset: require.resolve('assert'),
+        assert: require.resolve('assert'),
       },
     },
     module: {

@@ -1,7 +1,6 @@
 import React, { useRef } from 'react'
 import { View, TextInput, StyleSheet } from 'react-native'
 import { BasicButton } from './interactive/basic-button'
-import { Svg, Path } from 'react-native-svg'
 import { useBasicStyle } from './themed'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -80,16 +79,16 @@ function ClearButton({ onPress }: { onPress: () => void }) {
       }}
       onPress={onPress}
     >
-      <Svg viewBox="0 0 47.271 47.271" height="25" width="25">
-        <Path
+      <svg viewBox="0 0 47.271 47.271" height="25" width="25">
+        <path
           fill="currentColor"
           d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z"
         />
-        <Path
+        <path
           fill="currentColor"
           d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z"
         />
-      </Svg>
+      </svg>
     </BasicButton>
   )
 }

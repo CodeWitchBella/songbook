@@ -7,37 +7,20 @@ import ErrorBoundary from 'containers/error-boundary'
 import { NotFound } from 'components/error-page'
 
 const imports = {
-  CollectionList: once(
-    () =>
-      import(/* webpackChunkName: "r-collection-list" */ './collection-list'),
-  ),
-  Collection: once(
-    () => import(/* webpackChunkName: "r-collection" */ './collection'),
-  ),
-  AllSongs: once(
-    () => import(/* webpackChunkName: "r-all-songs" */ './all-songs'),
-  ),
-  Home: once(() => import(/* webpackChunkName: "r-home" */ './home')),
-  Logo: once(() => import(/* webpackChunkName: "r-logo" */ './logo')),
-  Song: once(() => import(/* webpackChunkName: "r-song" */ './song')),
-  AddToCollection: once(
-    () => import(/* webpackChunkName: "r-song" */ './add-to-collection'),
-  ),
-  CreateSong: once(
-    () => import(/* webpackChunkName: "r-create-song" */ './create-song'),
-  ),
-  EditSong: once(
-    () => import(/* webpackChunkName: "r-edit-song" */ './edit-song'),
-  ),
-  Changelog: once(
-    () => import(/* webpackChunkName: "r-changelog" */ './changelog'),
-  ),
-  Login: once(() => import(/* webpackChunkName: "r-login" */ './login')),
-  Register: once(
-    () => import(/* webpackChunkName: "r-register" */ './register'),
-  ),
-  Credits: once(() => import(/* webpackChunkName: "r-credits" */ './credits')),
-  About: once(() => import(/* webpackChunkName: "r-about" */ './about')),
+  CollectionList: once(() => import('./collection-list')),
+  Collection: once(() => import('./collection')),
+  AllSongs: once(() => import('./all-songs')),
+  Home: once(() => import('./home')),
+  Logo: once(() => import('./logo')),
+  Song: once(() => import('./song')),
+  AddToCollection: once(() => import('./add-to-collection')),
+  CreateSong: once(() => import('./create-song')),
+  EditSong: once(() => import('./edit-song')),
+  Changelog: once(() => import('./changelog')),
+  Login: once(() => import('./login')),
+  Register: once(() => import('./register')),
+  Credits: once(() => import('./credits')),
+  About: once(() => import('./about')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)

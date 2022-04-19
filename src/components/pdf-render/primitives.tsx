@@ -19,9 +19,12 @@ import { pdfSetup } from './pdf-setup'
 import { once } from 'utils/utils'
 import { useColors } from 'components/themed'
 
-const InPdfCtx = createContext<typeof import('@react-pdf/renderer') | null>(
-  null,
-)
+// prettier-ignore
+const InPdfCtx = createContext<Pick<
+  typeof import('@react-pdf/renderer'),
+  'default' | 'BlobProvider' | 'Font' | 'PDFDownloadLink' | 'PDFViewer' | 'StyleSheet' | 'pdf' | 'renderToFile' | 'renderToStream' | 'renderToString' | 'usePDF' | 'version'
+  // | 'createRenderer' | 'render'
+> | null>(null)
 
 export type PropsOf<T extends React.ComponentType<any>> =
   T extends React.ComponentType<infer P> ? P : never
@@ -89,7 +92,7 @@ export function View({
 }) {
   const pdf = useContext(InPdfCtx)
   if (!pdf) return <RNView {...rest} style={style} />
-  return <pdf.View {...rest} style={viewStyleForPDF(style)} />
+  return <pdf.default.View {...rest} style={viewStyleForPDF(style)} />
 }
 export function Text({
   style,
@@ -102,7 +105,7 @@ export function Text({
   if (!pdf) {
     return <RNText {...rest} style={[{ color: colors.text }, style]} />
   }
-  return <pdf.Text {...rest} style={textStyleForPDF(style)} />
+  return <pdf.default.Text {...rest} style={textStyleForPDF(style)} />
 }
 
 export function Image(
@@ -113,7 +116,7 @@ export function Image(
 ) {
   const pdf = useContext(InPdfCtx)
   const { source, ...rest } = props
-  if (pdf) return <pdf.Image src={source} {...rest} />
+  if (pdf) return <pdf.default.Image src={source} {...rest} />
   return <RNImage source={{ uri: source }} {...rest} />
 }
 
@@ -121,13 +124,13 @@ export function PDFDocument(
   props: PropsWithChildren<PropsOf<typeof ReactPDF.Document>>,
 ) {
   const pdf = usePDF()
-  return <pdf.Document {...props} />
+  return <pdf.default.Document {...props} />
 }
 export function PDFPage(
   props: PropsWithChildren<PropsOf<typeof ReactPDF.Page>>,
 ) {
   const pdf = usePDF()
-  return <pdf.Page {...props} />
+  return <pdf.default.Page {...props} />
 }
 
 export function PDFBlobProvider({

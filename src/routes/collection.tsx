@@ -24,6 +24,7 @@ function useColectionWithSet(slug: string) {
 export default function Collection() {
   const params = useParams()
   const slug = params.slug + (params.slug2 ? '/' + params.slug2 : '')
+  console.log(slug)
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id: string) => set?.has(id) || false, [set])

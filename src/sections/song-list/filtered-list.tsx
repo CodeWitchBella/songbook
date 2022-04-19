@@ -4,7 +4,8 @@ import { notNull } from '@codewitchbella/ts-utils'
 import getFilteredSongList, { SearchableSong } from './alg'
 import { SongType } from 'store/store-song'
 
-const SearchWorker = () => new Worker(new URL('./worker', import.meta.url))
+const SearchWorker = () =>
+  new Worker(new URL('./worker', import.meta.url), { type: 'module' })
 
 const getWorker = (() => {
   let worker: null | ReturnType<typeof SearchWorker> = null
