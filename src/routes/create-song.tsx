@@ -6,7 +6,7 @@ import { LargeInput } from 'components/input'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { BasicButton } from 'components/interactive/basic-button'
 import { useNewSong } from 'store/store'
-import { useLocation, useRouteMatch } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { View, StyleSheet } from 'react-native'
 import { songFromLink } from 'utils/song-from-link'
 import { ErrorPage, NotFound } from 'components/error-page'
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 })
 
 export default function CreateSong() {
-  const { params } = useRouteMatch<{ type?: string }>()
+  const params = useParams<{ type?: string }>()
   const { t } = useTranslation()
   const type = params.type ?? 'switch'
   const login = useLogin()
@@ -85,7 +85,7 @@ export default function CreateSong() {
 }
 
 function SwitchButton({ type, children }: { type: string; children: string }) {
-  const { params } = useRouteMatch<{ type?: string }>()
+  const params = useParams<{ type?: string }>()
   const activeType = params.type ?? 'switch'
   return (
     <BasicButton

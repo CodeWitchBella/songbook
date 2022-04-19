@@ -1,14 +1,14 @@
 /** @jsxImportSource @emotion/react */
 
-import { useMemo, PropsWithChildren } from 'react'
+import { useMemo, PropsWithChildren, useRef, useEffect } from 'react'
 import TopMenu from 'components/top-menu'
 import { useSongList } from 'store/store'
 import { SongType } from 'store/store-song'
 import { FilteredList } from './filtered-list'
-import useRouter, { useQueryParam } from 'components/use-router'
+import { useQueryParam } from 'components/use-router'
 import { DownloadPDF } from 'components/pdf'
 import { BackButton, BackArrow } from 'components/back-button'
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { SearchTextInput } from 'components/search-text-input'
 import { RootView, useBasicStyle } from 'components/themed'
 import { View } from 'react-native'
@@ -146,37 +146,40 @@ export default function SongList({
     [filter, sortByAuthor, source],
   )
 
-  const router = useRouter()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const clearOnBackRef = useRef((location.state as any)?.clearOnBack)
+  useEffect(() => {
+    clearOnBackRef.current = (location.state as any)?.clearOnBack
+  })
 
   const [search, setSearch] = useQueryParam('q')
-  const location = useLocation()
 
   return (
     <RootView>
       <Search
         text={search || ''}
         onChange={(v) => {
-          const { state } = router.location
-          if (
-            typeof state === 'object' &&
-            state &&
-            (state as any).goBackOnClear
-          ) {
+          if (clearOnBackRef.current) {
             if (v) {
               setSearch(v, { push: false })
+              clearOnBackRef.current = true
             } else {
-              router.history.goBack()
+              navigate(-1)
+              clearOnBackRef.current = false
             }
           } else {
             if (v) {
+              clearOnBackRef.current = true
               setSearch(v, {
                 push: true,
                 state: {
-                  goBackOnClear: true,
+                  clearOnBack: true,
                   canGoBack: (location.state as any)?.canGoBack ? 2 : undefined,
                 },
               })
             } else {
+              clearOnBackRef.current = false
               setSearch(null)
             }
           }

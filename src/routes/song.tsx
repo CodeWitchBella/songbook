@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import Song from 'sections/song/song'
 import { ScrollToTopOnMount } from 'components/scroll'
+import { useParams } from 'react-router'
+import { NotFound } from 'components/error-page'
 
-const SongRoute = ({ slug }: { slug: string }) => {
+function SongRoute() {
+  const { slug } = useParams()
   useWakeLock()
+  if (!slug) return <NotFound />
   return (
     <main>
       <ScrollToTopOnMount />

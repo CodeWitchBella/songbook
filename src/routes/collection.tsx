@@ -6,6 +6,7 @@ import { useMemo, useCallback, useEffect } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { TText } from 'components/themed'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
 
 const emptyArray: never[] = []
 function useColectionWithSet(slug: string) {
@@ -20,7 +21,9 @@ function useColectionWithSet(slug: string) {
   return { set, ...collection }
 }
 
-export default function Collection({ slug }: { slug: string }) {
+export default function Collection() {
+  const params = useParams()
+  const slug = params.slug + (params.slug2 ? '/' + params.slug2 : '')
   const collection = useColectionWithSet(slug)
   const set = collection?.set
   const filter = useCallback((id: string) => set?.has(id) || false, [set])

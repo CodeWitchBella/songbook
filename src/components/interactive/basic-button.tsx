@@ -1,11 +1,11 @@
-import React, { PropsWithChildren, useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
 import {
   StyleProp,
   TextStyle,
   GestureResponderEvent,
   Pressable,
 } from 'react-native'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
 import { TText, useColors } from 'components/themed'
 import { isPressOverriden, useInPressOutside } from './press-outside'
@@ -30,7 +30,7 @@ export function useLinkOnPress(
   to: string,
   { replace = false }: { replace?: boolean } = {},
 ) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return useCallback(
     (event?: { preventDefault?: () => any }) => {
@@ -39,14 +39,10 @@ export function useLinkOnPress(
         window.open(to, '_blank', 'noopener,noreferrer')
       } else {
         updateAfterNavigate()
-        if (replace) {
-          history.replace(to, { canGoBack: true })
-        } else {
-          history.push(to, { canGoBack: true })
-        }
+        navigate(to, { state: { canGoBack: true }, replace })
       }
     },
-    [history, replace, to, updateAfterNavigate],
+    [navigate, replace, to, updateAfterNavigate],
   )
 }
 

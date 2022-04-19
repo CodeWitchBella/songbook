@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { Link, LinkProps, useHistory } from 'react-router-dom'
+import { Link, LinkProps, useLocation, useNavigate } from 'react-router-dom'
 import {
   PlayButton,
   Burger,
@@ -134,7 +134,8 @@ export default function SongMenu({
     else if (transposition <= -12) setTransposition(transposition + 12)
   })
   const [info, setInfo] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
+  const location = useLocation()
   const getRandomSong = useGetRandomSong()
   const menuStyle = useMenuStyle()
 
@@ -173,7 +174,7 @@ export default function SongMenu({
             <MenuButton
               onClick={() => {
                 const nextSong = getRandomSong(song.id)
-                const canGoBackRaw = (history.location.state as any)?.canGoBack
+                const canGoBackRaw = (location.state as any)?.canGoBack
                 let canGoBack =
                   typeof canGoBackRaw === 'number'
                     ? canGoBackRaw
@@ -181,17 +182,16 @@ export default function SongMenu({
                     ? 1
                     : 0
                 if (!canGoBack) {
-                  const location = history.location
-                  history.replace('/all-songs')
-                  history.push(
+                  navigate('/all-songs', { replace: true })
+                  navigate(
                     location.pathname + location.search + location.hash,
-                    location.state,
+                    { state: location.state },
                   )
                   canGoBack = 1
                 }
 
-                history.push('/song/' + nextSong.item.slug, {
-                  canGoBack: canGoBack + 1,
+                navigate('/song/' + nextSong.item.slug, {
+                  state: { canGoBack: canGoBack + 1 },
                 })
               }}
             >

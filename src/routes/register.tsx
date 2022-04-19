@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useLogin } from 'components/use-login'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { LargeInput } from 'components/input'
 import { BackButton, BackArrow } from 'components/back-button'
@@ -16,7 +16,7 @@ export default function Register() {
   const { t } = useTranslation()
   const login = useLogin()
   const [status, setStatus] = useState('')
-  const history = useHistory()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -44,7 +44,8 @@ export default function Register() {
       .register(email, password, name)
       .then((result) => {
         setStatus(result || '')
-        if (!result) history.replace('/login', { canGoBack: true })
+        if (!result)
+          navigate('/login', { replace: true, state: { canGoBack: true } })
       })
       .catch((e) => {
         console.error(e)

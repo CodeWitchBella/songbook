@@ -1,28 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import { keyframes } from '@emotion/react'
 import { PropsWithChildren } from 'react'
-import { useHistory, useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
 import { StyleProp, TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
 
 export function useGoBack(to = '/') {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   const updateAfterNavigate = useUpdateAfterNavigate()
   return () => {
     const canGoBack = location.state && (location.state as any).canGoBack
     updateAfterNavigate()
     if (canGoBack) {
-      history.go(typeof canGoBack === 'number' ? -canGoBack : -1)
+      navigate(typeof canGoBack === 'number' ? -canGoBack : -1)
     } else {
-      const location = history.location
-      history.replace(to)
-      history.push(
-        location.pathname + location.search + location.hash,
-        location.state,
-      )
-      history.go(-1)
+      navigate(to, { replace: true })
+      navigate(location.pathname + location.search + location.hash, {
+        state: location.state,
+      })
+      navigate(-1)
     }
   }
 }

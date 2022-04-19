@@ -17,6 +17,8 @@ import { BackButton, BackArrow } from 'components/back-button'
 import { RootView, TH2, TH3, TP, TText } from 'components/themed'
 import { ListButton } from 'components/interactive/list-button'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router'
+import { NotFound } from 'components/error-page'
 
 const Form = styled.form`
   display: flex;
@@ -500,8 +502,10 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     </Columns>
   )
 }
-export default function EditSongRoute({ slug }: { slug: string }) {
-  const { song, methods } = useSong({ slug })
+export default function EditSongRoute() {
+  const { slug } = useParams()
+  const { song, methods } = useSong({ slug: slug || '' })
+  if (!slug) return <NotFound />
   if (!song || !methods) return <div>Píseň nenalezena</div>
 
   return (

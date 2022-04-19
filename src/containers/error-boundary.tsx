@@ -1,11 +1,14 @@
 import { RootView, TText } from 'components/themed'
-import React, { Component, useEffect } from 'react'
-import { useHistory } from 'react-router'
+import React, { Component, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router'
 let Raven: any = null
 
 function Fallback({ reset }: { reset: () => void }) {
-  const history = useHistory()
-  useEffect(() => history.listen(reset), [history, reset])
+  const location = useLocation()
+  const last = useRef(location)
+  useEffect(() => {
+    if (last.current !== location) reset()
+  }, [location, reset])
   return (
     <RootView
       style={{
