@@ -76,10 +76,11 @@
     }
   ],
   "start_url": "/installed-home",
+  "id": "/installed-home",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["minimal-ui"],
-  "background_color": "#FFFFFF",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#9917da",
   "theme_color": "#9917da",
   "orientation": "portrait",
   "share_target": {
