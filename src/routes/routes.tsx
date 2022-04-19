@@ -77,7 +77,8 @@ function AppRoutes() {
         <Route path="add-to-collection/:slug" element={<AddToCollection />} />
         <Route path="collections" element={<CollectionList />} />
 
-        <Route path="collections/:slug/:slug2?" element={<Collection />} />
+        <Route path="collections/:slug/:slug2" element={<Collection />} />
+        <Route path="collections/:slug" element={<Collection />} />
         <Route path="song/:slug" element={<Song />} />
         <Route path="new" element={<CreateSong />} />
         <Route path="new/:type" element={<CreateSong />} />
