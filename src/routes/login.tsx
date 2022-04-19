@@ -75,7 +75,7 @@ export default function Login() {
               <TText style={{ fontSize: 16 }}>
                 <Trans>
                   I don't have account,{' '}
-                  <InlineLink to="register">register</InlineLink>
+                  <InlineLink to="/register">register</InlineLink>
                 </Trans>
               </TText>
             </View>

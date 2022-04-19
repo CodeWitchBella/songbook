@@ -67,9 +67,9 @@ export default function CreateSong() {
     return (
       <ErrorPage text={t('You have to be logged in to add a song')}>
         <View style={{ flexDirection: 'row', marginTop: 8, marginBottom: 4 }}>
-          <ListButton to="login">{t('Log in')}</ListButton>
+          <ListButton to="/login">{t('Log in')}</ListButton>
           <View style={{ width: 16 }} />
-          <ListButton to="register">{t('Register')}</ListButton>
+          <ListButton to="/register">{t('Register')}</ListButton>
         </View>
       </ErrorPage>
     )

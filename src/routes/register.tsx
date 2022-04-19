@@ -103,7 +103,7 @@ export default function Register() {
               <TText style={{ fontSize: 16 }}>
                 <Trans>
                   I already have account,{' '}
-                  <InlineLink to="login">log in</InlineLink>
+                  <InlineLink to="/login">log in</InlineLink>
                 </Trans>
               </TText>
             </View>

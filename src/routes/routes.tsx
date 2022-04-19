@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router'
+import { Routes, Route, useLocation, Navigate } from 'react-router'
 import { getGraphqlUrl } from 'store/graphql'
-import InstalledHome from './installed-home'
 import { RouteRenderedMarker } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
 import { NotFound } from 'components/error-page'
@@ -51,7 +50,10 @@ function AppRoutes() {
       <Routes>
         <Route index={true} element={<Home />} />
         <Route path="logo" element={<Logo />} />
-        <Route path="installed-home" element={<InstalledHome />} />
+        <Route
+          path="installed-home"
+          element={<Navigate to="/" replace={true} />}
+        />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="all-songs" element={<AllSongs />} />
