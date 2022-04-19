@@ -1,11 +1,15 @@
 import React, { useContext, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
 import { PrimaryButton } from './interactive/primary-button'
+import { useTranslation } from 'react-i18next'
 
 type State = { install?: (() => void) | null }
 const Ctx = React.createContext({} as State)
 
-export class InstallProvider extends React.Component<{}, State> {
+export class InstallProvider extends React.Component<
+  { children: React.ReactNode },
+  State
+> {
   state: State = {}
   render() {
     return <Ctx.Provider value={this.state}>{this.props.children}</Ctx.Provider>
@@ -53,13 +57,14 @@ const InstallContainer = styled.div`
 
 export const InstallButtonLook = ({ children }: PropsWithChildren<{}>) => {
   const install = useInstall()
+  const [t] = useTranslation()
   if (!install) return null
 
   return (
     <>
       <InstallContainer>
         <PrimaryButton onPress={install ?? undefined}>
-          Nainstalovat jako appku
+          {t('Install as an app')}
         </PrimaryButton>
       </InstallContainer>
       {children}

@@ -18,7 +18,10 @@
   },
   "Collections": "Collections",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) and $t(count-pages-songs_pages, {\"count\": {{pagesNum}} })",
-  "Create account": "Create account",
+  "count-pages-songs_pages_one": "{{count}} page",
+  "count-pages-songs_pages_other": "{{count}} pages",
+  "count-pages-songs_songs_one": "{{count}} song",
+  "count-pages-songs_songs_other": "{{count}} songs",
   "create": {
     "{{a}}, or {{b}}": "{{a}}, or {{b}}",
     "Create": "Create",
@@ -29,6 +32,7 @@
     "Song name": "Song name",
     "Using link": "Using link"
   },
+  "Create account": "Create account",
   "Created by <2>Isabella Skořepová</2>": "Created by <2>Isabella Skořepová</2>",
   "credits-blurp <1>author</1>": "Most songbook functionality including, but not limited to PDF export, song editing, song display and transposition was implemented by <1>Isabella Skořepová</1>",
   "Current version": "Current version",
@@ -67,17 +71,18 @@
     "Inserted: {{date}}": "Inserted: {{date}}",
     "Last edit: {{date}}": "Last edit: {{date}}"
   },
+  "Install as an app": "Install as an app",
   "Invalid email": "Invalid email",
   "Language": "Language",
   "Light": "Light",
   "Log in": "Log in",
   "Log out": "Log out",
-  "login-screen-title": "Log in",
   "login": {
     "back-to-homepage": "Back to home page",
     "complete": "You are logged in! 🎉",
     "Your name: {{name}}": "Your name: {{name}}"
   },
+  "login-screen-title": "Log in",
   "My account": "My account",
   "Name has to be at least four characters long": "Name has to be at least four characters long",
   "other-icons": "Some other icons are taken from other sources, but I unfortunately don't remember from where and neither do I remember which I made :-(",
@@ -105,9 +110,5 @@
   "Sort by name": "Sort by name",
   "Suggestions": "Suggestions",
   "Type to search": "Type to search",
-  "You have to be logged in to add a song": "You have to be logged in to add a song",
-  "count-pages-songs_songs_one": "{{count}} song",
-  "count-pages-songs_songs_other": "{{count}} songs",
-  "count-pages-songs_pages_one": "{{count}} page",
-  "count-pages-songs_pages_other": "{{count}} pages"
+  "You have to be logged in to add a song": "You have to be logged in to add a song"
 }

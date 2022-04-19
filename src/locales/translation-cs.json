@@ -18,7 +18,12 @@
   },
   "Collections": "Seznam kolekcí",
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) a $t(count-pages-songs_page, {\"count\": {{pagesNum}} })",
-  "Create account": "Vytvořit účet",
+  "count-pages-songs_page": "{{count}} strana",
+  "count-pages-songs_page_1": "{{count}} strany",
+  "count-pages-songs_page_2": "{{count}} stran",
+  "count-pages-songs_songs": "{{count}} píseň",
+  "count-pages-songs_songs_1": "{{count}} písně",
+  "count-pages-songs_songs_2": "{{count}} písní",
   "create": {
     "{{a}}, or {{b}}": "{{a}} nebo {{b}}",
     "Create": "Vytvořit",
@@ -29,6 +34,7 @@
     "Song name": "Jméno písně",
     "Using link": "Z odkazu"
   },
+  "Create account": "Vytvořit účet",
   "Created by <2>Isabella Skořepová</2>": "Vytvořila <2>Isabella Skořepová</2>",
   "credits-blurp <1>author</1>": "Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně vytvořila <1>Isabella Skořepová</1>",
   "Current version": "Aktuální verze",
@@ -67,17 +73,18 @@
     "Inserted: {{date}}": "Vloženo: {{date}}",
     "Last edit: {{date}}": "Poslední úprava: {{date}}"
   },
+  "Install as an app": "Nainstalovat jako appku",
   "Invalid email": "Neplatný email",
   "Language": "Jazyk",
   "Light": "Světlý",
   "Log in": "Přihlásit se",
   "Log out": "Odhlásit se",
-  "login-screen-title": "Přihlášení",
   "login": {
     "back-to-homepage": "Zpět na hlavní stránku",
     "complete": "Jsi přihlášen/a! 🎉",
     "Your name: {{name}}": "Tvé jméno: {{name}}"
   },
+  "login-screen-title": "Přihlášení",
   "My account": "Můj účet",
   "Name has to be at least four characters long": "Jméno musí mít aspoň 4 znaky",
   "other-icons": "Některé jiné ikonky jsem převzala odněkud a už si bohužel nepamatuji odkud. Ani už nevím, které jsem dělala já a které jsou převzaté :-(",
@@ -105,11 +112,5 @@
   "Sort by name": "Řadit podle názvu",
   "Suggestions": "Návrhy",
   "Type to search": "Vyhledávejte psaním",
-  "You have to be logged in to add a song": "Pro vytvoření písně musíš mít účet",
-  "count-pages-songs_songs": "{{count}} píseň",
-  "count-pages-songs_songs_1": "{{count}} písně",
-  "count-pages-songs_songs_2": "{{count}} písní",
-  "count-pages-songs_page": "{{count}} strana",
-  "count-pages-songs_page_1": "{{count}} strany",
-  "count-pages-songs_page_2": "{{count}} stran"
+  "You have to be logged in to add a song": "Pro vytvoření písně musíš mít účet"
 }
