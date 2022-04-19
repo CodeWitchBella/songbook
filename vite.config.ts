@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import shimReactPdf from 'vite-plugin-shim-react-pdf'
 import { VitePWA } from 'vite-plugin-pwa'
+import fs from 'fs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,13 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'service-worker.ts',
+      manifestFilename: 'manifest.json',
+      manifest: JSON.parse(
+        fs.readFileSync(
+          new URL('./src/manifest.json', import.meta.url),
+          'utf-8',
+        ),
+      ),
       injectManifest: {
         maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
       },
