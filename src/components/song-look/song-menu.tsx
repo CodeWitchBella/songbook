@@ -64,18 +64,10 @@ function MenuButton(
   return <button type="button" css={useMenuStyle()} {...props} />
 }
 
-function MenuLink(props: LinkProps<any>) {
+function MenuLink(props: LinkProps) {
   const to = props.to
   return (
-    <Link<any>
-      css={useMenuStyle()}
-      {...props}
-      to={(location) => {
-        const res = typeof to === 'function' ? to(location) : to
-        const obj = typeof res === 'string' ? { pathname: res } : res
-        return { ...obj, state: { canGoBack: true, ...obj.state } }
-      }}
-    />
+    <Link css={useMenuStyle()} {...props} to={to} state={{ canGoBack: true }} />
   )
 }
 
