@@ -33,6 +33,11 @@ const getChordsMap = (() => {
   }
 })()
 
+export function getChordDefinition(chordIn: string) {
+  const chord = chordIn.replace(/^B/, 'Bb').replace(/^H/, 'B').replace(/,$/, '')
+  return getChordsMap().get(chord)?.[0]
+}
+
 const instrument = {
   strings: 6,
   fretsOnChord: 4,
@@ -45,13 +50,12 @@ const instrument = {
 
 export function ChordHelp({
   close,
-  chord: chordIn,
+  chord,
 }: {
   close: () => void
   chord: string
 }) {
-  const chord = chordIn.replace(/^B/, 'Bb').replace(/^H/, 'B')
-  const def = getChordsMap().get(chord)?.[0]
+  const def = getChordDefinition(chord)
   const colors = useColors()
   if (!def) return null
 

@@ -5,7 +5,7 @@ import getFilteredSongList, { SearchableSong } from './alg'
 import { SongType } from 'store/store-song'
 
 const SearchWorker = () =>
-  new Worker(new URL('./worker', import.meta.url), { type: 'module' })
+  new Worker(new URL('./worker', import.meta.url), { type: 'classic' })
 
 const getWorker = (() => {
   let worker: null | ReturnType<typeof SearchWorker> = null

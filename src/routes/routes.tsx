@@ -20,6 +20,7 @@ const imports = {
   Register: once(() => import('./register')),
   Credits: once(() => import('./credits')),
   About: once(() => import('./about')),
+  Chords: once(() => import('./chords')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)
@@ -36,6 +37,7 @@ const Register = React.lazy(imports.Register)
 const AddToCollection = React.lazy(imports.AddToCollection)
 const Credits = React.lazy(imports.Credits)
 const About = React.lazy(imports.About)
+const Chords = React.lazy(imports.Chords)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -69,6 +71,7 @@ function AppRoutes() {
         <Route path="new/:type" element={<CreateSong />} />
         <Route path="edit/:slug" element={<EditSong />} />
         <Route path="changelog" element={<Changelog />} />
+        <Route path="chords" element={<Chords />} />
         <Route
           path="graphql"
           element={<AbsoluteRedirect to={getGraphqlUrl()} />}
