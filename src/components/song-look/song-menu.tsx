@@ -137,7 +137,9 @@ export default function SongMenu({
         {open ? (
           <>
             {transposition ? (
-              <TText style={[menuStyle, { borderWidth: 0 }]}>
+              <TText
+                style={[menuStyle, { borderStyle: 'dotted', borderWidth: 0 }]}
+              >
                 {transposition > 0 ? '+' : ''}
                 {transposition}
               </TText>
