@@ -5,11 +5,23 @@ import { View } from 'react-native'
 import * as parser from 'utils/song-parser/song-parser'
 import { useSongList } from 'store/store'
 import { getChordDefinition } from 'components/chord-help'
+import { Link } from 'react-router-dom'
 
+const ignore = new Set([
+  '|',
+  '',
+  'kapo',
+  'repeat',
+  'play',
+  '|:',
+  ':|',
+  '...',
+  '(brnk)',
+])
 export default function Chords() {
   const songs = useSongList()
   const unknownChords = useMemo(() => {
-    const ret = new Map<string, string>()
+    const ret = new Map<string, Set<string>>()
     for (const s of songs.songs) {
       const parsed = parser.parseSong('my', s.item.text)
       for (const page of parsed) {
@@ -18,9 +30,15 @@ export default function Chords() {
             for (const part of line.content) {
               if (part.ch) {
                 for (const chord of part.ch.replace(/^_/, '').split(' ')) {
-                  const ch = chord.replace(/,$/, '')
-                  if (!getChordDefinition(ch) && ch) {
-                    ret.set(ch, s.item.slug)
+                  const ch = chord.replace(/,$/, '').trim()
+                  if (
+                    !getChordDefinition(ch).def &&
+                    !ignore.has(ch) &&
+                    !/^[0-9]/.test(ch) &&
+                    !/^\(?x[0-9]/.test(ch)
+                  ) {
+                    if (!ret.has(ch)) ret.set(ch, new Set())
+                    ret.get(ch)!.add(s.item.slug)
                   }
                 }
               }
@@ -31,7 +49,10 @@ export default function Chords() {
     }
     return Array.from(ret.keys())
       .sort()
-      .map((key) => ({ chord: key, slug: ret.get(key) }))
+      .map((key) => ({
+        chord: key,
+        slugs: Array.from(ret.get(key)?.values() || []),
+      }))
   }, [songs.songs])
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -49,9 +70,14 @@ export default function Chords() {
           </BackButton>
           Unknown chords
         </TH2>
-        {unknownChords.map(({ chord, slug }) => (
+        {unknownChords.map(({ chord, slugs }) => (
           <TText key={chord}>
-            {JSON.stringify(chord)} ({chord.length}) {slug}
+            {JSON.stringify(chord)}{' '}
+            <View>
+              {slugs.map((slug) => (
+                <Link to={'/song/' + slug}>{slug}</Link>
+              ))}
+            </View>
           </TText>
         ))}
       </View>

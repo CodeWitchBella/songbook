@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import { Pressable } from 'react-native'
 import { Text } from './primitives'
 import { usePDFSettings } from './pdf-settings'
+import { getChordDefinition } from 'components/chord-help'
 
 const notes = [
   ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'H'],
@@ -51,7 +52,7 @@ export function Chord({
         return (
           <Fragment key={index}>
             {index !== 0 ? ' ' : null}
-            {onChordPress ? (
+            {onChordPress && getChordDefinition(transposed).def ? (
               <Pressable
                 onPress={() => onChordPress(transposed)}
                 style={{
