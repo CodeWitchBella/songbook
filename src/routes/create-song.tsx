@@ -208,7 +208,10 @@ function CreateSongLink() {
     <FormWrap>
       {downloadedSong ? (
         <ErrorBoundary>
-          <SubmitSong songData={downloadedSong} />
+          <SubmitSong
+            cancel={() => setDownloadedSong(null)}
+            songData={downloadedSong}
+          />
         </ErrorBoundary>
       ) : (
         <Form onSubmit={form.submit}>
@@ -228,7 +231,13 @@ function CreateSongLink() {
   )
 }
 
-function SubmitSong({ songData }: { songData: IntermediateSongData }) {
+function SubmitSong({
+  songData,
+  cancel,
+}: {
+  songData: IntermediateSongData
+  cancel: () => void
+}) {
   const { t } = useTranslation()
   const [error, setError] = useState('')
   const song = useMemo(() => convertToSong(songData), [songData])
@@ -266,7 +275,7 @@ function SubmitSong({ songData }: { songData: IntermediateSongData }) {
       <TText style={createStyles.text}>{song.text}</TText>
       <button disabled={form.disabled} css={{ display: 'none' }} />
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-        <PrimaryButton disabled={form.disabled}>
+        <PrimaryButton onPress={cancel} disabled={form.disabled}>
           {t('create.Cancel')}
         </PrimaryButton>
         <PrimaryButton
