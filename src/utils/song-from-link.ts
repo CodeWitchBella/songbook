@@ -1,13 +1,10 @@
 import type { TFunction } from 'react-i18next'
 import { getGraphqlUrl } from 'store/graphql'
 
-export async function songFromLink(
+export async function songDataFromLink(
   link: string,
   t: TFunction<'translation'>,
-): Promise<
-  | string
-  | { author: string; title: string; text: string; extraNonSearchable: string }
-> {
+) {
   const ug = link.startsWith('https://tabs.ultimate-guitar.com/tab/')
   const supermusic =
     link.startsWith('https://supermusic.cz') ||
@@ -38,15 +35,59 @@ export async function songFromLink(
     return 'Něco se pokazilo'
   }
   return {
+    ug,
     author,
     title,
-    text: ug ? convertUltimateGuitarBody(text) : text,
-    extraNonSearchable: link + '\n',
+    text,
+    link: link,
+  }
+}
+type NotString<T> = T extends string ? never : T
+export type IntermediateSongData = NotString<
+  Awaited<ReturnType<typeof songDataFromLink>>
+>
+
+export function convertToSong(songData: IntermediateSongData): {
+  author: string
+  title: string
+  text: string
+  extraNonSearchable: string
+} {
+  return {
+    author: songData.author,
+    title: songData.title,
+    text: songData.ug
+      ? convertUltimateGuitarBody(songData.text)
+      : songData.text,
+    extraNonSearchable: songData.link + '\n',
   }
 }
 
+const entities: { [key: string]: string } = {
+  '&quot;': '"',
+  '&laquo;': '«',
+  '&raquo;': '»',
+  '&ndash;': '–',
+  '&mdash;': '—',
+  '&lsquo;': '‘',
+  '&rsquo;': '’',
+  '&sbquo;': '‚',
+  '&ldquo;': '“',
+  '&rdquo;': '”',
+  '&bdquo;': '„',
+  '&hellip;': '…',
+  '&prime;': '′',
+  '&Prime;': '″',
+}
+function replaceHtmlEntities(text: string) {
+  return text.replace(
+    /&[a-z]+;/g,
+    (substring) => entities[substring] || substring,
+  )
+}
+
 function convertUltimateGuitarBody(text: string) {
-  const lines = text
+  const lines = replaceHtmlEntities(text)
     .replace(/\r\n/g, '\n')
     .replace(/\[\/?tab\]/g, '')
     .split('\n')
@@ -54,21 +95,29 @@ function convertUltimateGuitarBody(text: string) {
   let retLines: string[] = []
   while (lines.length > 0) {
     const line = lines.pop()!
-    if (line.trim().startsWith('[ch]') && lines.length > 0) {
-      const text = lines.pop()!
-      retLines.push(spliceLines(line, text))
+    if (line.trim().startsWith('[ch]')) {
+      const text = lines[lines.length - 1]
+      if (!text || text.trim().startsWith('[ch]')) {
+        retLines.push(spliceLines(line, ''))
+      } else {
+        lines.pop()
+        retLines.push(spliceLines(line, text))
+      }
     } else {
       retLines.push(line)
     }
   }
   return retLines
     .join('\n')
+    .replace(/\] +\[/g, ' ')
     .replace(/\[Chorus\] *\n*/gi, 'R: ')
     .replace(/\[Verse( [0-9]+)?\] *\n*/gi, 'S: ')
+    .replace(/\[(Interlude|Outro|Bridge|Intro)\] *\n*/gi, '[*$1] ')
 }
 
 function spliceLines(chordText: string, text: string) {
   const chords = parseChordLine(tokenizeChordLine(chordText)).reverse()
+  text = text.padEnd(chords[0]?.index ?? 0, ' ')
   for (const chord of chords) {
     text = `${text.substring(0, chord.index)}[${chord.text}]${text.substring(
       chord.index,

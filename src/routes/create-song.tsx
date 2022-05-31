@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from '@emotion/styled'
 import { LargeInput } from 'components/input'
 import { PrimaryButton } from 'components/interactive/primary-button'
@@ -8,12 +8,17 @@ import { BasicButton } from 'components/interactive/basic-button'
 import { useNewSong } from 'store/store'
 import { useLocation, useParams } from 'react-router-dom'
 import { View, StyleSheet } from 'react-native'
-import { songFromLink } from 'utils/song-from-link'
+import {
+  convertToSong,
+  IntermediateSongData,
+  songDataFromLink,
+} from 'utils/song-from-link'
 import { ErrorPage, NotFound } from 'components/error-page'
 import { RootView, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { ListButton } from 'components/interactive/list-button'
 import { useTranslation } from 'react-i18next'
+import ErrorBoundary from 'containers/error-boundary'
 
 const FormWrap = styled.div({
   display: 'flex',
@@ -184,17 +189,13 @@ function CreateSongLink() {
   const location = useLocation()
   const [link, setLink] = useState(getURLFromSearch(location.search))
   const [error, setError] = useState('')
-  const newSong = useNewSong()
+
   const { t } = useTranslation()
-  const [downloadedSong, setDownloadedSong] = useState<{
-    author: string
-    title: string
-    text: string
-    extraNonSearchable: string
-  } | null>(null)
-  const form1 = useSubmit(async () => {
+  const [downloadedSong, setDownloadedSong] =
+    useState<IntermediateSongData | null>(null)
+  const form = useSubmit(async () => {
     setError('')
-    const song = await songFromLink(link, t)
+    const song = await songDataFromLink(link, t)
     if (typeof song === 'string') {
       setError(song)
       return false
@@ -203,10 +204,39 @@ function CreateSongLink() {
     return false
   })
 
-  const form2 = useSubmit(async () => {
+  return (
+    <FormWrap>
+      {downloadedSong ? (
+        <ErrorBoundary>
+          <SubmitSong songData={downloadedSong} />
+        </ErrorBoundary>
+      ) : (
+        <Form onSubmit={form.submit}>
+          <LargeInput
+            label={t('create.Link')}
+            value={link}
+            onChange={setLink}
+          />
+          <PrimaryButton disabled={form.disabled} onPress={form.submit}>
+            {t('create.Download')}
+          </PrimaryButton>
+          <button disabled={form.disabled} css={{ display: 'none' }} />
+          <TText style={createStyles.error}>{error}</TText>
+        </Form>
+      )}
+    </FormWrap>
+  )
+}
+
+function SubmitSong({ songData }: { songData: IntermediateSongData }) {
+  const { t } = useTranslation()
+  const [error, setError] = useState('')
+  const song = useMemo(() => convertToSong(songData), [songData])
+  const newSong = useNewSong()
+
+  const form = useSubmit(async () => {
     setError('')
-    if (!downloadedSong) return false
-    return newSong(downloadedSong).then(
+    return newSong(song).then(
       ({ slug }) => slug,
       () => {
         setError(t('create.Failed to save the song'))
@@ -214,52 +244,40 @@ function CreateSongLink() {
       },
     )
   })
+
   return (
-    <FormWrap>
-      {downloadedSong ? (
-        <Form onSubmit={form2.submit}>
-          <TText style={createStyles.error}>{error}</TText>
-          <TText style={createStyles.line}>
-            <TText style={createStyles.label}>{t('create.Song name')}:</TText>{' '}
-            {downloadedSong.title}
-          </TText>
-          <TText style={createStyles.line}>
-            <TText style={createStyles.label}>{t('create.Song author')}:</TText>{' '}
-            {downloadedSong.author}
-          </TText>
-          <TText style={createStyles.line}>
-            <TText style={createStyles.label}>{t('create.Text')}:</TText>{' '}
-          </TText>
-          <TText style={createStyles.text}>{downloadedSong.text}</TText>
-          <button disabled={form2.disabled} css={{ display: 'none' }} />
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <PrimaryButton disabled={form2.disabled}>
-              {t('create.Cancel')}
-            </PrimaryButton>
-            <PrimaryButton
-              disabled={form2.disabled}
-              onPress={form2.submit}
-              style={{ marginLeft: 8 }}
-            >
-              {t('create.Confirm')}
-            </PrimaryButton>
-          </View>
-        </Form>
-      ) : (
-        <Form onSubmit={form1.submit}>
-          <LargeInput
-            label={t('create.Link')}
-            value={link}
-            onChange={setLink}
-          />
-          <PrimaryButton disabled={form1.disabled} onPress={form1.submit}>
-            {t('create.Download')}
-          </PrimaryButton>
-          <button disabled={form1.disabled} css={{ display: 'none' }} />
-          <TText style={createStyles.error}>{error}</TText>
-        </Form>
-      )}
-    </FormWrap>
+    <Form onSubmit={form.submit}>
+      <TText style={createStyles.error}>{error}</TText>
+      <TText style={createStyles.line}>
+        <TText style={createStyles.label}>{t('create.Song name')}:</TText>{' '}
+        {song.title}
+      </TText>
+      <TText style={createStyles.line}>
+        <TText style={createStyles.label}>{t('create.Link')}:</TText>{' '}
+        {songData.link}
+      </TText>
+      <TText style={createStyles.line}>
+        <TText style={createStyles.label}>{t('create.Song author')}:</TText>{' '}
+        {song.author}
+      </TText>
+      <TText style={createStyles.line}>
+        <TText style={createStyles.label}>{t('create.Text')}:</TText>{' '}
+      </TText>
+      <TText style={createStyles.text}>{song.text}</TText>
+      <button disabled={form.disabled} css={{ display: 'none' }} />
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+        <PrimaryButton disabled={form.disabled}>
+          {t('create.Cancel')}
+        </PrimaryButton>
+        <PrimaryButton
+          disabled={form.disabled}
+          onPress={form.submit}
+          style={{ marginLeft: 8 }}
+        >
+          {t('create.Confirm')}
+        </PrimaryButton>
+      </View>
+    </Form>
   )
 }
 
