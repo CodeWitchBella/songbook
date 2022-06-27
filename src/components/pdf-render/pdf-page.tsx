@@ -67,7 +67,7 @@ function NoopPage({ children }: PropsWithChildren<{}>) {
 
 export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
   const pagesCp = [...pages]
-  const realPages: (readonly [
+  const physicalPages: (readonly [
     readonly [JSX.Element, JSX.Element],
     readonly [JSX.Element, JSX.Element],
   ])[] = []
@@ -85,15 +85,15 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
         <PDFPage left={false} key={`booklet-${keygen++}`} />
       ),
     ] as const
-    realPages.push([a, b])
-    realPages.push([a, b])
+    physicalPages.push([a, b])
+    physicalPages.push([a, b])
   }
 
   const { pageSize } = usePDFSettings()
 
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
-      {realPages.map((page, i) => (
+      {physicalPages.map((page, i) => (
         <PrimitivePDFPage
           key={i}
           size={`A${pageSize - 2}` as $FixMe}

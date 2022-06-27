@@ -3,7 +3,7 @@ import { Line, Paragraph } from 'utils/song-parser/song-parser'
 import { usePDFSettings } from './pdf-settings'
 import { PDFPage } from './pdf-page'
 import { View, Text, PropsOf } from './primitives'
-import { notNull } from '@codewitchbella/ts-utils'
+import { notNull } from '@isbl/ts-utils'
 import { Chord } from './chord'
 import { BackButton, BackArrow } from 'components/back-button'
 

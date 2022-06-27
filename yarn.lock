@@ -1250,11 +1250,6 @@
   resolved "https://registry.yarnpkg.com/@chevrotain/utils/-/utils-10.1.2.tgz#d2fb7b968141139e5c2419553e5295382c265e7d"
   integrity sha512-bbZIpW6fdyf7FMaeDmw3cBbkTqsecxEkwlVKgVfqqXWBPLH6azxhPA2V9F7OhoZSVrsnMYw7QuyK6qutXPjEew==
 
-"@codewitchbella/ts-utils@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@codewitchbella/ts-utils/-/ts-utils-0.2.0.tgz#66f80377270714e53ac831d1baa3847ea47134d9"
-  integrity sha512-r202jqt9h9ae8JZbBs048r2ocLXAxmcV+dLqA1xawlQquskHrxuaL0Wl+aMm+HFgfaU/o13/Fo183Wkv9lkCDQ==
-
 "@emotion/babel-plugin@^11.7.1":
   version "11.9.2"
   resolved "https://registry.yarnpkg.com/@emotion/babel-plugin/-/babel-plugin-11.9.2.tgz#723b6d394c89fb2ef782229d92ba95a740576e95"
@@ -1788,6 +1783,11 @@
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
+
+"@isbl/ts-utils@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@isbl/ts-utils/-/ts-utils-1.0.1.tgz#dcb2668cca3c356bfe0f6d91e9dd2d079b82be68"
+  integrity sha512-wpZ1kDXfAM2ZVJ2ys/4o3hCUHVEx/cI9L1urXqHEsm5EPMRReJ03PRHG/pigb5tyvCo1Jn7aBcgztPnSCAfycA==
 
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.0.5"

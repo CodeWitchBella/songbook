@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import type ReactPDF from '@react-pdf/renderer'
 import type ReactPDFTypes from '@react-pdf/types/style'
-import { notNull } from '@codewitchbella/ts-utils'
+import { notNull } from '@isbl/ts-utils'
 import { pdfSetup } from './pdf-setup'
 import { once } from 'utils/utils'
 import { useColors } from 'components/themed'
@@ -56,6 +56,7 @@ function viewStyleForPDF(
       .flat()
       .map((t) => t ?? null)
       .filter(notNull)
+  if (!st.transform || st.transform.length < 1) return st as ReactPDFTypes.Style
   return {
     ...st,
     transform: st.transform

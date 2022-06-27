@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@codewitchbella/ts-utils": "^0.2.0",
     "@emotion/eslint-plugin": "^11.7.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@isbl/ts-utils": "^1.0.1",
     "@react-pdf/renderer": "^2.1.1",
     "@react-three/drei": "^9.4.3",
     "@react-three/fiber": "^8.0.12",

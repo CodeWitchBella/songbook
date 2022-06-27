@@ -12,6 +12,7 @@ export default defineConfig({
   plugins: [
     react(),
     shimReactPdf(),
+    myPlugin(),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
@@ -44,3 +45,20 @@ export default defineConfig({
     ],
   },
 })
+
+const file =
+  'node_modules/@react-pdf/unicode-properties/lib/unicode-properties.es.js'
+function myPlugin() {
+  return {
+    name: 'transform-file',
+
+    transform(src, id) {
+      if (id.endsWith(file)) {
+        return {
+          code: "import { Buffer } from 'buffer';" + src,
+          map: null, // provide source map if available
+        }
+      }
+    },
+  }
+}
