@@ -3,6 +3,7 @@ import { DateTime } from 'luxon'
 import deti21 from './deti21.png'
 import vedouci21 from './vedouci21.png'
 import extra21 from './extra21.png'
+import deti22 from './deti22.png'
 
 const titleMap: {
   [key: string]: {
@@ -63,6 +64,17 @@ const titleMap: {
     imageWidth: 30,
     imageOnly: false,
     image: extra21,
+  },
+  'Kačlehy 2022 Děti': {
+    title: 'Písně Aersgathské',
+    subtitle: 'MMXXII',
+    footer: 'Kačležský turnaj MMXXII',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    // source: https://blaedura-official.fandom.com/wiki/The_Weaver
+    image: deti22,
   },
 }
 

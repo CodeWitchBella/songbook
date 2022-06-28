@@ -10,7 +10,7 @@ import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
 import { PDFToc } from './pdf-toc'
-import { PDFBooklet } from './pdf-page'
+import { PDFBookletDouble, PDFBookletQuad } from './pdf-page'
 import { PDFProvider, PDFDocument, PDFBlobProvider } from './primitives'
 import { once } from 'utils/utils'
 import React from 'react'
@@ -216,7 +216,7 @@ export function PDFDownload({
   const delayedPages = [] as typeof songPages
   let songCounter = 0
   const [bookletV] = useQueryParam('booklet')
-  const booklet = bookletV !== null
+  const booklet = bookletV === null ? false : bookletV || 'true'
 
   for (const song of list) {
     songCounter += 1
@@ -284,7 +284,13 @@ export function PDFDownload({
           pageSize: pageSize,
         }}
       >
-        {booklet ? <PDFBooklet pages={pages} /> : pages}
+        {!booklet ? (
+          pages
+        ) : booklet === 'quad' ? (
+          <PDFBookletQuad pages={pages} />
+        ) : (
+          <PDFBookletDouble pages={pages} />
+        )}
       </PDFSettingsProvider>
     </PDFDocument>
   )
@@ -297,7 +303,10 @@ export function PDFDownload({
               blob={blob}
               onDone={onDone}
               slug={
-                slug + (booklet ? `-booklet-a${pageSize - 2}` : `-a${pageSize}`)
+                slug +
+                (booklet
+                  ? `-booklet-a${pageSize - (booklet === 'quad' ? 2 : 1)}`
+                  : `-a${pageSize}`)
               }
             />
           )

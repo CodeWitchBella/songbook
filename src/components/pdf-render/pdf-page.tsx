@@ -65,7 +65,7 @@ function NoopPage({ children }: PropsWithChildren<{}>) {
   return <View style={{ width: vw(100), height: vh(100) }}>{children}</View>
 }
 
-export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
+export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
   const pagesCp = [...pages]
   const physicalPages: (readonly [
     readonly [JSX.Element, JSX.Element],
@@ -124,6 +124,65 @@ export function PDFBooklet({ pages }: { pages: JSX.Element[] }) {
               }}
             >
               {page[1]}
+            </View>
+          </View>
+        </PrimitivePDFPage>
+      ))}
+    </pageContext.Provider>
+  )
+}
+
+export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
+  const pagesCp = [...pages]
+  const physicalPages: (readonly [JSX.Element, JSX.Element])[] = []
+  let keygen = 0
+  while (pagesCp.length > 0) {
+    physicalPages.push([
+      pagesCp.splice(pagesCp.length - 1, 1)[0],
+      pagesCp.splice(0, 1)[0] || (
+        <PDFPage left={false} key={`booklet-${keygen++}`} />
+      ),
+    ])
+    physicalPages.push([
+      pagesCp.splice(0, 1)[0] || (
+        <PDFPage left={false} key={`booklet-${keygen++}`} />
+      ),
+      pagesCp.splice(pagesCp.length - 1, 1)[0] || (
+        <PDFPage left={false} key={`booklet-${keygen++}`} />
+      ),
+    ])
+  }
+
+  const { pageSize } = usePDFSettings()
+
+  return (
+    <pageContext.Provider value={{ Page: NoopPage }}>
+      {physicalPages.map((page, i) => (
+        <PrimitivePDFPage
+          key={i}
+          size={`A${pageSize - 1}` as $FixMe}
+          orientation="portrait"
+          wrap={false}
+        >
+          <View
+            style={{
+              display: 'flex',
+              width: '100vw',
+              height: '100vh',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View
+              style={{
+                width: '100vh',
+                height: '100vw',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                transform: [{ rotate: i % 2 === 0 ? '90deg' : '-90deg' }],
+              }}
+            >
+              {page}
             </View>
           </View>
         </PrimitivePDFPage>
