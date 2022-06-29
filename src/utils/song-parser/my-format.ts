@@ -171,9 +171,12 @@ function parsePage(
   }
 }
 
-export function parseSongMyFormat(song: string): Paragraph[][] {
+export function parseSongMyFormat(
+  song: string,
+  requestedVariant: 'print' | 'digital' = 'print',
+): Paragraph[][] {
   let pCounter = 0
-  return song
+  const pages = song
     .trim()
     .split('--- page break ---')
     .map((page) => {
@@ -181,4 +184,63 @@ export function parseSongMyFormat(song: string): Paragraph[][] {
       pCounter = ret.pCounter
       return ret.page
     })
+  let chordsOff = false
+  let variant: 'print' | 'both' | 'digital' = 'both'
+
+  function handleCommand(cmd: string, args: readonly string[]) {
+    if (cmd === 'chords') {
+      chordsOff =
+        args[0] === 'off' ? true : args[0] === 'on' ? false : chordsOff
+    } else if (cmd === 'variant') {
+      if (!args[0]) variant = 'both'
+      else if (['print', 'both', 'digital'].includes(args[0]))
+        variant = args[0] as any
+    }
+  }
+
+  for (const page of pages) {
+    for (let paragraphI = 0; paragraphI < page.length; ++paragraphI) {
+      const paragraph = page[paragraphI]!
+      const commands = parseCommands(paragraph)
+      if (commands.length) {
+        for (const command of commands) {
+          handleCommand(command.cmd, command.args)
+        }
+        page.splice(paragraphI, 1)
+        paragraphI--
+        continue
+      }
+
+      for (const line of paragraph) {
+        for (const part of line.content) {
+          if (part.ch && chordsOff) part.ch = ''
+          if (variant !== 'both' && variant !== requestedVariant) {
+            part.ch = ''
+            part.text = ''
+          }
+        }
+        if (variant !== 'both' && variant !== requestedVariant) {
+          line.tag = null
+        }
+      }
+    }
+  }
+  return pages
+}
+
+function parseCommands(paragraph: Paragraph) {
+  const commands: { cmd: string; args: string[] }[] = []
+  for (const line of paragraph) {
+    if (!line.tag && line.content.length === 1) {
+      const part = line.content[0]!
+
+      if (part.ch.startsWith('>') && !part.text) {
+        const [cmd, ...args] = part.ch.slice(1).split(' ')
+        commands.push({ cmd, args })
+        continue
+      }
+    }
+    return []
+  }
+  return commands
 }

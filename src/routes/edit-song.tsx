@@ -465,6 +465,24 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             sekci jdou zobrazit kliknutím pravého tlačítka myši a nebo
             zmáčknutím klávesy F1.
           </TP>
+          <TP>
+            Dále existuje pár pokročilých příkazů, které jsou zatím
+            implementované tak napůl. Plán je mít možnost přepnout mezi
+            digitálním zobrazením ve kterém budou akordy všude a neboudou se
+            zobrazovat předěly stran a zobrazením pro tisk, které bude vypadat
+            jako doteď.
+          </TP>
+          <TP>
+            Příkaz musí být ve vlastní "sloce", tj. musí před ním i po něm být
+            volný řádek. Konkrétně jde o příkazy <b>{'[>chords'}&nbsp;off]</b> a{' '}
+            <b>{'[>chords'}&nbsp;on]</b>, které zapínají a vypínají zobrazování
+            akordů v tiskové verzi. Druhá sada příkazů je{' '}
+            <b>{'[>variant'}&nbsp;digital]</b>, <b>{'[>variant'}&nbsp;print]</b>{' '}
+            a <b>{'[>variant'}&nbsp;both]</b>, které přepínají mezi variantou
+            pro tisk a variantou pro "digitální" zobrazení. V současnosti jsou
+            příkazy implementované tak, že se vždy chovají jako ve variantě pro
+            tisk.
+          </TP>
           <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
         <Help
