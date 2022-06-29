@@ -271,7 +271,12 @@ export function PDFDownload({
         />
       </PDFSettingsProvider>
     )),
-    <PDFToc list={list} idToCounter={idToCounter} key="toc" />,
+    <PDFToc
+      list={list}
+      idToCounter={idToCounter}
+      key="toc"
+      booklet={booklet !== false}
+    />,
   ]
 
   const doc = (

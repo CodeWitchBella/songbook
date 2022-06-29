@@ -1,16 +1,20 @@
 import React from 'react'
 import { PDFPage } from './pdf-page'
-import { View } from './primitives'
+import { View, Text } from './primitives'
 import { usePDFSettings } from './pdf-settings'
-const Link: typeof import('@react-pdf/renderer').Link = 'LINK' as any
 
 export function PDFToc({
   list,
   idToCounter = new Map(),
+  booklet = false,
 }: {
   list: { title: string; author: string; id: string; text: string }[]
   idToCounter?: Map<string, number>
+  booklet?: boolean
 }) {
+  const Link: typeof import('@react-pdf/renderer').Link = (
+    booklet ? Text : 'LINK'
+  ) as any
   const { em } = usePDFSettings()
   let page = 1
   return (
@@ -45,7 +49,7 @@ export function PDFToc({
               }}
             >
               <Link
-                src={link as any}
+                src={booklet ? undefined : (link as any)}
                 style={{
                   fontSize: em(0.8),
                   textDecoration: 'none',
