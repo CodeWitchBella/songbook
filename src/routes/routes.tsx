@@ -21,6 +21,7 @@ const imports = {
   Credits: once(() => import('./credits')),
   About: once(() => import('./about')),
   Chords: once(() => import('./chords')),
+  CollectionDiff: once(() => import('./collection-diff')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)
@@ -38,6 +39,7 @@ const AddToCollection = React.lazy(imports.AddToCollection)
 const Credits = React.lazy(imports.Credits)
 const About = React.lazy(imports.About)
 const Chords = React.lazy(imports.Chords)
+const CollectionDiff = React.lazy(imports.CollectionDiff)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -76,6 +78,7 @@ function AppRoutes() {
           path="graphql"
           element={<AbsoluteRedirect to={getGraphqlUrl()} />}
         />
+        <Route path="diff" element={<CollectionDiff />} />
         <Route element={<NotFound />} />
       </Routes>
     </ErrorBoundary>
