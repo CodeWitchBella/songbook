@@ -4,6 +4,7 @@ import deti21 from './deti21.png'
 import vedouci21 from './vedouci21.png'
 import extra21 from './extra21.png'
 import deti22 from './deti22.png'
+import Vedouci22 from './vedouci22'
 
 const titleMap: {
   [key: string]: {
@@ -14,7 +15,7 @@ const titleMap: {
     imageViewPaddingTop: number
     imageWidth?: number
     imageOnly: boolean
-    image?: string
+    image?: string | ((props: any) => JSX.Element)
   }
 } = {
   'Kačlehy 2020 Děti': {
@@ -75,6 +76,16 @@ const titleMap: {
     imageOnly: false,
     // source: https://blaedura-official.fandom.com/wiki/The_Weaver
     image: deti22,
+  },
+  'Kačlehy 2022 Vedoucí': {
+    title: 'Uctívání kedluben',
+    subtitle: 'MMXXII',
+    footer: 'Sonomanceři od Kačleh MMXXII',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: Vedouci22,
   },
 }
 

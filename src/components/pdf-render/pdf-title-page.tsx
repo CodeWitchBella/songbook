@@ -9,7 +9,7 @@ import { getSongbookMeta } from './songbook-meta'
 export function PDFTitlePage({ title }: { title: string }) {
   const { em, vh } = usePDFSettings()
   const meta = getSongbookMeta(title, DateTime.utc())
-  const image = meta.image || img
+  const ImageRef = meta.image || img
   if (meta.imageOnly) {
     return (
       <PDFPage left={false}>
@@ -21,7 +21,14 @@ export function PDFTitlePage({ title }: { title: string }) {
             justifyContent: 'center',
           }}
         >
-          <Image source={image} style={{ height: vh(90), width: vh(63) }} />
+          {typeof ImageRef === 'string' ? (
+            <Image
+              source={ImageRef}
+              style={{ height: vh(90), width: vh(63) }}
+            />
+          ) : (
+            <ImageRef style={{ height: vh(90), width: vh(63) }} />
+          )}
         </View>
       </PDFPage>
     )
@@ -36,10 +43,16 @@ export function PDFTitlePage({ title }: { title: string }) {
           paddingTop: em(meta.imageViewPaddingTop),
         }}
       >
-        <Image
-          source={image}
-          style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}}
-        />
+        {typeof ImageRef === 'string' ? (
+          <Image
+            source={ImageRef}
+            style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}}
+          />
+        ) : (
+          <ImageRef
+            style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}}
+          />
+        )}
       </View>
       <View
         style={{
