@@ -1,6 +1,9 @@
 import { BackArrow, BackButton } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
-import { AddToCollection } from 'components/song-look/song-menu-icons'
+import {
+  AddToCollection,
+  QuickSettings,
+} from 'components/song-look/song-menu-icons'
 import { RootView, TText } from 'components/themed'
 import { Trans, useTranslation } from 'react-i18next'
 import { View, StyleSheet } from 'react-native'
@@ -28,11 +31,18 @@ export default function Credits() {
             <InlineLink to="https://smashicons.com/">Smashicons</InlineLink>
           </Trans>
         </TText>
+        <TText style={styles.text}>
+          <Trans>
+            Icon for quick settings <QuickSettings /> is taken from{' '}
+            <InlineLink to="https://iconic.app/">{iconicApp}</InlineLink>
+          </Trans>
+        </TText>
         <TText style={styles.text}>{t('other-icons')}</TText>
       </View>
     </RootView>
   )
 }
+const iconicApp = 'iconic.app'
 
 const styles = StyleSheet.create({
   head: {
