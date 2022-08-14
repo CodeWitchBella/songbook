@@ -1,3 +1,4 @@
+import { ContinuousModeSetting } from 'components/continuous-mode'
 import { Line, Paragraph } from './song-parser'
 
 export function tokenizeLine(line_: string) {
@@ -171,10 +172,13 @@ function parsePage(
   }
 }
 
+export type ParserOpts = {
+  continuous: ContinuousModeSetting
+}
 export function parseSongMyFormat(
   song: string,
-  requestedVariant: 'print' | 'digital' = 'print',
-): Paragraph[][] {
+  opts: ParserOpts,
+): { pages: Paragraph[][]; continuous: boolean } {
   let pCounter = 0
   const pages = song
     .trim()
@@ -185,15 +189,22 @@ export function parseSongMyFormat(
       return ret.page
     })
   let chordsOff = false
-  let variant: 'print' | 'both' | 'digital' = 'both'
+  let variant: 'paged' | 'both' | 'long' = 'both'
+
+  const continuous =
+    opts.continuous === 'always' ||
+    (opts.continuous === 'multipage' && pages.length > 1)
+  const requestedVariant = continuous ? 'long' : 'paged'
 
   function handleCommand(cmd: string, args: readonly string[]) {
     if (cmd === 'chords') {
-      chordsOff =
-        args[0] === 'off' ? true : args[0] === 'on' ? false : chordsOff
+      if (!continuous) {
+        chordsOff =
+          args[0] === 'off' ? true : args[0] === 'on' ? false : chordsOff
+      }
     } else if (cmd === 'variant') {
       if (!args[0]) variant = 'both'
-      else if (['print', 'both', 'digital'].includes(args[0]))
+      else if (['paged', 'both', 'long'].includes(args[0]))
         variant = args[0] as any
     }
   }
@@ -225,7 +236,7 @@ export function parseSongMyFormat(
       }
     }
   }
-  return pages
+  return { pages, continuous }
 }
 
 function parseCommands(paragraph: Paragraph) {

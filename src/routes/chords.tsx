@@ -23,7 +23,11 @@ export default function Chords() {
   const unknownChords = useMemo(() => {
     const ret = new Map<string, Set<string>>()
     for (const s of songs.songs) {
-      const parsed = parser.parseSong('my', s.item.text)
+      const parsed = parser
+        .parseSong('my', s.item.text, { continuous: 'always' })
+        .pages.concat(
+          parser.parseSong('my', s.item.text, { continuous: 'never' }).pages,
+        )
       for (const page of parsed) {
         for (const paragraph of page) {
           for (const line of paragraph) {

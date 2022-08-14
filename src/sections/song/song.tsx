@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAutoUpdatedSong } from 'utils/firebase'
 import { ChordHelp } from 'components/chord-help'
 import { useBasicStyle } from 'components/themed'
-import { useContinousModeSetting } from 'components/continuous-mode'
+import { useContinuousModeSetting } from 'components/continuous-mode'
 
 const IFrame = (props: any) => <iframe title="Spotify přehrávač" {...props} />
 
@@ -55,13 +55,13 @@ export default function SongSection({
 }) {
   const { song } = useAutoUpdatedSong({ slug })
   const [spotifyVisible, setSpotifyVisible] = useState(false)
-  const parsed = song ? parser.parseSong('my', song.text) : null
+  const [continuous] = useContinuousModeSetting()
+  const parsed = song ? parser.parseSong('my', song.text, { continuous }) : null
 
   const location = useLocation()
   const navigate = useNavigate()
   const [chordHelp, setChordHelp] = useState('')
   const basicStyle = useBasicStyle()
-  const [continous] = useContinousModeSetting()
 
   if (!song || !parsed) return null
 
@@ -87,10 +87,6 @@ export default function SongSection({
           parsed={parsed}
           transposition={transposition}
           onChordPress={setChordHelp}
-          continous={
-            continous === 'always' ||
-            (continous === 'multipage' && parsed.length > 1)
-          }
         />
       </div>
       {enableMenu && (

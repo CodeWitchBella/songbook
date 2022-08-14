@@ -19,8 +19,8 @@ function write(val: ContinuousModeSetting) {
   }
 }
 
-type ContinuousModeSetting = 'always' | 'never' | 'multipage'
-export function useContinousModeSetting() {
+export type ContinuousModeSetting = 'always' | 'never' | 'multipage'
+export function useContinuousModeSetting() {
   const [setting, setSetting] = useState(() =>
     deserialize(localStorage.getItem(key)),
   )
@@ -30,7 +30,7 @@ export function useContinousModeSetting() {
       window.removeEventListener('storage', listener)
     }
     function listener(event: StorageEvent) {
-      if (event.key === 'dark-mode-setting') {
+      if (event.key === key) {
         const value = deserialize(event.newValue)
         setSetting(value)
       }

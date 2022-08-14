@@ -17,10 +17,10 @@
     "Song is also in collections": "Píseň je také v kolekcích"
   },
   "Collections": "Seznam kolekcí",
-  "continous": {
+  "continuous": {
     "always": "Vždy",
     "Continuous mode": "Plynulý mód",
-    "description": "V plynulém módu je vypnuté zalamování stran a akordy se zobrazují všemi slokami - nejen nad tou první. Zobrazování akordů všude je podporováno jen u některých písní.",
+    "description": "V plynulém módu je vypnuté zalamování stran a akordy se zobrazují nad všemi slokami - nejen nad tou první. Zobrazování akordů všude je podporováno jen u některých písní.",
     "multipage": "Pouze na více stránkách",
     "never": "Nikdy"
   },
@@ -54,6 +54,7 @@
   "Display name": "Zobrazované jméno",
   "edit": {
     "Advanced settings": "Pokročilá nastavení",
+    "Continuous mode": "",
     "Edit song": "Upravit píseň",
     "Font size": "Velikost písma",
     "Hide extra information": "Skrýt extra informace",

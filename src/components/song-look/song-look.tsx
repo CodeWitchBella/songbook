@@ -1,4 +1,3 @@
-import React from 'react'
 import * as parser from 'utils/song-parser/song-parser'
 import { SongType } from 'store/store-song'
 import {
@@ -6,7 +5,7 @@ import {
   PDFSongPage,
 } from 'components/pdf-render/pdf-song-page'
 import { PDFSettingsProvider } from 'components/pdf-render/pdf-settings'
-import { View } from 'react-native'
+import { ContinuousPage } from 'components/sizer-page'
 
 function SongPage({
   song,
@@ -47,7 +46,7 @@ function SongPage({
   )
 }
 
-function SongContinousPage({
+function SongContinuousPage({
   song,
   pageData,
   transposition = 0,
@@ -70,7 +69,7 @@ function SongContinousPage({
         titleSpace: song.titleSpace,
       }}
     >
-      <View>
+      <ContinuousPage>
         <PDFSongContent
           author={song.author}
           footer=""
@@ -79,7 +78,7 @@ function SongContinousPage({
           title={song.title}
           back={true}
         />
-      </View>
+      </ContinuousPage>
     </PDFSettingsProvider>
   )
 }
@@ -90,19 +89,17 @@ export function SongLook({
   noBack = false,
   transposition = 0,
   onChordPress,
-  continous,
 }: {
   song: SongType
-  parsed: parser.Paragraph[][]
+  parsed: parser.ParsedSong
   noBack?: boolean
   transposition?: number
   onChordPress?: (chord: string) => void
-  continous: boolean
 }) {
-  if (continous) {
+  if (parsed.continuous) {
     return (
-      <SongContinousPage
-        pageData={parsed.flat(1)}
+      <SongContinuousPage
+        pageData={parsed.pages.flat(1)}
         song={song}
         transposition={transposition}
         onChordPress={onChordPress}
@@ -111,15 +108,15 @@ export function SongLook({
   }
   return (
     <>
-      {parsed.map((pageData, i) => (
+      {parsed.pages.map((pageData, i) => (
         <SongPage
           key={i}
           pageData={pageData}
           song={{
             ...song,
             title:
-              parsed.length > 1
-                ? `${song.title} (${i + 1}/${parsed.length})`
+              parsed.pages.length > 1
+                ? `${song.title} (${i + 1}/${parsed.pages.length})`
                 : song.title,
           }}
           noBack={noBack || i !== 0}

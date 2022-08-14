@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
 import { Line, Paragraph } from 'utils/song-parser/song-parser'
 import { usePDFSettings } from './pdf-settings'
 import { PDFPage } from './pdf-page'
@@ -6,6 +6,7 @@ import { View, Text, PropsOf } from './primitives'
 import { notNull } from '@isbl/ts-utils'
 import { Chord } from './chord'
 import { BackButton, BackArrow } from 'components/back-button'
+import { StyleSheet } from 'react-native'
 
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +
@@ -14,18 +15,29 @@ const nbsp = (text: string) =>
 
 const hasChord = (l: Line) => l.content.some((el) => !!el.ch)
 
-const lineStyle = {
-  verticalAlign: 'baseline',
-  alignItems: 'flex-end',
-  flexDirection: 'row',
-} as const
+const style = StyleSheet.create({
+  line: {
+    textVerticalAlign: 'baseline',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+  },
+  lineWrap: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: 'auto',
+  },
+  bold: { fontWeight: 'bold' },
+  transparent: { opacity: 0 },
+  zIndexTop: { zIndex: 2 },
+  defaultStyleText: { fontFamily: 'Cantarell' },
+})
 
 function DefaultStyleText(props: PropsOf<typeof Text>) {
   const { em, fontSize } = usePDFSettings()
   return (
     <Text
       {...props}
-      style={[{ fontSize: em(fontSize), fontFamily: 'Cantarell' }, props.style]}
+      style={[{ fontSize: em(fontSize) }, style.defaultStyleText, props.style]}
     />
   )
 }
@@ -41,25 +53,25 @@ function ChordLine({ l }: { l: Line }) {
             key={i}
             style={{ position: 'absolute', width: vw(100) }}
           >
-            <Text style={{ opacity: 0, ...lineStyle }}>
+            <Text style={[style.transparent, style.line]}>
               {l.content.slice(0, i).map((t, i2) => (
-                <Text key={i2} style={t.bold ? { fontWeight: 'bold' } : {}}>
+                <Text key={i2} style={t.bold ? style.bold : {}}>
                   {t.text}
                   {t.ch?.startsWith('_') ? (
-                    <Text style={{ fontWeight: 'bold' }}>
+                    <Text style={style.bold}>
                       <Chord spacer={true}>{t.ch.replace('_', '')}</Chord>
                     </Text>
                   ) : null}
                 </Text>
               ))}
             </Text>
-            <Text style={{ fontWeight: 'bold', zIndex: 2 }}>
+            <Text style={[style.bold, style.zIndexTop]}>
               <Chord>{cur.ch.replace(/^_/, '')}</Chord>
             </Text>
           </DefaultStyleText>
         ))
         .filter(notNull)}
-      <DefaultStyleText style={{ fontWeight: 'bold' }} />
+      <DefaultStyleText style={style.bold} />
     </View>
   )
 }
@@ -71,11 +83,10 @@ function LineWrap({
   const { em, fontSize } = usePDFSettings()
   return (
     <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        height: hasChord ? em(fontSize * 2.2) : 'auto',
-      }}
+      style={[
+        style.lineWrap,
+        { height: hasChord ? em(fontSize * 2.2) : undefined },
+      ]}
     >
       {children}
     </View>
@@ -88,12 +99,10 @@ function LineC({ l }: { l: Line }) {
     return (
       <LineWrap hasChord={false}>
         {l.tag ? (
-          <DefaultStyleText style={{ fontWeight: 'bold' }}>
-            {l.tag}&nbsp;
-          </DefaultStyleText>
+          <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText>
         ) : null}
         {l.content.map((c, i) => (
-          <DefaultStyleText style={{ fontWeight: 'bold' }} key={i}>
+          <DefaultStyleText style={style.bold} key={i}>
             <Chord>{c.ch}</Chord>
           </DefaultStyleText>
         ))}
@@ -103,13 +112,11 @@ function LineC({ l }: { l: Line }) {
   return (
     <LineWrap hasChord={hasChord(l)}>
       {l.tag ? (
-        <DefaultStyleText style={{ fontWeight: 'bold' }}>
-          {l.tag}&nbsp;
-        </DefaultStyleText>
+        <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText>
       ) : null}
       {hasChord(l) ? <ChordLine l={l} /> : null}
 
-      <DefaultStyleText style={lineStyle}>
+      <DefaultStyleText style={style.line}>
         {l.content
           .map((c, i) => [
             c.ch && c.ch.startsWith('_') ? (
@@ -118,10 +125,7 @@ function LineC({ l }: { l: Line }) {
               </Text>
             ) : null,
             c.text ? (
-              <Text
-                style={c.bold ? { fontWeight: 'bold' } : {}}
-                key={i * 2 + 1}
-              >
+              <Text style={c.bold ? style.bold : {}} key={i * 2 + 1}>
                 {nbsp(c.text)}
               </Text>
             ) : null,

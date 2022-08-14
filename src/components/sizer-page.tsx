@@ -1,17 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import * as page from 'utils/page'
 import { useBasicStyle } from './themed'
 
-const sizer = () => css`
-  @media not print {
-    position: relative;
-    display: flex;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-  }
+const sizer = css`
+  position: relative;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
 `
 
 const width = `calc(${page.width} - ${page.margin.inner} - ${page.margin.outer})`
@@ -19,7 +17,7 @@ const height = `calc(
     ${page.height} - ${page.margin.top} - ${page.margin.bottom} - 1px
   )`
 
-const songClass = (left: boolean) => css`
+const songClass = css`
   position: relative;
 
   width: ${width};
@@ -50,15 +48,29 @@ const marginDisplay = css`
   height: 100%;
 `
 
-export default function SizerPage({
-  children,
-  left,
-}: PropsWithChildren<{ left?: boolean }>) {
+export function SizerPage({ children }: PropsWithChildren<{}>) {
   return (
-    <section css={sizer()}>
+    <section css={sizer}>
       <div css={marginDisplay}>
-        <div css={[songClass(!!left), useBasicStyle()]}>{children}</div>
+        <div css={[songClass, useBasicStyle()]}>{children}</div>
       </div>
     </section>
+  )
+}
+
+const remConvert = 0.9 / 3.4
+
+export function ContinuousPage({ children }: { children: ReactNode }) {
+  return (
+    <div
+      css={css`
+        box-sizing: border-box;
+        font-size: ${remConvert * 3.4}rem;
+        --vh: ${remConvert / page.innerRatio}rem;
+        --vw: ${remConvert}rem;
+      `}
+    >
+      {children}
+    </div>
   )
 }

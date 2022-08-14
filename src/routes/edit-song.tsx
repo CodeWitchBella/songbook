@@ -156,6 +156,7 @@ type State = {
   extraSearchable: string | null
   extraNonSearchable: string | null
   saveStatus: SaveStatus
+  continuousMode: boolean
 }
 
 function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
@@ -229,6 +230,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     pdfPreview: false,
     simpleEditor: window.screen.width < 980,
     saveStatus: 'NO_CHANGES',
+    continuousMode: false,
   }
   const latestState = useRef<State>(initialState)
   const [state, setState] = useReducer(
@@ -332,6 +334,8 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     setState({ simpleEditor: value })
   const previewChange = (value: boolean) => setState({ preview: value })
   const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value })
+  const continuousModeChange = (value: boolean) =>
+    setState({ continuousMode: value })
 
   const editor = (
     lang: 'song' | 'none',
@@ -377,13 +381,20 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
               checked={state.preview}
               onChange={previewChange}
             />
-            {state.preview && (
-              <Checkbox
-                label={t('edit.PDF preview')}
-                checked={state.pdfPreview}
-                onChange={pdfPreviewChange}
-              />
-            )}
+            {state.preview ? (
+              <>
+                <Checkbox
+                  label={t('edit.PDF preview')}
+                  checked={state.pdfPreview}
+                  onChange={pdfPreviewChange}
+                />
+                <Checkbox
+                  label={t('edit.Continuous mode')}
+                  checked={state.continuousMode}
+                  onChange={continuousModeChange}
+                />
+              </>
+            ) : null}
           </InputLine>
           <Checkbox
             label={t('edit.Simplified editor (use this on phones)')}
@@ -474,14 +485,20 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           </TP>
           <TP>
             Příkaz musí být ve vlastní "sloce", tj. musí před ním i po něm být
-            volný řádek. Konkrétně jde o příkazy <b>{'[>chords'}&nbsp;off]</b> a{' '}
+            volný řádek. Všechny v současnosti implementované příkazy umožňují
+            změnit zobrazení mezi stránkovaným (pro tisk) a plynulým zobrazením.
+            V plynulém zobrazení chceme akordy zobrazit všude, ale ve
+            stránkovaném zobrazení máme omezený prostor, což znamená, že akordy
+            chceme zobrazovat pouze tam kde je potřeba. To samé někdy platí pro
+            např. slova refrénů.
+          </TP>
+          <TP>
+            Konkrétně jde o příkazy <b>{'[>chords'}&nbsp;off]</b> a{' '}
             <b>{'[>chords'}&nbsp;on]</b>, které zapínají a vypínají zobrazování
-            akordů v tiskové verzi. Druhá sada příkazů je{' '}
-            <b>{'[>variant'}&nbsp;digital]</b>, <b>{'[>variant'}&nbsp;print]</b>{' '}
-            a <b>{'[>variant'}&nbsp;both]</b>, které přepínají mezi variantou
-            pro tisk a variantou pro "digitální" zobrazení. V současnosti jsou
-            příkazy implementované tak, že se vždy chovají jako ve variantě pro
-            tisk.
+            akordů ve stránkované verzi. Druhá sada příkazů je{' '}
+            <b>{'[>variant'}&nbsp;long]</b>, <b>{'[>variant'}&nbsp;paged]</b> a{' '}
+            <b>{'[>variant'}&nbsp;both]</b>, které přepínají mezi stránkovanou
+            variantou a variantou pro "plynulé" zobrazení.
           </TP>
           <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
@@ -511,7 +528,9 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           ) : (
             <SongLook
               song={getResult(props.song, state)}
-              parsed={parser.parseSong('my', state.textWithChords)}
+              parsed={parser.parseSong('my', state.textWithChords, {
+                continuous: state.continuousMode ? 'always' : 'never',
+              })}
               noBack
             />
           )}

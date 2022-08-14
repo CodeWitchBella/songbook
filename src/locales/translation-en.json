@@ -17,10 +17,10 @@
     "Song is also in collections": "Song is also in collections"
   },
   "Collections": "Collections",
-  "continous": {
+  "continuous": {
     "always": "Always",
-    "Continuous mode": "Continous mode",
-    "description": "Continous mode disables page breaks and enables chords over all verses, not only the first one. Displaying all chords over all verses is only available on some songs.",
+    "Continuous mode": "Continuous mode",
+    "description": "Continuous mode disables page breaks and enables chords over all verses, not only the first one. Displaying all chords over all verses is only available for some songs.",
     "multipage": "Only on songs with multiple pages",
     "never": "Never"
   },
@@ -52,6 +52,7 @@
   "Display name": "Display name",
   "edit": {
     "Advanced settings": "Advanced settings",
+    "Continuous mode": "Continuous mode",
     "Edit song": "Edit song",
     "Font size": "Font size",
     "Hide extra information": "Hide extra information",

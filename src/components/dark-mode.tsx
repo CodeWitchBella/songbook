@@ -39,7 +39,7 @@ export function DarkModeProvider({
       window.removeEventListener('storage', listener)
     }
     function listener(event: StorageEvent) {
-      if (event.key === 'dark-mode-setting') {
+      if (event.key === key) {
         const value = deserialize(event.newValue)
         setSetting(value)
         apply(value)

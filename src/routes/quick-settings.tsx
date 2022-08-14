@@ -1,5 +1,5 @@
 import { BackButton, BackArrow } from 'components/back-button'
-import { useContinousModeSetting } from 'components/continuous-mode'
+import { useContinuousModeSetting } from 'components/continuous-mode'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
@@ -12,7 +12,7 @@ export default function About() {
   const { t } = useTranslation()
   const darkMode = useDarkModeSetting()
   const [lng, setLng] = useLanguage()
-  const [continous, setContinuous] = useContinousModeSetting()
+  const [continuous, setContinuous] = useContinuousModeSetting()
   return (
     <RootView style={style.root}>
       <View style={style.page}>
@@ -34,16 +34,16 @@ export default function About() {
           ]}
         />
         <TitledSelect
-          title={t('continous.Continuous mode')}
-          value={continous}
+          title={t('continuous.Continuous mode')}
+          value={continuous}
           onChange={setContinuous}
           options={[
-            ['always', t('continous.always')],
-            ['never', t('continous.never')],
-            ['multipage', t('continous.multipage')],
+            ['always', t('continuous.always')],
+            ['never', t('continuous.never')],
+            ['multipage', t('continuous.multipage')],
           ]}
         />
-        <TText>{t('continous.description')}</TText>
+        <TText>{t('continuous.description')}</TText>
         <TitledSelect
           title={t('Language')}
           value={lng}

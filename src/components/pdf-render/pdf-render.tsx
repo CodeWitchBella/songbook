@@ -129,7 +129,7 @@ function PDFDoc({ url }: { url: string }) {
 }
 
 export default function PDFRender({ song }: Props) {
-  const pages = parseSong('my', song.text)
+  const { pages } = parseSong('my', song.text, { continuous: 'never' })
 
   const [footer] = useQueryParam('footer')
 
@@ -220,7 +220,7 @@ export function PDFDownload({
 
   for (const song of list) {
     songCounter += 1
-    const pages = parseSong('my', song.text)
+    const { pages } = parseSong('my', song.text, { continuous: 'never' })
     let pageCounter = 0
     const thisSongPages = [] as typeof songPages
     for (const page of pages) {
