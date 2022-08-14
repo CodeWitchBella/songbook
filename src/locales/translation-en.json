@@ -101,6 +101,10 @@
     "Loading": "Loading generator",
     "Something went wrong": "Something went wrong"
   },
+  "quick-settings": {
+    "More options": "More options",
+    "Quick settings": "Quick settings"
+  },
   "Register": "Register",
   "search": {
     "author": "By author",

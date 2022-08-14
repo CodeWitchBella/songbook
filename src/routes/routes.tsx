@@ -20,6 +20,7 @@ const imports = {
   Register: once(() => import('./register')),
   Credits: once(() => import('./credits')),
   About: once(() => import('./about')),
+  QuickSettings: once(() => import('./quick-settings')),
   Chords: once(() => import('./chords')),
   CollectionDiff: once(() => import('./collection-diff')),
 }
@@ -38,6 +39,7 @@ const Register = React.lazy(imports.Register)
 const AddToCollection = React.lazy(imports.AddToCollection)
 const Credits = React.lazy(imports.Credits)
 const About = React.lazy(imports.About)
+const QuickSettings = React.lazy(imports.QuickSettings)
 const Chords = React.lazy(imports.Chords)
 const CollectionDiff = React.lazy(imports.CollectionDiff)
 
@@ -62,6 +64,7 @@ function AppRoutes() {
         <Route path="register" element={<Register />} />
         <Route path="all-songs" element={<AllSongs />} />
         <Route path="credits" element={<Credits />} />
+        <Route path="quick-settings" element={<QuickSettings />} />
         <Route path="about" element={<About />} />
         <Route path="add-to-collection/:slug" element={<AddToCollection />} />
         <Route path="collections" element={<CollectionList />} />

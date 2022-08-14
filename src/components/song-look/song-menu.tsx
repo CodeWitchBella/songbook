@@ -10,6 +10,7 @@ import {
   InfoButton,
   RandomButton,
   AddToCollection,
+  QuickSettings,
 } from './song-menu-icons'
 import { SongType } from 'store/store-song'
 import { useGetRandomSong } from 'store/store'
@@ -196,6 +197,9 @@ export default function SongMenu({
               to={'/add-to-collection/' + slug}
             >
               <AddToCollection />
+            </MenuLink>
+            <MenuLink to="/quick-settings">
+              <QuickSettings />
             </MenuLink>
           </>
         ) : null}
