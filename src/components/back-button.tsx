@@ -3,8 +3,9 @@ import { keyframes } from '@emotion/react'
 import { PropsWithChildren } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
-import { StyleProp, TextStyle } from 'react-native'
+import { TextStyle } from 'react-native'
 import { useUpdateAfterNavigate } from './service-worker-status'
+import { TStyleProp } from './themed'
 
 export function useGoBack(to = '/') {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ export function BackButton({
   children,
   to = '/',
   style,
-}: PropsWithChildren<{ to?: string; style?: StyleProp<TextStyle> }>) {
+}: PropsWithChildren<{ to?: string; style?: TStyleProp<TextStyle> }>) {
   return (
     <BasicButton
       style={[

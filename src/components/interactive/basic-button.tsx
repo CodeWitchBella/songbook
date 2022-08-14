@@ -1,20 +1,15 @@
 import { PropsWithChildren, useState } from 'react'
-import {
-  StyleProp,
-  TextStyle,
-  GestureResponderEvent,
-  Pressable,
-} from 'react-native'
+import { TextStyle, GestureResponderEvent, Pressable } from 'react-native'
 import { useNavigate } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
-import { TText, useColors } from 'components/themed'
+import { TStyleProp, TText, useColors } from 'components/themed'
 import { isPressOverriden, useInPressOutside } from './press-outside'
 import { useCallback } from 'react'
 
 type ButtonPropsBase<T> = PropsWithChildren<
   {
     disabled?: boolean
-    style?: StyleProp<TextStyle>
+    style?: TStyleProp<TextStyle>
   } & T
 >
 

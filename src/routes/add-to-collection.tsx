@@ -21,6 +21,7 @@ export default function AddToCollection() {
   const { t } = useTranslation()
   const { refresh, list } = useCollectionList()
   const params = useParams<{ slug: string }>()
+  if (!params.slug) throw new Error('Invalid route')
   const { song } = useSong({ slug: params.slug })
   const [viewer] = useViewer()
   const [error, setError] = useState('')

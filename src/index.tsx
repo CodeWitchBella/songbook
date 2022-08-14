@@ -24,7 +24,6 @@ Loadable.preloadReady().then(() => {
     <React.Fragment>
       <InjectGlobal />
       <ErrorBoundary>
-        {/* @ts-expect-error FIXME */}
         <BrowserRouter>
           <ServiceWorkerStatusProvider register={serviceWorker.register}>
             <App />

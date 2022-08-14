@@ -1,6 +1,6 @@
 module.exports = {
   extends: ['eslint-config-react-app', 'prettier'],
-  plugins: ['@emotion', 'react-hooks', 'prettier'],
+  plugins: ['@emotion', 'prettier'],
   parser: '@typescript-eslint/parser',
   rules: {
     'no-unused-vars': 0,

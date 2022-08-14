@@ -34,7 +34,7 @@ export function useColors() {
   return getColors(useDarkModeSetting().value)
 }
 
-type TStyleProp<T> = undefined | null | T | TStyleProp<T>[]
+export type TStyleProp<T> = undefined | null | T | TStyleProp<T>[]
 export type TTextProps = Omit<TextProps, 'style'> & {
   style?: TStyleProp<TextStyle & { fontSize?: string | number }>
   children?: React.ReactNode

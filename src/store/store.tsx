@@ -175,13 +175,13 @@ export function useCollectionList() {
   return useGenericStore(useStoreContext().collections)
 }
 
-export function useCollection({ slug }: { slug: string }) {
+export function useCollection({ slug }: { slug: string | null }) {
   const { collections: store } = useStoreContext()
-  const [value, setValue] = useState(() => store.readBySlug(slug))
+  const [value, setValue] = useState(() => read(store, slug))
   useEffect(() => {
-    setValue(store.readBySlug(slug))
+    setValue(read(store, slug))
     return store.onChange(() => {
-      setValue(store.readBySlug(slug))
+      setValue(read(store, slug))
     })
   }, [slug, store])
   return useMemo(
@@ -191,6 +191,13 @@ export function useCollection({ slug }: { slug: string }) {
     }),
     [value],
   )
+}
+
+function read(
+  store: ReturnType<typeof useStoreContext>['collections'],
+  slug: string | null,
+) {
+  return slug ? store.readBySlug(slug) : undefined
 }
 
 function getSongFromStore(

@@ -9,6 +9,10 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  esbuild: {
+    jsx: 'automatic',
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+  },
   plugins: [
     react(),
     shimReactPdf(),
