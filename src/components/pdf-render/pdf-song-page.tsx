@@ -206,7 +206,7 @@ function SongHeaderWithBack({
   )
 }
 
-export function PDFSongPage({
+export function PDFSongContent({
   page,
   left,
   title,
@@ -223,6 +223,43 @@ export function PDFSongPage({
 }) {
   const { em } = usePDFSettings()
   return (
+    <>
+      <SongHeaderWithBack title={title} author={author} back={back} />
+      {page.map((paragraph, i2) => (
+        <ParagraphC p={paragraph} key={i2} />
+      ))}
+      {left ? null : (
+        <DefaultStyleText
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            textAlign: 'center',
+            fontSize: em(1),
+          }}
+        >
+          {footer}
+        </DefaultStyleText>
+      )}
+    </>
+  )
+}
+
+export function PDFSongPage({
+  page,
+  left,
+  title,
+  author,
+  footer,
+  back = false,
+}: {
+  page: Line[][]
+  left: boolean
+  title: string
+  author: string
+  footer: string
+  back?: boolean
+}) {
+  return (
     <PDFPage left={left}>
       <View
         style={{
@@ -230,22 +267,14 @@ export function PDFSongPage({
           height: '100%',
         }}
       >
-        <SongHeaderWithBack title={title} author={author} back={back} />
-        {page.map((paragraph, i2) => (
-          <ParagraphC p={paragraph} key={i2} />
-        ))}
-        {left ? null : (
-          <DefaultStyleText
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              textAlign: 'center',
-              fontSize: em(1),
-            }}
-          >
-            {footer}
-          </DefaultStyleText>
-        )}
+        <PDFSongContent
+          page={page}
+          left={left}
+          title={title}
+          author={author}
+          footer={footer}
+          back={back}
+        />
       </View>
     </PDFPage>
   )

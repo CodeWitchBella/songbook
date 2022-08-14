@@ -1,8 +1,9 @@
 import { BackButton, BackArrow } from 'components/back-button'
+import { useContinousModeSetting } from 'components/continuous-mode'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
-import { RootView, TH2 } from 'components/themed'
+import { RootView, TH2, TText } from 'components/themed'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, StyleSheet } from 'react-native'
@@ -11,6 +12,7 @@ export default function About() {
   const { t } = useTranslation()
   const darkMode = useDarkModeSetting()
   const [lng, setLng] = useLanguage()
+  const [continous, setContinuous] = useContinousModeSetting()
   return (
     <RootView style={style.root}>
       <View style={style.page}>
@@ -31,6 +33,17 @@ export default function About() {
             ['automatic', t('Automatic')],
           ]}
         />
+        <TitledSelect
+          title={t('continous.Continuous mode')}
+          value={continous}
+          onChange={setContinuous}
+          options={[
+            ['always', t('continous.always')],
+            ['never', t('continous.never')],
+            ['multipage', t('continous.multipage')],
+          ]}
+        />
+        <TText>{t('continous.description')}</TText>
         <TitledSelect
           title={t('Language')}
           value={lng}

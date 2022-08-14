@@ -17,6 +17,13 @@
     "Song is also in collections": "Song is also in collections"
   },
   "Collections": "Collections",
+  "continous": {
+    "always": "Always",
+    "Continuous mode": "Continous mode",
+    "description": "Continous mode disables page breaks and enables chords over all verses, not only the first one. Displaying all chords over all verses is only available on some songs.",
+    "multipage": "Only on songs with multiple pages",
+    "never": "Never"
+  },
   "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) and $t(count-pages-songs_pages, {\"count\": {{pagesNum}} })",
   "count-pages-songs_pages_one": "{{count}} page",
   "count-pages-songs_pages_other": "{{count}} pages",
