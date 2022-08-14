@@ -1,0 +1,47 @@
+name: 🕊 Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: 🕊 Deploy
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.7.0
+
+      - name: 🙈 Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .yarn/cache
+            .node/corepack
+          key: ${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+
+      - name: 📥 Install deps
+        run: |
+          export COREPACK_HOME=$PWD/.node/corepack
+          corepack -v
+          corepack enable
+          corepack prepare
+          yarn config set enableGlobalCache 0
+          yarn config set cacheFolder .yarn/cache
+          yarn --immutable
+
+      - name: 📦 Build
+        run: |
+          export NODE_OPTIONS="--max_old_space_size=4096"
+          yarn build-ci
+
+      - name: 🚀 Publish
+        run: yarn wrangler pages publish dist --project-name songbook
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: cce7f3b93d1cc5016fffc6068a30a3bb

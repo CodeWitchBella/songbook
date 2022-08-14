@@ -84,5 +84,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "wrangler": "^2.0.25"
   }
 }
