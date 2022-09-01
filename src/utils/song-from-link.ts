@@ -63,27 +63,12 @@ export function convertToSong(songData: IntermediateSongData): {
   }
 }
 
-const entities: { [key: string]: string } = {
-  '&quot;': '"',
-  '&laquo;': '«',
-  '&raquo;': '»',
-  '&ndash;': '–',
-  '&mdash;': '—',
-  '&lsquo;': '‘',
-  '&rsquo;': '’',
-  '&sbquo;': '‚',
-  '&ldquo;': '“',
-  '&rdquo;': '”',
-  '&bdquo;': '„',
-  '&hellip;': '…',
-  '&prime;': '′',
-  '&Prime;': '″',
-}
 function replaceHtmlEntities(text: string) {
-  return text.replace(
-    /&[a-z]+;/g,
-    (substring) => entities[substring] || substring,
-  )
+  const span = document.createElement('span')
+  return text.replace(/&[a-z]+;/g, (substring) => {
+    span.innerHTML = substring
+    return span.innerText
+  })
 }
 
 function convertUltimateGuitarBody(text: string) {
@@ -95,7 +80,7 @@ function convertUltimateGuitarBody(text: string) {
   let retLines: string[] = []
   while (lines.length > 0) {
     const line = lines.pop()!
-    if (line.trim().startsWith('[ch]')) {
+    if (line.includes('[ch]') && line.includes('[/ch]')) {
       const text = lines[lines.length - 1]
       if (!text || text.trim().startsWith('[ch]')) {
         retLines.push(spliceLines(line, ''))
@@ -107,21 +92,37 @@ function convertUltimateGuitarBody(text: string) {
       retLines.push(line)
     }
   }
-  return retLines
-    .join('\n')
-    .replace(/\] +\[/g, ' ')
+  return replaceWhile(
+    retLines.join('\n'),
+    // merge two chords only separated by spaces and not containing control chars
+    /\[([^\]^_*][^\]]*)\]( +)\[([^\]^_*][^\]]*)\]/g,
+    (full, ch1, space, ch2) => `[${ch1}${space}${ch2}]`,
+  )
     .replace(/\[Chorus\] *\n*/gi, 'R: ')
     .replace(/\[Verse( [0-9]+)?\] *\n*/gi, 'S: ')
     .replace(/\[(Interlude|Outro|Bridge|Intro)\] *\n*/gi, '[*$1] ')
+}
+
+function replaceWhile(
+  src: string,
+  pattern: RegExp,
+  replacer: (...args: string[]) => string,
+) {
+  for (let i = 0; i < 10; ++i) {
+    let next = src.replace(pattern, replacer)
+    if (next === src) return src
+    src = next
+  }
+  return src
 }
 
 function spliceLines(chordText: string, text: string) {
   const chords = parseChordLine(tokenizeChordLine(chordText)).reverse()
   text = text.padEnd(chords[0]?.index ?? 0, ' ')
   for (const chord of chords) {
-    text = `${text.substring(0, chord.index)}[${chord.text}]${text.substring(
-      chord.index,
-    )}`
+    text = `${text.substring(0, chord.index)}[${chord.special ? '^' : ''}${
+      chord.text
+    }]${text.substring(chord.index)}`
   }
 
   return text
@@ -151,7 +152,7 @@ function tokenizeChordLine(line: string) {
 
 function parseChordLine(tokens: string[]) {
   let state = 'default' as 'default' | 'chord'
-  let ret: { text: string; index: number }[] = []
+  let ret: { text: string; index: number; special?: true }[] = []
   let index = 0
   for (const token of tokens) {
     if (token === '[ch]') {
@@ -162,7 +163,18 @@ function parseChordLine(tokens: string[]) {
       state = 'default'
       continue
     }
-    if (state === 'chord') ret.push({ text: token, index })
+    if (state === 'chord') {
+      ret.push({ text: token, index })
+    } else {
+      const trimmed = token.trim()
+      if (trimmed.length) {
+        ret.push({
+          text: trimmed,
+          index: index + token.indexOf(trimmed),
+          special: true,
+        })
+      }
+    }
     index += token.length
   }
   return ret

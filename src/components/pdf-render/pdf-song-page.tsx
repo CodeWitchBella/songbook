@@ -65,8 +65,10 @@ function ChordLine({ l }: { l: Line }) {
                 </Text>
               ))}
             </Text>
-            <Text style={[style.bold, style.zIndexTop]}>
-              <Chord>{cur.ch.replace(/^_/, '')}</Chord>
+            <Text
+              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop]}
+            >
+              <Chord>{cur.ch.replace(/^[_^]+/, '')}</Chord>
             </Text>
           </DefaultStyleText>
         ))
