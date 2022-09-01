@@ -236,7 +236,23 @@ export function parseSongMyFormat(
       }
     }
   }
-  return { pages, continuous }
+  return {
+    pages: pages.map((page) =>
+      // remove empty paragraphs
+      page.filter((paragraph) => !isParagraphEmpty(paragraph)),
+    ),
+    continuous,
+  }
+}
+
+function isParagraphEmpty(paragraph: Paragraph) {
+  for (const line of paragraph) {
+    if (line.tag) return false
+    for (const part of line.content) {
+      if (part.ch || part.text) return false
+    }
+  }
+  return true
 }
 
 function parseCommands(paragraph: Paragraph) {
