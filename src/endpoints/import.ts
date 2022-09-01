@@ -64,9 +64,10 @@ const handlers: readonly {
   {
     test: url => {
       const begin = "https://tabs.ultimate-guitar.com/tab/";
+      // https://tabs.ultimate-guitar.com/tab/3485234 is valid
       return (
         url.startsWith(begin) &&
-        !!url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i)
+        !!url.substring(begin.length).match(/^[a-z0-9-]+(\/[a-z0-9-]+)?$/i)
       );
     },
     handle: async target => {
