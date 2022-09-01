@@ -26,8 +26,10 @@ const target = 'https://zpevnik.skorepova.info'
 
       if (
         origin &&
-        (origin.startsWith('https://localhost') ||
-          origin.startsWith('http://localhost'))
+        (origin.startsWith('https://localhost:') ||
+          origin.startsWith('http://localhost:') ||
+          origin.startsWith('https://127.0.0.1:') ||
+          origin.startsWith('http://127.0.0.1:'))
       ) {
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Vary', 'Origin')

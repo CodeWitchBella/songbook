@@ -65,9 +65,9 @@
   },
   "packageManager": "yarn@3.2.2",
   "scripts": {
-    "start": "vite",
     "build": "vite build",
     "build-ci": "node build-ci.js && vite build",
+    "dev": "vite",
     "extract": "node extract.js",
     "lint": "eslint --ext ts --ext tsx --cache src"
   },

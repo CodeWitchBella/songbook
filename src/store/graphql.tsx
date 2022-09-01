@@ -1,6 +1,7 @@
 const enableLocalhostBackend = false
 const url =
-  window.location.hostname !== 'localhost'
+  window.location.hostname !== 'localhost' &&
+  window.location.hostname !== '127.0.0.1'
     ? '/api/graphql'
     : enableLocalhostBackend
     ? 'http://localhost:8080/graphql'
