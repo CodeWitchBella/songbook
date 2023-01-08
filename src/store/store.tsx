@@ -18,16 +18,14 @@ import { DateTime } from 'luxon'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
-const context = React.createContext(
-  null as null | {
-    store: ReturnType<typeof createSongStore>
-    collections: ReturnType<typeof createCollectionStore>
-    viewer: User | null
-    setViewer: (v: User | null) => void
-    initing: boolean
-    loading: boolean
-  },
-)
+const context = React.createContext<null | {
+  store: ReturnType<typeof createSongStore>
+  collections: ReturnType<typeof createCollectionStore>
+  viewer: User | null
+  setViewer: (v: User | null) => void
+  initing: boolean
+  loading: boolean
+}>(null)
 
 function useCachedState<T>(key: string, initial: T | null) {
   const st = useState<T | null>(initial)
@@ -121,17 +119,15 @@ export function useGetRandomSong() {
     (currentSongId: string) => {
       const nowReal = DateTime.utc()
       const now = nowReal.get('hour') < 3 ? nowReal.minus({ day: 1 }) : nowReal
-      const random = new xorshift.constructor([
-        now.get('day'),
-        now.get('month'),
-        now.get('year'),
-        0,
-      ])
+      const seed = [now.get('day'), now.get('month'), now.get('year'), 0]
+      const random = new xorshift.constructor(seed)
       const songs = store.readAll()
-      const withRandom = songs.map((song) => ({
-        song,
-        number: random.random(),
-      }))
+      const withRandom = [...songs]
+        .sort((a, b) => a.item.slug.localeCompare(b.item.slug))
+        .map((song) => ({
+          song,
+          number: random.random(),
+        }))
       const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
       const next = withRandom.reduce((cur, t) => {
