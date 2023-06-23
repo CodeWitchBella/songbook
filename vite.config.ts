@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import shimReactPdf from 'vite-plugin-shim-react-pdf'
 import { VitePWA } from 'vite-plugin-pwa'
 import fs from 'fs'
 
@@ -15,7 +14,6 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    shimReactPdf(),
     myPlugin(),
     VitePWA({
       strategies: 'injectManifest',
