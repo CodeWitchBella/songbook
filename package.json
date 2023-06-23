@@ -7,7 +7,7 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@isbl/ts-utils": "^1.0.1",
-    "@react-pdf/renderer": "^2.3.0",
+    "@react-pdf/renderer": "^3.1.12",
     "@react-three/drei": "^9.22.0",
     "@react-three/fiber": "^8.3.1",
     "@tombatossals/chords-db": "^0.5.1",
