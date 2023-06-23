@@ -254,19 +254,30 @@ export function PDFSongPage({
   page,
   left,
   title,
+  titleExtra,
   author,
   footer,
   back = false,
+  firstPage,
+  slug,
 }: {
   page: Line[][]
   left: boolean
   title: string
+  titleExtra?: string
   author: string
   footer: string
   back?: boolean
+  firstPage: boolean
+  slug: string
 }) {
+  console.log({ firstPage, slug, title, author })
   return (
-    <PDFPage left={left}>
+    <PDFPage
+      left={left}
+      bookmark={firstPage ? title + ' – ' + author : undefined}
+      id={firstPage ? slug : undefined}
+    >
       <View
         style={{
           position: 'relative',
@@ -276,7 +287,7 @@ export function PDFSongPage({
         <PDFSongContent
           page={page}
           left={left}
-          title={title}
+          title={title + (titleExtra ? ' ' + titleExtra : '')}
           author={author}
           footer={footer}
           back={back}

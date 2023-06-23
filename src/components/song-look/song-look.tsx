@@ -14,6 +14,7 @@ function SongPage({
   noBack = false,
   transposition = 0,
   onChordPress = null,
+  firstPage,
 }: {
   song: SongType
   pageData: parser.Paragraph[]
@@ -21,6 +22,7 @@ function SongPage({
   pageNumber?: number
   noBack?: boolean
   onChordPress?: null | ((chord: string) => void)
+  firstPage: boolean
 }) {
   const pretranspose =
     typeof song.pretranspose === 'number' ? song.pretranspose : 0
@@ -41,6 +43,8 @@ function SongPage({
         page={pageData}
         title={song.title}
         back={!noBack}
+        firstPage={firstPage}
+        slug={song.slug}
       />
     </PDFSettingsProvider>
   )
@@ -122,6 +126,7 @@ export function SongLook({
           noBack={noBack || i !== 0}
           transposition={transposition}
           onChordPress={onChordPress}
+          firstPage={i === 0}
         />
       ))}
     </>

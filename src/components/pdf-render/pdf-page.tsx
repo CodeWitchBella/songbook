@@ -11,12 +11,19 @@ const margin = {
   inner: (18.8 / 105) * 100,
 }
 
-function DefaultPage({ children }: PropsWithChildren<{}>) {
+function DefaultPage({
+  children,
+  ...rest
+}: PropsWithChildren<{ bookmark?: string; id?: string }>) {
   const isInPDF = useIsInPDF()
   const pdfSettings = usePDFSettings()
   if (!isInPDF) return <SizerPage>{children}</SizerPage>
   return (
-    <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}` as $FixMe}>
+    <PrimitivePDFPage
+      wrap={false}
+      size={`A${pdfSettings.pageSize}` as $FixMe}
+      {...rest}
+    >
       {children}
     </PrimitivePDFPage>
   )
@@ -30,15 +37,18 @@ export function PDFPage({
   children,
   left,
   style,
+  ...rest
 }: PropsWithChildren<{
   left: boolean
   style?: ReactPDFTypes.Style | ReactPDFTypes.Style[]
+  bookmark?: string
+  id?: string
 }>) {
   const { vw, vh, web } = usePDFSettings()
   const { Page } = useContext(pageContext)
 
   return (
-    <Page>
+    <Page {...rest}>
       <View
         style={[
           style as any,

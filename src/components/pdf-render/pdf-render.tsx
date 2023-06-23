@@ -146,6 +146,8 @@ export default function PDFRender({ song }: Props) {
             title={song.title}
             author={song.author}
             footer={footer || ''}
+            firstPage={i === 0}
+            slug={song.slug}
           />
         ))}
       </PDFSettingsProvider>
@@ -212,7 +214,12 @@ export function PDFDownload({
   slug,
   title,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
-  const songPages = [] as (SongType & { page: Line[][]; counter: number })[]
+  const songPages = [] as (SongType & {
+    page: Line[][]
+    counter: number
+    firstPage: boolean
+    titleExtra?: string
+  })[]
   const delayedPages = [] as typeof songPages
   let songCounter = 0
   const [bookletV] = useQueryParam('booklet')
@@ -223,17 +230,17 @@ export function PDFDownload({
     const { pages } = parseSong('my', song.text, { continuous: 'never' })
     let pageCounter = 0
     const thisSongPages = [] as typeof songPages
+    let firstPage = true
     for (const page of pages) {
       pageCounter += 1
       thisSongPages.push({
         ...song,
         page,
         counter: songCounter,
-        title:
-          pages.length > 1
-            ? `${song.title} (${pageCounter}/${pages.length})`
-            : song.title,
+        firstPage,
+        titleExtra: pages.length > 1 ? `(${pageCounter}/${pages.length})` : '',
       })
+      firstPage = false
     }
     if (thisSongPages.length === 2 && songPages.length % 2 === 1) {
       delayedPages.push(...thisSongPages)
@@ -266,8 +273,11 @@ export function PDFDownload({
           page={song.page}
           left={i % 2 === 0}
           title={song.counter + '. ' + song.title}
+          titleExtra={song.titleExtra}
           author={song.author}
           footer={getSongbookMeta(title, DateTime.utc()).footer}
+          firstPage={song.firstPage}
+          slug={song.slug}
         />
       </PDFSettingsProvider>
     )),
