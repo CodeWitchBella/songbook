@@ -9,8 +9,11 @@ export function slugify(part: string) {
     .toLowerCase();
 }
 export async function randomID(length: number) {
-  let ret = nodeCrypto
-    .randomBytes(Math.ceil((length / 3) * 2) + 1 + 3)
+  const bytes = crypto.getRandomValues(
+    new Uint8Array(Math.ceil((length / 3) * 2) + 1 + 3),
+  );
+  if (!bytes) throw new Error("Could not generate random bytes");
+  let ret = Buffer.from(bytes)
     .toString("base64")
     .replace(/\+/g, "")
     .replace(/\//g, "")
