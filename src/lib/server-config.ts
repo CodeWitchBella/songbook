@@ -278,17 +278,14 @@ const resolvers = {
       return null;
     },
     insertedAt: (src: any) => src.insertedAt || null,
-    fontSize: (src: any) =>
-      typeof src.fontSize === "number" ? src.fontSize : 1,
-    paragraphSpace: (src: any) =>
-      typeof src.paragraphSpace === "number" ? src.paragraphSpace : 1,
-    titleSpace: (src: any) =>
-      typeof src.titleSpace === "number" ? src.titleSpace : 1,
-    pretranspose: (src: any) =>
-      typeof src.pretranspose === "number" ? src.pretranspose : 0,
+    fontSize: (src: any) => coerceNumber(src.fontSize, 1),
+    paragraphSpace: (src: any) => coerceNumber(src.paragraphSpace, 1),
+    titleSpace: (src: any) => coerceNumber(src.titleSpace, 1),
+    pretranspose: (src: any) => coerceNumber(src.pretranspose, 0),
+      
   },
   SongRecord: {
-    data: (src: any) => src.data(),
+    data: (src: any) => {const data = src.data(); console.log(JSON.stringify(src.data(), null, 2)); return data},
     lastModified: (src: any) => src.data().lastModified,
   },
   CollectionRecord: {
@@ -474,6 +471,7 @@ const resolvers = {
       const doc = firestoreDoc("songs/" + id);
       const prev = await doc.get(context.loader);
       if (!prev) throw new Error("Song does not exist");
+      console.log(JSON.stringify(input, null, 2))
       await doc.set(
         {
           ...Object.fromEntries(
@@ -483,6 +481,7 @@ const resolvers = {
         },
         { merge: true },
       );
+      console.log(JSON.stringify((await doc.get(context.loader))?.data(), null, 2))
       return doc.get(context.loader);
     },
     async login(
@@ -585,3 +584,12 @@ export default {
   introspection: true,
   //tracing: true,
 };
+function coerceNumber(val: any, arg1: number) {
+  if (typeof val === "number") return val
+  if (typeof val === 'string') {
+    const parsed = +val
+    if(parsed.toFixed(0) === val && Number.isSafeInteger(parsed)) return parsed
+  }
+  return arg1
+}
+
