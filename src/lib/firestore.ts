@@ -10,6 +10,7 @@ const serviceAccountJSON = JSON.parse(
 );
 
 async function getAccessToken() {
+  if (!serviceAccountJSON.project_id) throw new Error("missing FIREBASE_SERVICE_KEY")
   const jwtToken = await getTokenFromGCPServiceAccount({
     serviceAccountJSON,
     aud: "https://oauth2.googleapis.com/token",
