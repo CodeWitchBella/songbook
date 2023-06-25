@@ -5,6 +5,7 @@ import vedouci21 from './vedouci21.png'
 import extra21 from './extra21.png'
 import deti22 from './deti22.png'
 import Vedouci22 from './vedouci22'
+import Deti23 from './deti23'
 
 const titleMap: {
   [key: string]: {
@@ -86,6 +87,25 @@ const titleMap: {
     imageWidth: 30,
     imageOnly: false,
     image: Vedouci22,
+  },
+  'Tábor 2023 Vedoucí': {
+    title: 'Cooler-than-you zpěvy',
+    subtitle: 'MMXXIII',
+    footer: 'Sonomanceři od Kačleh MMXXII',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+  },
+  'Tábor 2023 Děti': {
+    title: 'Posvátné zpěvy',
+    subtitle: 'MMXXIII',
+    footer: 'Brehoni 2023',
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: Deti23,
   },
 }
 
