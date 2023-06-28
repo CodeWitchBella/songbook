@@ -6,6 +6,7 @@ import extra21 from './extra21.png'
 import deti22 from './deti22.png'
 import Vedouci22 from './vedouci22'
 import Deti23 from './deti23'
+import Vedouci23 from './vedouci23'
 
 const titleMap: {
   [key: string]: {
@@ -80,8 +81,8 @@ const titleMap: {
   },
   'Kačlehy 2022 Vedoucí': {
     title: 'Uctívání kedluben',
-    subtitle: 'MMXXII',
-    footer: 'Sonomanceři od Kačleh MMXXII',
+    subtitle: 'MMXXII, 2. edice',
+    footer: 'Brehonští Sonomanceři MMXXII, 2. edice',
     imageViewHeight: 40,
     imageViewPaddingTop: 0,
     imageWidth: 30,
@@ -89,13 +90,14 @@ const titleMap: {
     image: Vedouci22,
   },
   'Tábor 2023 Vedoucí': {
-    title: 'Cooler-than-you zpěvy',
-    subtitle: 'MMXXIII',
-    footer: 'Sonomanceři od Kačleh MMXXII',
+    title: 'Okultní zvuky',
+    subtitle: 'Brehoni 2023',
+    footer: 'Brehonské okultní zvuky 2023',
     imageViewHeight: 40,
     imageViewPaddingTop: 0,
     imageWidth: 30,
     imageOnly: false,
+    image: Vedouci23,
   },
   'Tábor 2023 Děti': {
     title: 'Posvátné zpěvy',
