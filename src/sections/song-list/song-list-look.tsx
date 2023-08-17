@@ -127,11 +127,17 @@ function useWindowWidth() {
   return width
 }
 
-export function SongList({ list }: { list: SongListItem[] }) {
+export function SongList({
+  list,
+  alwaysBig,
+}: {
+  list: SongListItem[]
+  alwaysBig: boolean
+}) {
   const { t } = useTranslation()
   const windowWidth = useWindowWidth()
 
-  const big = windowWidth >= 800
+  const big = alwaysBig || windowWidth >= 800
   const key = useMemo(
     () => Math.random() + '' + list.length + '' + windowWidth,
     [list, windowWidth],
