@@ -1,5 +1,5 @@
 {
-  description = "Gemma";
+  description = "songbook";
 
   inputs = {
     systems.url = "github:nix-systems/default";
