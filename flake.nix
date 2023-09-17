@@ -13,34 +13,23 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.systems.follows = "systems";
     };
-    nix-filter.url = "github:numtide/nix-filter";
+    corepack-overlay = {
+      url = "github:CodeWitchBella/corepack-overlay/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, flake-utils, devshell, nixpkgs, nix-filter, ... }:
+  outputs = { self, flake-utils, devshell, nixpkgs, corepack-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShell = let
         pkgs = import nixpkgs {
           inherit system;
 
-          overlays = [ devshell.overlays.default ];
-        };
-        nodejs = pkgs.nodejs_20;
-        packageJson = builtins.fromJSON (builtins.readFile ./package.json);
-        corepack = pkgs.stdenv.mkDerivation {
-          name = "corepack-shims";
-          nativeBuildInputs = [ nodejs ];
-          phases = [ "installPhase" ];
-          installPhase = ''
-            mkdir -p $out/bin
-            HOME=$PWD
-            echo '{ "packageManager": "${packageJson.packageManager}" }' > package.json
-            corepack prepare
-            corepack enable --install-directory=$out/bin
-          '';
+          overlays = [ (import corepack-overlay ./package.json) devshell.overlays.default ];
         };
       in pkgs.devshell.mkShell {
         imports = [ (pkgs.devshell.importTOML ./devshell.toml) ];
-        devshell.packages = [ nodejs corepack ];
+        devshell.packages = [ pkgs.nodejs_20 pkgs.corepack ];
       };
     });
 }

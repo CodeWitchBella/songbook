@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "corepack-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1692697058,
+        "narHash": "sha256-8t34tKhRdp2SX7+LD+wWwSpIOzvLxAwY4F4sS4Qd2FY=",
+        "owner": "CodeWitchBella",
+        "repo": "corepack-overlay",
+        "rev": "1a8109a22f24b82307fe0d1a3e03ed27e6ff97b0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CodeWitchBella",
+        "ref": "main",
+        "repo": "corepack-overlay",
+        "type": "github"
+      }
+    },
     "devshell": {
       "inputs": {
         "nixpkgs": [
@@ -43,21 +64,6 @@
         "type": "github"
       }
     },
-    "nix-filter": {
-      "locked": {
-        "lastModified": 1687178632,
-        "narHash": "sha256-HS7YR5erss0JCaUijPeyg2XrisEb959FIct3n2TMGbE=",
-        "owner": "numtide",
-        "repo": "nix-filter",
-        "rev": "d90c75e8319d0dd9be67d933d8eb9d0894ec9174",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "nix-filter",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1687412861,
@@ -76,9 +82,9 @@
     },
     "root": {
       "inputs": {
+        "corepack-overlay": "corepack-overlay",
         "devshell": "devshell",
         "flake-utils": "flake-utils",
-        "nix-filter": "nix-filter",
         "nixpkgs": "nixpkgs",
         "systems": "systems"
       }
