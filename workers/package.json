@@ -7,7 +7,9 @@
   "type": "module",
   "scripts": {
     "build": "webpack",
-    "dev": "NODE_OPTIONS=\"--loader ts-node/esm\" nodemon index.ts"
+    "dev": "NODE_OPTIONS=\"--loader ts-node/esm\" nodemon index.ts",
+    "db-push": "yarn drizzle-kit push:mysql --config=drizzle.ts",
+    "db-migrate": "yarn drizzle-kit generate:mysql --config=drizzle.ts"
   },
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "license": "UNLICENSED",
@@ -34,6 +36,7 @@
     "crypto-browserify": "^3.12.0",
     "dataloader": "^2.2.2",
     "dotenv": "^16.3.1",
+    "drizzle-kit": "^0.19.13",
     "drizzle-orm": "^0.28.6",
     "latinize": "^0.5.0",
     "luxon": "^3.4.3",

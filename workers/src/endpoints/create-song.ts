@@ -1,9 +1,4 @@
 import type { MyContext } from '../lib/context.js'
-import {
-  firestoreDoc,
-  queryFieldEqualsSingle,
-  serverTimestamp,
-} from '../lib/firestore.js'
 import { validateJsonBody } from '../lib/request.js'
 import {
   badRequestResponse,

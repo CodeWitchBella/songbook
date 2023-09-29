@@ -1,20 +1,9 @@
 import { convertNodeRequest } from '@miniflare/http-server'
-import fs from 'fs'
 import http from 'http'
 
-Object.assign(
-  process.env,
-  Object.fromEntries(
-    fs
-      .readFileSync(new URL('.dev.vars', import.meta.url), 'utf8')
-      .trim()
-      .split('\n')
-      .map((v) => v.trim())
-      .filter((v) => !v.startsWith('#'))
-      .map((v) => v.split('=')),
-  ),
-)
+import { env } from './drizzle.js'
 
+Object.assign(process.env, env)
 globalThis.isInNodejs = true
 
 const worker = (await import('./src/index.js')).default

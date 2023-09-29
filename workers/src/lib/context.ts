@@ -2,14 +2,12 @@ import type { Duration } from 'luxon'
 
 import { createSetSessionCookieHeader, parseSessionCookie } from './cookie.js'
 import type { DB } from './drizzle.js'
-import type { LoaderType } from './firestore.js'
-import { getLoader } from './firestore.js'
 
 export type MyContext = {
   sessionCookie?: string
   setSessionCookie(cookie: string | null, duration: Duration): void
   url: string
-  loader: LoaderType
+
   db: DB
 }
 
@@ -37,7 +35,6 @@ export function contextPair(request: Request) {
         hdr = createSetSessionCookieHeader(value, duration)
       },
       url: request.url,
-      loader: getLoader(),
       db: await drizzle(),
     }),
     finishContext: (response: Response) => {

@@ -4,14 +4,6 @@ import * as bcrypt from 'bcryptjs'
 import { DateTime, Duration } from 'luxon'
 
 import type { MyContext } from './context.js'
-import {
-  firestoreDoc,
-  firestoreFieldTransforms,
-  getAll,
-  queryFieldEquals,
-  runQuery,
-  serverTimestamp,
-} from './firestore.js'
 import { randomID, slugify } from './utils.js'
 
 // Construct a schema, using GraphQL schema language

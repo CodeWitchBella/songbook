@@ -5,19 +5,25 @@ packages = ["mariadb_1011"]
 name = "dev-frontend-vite"
 command = "yarn frontend:dev"
 help = "Start dev server for frontend code"
-category = "frontend"
+category = "frontend-only"
 
 [[commands]]
 name = "dev-proxy"
 command = "yarn frontend:proxy"
 help = "Start proxy to access production from frontend"
-category = "frontend"
+category = "frontend-only"
 
 [[commands]]
 name = "dev-frontend"
 command = "yarn frontend"
 help = "Start everything for frontend-only development"
-category = "frontend"
+category = "frontend-only"
+
+[[commands]]
+name = "dev-frontend-local"
+command = "yarn full:frontend"
+help = "Start frontend"
+category = "fullstack"
 
 [[commands]]
 name = "dev-server"
@@ -29,6 +35,12 @@ category = "fullstack"
 name = "dev-db"
 command = "yarn full:db"
 help = "Start database"
+category = "fullstack"
+
+[[commands]]
+name = "db-push"
+command = "yarn workspace songbook-workers db-push"
+help = "Apply changes to database"
 category = "fullstack"
 
 [[commands]]
