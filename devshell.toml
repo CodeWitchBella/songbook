@@ -1,2 +1,8 @@
 [devshell]
 packages = []
+
+[[commands]]
+name = "dev-server"
+command = "yarn dev"
+help = "Start dev server"
+category = "new to project? run me first"
