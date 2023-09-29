@@ -1,5 +1,7 @@
 {
   "semi": false,
   "trailingComma": "all",
-  "singleQuote": true
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
