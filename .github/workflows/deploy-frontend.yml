@@ -18,7 +18,11 @@ jobs:
 
       - name: 🚀 Publish
         if: github.ref_name == 'main'
-        run: yarn wrangler pages publish dist --project-name songbook
+        run: |
+          set -xe
+          cd frontend
+          which wrangler
+          wrangler pages publish dist --project-name songbook
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: cce7f3b93d1cc5016fffc6068a30a3bb

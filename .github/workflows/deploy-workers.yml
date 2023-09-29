@@ -19,4 +19,5 @@ jobs:
         run:
           set -xe
           cd workers
-          yarn wrangler publish
+          which wrangler
+          wrangler publish
