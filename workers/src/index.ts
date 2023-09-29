@@ -9,10 +9,11 @@ import { contextPair } from './lib/context'
 globalThis.setImmediate = undefined as any
 
 async function handleRequest(
-  event: FetchEvent,
+  request: Request,
+  env: {},
+  ctx: ExecutionContext,
   createContext: () => MyContext,
 ): Promise<Response> {
-  const { request } = event
   try {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/api')) url.pathname = url.pathname.slice(4)
@@ -21,7 +22,7 @@ async function handleRequest(
       return await handleGraphql(request, createContext())
     if (url.pathname === '/ultimate-guitar' || url.pathname === '/import')
       return await handleImport(request)
-    if (url.pathname === '/releases') return await handleReleases(event)
+    if (url.pathname === '/releases') return await handleReleases(request, ctx)
     if (request.method === 'POST' && url.pathname === '/song')
       return await handleCreateSong(request, createContext())
     if (url.pathname === '/beacon.min.js')
@@ -33,7 +34,7 @@ async function handleRequest(
       status: 404,
       headers: { 'content-type': 'text/plain; charset=utf-8' },
     })
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof Response) return err
     console.error(err.stack)
     return new Response(err.stack, {
@@ -43,12 +44,16 @@ async function handleRequest(
   }
 }
 
-addEventListener('fetch', (event) => {
-  const { createContext, finishContext } = contextPair(event.request)
-  event.respondWith(
-    handleRequest(event, createContext).then((response) => {
-      finishContext(response)
-      return response
-    }),
-  )
-})
+const worker = {
+  async fetch(
+    request: Request,
+    env: {},
+    ctx: ExecutionContext,
+  ): Promise<Response> {
+    const { createContext, finishContext } = contextPair(request)
+    const res = await handleRequest(request, env, ctx, createContext)
+    finishContext(res)
+    return res
+  },
+}
+export default worker

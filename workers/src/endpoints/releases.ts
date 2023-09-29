@@ -21,11 +21,11 @@ type GithubResponse = {
   body: string // "## English\r\n\r\n- ...\r\n\r\n## Česky\r\n\r\n- ...\r\n";
 }
 
-export async function handleReleases(event: FetchEvent) {
-  const { request } = event
+export async function handleReleases(request: Request, ctx: ExecutionContext) {
   if (request.method !== 'GET') return methodNotAllowedResponse()
 
-  let response = await caches.default.match(request.url)
+  const cache = await caches.open('default')
+  let response = await cache.match(request.url)
   if (!response) {
     const fetched = await fetch(
       'https://api.github.com/repos/CodeWitchBella/songbook/releases?per_page=100',
@@ -68,7 +68,7 @@ export async function handleReleases(event: FetchEvent) {
       )
     }
     response.headers.set('content-type', 'application/json; charset=utf-8')
-    event.waitUntil(caches.default.put(request.url, response.clone()))
+    ctx.waitUntil(cache.put(request.url, response.clone()))
   }
   return response
 }
