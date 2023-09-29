@@ -6,6 +6,7 @@ runs:
     - uses: DeterminateSystems/nix-installer-action@main
     - uses: DeterminateSystems/magic-nix-cache-action@main
     - name: Run in devshell-ish
+      shell: bash
       run: |
         export PATH=`nix develop -c bash -c 'echo $PATH'`
         echo PATH=$PATH >> ${GITHUB_ENV}
@@ -17,6 +18,7 @@ runs:
         path: .yarn/cache
         key: ${{ hashFiles('yarn.lock') }}
     - name: 📥 Install deps
+      shell: bash
       run: |
         yarn config set enableGlobalCache 0
         yarn config set cacheFolder .yarn/cache
