@@ -9,26 +9,21 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Run in devshell-ish
+        run: |
+          export PATH=`nix develop -c bash -c 'echo $PATH'`
+          echo PATH=$PATH >> ${GITHUB_ENV}
 
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20.x
 
       - name: 🙈 Cache
         uses: actions/cache@v3
         with:
-          path: |
-            .yarn/cache
-            .node/corepack
-          key: ${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
-
+          path: .yarn/cache
+          key: ${{ hashFiles('yarn.lock') }}
       - name: 📥 Install deps
         run: |
-          export COREPACK_HOME=$PWD/.node/corepack
-          corepack -v
-          corepack enable
-          corepack prepare
           yarn config set enableGlobalCache 0
           yarn config set cacheFolder .yarn/cache
           yarn --immutable
