@@ -2,7 +2,31 @@
 packages = []
 
 [[commands]]
-name = "dev-server"
-command = "yarn dev"
-help = "Start dev server"
-category = "new to project? run me first"
+name = "dev-frontend-vite"
+command = "yarn frontend:dev"
+help = "Start dev server for frontend code"
+category = "frontend"
+
+[[commands]]
+name = "dev-proxy"
+command = "yarn frontend:proxy"
+help = "Start proxy to access production from frontend"
+category = "frontend"
+
+[[commands]]
+name = "dev-frontend"
+command = "yarn frontend"
+help = "Start everything for frontend-only development"
+category = "frontend"
+
+[[commands]]
+name = "dev-workers"
+command = "yarn full:workers"
+help = "Start dev server for backend code"
+category = "fullstack"
+
+[[commands]]
+name = "dev"
+command = "yarn full"
+help = "Start everything needed for fullstack development"
+category = "fullstack"

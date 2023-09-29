@@ -62,7 +62,6 @@
     "workbox-window": "^6.5.4",
     "xorshift": "^1.2.0"
   },
-  "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5",
   "scripts": {
     "build": "vite build",
     "build-ci": "node build-ci.js && vite build",
@@ -87,7 +86,6 @@
   "devDependencies": {
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
-    "wrangler": "^2.0.25"
+    "tailwindcss": "^3.3.3"
   }
 }

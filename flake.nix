@@ -29,7 +29,7 @@
         };
       in pkgs.devshell.mkShell {
         imports = [ (pkgs.devshell.importTOML ./devshell.toml) ];
-        devshell.packages = [ pkgs.nodejs_20 pkgs.corepack ];
+        devshell.packages = [ pkgs.nodejs_20 pkgs.corepack pkgs.nodePackages.wrangler ];
       };
     });
 }

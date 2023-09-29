@@ -1,0 +1,20 @@
+{
+    "private": true,
+    "name": "songbook-root",
+    "scripts": {
+        "frontend:dev": "yarn workspace songbook-frontend dev",
+        "frontend:proxy": "yarn workspace songbook-frontend node proxy.js",
+        "frontend": "run-p \"frontend:*\"",
+        "full:workers": "yarn workspace songbook-workers dev",
+        "full:frontend": "yarn frontend:dev",
+        "full": "run-p \"full:*\""
+    },
+    "packageManager": "yarn@3.6.3+sha256.08ead1821a257416e6f217e89365425bf4b6d2430c3279318bedcec1a245fff5",
+    "workspaces": [
+        "frontend",
+        "workers"
+    ],
+    "devDependencies": {
+        "npm-run-all": "^4.1.5"
+    }
+}
