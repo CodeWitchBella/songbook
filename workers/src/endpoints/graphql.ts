@@ -1,9 +1,9 @@
 import { renderPlaygroundPage } from '@apollographql/graphql-playground-html'
 import { ApolloServer } from 'apollo-server-cloudflare'
-import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo'
+import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo.js'
 
-import type { MyContext } from '../lib/context'
-import serverConfig from '../lib/server-config'
+import type { MyContext } from '../lib/context.js'
+import serverConfig from '../lib/server-config.js'
 
 const getServer = (() => {
   let cache: ApolloServer

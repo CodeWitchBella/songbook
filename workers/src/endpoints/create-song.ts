@@ -1,17 +1,17 @@
-import type { MyContext } from '../lib/context'
+import type { MyContext } from '../lib/context.js'
 import {
   firestoreDoc,
   queryFieldEqualsSingle,
   serverTimestamp,
-} from '../lib/firestore'
-import { parseJsonBody, validateJsonBody } from '../lib/request'
+} from '../lib/firestore.js'
+import { validateJsonBody } from '../lib/request.js'
 import {
   badRequestResponse,
   jsonResponse,
   methodNotAllowedResponse,
-} from '../lib/response'
-import { getViewerCheck } from '../lib/server-config'
-import { randomID, slugify } from '../lib/utils'
+} from '../lib/response.js'
+import { getViewerCheck } from '../lib/server-config.js'
+import { randomID, slugify } from '../lib/utils.js'
 
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context)

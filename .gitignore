@@ -28,6 +28,9 @@ frontend/bundle
 .env
 /dist
 .direnv
+.mariadb
+.dev.vars
+.wrangler
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 

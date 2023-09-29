@@ -20,7 +20,7 @@ async function getAccessToken() {
     },
   })
 
-  const accessToken = await (
+  const accessToken: any = await (
     await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

@@ -3,7 +3,7 @@ import { gql, UserInputError } from 'apollo-server-cloudflare'
 import * as bcrypt from 'bcryptjs'
 import { DateTime, Duration } from 'luxon'
 
-import type { MyContext } from './context'
+import type { MyContext } from './context.js'
 import {
   firestoreDoc,
   firestoreFieldTransforms,
@@ -11,8 +11,8 @@ import {
   queryFieldEquals,
   runQuery,
   serverTimestamp,
-} from './firestore'
-import { randomID, slugify } from './utils'
+} from './firestore.js'
+import { randomID, slugify } from './utils.js'
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -577,13 +577,14 @@ async function createSession(context: MyContext, id: string) {
   context.setSessionCookie(sessionToken, sessionDuration)
 }
 
-export default {
+const serverConfig = {
   typeDefs,
   resolvers,
   playground: true,
   introspection: true,
   //tracing: true,
 }
+export default serverConfig
 function coerceNumber(val: any, arg1: number) {
   if (typeof val === 'number') return val
   if (typeof val === 'string') {

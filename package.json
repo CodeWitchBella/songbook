@@ -5,8 +5,9 @@
     "frontend:dev": "yarn workspace songbook-frontend dev",
     "frontend:proxy": "yarn workspace songbook-frontend node proxy.js",
     "frontend": "run-p \"frontend:*\"",
-    "full:workers": "yarn workspace songbook-workers dev",
+    "full:server": "yarn workspace songbook-workers dev",
     "full:frontend": "yarn frontend:dev",
+    "full:db": "nu workers/mariadb.nu",
     "full": "run-p \"full:*\"",
     "lint": "eslint --cache frontend workers"
   },

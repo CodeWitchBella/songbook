@@ -1,4 +1,4 @@
-import { badRequestResponse, jsonResponse } from '../lib/response'
+import { badRequestResponse, jsonResponse } from '../lib/response.js'
 
 export async function handleImport(request: Request): Promise<Response> {
   const url = new URL(request.url)
@@ -279,10 +279,4 @@ function before(text: string, delimiter: string) {
   const index = text.indexOf(delimiter)
   if (index < 0) return ''
   return text.substring(0, index)
-}
-
-function splitOnce(text: string, delimiter: string): readonly [string, string] {
-  const index = text.indexOf(delimiter)
-  if (index < 0) return [text, '']
-  return [text.substring(0, index), text.substring(index + delimiter.length)]
 }

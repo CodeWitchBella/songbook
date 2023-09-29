@@ -1,10 +1,10 @@
-import { handleCreateSong } from './endpoints/create-song'
-import { handleGraphql } from './endpoints/graphql'
-import { handleImport } from './endpoints/import'
-import { handleReleases } from './endpoints/releases'
-import { forward } from './forward'
-import type { MyContext } from './lib/context'
-import { contextPair } from './lib/context'
+import { handleCreateSong } from './endpoints/create-song.js'
+import { handleGraphql } from './endpoints/graphql.js'
+import { handleImport } from './endpoints/import.js'
+import { handleReleases } from './endpoints/releases.js'
+import { forward } from './forward.js'
+import type { MyContext } from './lib/context.js'
+import { contextPair } from './lib/context.js'
 
 globalThis.setImmediate = undefined as any
 
@@ -12,19 +12,19 @@ async function handleRequest(
   request: Request,
   env: {},
   ctx: ExecutionContext,
-  createContext: () => MyContext,
+  createContext: () => Promise<MyContext>,
 ): Promise<Response> {
   try {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/api')) url.pathname = url.pathname.slice(4)
     if (url.pathname === '/hello') return new Response('World')
     if (url.pathname === '/graphql')
-      return await handleGraphql(request, createContext())
+      return await handleGraphql(request, await createContext())
     if (url.pathname === '/ultimate-guitar' || url.pathname === '/import')
       return await handleImport(request)
     if (url.pathname === '/releases') return await handleReleases(request, ctx)
     if (request.method === 'POST' && url.pathname === '/song')
-      return await handleCreateSong(request, createContext())
+      return await handleCreateSong(request, await createContext())
     if (url.pathname === '/beacon.min.js')
       return await forward(
         request,

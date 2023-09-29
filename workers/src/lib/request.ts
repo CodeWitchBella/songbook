@@ -1,4 +1,4 @@
-import { badRequestResponse } from './response'
+import { badRequestResponse } from './response.js'
 
 export async function parseJsonBody(request: Request) {
   if (
@@ -10,6 +10,9 @@ export async function parseJsonBody(request: Request) {
   return await request.json()
 }
 
+/**
+ * @deprecated switch to zod
+ */
 export async function validateJsonBody<
   Req extends string = never,
   Opt extends string = never,
@@ -26,7 +29,7 @@ export async function validateJsonBody<
     [key in OptNum]: number | null | undefined
   } & { [key in ReqNum]: number }
 > {
-  const json = await parseJsonBody(request)
+  const json: any = await parseJsonBody(request)
 
   // Check for extras
   const set = new Set<string>()
