@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
-import Song from 'sections/song/song'
-import { ScrollToTopOnMount } from 'components/scroll'
-import { useParams } from 'react-router'
 import { NotFound } from 'components/error-page'
+import { ScrollToTopOnMount } from 'components/scroll'
+import { useEffect } from 'react'
+import { useParams } from 'react-router'
+import Song from 'sections/song/song'
 
 function SongRoute() {
   const { slug } = useParams()

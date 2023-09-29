@@ -1,27 +1,28 @@
 /** @jsxImportSource @emotion/react */
 
+import { css, Global } from '@emotion/react'
+import { DarkModeProvider } from 'components/dark-mode'
+import { InstallProvider } from 'components/install'
+import { LanguageProvider } from 'components/localisation'
+import { RootView, TText } from 'components/themed'
+import ErrorBoundary from 'containers/error-boundary'
 import React, { Suspense } from 'react'
 import Routes from 'routes/routes'
-import { InstallProvider } from 'components/install'
-import { css, Global } from '@emotion/react'
-import OutlineHandler from 'utils/outline-handler'
-import ErrorBoundary from 'containers/error-boundary'
 import { StoreProvider } from 'store/store'
-import { RootView, TText } from 'components/themed'
+import OutlineHandler from 'utils/outline-handler'
 
-import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
-import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
 import cantarellBoldWoff from './webfonts/cantarell-bold.woff'
 import cantarellBoldWoff2 from './webfonts/cantarell-bold.woff2'
-import { DarkModeProvider } from 'components/dark-mode'
-import { LanguageProvider } from 'components/localisation'
+import cantarellRegularWoff from './webfonts/cantarell-regular.woff'
+import cantarellRegularWoff2 from './webfonts/cantarell-regular.woff2'
 
 export const InjectGlobal = () => (
   <Global
     styles={css`
       @font-face {
         font-family: 'Cantarell';
-        src: url('${cantarellRegularWoff2}') format('woff2'),
+        src:
+          url('${cantarellRegularWoff2}') format('woff2'),
           url('${cantarellRegularWoff}') format('woff');
         font-weight: normal;
         font-style: normal;
@@ -29,7 +30,8 @@ export const InjectGlobal = () => (
 
       @font-face {
         font-family: 'Cantarell';
-        src: url('${cantarellBoldWoff2}') format('woff2'),
+        src:
+          url('${cantarellBoldWoff2}') format('woff2'),
           url('${cantarellBoldWoff}') format('woff');
         font-weight: bold;
         font-style: normal;

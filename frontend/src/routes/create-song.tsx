@@ -1,24 +1,21 @@
 /** @jsxImportSource @emotion/react */
 
-import { useMemo, useState } from 'react'
 import styled from '@emotion/styled'
-import { LargeInput } from 'components/input'
-import { PrimaryButton } from 'components/interactive/primary-button'
-import { BasicButton } from 'components/interactive/basic-button'
-import { useNewSong } from 'store/store'
-import { useLocation, useParams } from 'react-router-dom'
-import { View, StyleSheet } from 'react-native'
-import {
-  convertToSong,
-  IntermediateSongData,
-  songDataFromLink,
-} from 'utils/song-from-link'
 import { ErrorPage, NotFound } from 'components/error-page'
+import { LargeInput } from 'components/input'
+import { BasicButton } from 'components/interactive/basic-button'
+import { ListButton } from 'components/interactive/list-button'
+import { PrimaryButton } from 'components/interactive/primary-button'
 import { RootView, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
-import { ListButton } from 'components/interactive/list-button'
-import { useTranslation } from 'react-i18next'
 import ErrorBoundary from 'containers/error-boundary'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet, View } from 'react-native'
+import { useLocation, useParams } from 'react-router-dom'
+import { useNewSong } from 'store/store'
+import type { IntermediateSongData } from 'utils/song-from-link'
+import { convertToSong, songDataFromLink } from 'utils/song-from-link'
 
 const FormWrap = styled.div({
   display: 'flex',

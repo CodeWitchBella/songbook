@@ -1,4 +1,5 @@
-import React, { useContext, useMemo, PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 type CtxIn = {
   fontSize: number

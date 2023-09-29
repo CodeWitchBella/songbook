@@ -1,8 +1,11 @@
-import React, { useEffect, useReducer } from 'react'
-import { SongList, SongListItem } from './song-list-look'
 import { notNull } from '@isbl/ts-utils'
-import getFilteredSongList, { SearchableSong } from './alg'
-import { SongType } from 'store/store-song'
+import React, { useEffect, useReducer } from 'react'
+import type { SongType } from 'store/store-song'
+
+import type { SearchableSong } from './alg'
+import getFilteredSongList from './alg'
+import type { SongListItem } from './song-list-look'
+import { SongList } from './song-list-look'
 
 const SearchWorker = () =>
   new Worker(new URL('./worker', import.meta.url), { type: 'module' })

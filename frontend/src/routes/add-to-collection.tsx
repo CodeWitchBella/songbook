@@ -11,10 +11,10 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { useParams } from 'react-router-dom'
-import { WithMethods } from 'store/generic-store'
+import type { WithMethods } from 'store/generic-store'
 import { graphqlFetch } from 'store/graphql'
 import { useCollectionList, useSong, useViewer } from 'store/store'
-import { CollectionType } from 'store/store-collections'
+import type { CollectionType } from 'store/store-collections'
 import { collectionCompare, collectionFullName } from 'utils/utils'
 
 export default function AddToCollection() {

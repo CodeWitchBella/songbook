@@ -1,11 +1,11 @@
 import { BackArrow, BackButton } from 'components/back-button'
+import { getChordDefinition } from 'components/chord-help'
 import { RootView, TH2, TText } from 'components/themed'
 import { useMemo } from 'react'
 import { View } from 'react-native'
-import * as parser from 'utils/song-parser/song-parser'
-import { useSongList } from 'store/store'
-import { getChordDefinition } from 'components/chord-help'
 import { Link } from 'react-router-dom'
+import { useSongList } from 'store/store'
+import * as parser from 'utils/song-parser/song-parser'
 
 const ignore = new Set([
   '|',

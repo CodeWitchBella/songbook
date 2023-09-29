@@ -1,11 +1,11 @@
-import { DateTime } from 'luxon'
+import type { DateTime } from 'luxon'
 
 import deti21 from './deti21.png'
-import vedouci21 from './vedouci21.png'
-import extra21 from './extra21.png'
 import deti22 from './deti22.png'
-import Vedouci22 from './vedouci22'
 import Deti23 from './deti23'
+import extra21 from './extra21.png'
+import vedouci21 from './vedouci21.png'
+import Vedouci22 from './vedouci22'
 import Vedouci23 from './vedouci23'
 
 const titleMap: {

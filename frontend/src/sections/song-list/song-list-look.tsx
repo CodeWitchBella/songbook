@@ -1,21 +1,22 @@
 /** @jsxImportSource @emotion/react */
 
+import { css } from '@emotion/react'
+import styled from '@emotion/styled'
+import { BasicButton } from 'components/interactive/basic-button'
+import { TText } from 'components/themed'
+import type { PropsWithChildren } from 'react'
 import React, {
-  PropsWithChildren,
-  useState,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
-  useLayoutEffect,
+  useState,
 } from 'react'
-import styled from '@emotion/styled'
-import { css } from '@emotion/react'
-import { VariableSizeList } from 'react-window'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { BasicButton } from 'components/interactive/basic-button'
-import { useTranslation, TFunction } from 'react-i18next'
-import { TText } from 'components/themed'
+import type { TFunction } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { VariableSizeList } from 'react-window'
 
 const TheSong = styled.div`
   all: unset;
@@ -83,13 +84,12 @@ function SongItem(
   )
 }
 
-const columns = (n: number) => (p: { count: number }) =>
-  css`
-    @media (min-width: ${n * 400}px) {
-      grid-template-columns: repeat(${n}, 400px);
-      grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
-    }
-  `
+const columns = (n: number) => (p: { count: number }) => css`
+  @media (min-width: ${n * 400}px) {
+    grid-template-columns: repeat(${n}, 400px);
+    grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
+  }
+`
 
 const ListContainer = styled('div')<{ count: number }>`
   display: grid;

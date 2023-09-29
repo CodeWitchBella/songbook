@@ -1,8 +1,9 @@
+import { getChordDefinition } from 'components/chord-help'
 import { Fragment } from 'react'
 import { Pressable } from 'react-native'
-import { Text } from './primitives'
+
 import { usePDFSettings } from './pdf-settings'
-import { getChordDefinition } from 'components/chord-help'
+import { Text } from './primitives'
 
 const notes = [
   ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'H'],

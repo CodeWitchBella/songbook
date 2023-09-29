@@ -1,4 +1,4 @@
-import { BackButton, BackArrow } from 'components/back-button'
+import { BackArrow, BackButton } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
 import { ListButton } from 'components/interactive/list-button'
 import { DarkModeSettings } from 'components/settings/dark-mode'
@@ -7,7 +7,7 @@ import { RootView, TH2, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { Version } from 'components/version'
 import { Trans, useTranslation } from 'react-i18next'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 const googleDoc =
   'https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing'
@@ -16,7 +16,7 @@ export default function About() {
   const { t } = useTranslation()
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <div className="px-1 py-2 max-w-full" style={{ width: 500 }}>
+      <div className="max-w-full px-1 py-2" style={{ width: 500 }}>
         <TH2>
           <BackButton>
             <BackArrow />

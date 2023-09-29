@@ -1,6 +1,8 @@
-import { GenericStore } from './generic-store'
 import { DateTime } from 'luxon'
-import { graphqlFetch, userFragment, User } from './graphql'
+
+import { GenericStore } from './generic-store'
+import type { User } from './graphql'
+import { graphqlFetch, userFragment } from './graphql'
 
 const songRecordFragment = `
   fragment songRecord on SongRecord {

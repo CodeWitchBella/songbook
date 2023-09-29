@@ -1,16 +1,16 @@
-import * as serviceWorker from './serviceWorker'
-
-import * as ReactDOM from 'react-dom/client'
-import React from 'react'
-import ErrorBoundary from 'containers/error-boundary'
-import { BrowserRouter } from 'react-router-dom'
-import Loadable from 'react-loadable'
-import App, { InjectGlobal } from './app'
-import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
 //import { Buffer } from 'buffer'
-
 import 'inter-ui/inter.css'
 import './index.css'
+
+import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
+import ErrorBoundary from 'containers/error-boundary'
+import React from 'react'
+import * as ReactDOM from 'react-dom/client'
+import Loadable from 'react-loadable'
+import { BrowserRouter } from 'react-router-dom'
+
+import App, { InjectGlobal } from './app'
+import * as serviceWorker from './serviceWorker'
 
 // workaround for something removing import React from 'react'
 ;(window as any).React = React

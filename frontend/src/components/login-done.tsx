@@ -1,8 +1,9 @@
-import { View } from 'react-native'
-import { User } from 'store/graphql'
-import { TText } from './themed'
 import { useTranslation } from 'react-i18next'
+import { View } from 'react-native'
+import type { User } from 'store/graphql'
+
 import { InlineLink } from './interactive/inline-link'
+import { TText } from './themed'
 
 export function LoginDone({ viewer }: { viewer: User }) {
   const { t } = useTranslation()

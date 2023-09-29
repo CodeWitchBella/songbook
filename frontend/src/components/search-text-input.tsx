@@ -1,9 +1,10 @@
 import React, { useRef } from 'react'
-import { View, TextInput, StyleSheet } from 'react-native'
-import { BasicButton } from './interactive/basic-button'
-import { useBasicStyle } from './themed'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { StyleSheet, TextInput, View } from 'react-native'
+
+import { BasicButton } from './interactive/basic-button'
+import { useBasicStyle } from './themed'
 
 export function SearchTextInput({
   value,

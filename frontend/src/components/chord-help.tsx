@@ -1,8 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
 // @ts-expect-error
-import Chord from '@tombatossals/react-chords/lib/Chord'
 import guitar from '@tombatossals/chords-db/lib/guitar.json'
+import Chord from '@tombatossals/react-chords/lib/Chord'
+
 import { DumbModal } from './dumb-modal'
 import { TText, useColors } from './themed'
 

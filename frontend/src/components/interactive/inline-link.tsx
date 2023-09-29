@@ -1,5 +1,8 @@
-import { TextRef, TText, TTextProps, useColors } from 'components/themed'
-import { PropsWithChildren, useRef, useState } from 'react'
+import type { TextRef, TTextProps } from 'components/themed'
+import { TText, useColors } from 'components/themed'
+import type { PropsWithChildren } from 'react'
+import { useRef, useState } from 'react'
+
 import { useLinkOnPress } from './basic-button'
 import { isPressOverriden, useInPressOutside } from './press-outside'
 

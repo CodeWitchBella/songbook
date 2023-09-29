@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 
 import { View } from 'react-native'
+
 import { useColors } from './themed'
 
 export function DumbModal({

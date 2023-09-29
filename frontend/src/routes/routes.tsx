@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
-import { Routes, Route, useLocation, Navigate } from 'react-router'
-import { getGraphqlUrl } from 'store/graphql'
+import { NotFound } from 'components/error-page'
 import { RouteRenderedMarker } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
-import { NotFound } from 'components/error-page'
+import React, { useEffect } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { getGraphqlUrl } from 'store/graphql'
 
 const imports = {
   CollectionList: once(() => import('./collection-list')),

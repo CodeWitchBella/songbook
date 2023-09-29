@@ -1,10 +1,14 @@
-import { PropsWithChildren, useState } from 'react'
-import { TextStyle, GestureResponderEvent, Pressable } from 'react-native'
-import { useNavigate } from 'react-router'
 import { useUpdateAfterNavigate } from 'components/service-worker-status'
-import { TStyleProp, TText, useColors } from 'components/themed'
-import { isPressOverriden, useInPressOutside } from './press-outside'
+import type { TStyleProp } from 'components/themed'
+import { TText, useColors } from 'components/themed'
+import type { PropsWithChildren } from 'react'
+import { useState } from 'react'
 import { useCallback } from 'react'
+import type { GestureResponderEvent, TextStyle } from 'react-native'
+import { Pressable } from 'react-native'
+import { useNavigate } from 'react-router'
+
+import { isPressOverriden, useInPressOutside } from './press-outside'
 
 type ButtonPropsBase<T> = PropsWithChildren<
   {

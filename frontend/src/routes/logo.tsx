@@ -1,13 +1,14 @@
 /** @jsxImportSource @emotion/react */
 // @ts-nocheck
-import { useRef } from 'react'
-import { Canvas, GroupProps, useFrame } from '@react-three/fiber'
 import {
-  useGLTF,
-  PresentationControls,
-  Environment,
   ContactShadows,
+  Environment,
+  PresentationControls,
+  useGLTF,
 } from '@react-three/drei'
+import type { GroupProps } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
 
 export default function LogoRoute() {
   return (

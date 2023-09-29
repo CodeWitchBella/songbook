@@ -1,12 +1,14 @@
-import { PropsWithChildren } from 'react'
-import { Line, Paragraph } from 'utils/song-parser/song-parser'
-import { usePDFSettings } from './pdf-settings'
-import { PDFPage } from './pdf-page'
-import { View, Text, PropsOf } from './primitives'
 import { notNull } from '@isbl/ts-utils'
-import { Chord } from './chord'
-import { BackButton, BackArrow } from 'components/back-button'
+import { BackArrow, BackButton } from 'components/back-button'
+import type { PropsWithChildren } from 'react'
 import { StyleSheet } from 'react-native'
+import type { Line, Paragraph } from 'utils/song-parser/song-parser'
+
+import { Chord } from './chord'
+import { PDFPage } from './pdf-page'
+import { usePDFSettings } from './pdf-settings'
+import type { PropsOf } from './primitives'
+import { Text, View } from './primitives'
 
 const nbsp = (text: string) =>
   '\u00A0'.repeat(text.length - text.trimLeft().length) +

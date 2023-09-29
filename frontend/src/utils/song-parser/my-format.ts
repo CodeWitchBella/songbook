@@ -1,5 +1,6 @@
-import { ContinuousModeSetting } from 'components/continuous-mode'
-import { Line, Paragraph } from './song-parser'
+import type { ContinuousModeSetting } from 'components/continuous-mode'
+
+import type { Line, Paragraph } from './song-parser'
 
 export function tokenizeLine(line_: string) {
   type Type = 'whitespace' | 'tag' | 'text' | 'chord'

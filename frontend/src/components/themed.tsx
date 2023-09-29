@@ -1,13 +1,12 @@
+import type { PropsWithChildren } from 'react'
 import { forwardRef } from 'react'
-import { PropsWithChildren } from 'react'
+import type { TextProps, TextStyle, ViewProps } from 'react-native'
 import {
   // eslint-disable-next-line no-restricted-imports
   Text as RNText,
-  TextProps,
-  TextStyle,
   View,
-  ViewProps,
 } from 'react-native'
+
 import { useDarkModeSetting } from './dark-mode'
 
 const colors = {

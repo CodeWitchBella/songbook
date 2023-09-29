@@ -5,7 +5,7 @@ import {
   useEffect,
   useRef,
 } from 'react'
-import { View } from 'react-native'
+import type { View } from 'react-native'
 
 const clickOutsideContext = createContext(false)
 let pressOverriden = 0

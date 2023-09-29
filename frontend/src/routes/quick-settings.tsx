@@ -1,4 +1,4 @@
-import { BackButton, BackArrow } from 'components/back-button'
+import { BackArrow, BackButton } from 'components/back-button'
 import { useContinuousModeSetting } from 'components/continuous-mode'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { InlineLink } from 'components/interactive/inline-link'
@@ -6,7 +6,7 @@ import { useLanguage } from 'components/localisation'
 import { RootView, TH2, TText } from 'components/themed'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 export default function About() {
   const { t } = useTranslation()

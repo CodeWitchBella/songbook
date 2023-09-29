@@ -1,23 +1,25 @@
 /** @jsxImportSource @emotion/react */
 
-import React, { useState, useEffect } from 'react'
 import styled from '@emotion/styled'
-import { Link, LinkProps, useLocation, useNavigate } from 'react-router-dom'
+import { DumbModal } from 'components/dumb-modal'
+import { TText, useColors } from 'components/themed'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { StyleSheet } from 'react-native'
+import type { LinkProps } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useGetRandomSong } from 'store/store'
+import type { SongType } from 'store/store-song'
+
 import {
-  PlayButton,
+  AddToCollection,
   Burger,
   EditButton,
   InfoButton,
-  RandomButton,
-  AddToCollection,
+  PlayButton,
   QuickSettings,
+  RandomButton,
 } from './song-menu-icons'
-import { SongType } from 'store/store-song'
-import { useGetRandomSong } from 'store/store'
-import { DumbModal } from 'components/dumb-modal'
-import { TText, useColors } from 'components/themed'
-import { StyleSheet } from 'react-native'
-import { useTranslation } from 'react-i18next'
 
 const MenuWrap = styled.div({
   display: 'flex',

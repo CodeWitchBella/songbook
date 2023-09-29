@@ -1,5 +1,6 @@
 import { BackButton } from 'components/back-button'
 import { useTranslation } from 'react-i18next'
+
 import { RootView, TText } from './themed'
 
 export function ErrorPage({

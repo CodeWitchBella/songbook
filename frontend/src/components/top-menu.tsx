@@ -1,7 +1,9 @@
 /** @jsxImportSource @emotion/react */
 
-import { PropsWithChildren, useReducer } from 'react'
+import type { PropsWithChildren } from 'react'
+import { useReducer } from 'react'
 import { View } from 'react-native'
+
 import { OnPressOutside } from './interactive/press-outside'
 import { Burger } from './song-look/song-menu-icons'
 import { useColors } from './themed'

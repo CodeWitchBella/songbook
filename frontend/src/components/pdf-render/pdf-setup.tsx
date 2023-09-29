@@ -1,5 +1,5 @@
-import Cantarell from 'webfonts/cantarell-regular.woff'
 import CantarellBold from 'webfonts/cantarell-bold.woff'
+import Cantarell from 'webfonts/cantarell-regular.woff'
 
 export function pdfSetup(pdf: typeof import('@react-pdf/renderer')) {
   pdf.Font.register({

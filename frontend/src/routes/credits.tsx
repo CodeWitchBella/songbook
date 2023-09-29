@@ -6,7 +6,7 @@ import {
 } from 'components/song-look/song-menu-icons'
 import { RootView, TText } from 'components/themed'
 import { Trans, useTranslation } from 'react-i18next'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 export default function Credits() {
   const { t } = useTranslation()

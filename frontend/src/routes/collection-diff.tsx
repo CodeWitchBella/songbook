@@ -1,7 +1,7 @@
 import { BackArrow, BackButton } from 'components/back-button'
 import { useQueryParam } from 'components/use-router'
 import React, { useMemo } from 'react'
-import { WithMethods } from 'store/generic-store'
+import type { WithMethods } from 'store/generic-store'
 import { graphqlFetch } from 'store/graphql'
 import {
   useCollection,
@@ -9,7 +9,7 @@ import {
   usePagesNum,
   useSongList,
 } from 'store/store'
-import { SongType } from 'store/store-song'
+import type { SongType } from 'store/store-song'
 import { collectionCompare, collectionFullName } from 'utils/utils'
 
 export default function CollectionDiff() {

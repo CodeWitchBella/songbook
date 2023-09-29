@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import { Pressable, View } from 'react-native'
-import { TText, useColors } from 'components/themed'
 import { useDarkModeSetting } from 'components/dark-mode'
+import { TText, useColors } from 'components/themed'
 import { useTranslation } from 'react-i18next'
+import { Pressable, View } from 'react-native'
 
 const dark = new URL('./dark.svg', import.meta.url).href
 const light = new URL('./light.svg', import.meta.url).href

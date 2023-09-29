@@ -1,6 +1,7 @@
 import { useColors } from 'components/themed'
 import * as monaco from 'monaco-editor'
 import { useEffect, useRef, useState } from 'react'
+
 import { addDeleteChordAction, addMoveAction } from './song-editor-actions'
 
 let wasSetup = false

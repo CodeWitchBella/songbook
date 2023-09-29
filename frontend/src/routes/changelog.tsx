@@ -1,19 +1,18 @@
-import { ChangelogEntry } from 'components/changelog-entry'
 import { BackArrow, BackButton } from 'components/back-button'
-import { View } from 'react-native'
-
-import { useChangelog } from 'utils/use-changelog'
-import { Fragment } from 'react'
-import { RootView, TP, TText } from 'components/themed'
+import { ChangelogEntry } from 'components/changelog-entry'
 import { InlineLink } from 'components/interactive/inline-link'
+import { useLanguage } from 'components/localisation'
+import { LanguageSettings } from 'components/settings/language-settings'
+import { RootView, TP, TText } from 'components/themed'
+import { Fragment } from 'react'
 import * as React from 'react'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { createContext } from 'react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLanguage } from 'components/localisation'
-import { LanguageSettings } from 'components/settings/language-settings'
+import ReactMarkdown from 'react-markdown'
+import { View } from 'react-native'
+import remarkGfm from 'remark-gfm'
+import { useChangelog } from 'utils/use-changelog'
 
 function ChangelogBody() {
   const changelog = useChangelog()

@@ -1,7 +1,8 @@
 import { buildData } from 'build-data'
 import { DateTime } from 'luxon'
 import { useTranslation } from 'react-i18next'
-import { Pressable, Linking } from 'react-native'
+import { Linking, Pressable } from 'react-native'
+
 import { TText } from './themed'
 
 export function Version() {

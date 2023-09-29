@@ -1,4 +1,5 @@
-import getFilteredSongList, { SearchableSong } from './alg'
+import type { SearchableSong } from './alg'
+import getFilteredSongList from './alg'
 
 let songs: SearchableSong[] = []
 let search = ''

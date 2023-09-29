@@ -1,11 +1,12 @@
-import { createContext, PropsWithChildren, useContext } from 'react'
 import i18n from 'i18next'
-import { I18nextProvider, initReactI18next } from 'react-i18next'
+import type { PropsWithChildren } from 'react'
+import { createContext, useContext } from 'react'
 import { useEffect } from 'react'
-
-import en from '../locales/translation-en.json'
-import cs from '../locales/translation-cs.json'
 import { useReducer } from 'react'
+import { I18nextProvider, initReactI18next } from 'react-i18next'
+
+import cs from '../locales/translation-cs.json'
+import en from '../locales/translation-en.json'
 
 type Language = 'cs' | 'en'
 const context = createContext<readonly [Language, (lng: Language) => void]>([

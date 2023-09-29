@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
-import { TText } from './themed'
 import { View } from 'react-native'
+
 import { useLanguage } from './localisation'
+import { TText } from './themed'
 
 // prettier-ignore
 const months = {

@@ -1,23 +1,19 @@
-import React, {
-  createContext,
-  useContext,
-  PropsWithChildren,
-  ComponentProps,
-} from 'react'
-import {
-  View as RNView,
-  // eslint-disable-next-line no-restricted-imports
-  Text as RNText,
-  Image as RNImage,
-  ViewStyle,
-  TextStyle,
-} from 'react-native'
+import { notNull } from '@isbl/ts-utils'
 import type ReactPDF from '@react-pdf/renderer'
 import type ReactPDFTypes from '@react-pdf/types/style'
-import { notNull } from '@isbl/ts-utils'
-import { pdfSetup } from './pdf-setup'
-import { once } from 'utils/utils'
 import { useColors } from 'components/themed'
+import type { ComponentProps, PropsWithChildren } from 'react'
+import React, { createContext, useContext } from 'react'
+import type { TextStyle, ViewStyle } from 'react-native'
+import {
+  Image as RNImage,
+  // eslint-disable-next-line no-restricted-imports
+  Text as RNText,
+  View as RNView,
+} from 'react-native'
+import { once } from 'utils/utils'
+
+import { pdfSetup } from './pdf-setup'
 
 // prettier-ignore
 const InPdfCtx = createContext<Pick<

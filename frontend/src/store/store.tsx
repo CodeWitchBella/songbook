@@ -1,20 +1,21 @@
+import localForage from 'localforage'
+import { DateTime } from 'luxon'
+import type { PropsWithChildren } from 'react'
 import React, {
-  PropsWithChildren,
-  useMemo,
+  useCallback,
   useContext,
   useEffect,
-  useState,
+  useMemo,
   useRef,
-  useCallback,
+  useState,
 } from 'react'
-import localForage from 'localforage'
-import { newSong } from './fetchers'
-import { createSongStore } from './store-song'
-import { User } from './graphql'
-import { createCollectionStore } from './store-collections'
-import { GenericStore, MinItem } from './generic-store'
 import xorshift from 'xorshift'
-import { DateTime } from 'luxon'
+
+import { newSong } from './fetchers'
+import type { GenericStore, MinItem } from './generic-store'
+import type { User } from './graphql'
+import { createCollectionStore } from './store-collections'
+import { createSongStore } from './store-song'
 
 const settingsStorage = localForage.createInstance({ name: 'settings' })
 
@@ -130,16 +131,19 @@ export function useGetRandomSong() {
         }))
       const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
-      const next = withRandom.reduce((cur, t) => {
-        if (t.number < curRandom.number) return cur
-        if (t.song.item.id === currentSongId) return cur
-        if (!cur) return t
-        return cur.number < t.number ? cur : t
-      }, null as null | typeof withRandom[0])
+      const next = withRandom.reduce(
+        (cur, t) => {
+          if (t.number < curRandom.number) return cur
+          if (t.song.item.id === currentSongId) return cur
+          if (!cur) return t
+          return cur.number < t.number ? cur : t
+        },
+        null as null | (typeof withRandom)[0],
+      )
       if (next) return next.song
       return withRandom.reduce(
         (a, b) => (a === null ? b : a.number < b.number ? a : b),
-        null as null | typeof withRandom[0],
+        null as null | (typeof withRandom)[0],
       )!.song
     },
     [store],

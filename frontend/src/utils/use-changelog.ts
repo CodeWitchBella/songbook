@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { jsonGet } from 'store/fetchers'
 import localForage from 'localforage'
+import { useEffect, useState } from 'react'
+import { jsonGet } from 'store/fetchers'
 
 const storage = localForage.createInstance({ name: 'changelog' })
 

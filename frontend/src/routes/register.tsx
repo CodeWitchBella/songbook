@@ -1,16 +1,16 @@
 /** @jsxImportSource @emotion/react */
 
-import { useState } from 'react'
-import { useLogin } from 'components/use-login'
-import { useNavigate } from 'react-router'
-import { PrimaryButton } from 'components/interactive/primary-button'
+import { BackArrow, BackButton } from 'components/back-button'
 import { LargeInput } from 'components/input'
-import { BackButton, BackArrow } from 'components/back-button'
-import { LoginDone } from 'components/login-done'
-import { RootView, TH2, TText } from 'components/themed'
 import { InlineLink } from 'components/interactive/inline-link'
+import { PrimaryButton } from 'components/interactive/primary-button'
+import { LoginDone } from 'components/login-done'
 import { View } from 'components/pdf-render/primitives'
+import { RootView, TH2, TText } from 'components/themed'
+import { useLogin } from 'components/use-login'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router'
 
 export default function Register() {
   const { t } = useTranslation()

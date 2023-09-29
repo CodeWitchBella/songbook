@@ -1,7 +1,9 @@
-import React, { useContext, PropsWithChildren } from 'react'
 import styled from '@emotion/styled'
-import { PrimaryButton } from './interactive/primary-button'
+import type { PropsWithChildren } from 'react'
+import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { PrimaryButton } from './interactive/primary-button'
 
 type State = { install?: (() => void) | null }
 const Ctx = React.createContext({} as State)

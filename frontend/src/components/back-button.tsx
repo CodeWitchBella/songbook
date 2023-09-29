@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { keyframes } from '@emotion/react'
-import { PropsWithChildren } from 'react'
-import { useLocation, useNavigate } from 'react-router'
 import { BasicButton } from 'components/interactive/basic-button'
-import { TextStyle } from 'react-native'
+import type { PropsWithChildren } from 'react'
+import type { TextStyle } from 'react-native'
+import { useLocation, useNavigate } from 'react-router'
+
 import { useUpdateAfterNavigate } from './service-worker-status'
-import { TStyleProp } from './themed'
+import type { TStyleProp } from './themed'
 
 export function useGoBack(to = '/') {
   const navigate = useNavigate()

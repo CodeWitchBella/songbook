@@ -1,8 +1,9 @@
-import firebase from 'firebase/compat/app'
 import 'firebase/compat/firestore'
+
+import firebase from 'firebase/compat/app'
+import { DateTime } from 'luxon'
 import { useEffect } from 'react'
 import { useSong } from 'store/store'
-import { DateTime } from 'luxon'
 
 function okHost() {
   if (window.location.protocol === 'http:') {

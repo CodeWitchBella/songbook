@@ -1,4 +1,5 @@
-import { ParserOpts, parseSongMyFormat } from './my-format'
+import type { ParserOpts } from './my-format'
+import { parseSongMyFormat } from './my-format'
 
 export type Line = {
   content: { ch: string; text: string; bold?: boolean }[]

@@ -1,7 +1,8 @@
 import React from 'react'
+
 import { PDFPage } from './pdf-page'
-import { View, Text } from './primitives'
 import { usePDFSettings } from './pdf-settings'
+import { Text, View } from './primitives'
 
 export function PDFToc({
   list,

@@ -1,5 +1,5 @@
-import { DateTime } from 'luxon'
 import localForage from 'localforage'
+import type { DateTime } from 'luxon'
 
 const storage = localForage.createInstance({ name: 'store' })
 

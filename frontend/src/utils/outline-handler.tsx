@@ -1,5 +1,5 @@
+import { css, Global } from '@emotion/react'
 import React, { useEffect } from 'react'
-import { Global, css } from '@emotion/react'
 
 export default function OutlineHandler() {
   useEffect(() => {

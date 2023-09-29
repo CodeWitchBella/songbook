@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
-import { ServiceWorkerRegisterConfig } from 'serviceWorker'
-import { Workbox } from 'workbox-window'
+import type { ServiceWorkerRegisterConfig } from 'serviceWorker'
+import type { Workbox } from 'workbox-window'
 
 const context = React.createContext({
   updateAfterNavigate: () => {},

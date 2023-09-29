@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useMemo, useContext } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useMediaQuery } from 'utils/utils'
 
 const key = 'dark-mode-setting'

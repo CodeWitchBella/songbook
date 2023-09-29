@@ -1,7 +1,8 @@
-import { useState, useCallback, Suspense, useEffect } from 'react'
-import { PDFRenderMultipleSongsProps } from './pdf-render/pdf-render'
-import PDF, { PDFDownload } from './pdf-render/pdf-render'
+import { Suspense, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import type { PDFRenderMultipleSongsProps } from './pdf-render/pdf-render'
+import PDF, { PDFDownload } from './pdf-render/pdf-render'
 
 export default PDF
 

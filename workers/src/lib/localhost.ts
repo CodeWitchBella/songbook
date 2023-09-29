@@ -1,9 +1,10 @@
 import { ApolloServer } from 'apollo-server'
-import config from './server-config'
-import type { MyContext } from './context'
 import type { Request, Response } from 'express'
+
+import type { MyContext } from './context'
 import { createSetSessionCookieHeader, parseSessionCookie } from './cookie'
 import { getLoader } from './firestore'
+import config from './server-config'
 
 const server = new ApolloServer({
   ...config,

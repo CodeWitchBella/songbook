@@ -1,15 +1,15 @@
 /** @jsxImportSource @emotion/react */
 
-import { useLogin } from 'components/use-login'
-import { PrimaryButton } from 'components/interactive/primary-button'
-import { useState } from 'react'
+import { BackArrow, BackButton } from 'components/back-button'
 import { LargeInput } from 'components/input'
-import { BackButton, BackArrow } from 'components/back-button'
+import { InlineLink } from 'components/interactive/inline-link'
+import { PrimaryButton } from 'components/interactive/primary-button'
 import { LoginDone } from 'components/login-done'
 import { RootView, TH2, TText } from 'components/themed'
-import { InlineLink } from 'components/interactive/inline-link'
-import { View } from 'react-native'
+import { useLogin } from 'components/use-login'
+import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import { View } from 'react-native'
 
 export default function Login() {
   const { t } = useTranslation()
