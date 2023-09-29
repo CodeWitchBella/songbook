@@ -2,8 +2,6 @@ name: Deploy Workers
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   deploy:
@@ -21,6 +19,7 @@ jobs:
           corepack enable yarn
           yarn
       - name: Publish
+        if: github.ref_name == 'main'
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
         run:
