@@ -24,7 +24,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.6",
     "@types/workbox-window": "^5.0.0",
-    "@vitejs/plugin-react": "^4.1.0",
+    "@vitejs/plugin-react-swc": "^3.4.0",
     "devcert": "^1.2.2",
     "file-saver": "^2.0.5",
     "firebase": "^9.9.2",
