@@ -5,8 +5,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: 🕊 Deploy
+    name: 🕊 Deploy Frontend
     steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
       - name: 📥 Prepare dependencies
         uses: ./.github/actions/prepare
       - name: 📦 Build
