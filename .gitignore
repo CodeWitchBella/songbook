@@ -28,7 +28,7 @@ frontend/bundle
 .env
 /dist
 .direnv
-.mariadb
+.mysql
 .dev.vars
 .wrangler
 

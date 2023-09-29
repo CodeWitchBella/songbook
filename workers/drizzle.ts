@@ -18,9 +18,9 @@ export default {
   dbCredentials: env.DATABASE_SOCKET
     ? {
         host: 'localhost',
-        user: 'user',
+        user: 'root',
         database: 'database',
-        password: 'password',
+        password: '',
         port: 3306,
       }
     : {

@@ -1,5 +1,5 @@
 [devshell]
-packages = ["mariadb_1011"]
+packages = ["mysql80"]
 
 [[commands]]
 name = "dev-frontend-vite"

@@ -1,5 +1,5 @@
 # DATABASE_SOCKET takes precedence over the other values
-DATABASE_SOCKET=./.mariadb/mariadb.sock
+DATABASE_SOCKET=./.mysql/mysql.sock
 DATABASE_HOST=localhost
 DATABASE_USERNAME=user
 DATABASE_PASSWORD=password
