@@ -1,4 +1,4 @@
-name: Deploy Workers
+name: 👷‍♀️ Deploy Workers
 
 on:
   push:
@@ -6,19 +6,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy Workers
+    name: 👷‍♀️ Deploy Workers
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 20.x
-          cache: "yarn"
-      - run: |
-          set -xe
-          cd workers
-          corepack enable yarn
-          yarn
-      - name: Publish
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+      - name: 📥 Prepare dependencies
+        uses: ./.github/actions/prepare
+      - name: 🚀 Publish
         if: github.ref_name == 'main'
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
