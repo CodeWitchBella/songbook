@@ -16,14 +16,7 @@ export default function About() {
   const { t } = useTranslation()
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <View
-        style={{
-          width: 500,
-          maxWidth: '100%',
-          paddingHorizontal: 4,
-          paddingBottom: 8,
-        }}
-      >
+      <div className="px-1 py-2 max-w-full" style={{ width: 500 }}>
         <TH2>
           <BackButton>
             <BackArrow />
@@ -54,7 +47,7 @@ export default function About() {
         </View>
         <Gap />
         <Version />
-      </View>
+      </div>
     </RootView>
   )
 }

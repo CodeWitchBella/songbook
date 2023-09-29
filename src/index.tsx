@@ -10,6 +10,7 @@ import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
 //import { Buffer } from 'buffer'
 
 import 'inter-ui/inter.css'
+import './index.css'
 
 // workaround for something removing import React from 'react'
 ;(window as any).React = React
