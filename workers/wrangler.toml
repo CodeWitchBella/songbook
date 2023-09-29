@@ -1,0 +1,7 @@
+name = "songbook"
+account_id = "cce7f3b93d1cc5016fffc6068a30a3bb"
+workers_dev = true
+route = "zpevnik.skorepova.info/api/*"
+compatibility_date = "2022-02-07"
+main = "src/index.ts"
+node_compat = true

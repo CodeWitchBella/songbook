@@ -1,0 +1,6 @@
+# https://numtide.github.io/devshell
+[[commands]]
+name = "dev-server"
+command = "yarn dev"
+help = "Run dev server"
+category = "new to project? run me first"
