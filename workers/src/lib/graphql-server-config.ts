@@ -164,40 +164,6 @@ export async function getViewerCheck(context: MyContext) {
   return viewer
 }
 
-async function whereModifiedAfter(
-  path: string,
-  {
-    filterDeleted = true,
-    modifiedAfter,
-  }: { filterDeleted?: boolean; modifiedAfter: string | null },
-) {
-  return runQuery(path, {
-    compositeFilter: {
-      op: 'AND',
-      filters: [
-        modifiedAfter
-          ? {
-              fieldFilter: {
-                field: { fieldPath: 'lastModified' },
-                op: 'GREATER_THAN',
-                value: { timestampValue: modifiedAfter },
-              },
-            }
-          : null,
-        filterDeleted
-          ? {
-              fieldFilter: {
-                field: { fieldPath: 'deleted' },
-                op: 'EQUAL',
-                value: { booleanValue: false },
-              },
-            }
-          : null,
-      ].filter(Boolean),
-    },
-  })
-}
-
 export const comparePassword = (password: string, hash: string) => {
   return new Promise<boolean>((resolve, reject) => {
     bcrypt.compare(password, hash, (err, res) => {
@@ -229,24 +195,38 @@ const resolvers = {
     songs: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
+      context: MyContext,
     ) => {
-      const docs = await whereModifiedAfter('songs', { modifiedAfter })
+      if (!modifiedAfter) return await context.db.query.song.findMany()
+      const docs = await context.db.query.song.findMany({
+        where: (song, { gte }) => gte(song.lastModified, modifiedAfter),
+      })
       return docs
     },
-    deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }) => {
-      const docs = await whereModifiedAfter('deletedSongs', {
-        filterDeleted: false,
-        modifiedAfter: deletedAfter,
+    deletedSongs: async (
+      _: {},
+      { deletedAfter }: { deletedAfter: string },
+      context: MyContext,
+    ) => {
+      const docs = await context.db.query.deletedSong.findMany({
+        where: (record, { gte }) => gte(record.deletedAt, deletedAfter),
       })
-      return docs.map((d) => d.id)
+      return docs.map((d) => d.songId)
     },
     collections: async (
       _: {},
       { modifiedAfter }: { modifiedAfter: string | null },
+      context: MyContext,
     ) => {
-      const docs = await whereModifiedAfter('collections', {
-        modifiedAfter,
-        filterDeleted: !modifiedAfter, // only include deleted if asking for updates
+      if (!modifiedAfter) {
+        return await context.db.query.collection.findMany({
+          // query current state -> exclude deleted
+          where: (record, { eq }) => eq(record.deleted, 0),
+        })
+      }
+      // query changes since -> include deleted
+      const docs = await context.db.query.collection.findMany({
+        where: (record, { gte }) => gte(record.lastModified, modifiedAfter),
       })
       return docs
     },

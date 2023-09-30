@@ -31,6 +31,7 @@ frontend/bundle
 .mysql
 .dev.vars
 .wrangler
+/workers/drizzle
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
