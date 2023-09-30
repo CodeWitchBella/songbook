@@ -15,6 +15,7 @@ const server = http.createServer(async (nodeReq, nodeRes) => {
   if (nodeReq.method === 'OPTIONS') {
     nodeRes.statusCode = 200
     nodeRes.end()
+    return
   }
 
   const res = await worker.fetch(req.request as any, {}, {} as any)
