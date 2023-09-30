@@ -34,13 +34,7 @@ function SearchContainer({ children }: PropsWithChildren<{}>) {
         },
       ]}
     >
-      <div
-        css={{
-          position: 'relative',
-          width: 'calc(100% - 22px)',
-          maxWidth: 420,
-        }}
-      >
+      <div className="relative max-w-md" style={{ width: 'calc(100% - 22px)' }}>
         {children}
         <button style={{ display: 'none' }} />
       </div>
@@ -62,21 +56,8 @@ function Search({
     <>
       <SearchContainer>
         {children}
-        <div
-          css={{
-            position: 'relative',
-            display: 'flex',
-            padding: '0 4px',
-            margin: '10px 0',
-            alignItems: 'stretch',
-          }}
-        >
-          <BackButton
-            style={{
-              flexDirection: 'row',
-              display: 'flex',
-            }}
-          >
+        <div className="relative my-2 flex items-stretch px-1">
+          <BackButton className="py-2 pr-2">
             <BackArrow />
           </BackButton>
           <SearchTextInput value={text} onChange={onChange} />
@@ -103,16 +84,7 @@ function compareSongs(sortByAuthor: boolean) {
 
 function Loader() {
   return (
-    <div
-      css={{
-        display: 'flex',
-        height: '100%',
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 18,
-      }}
-    >
+    <div className="flex h-full w-full items-center justify-center text-lg">
       Načítám seznam písní...
     </div>
   )
@@ -210,7 +182,7 @@ export default function SongList({
       >
         {header ?? null}
       </Search>
-      <div css={{ flexGrow: 1 }}>
+      <div className="grow">
         {songs.length !== 0 ? (
           <FilteredList
             songs={songs}

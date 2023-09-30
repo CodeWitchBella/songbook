@@ -1,6 +1,6 @@
-import { BackArrow, BackButton } from 'components/back-button'
 import { getChordDefinition } from 'components/chord-help'
-import { RootView, TH2, TText } from 'components/themed'
+import { PageHeader } from 'components/page-header'
+import { RootView, TText } from 'components/themed'
 import { useMemo } from 'react'
 import { View } from 'react-native'
 import { Link } from 'react-router-dom'
@@ -68,12 +68,7 @@ export default function Chords() {
           paddingBottom: 8,
         }}
       >
-        <TH2>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          Unknown chords
-        </TH2>
+        <PageHeader>Unknown chords</PageHeader>
         {unknownChords.map(({ chord, slugs }) => (
           <TText key={chord}>
             {JSON.stringify(chord)}{' '}

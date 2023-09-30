@@ -25,7 +25,7 @@ export function ErrorPage({
     >
       <TText style={{ fontSize: 42, textAlign: 'center' }}>{text}</TText>
       {children || null}
-      <BackButton style={{ marginTop: 16 }}>
+      <BackButton className="p-2">
         <TText style={{ fontSize: 22 }}>{t('Go back')}</TText>
       </BackButton>
     </RootView>

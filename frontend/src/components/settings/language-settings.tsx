@@ -57,6 +57,7 @@ function Option({
         borderColor: !selected ? 'transparent' : colors.borders,
         padding: 4,
         justifyContent: 'center',
+        minHeight: compact ? 36 : undefined,
       }}
     >
       {compact ? null : (
@@ -66,7 +67,7 @@ function Option({
           {short}
         </TText>
       )}
-      <TText style={{ textAlign: 'center', marginTop: 2 }}>{text}</TText>
+      <div className="mt-1 text-center">{text}</div>
     </Pressable>
   )
 }

@@ -203,7 +203,7 @@ function SongHeaderWithBack({
           }}
         >
           <DefaultStyleText>
-            <BackButton style={{ marginRight: em(0.4) }}>
+            <BackButton className="py-4 pr-4">
               <BackArrow height={em(0.75)} />
             </BackButton>
           </DefaultStyleText>

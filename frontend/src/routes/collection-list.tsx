@@ -1,11 +1,10 @@
-import { BackArrow, BackButton } from 'components/back-button'
-import { ListButton } from 'components/interactive/list-button'
-import { RootView, TH2 } from 'components/themed'
+import { PageHeader } from 'components/page-header'
+import { RootView } from 'components/themed'
 import { DateTime } from 'luxon'
 import { useEffect } from 'react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { Link } from 'react-router-dom'
 import { useCollectionList } from 'store/store'
 import { collectionCompare, collectionFullName } from 'utils/utils'
 
@@ -29,46 +28,21 @@ export default function CollectionList() {
   )
   return (
     <RootView style={{ padding: 10 }}>
-      <TH2
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <BackButton>
-          <BackArrow />
-        </BackButton>{' '}
-        {t('Collections')}
-      </TH2>
-
-      <View
-        style={{
-          flexDirection: 'column',
-          marginHorizontal: 'auto',
-        }}
-      >
-        <div>
-          <ListButton to="/all-songs" style={{ borderWidth: 0 }}>
-            {t('All songs')}
-          </ListButton>
-        </div>
+      <div className="mx-auto flex flex-col gap-4">
+        <PageHeader>{t('Collections')}</PageHeader>
+        <Link to="/all-songs" className="hover:underline">
+          {t('All songs')}
+        </Link>
         {sortedList.map(({ item: collection }) => (
-          <div key={collection.id}>
-            <Gap />
-            <ListButton
-              to={`/collections/${collection.slug}`}
-              style={{ borderWidth: 0 }}
-            >
-              {collectionFullName(collection)}
-            </ListButton>
-          </div>
+          <Link
+            key={collection.id}
+            to={`/collections/${collection.slug}`}
+            className="hover:underline"
+          >
+            {collectionFullName(collection)}
+          </Link>
         ))}
-      </View>
+      </div>
     </RootView>
   )
-}
-
-function Gap() {
-  return <View style={{ height: 5 }} />
 }

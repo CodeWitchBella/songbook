@@ -2,11 +2,11 @@
 
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { BackArrow, BackButton } from 'components/back-button'
 import Checkbox from 'components/checkbox'
 import { NotFound } from 'components/error-page'
 import Input from 'components/input'
 import { ListButton } from 'components/interactive/list-button'
+import { PageHeader } from 'components/page-header'
 import PDF from 'components/pdf'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongLook } from 'components/song-look/song-look'
@@ -128,18 +128,6 @@ function Help({
     </Togglable>
   )
 }
-
-const InputLine = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  > * {
-    margin-left: 10px;
-  }
-  > *:first-child {
-    margin-left: 0;
-  }
-  margin-bottom: 2px;
-`
 
 type SaveStatus = 'NO_CHANGES' | 'SAVING' | 'UNSAVED' | 'FAILED' | 'SAVED'
 type State = {
@@ -358,26 +346,21 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     <Columns number={state.preview ? 2 : 1}>
       <div>
         <Form onSubmit={submit}>
-          <TH2>
-            <BackButton style={{ paddingBottom: 10 }}>
-              <BackArrow />
-            </BackButton>
+          <PageHeader backTo={'/song/' + props.song.slug}>
             {t('edit.Edit song')}
-          </TH2>
-          <InputLine>
-            <Input label="Autor" value={state.author} onChange={authorChange} />
-            <Input
-              label={t('edit.Song name')}
-              value={state.title}
-              onChange={titleChange}
-            />
-          </InputLine>
+          </PageHeader>
+          <Input label="Autor" value={state.author} onChange={authorChange} />
+          <Input
+            label={t('edit.Song name')}
+            value={state.title}
+            onChange={titleChange}
+          />
           <Input
             label={t('edit.Spotify link')}
             value={state.spotify}
             onChange={spotifyChange}
           />
-          <InputLine>
+          <div className="mb-0.5">
             <Checkbox
               label={t('edit.Show preview')}
               checked={state.preview}
@@ -397,7 +380,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
                 />
               </>
             ) : null}
-          </InputLine>
+          </div>
           <Checkbox
             label={t('edit.Simplified editor (use this on phones)')}
             checked={state.simpleEditor}

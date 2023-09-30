@@ -1,8 +1,8 @@
-import { BackArrow, BackButton } from 'components/back-button'
 import { useContinuousModeSetting } from 'components/continuous-mode'
 import { useDarkModeSetting } from 'components/dark-mode'
 import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
+import { PageHeader } from 'components/page-header'
 import { RootView, TH2, TText } from 'components/themed'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,12 +16,7 @@ export default function About() {
   return (
     <RootView style={style.root}>
       <View style={style.page}>
-        <TH2>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          {t('quick-settings.Quick settings')}
-        </TH2>
+        <PageHeader>{t('quick-settings.Quick settings')}</PageHeader>
 
         <TitledSelect
           title={t('Appearance')}

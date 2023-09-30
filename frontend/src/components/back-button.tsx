@@ -1,12 +1,7 @@
-/** @jsxImportSource @emotion/react */
-import { keyframes } from '@emotion/react'
-import { BasicButton } from 'components/interactive/basic-button'
 import type { PropsWithChildren } from 'react'
-import type { TextStyle } from 'react-native'
 import { useLocation, useNavigate } from 'react-router'
 
 import { useUpdateAfterNavigate } from './service-worker-status'
-import type { TStyleProp } from './themed'
 
 export function useGoBack(to = '/') {
   const navigate = useNavigate()
@@ -30,51 +25,21 @@ export function useGoBack(to = '/') {
 export function BackButton({
   children,
   to = '/',
-  style,
-}: PropsWithChildren<{ to?: string; style?: TStyleProp<TextStyle> }>) {
+  className,
+}: PropsWithChildren<{
+  to?: string
+  className?: string
+}>) {
   return (
-    <BasicButton
-      style={[
-        {
-          marginRight: '10px',
-          textDecorationLine: 'underline',
-        },
-        style,
-      ]}
-      onPress={useGoBack(to)}
-    >
+    <button onClick={useGoBack(to)} className={className}>
       {children}
-    </BasicButton>
+    </button>
   )
 }
 
-const float = keyframes`
-	0% {
-		transform: translatey(0px);
-	}
-	50% {
-		transform: translatey(-2px);
-	}
-	100% {
-		transform: translatey(0px);
-  }
-`
-
 export function BackArrow({ height }: { height?: number | string }) {
   return (
-    <svg
-      viewBox="0 0 5.443 4.692"
-      height={height ?? '13'}
-      css={{
-        transform: 'translatey(0px)',
-        ':hover': {
-          animationName: float,
-          animationDuration: '3s',
-          animationTimingFunction: 'ease-in-out',
-          animationIterationCount: 'infinite',
-        },
-      }}
-    >
+    <svg viewBox="0 0 5.443 4.692" height={height ?? '13'}>
       <g
         fill="none"
         stroke="currentColor"

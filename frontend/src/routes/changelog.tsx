@@ -4,8 +4,6 @@ import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
 import { LanguageSettings } from 'components/settings/language-settings'
 import { RootView, TP, TText } from 'components/themed'
-import { Fragment } from 'react'
-import * as React from 'react'
 import { createContext } from 'react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -91,10 +89,10 @@ function ChangeBody({ body }: { body: string }) {
 export default function Changelog() {
   return (
     <RootView style={{ alignItems: 'center' }}>
-      <View style={{ maxWidth: 800 }}>
+      <div className="w-full max-w-3xl">
         <Head />
         <ChangelogBody />
-      </View>
+      </div>
     </RootView>
   )
 }
@@ -102,25 +100,13 @@ export default function Changelog() {
 function Head() {
   const { t } = useTranslation()
   return (
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        padding: 16,
-        paddingBottom: 4,
-        paddingTop: 24,
-        paddingLeft: 12,
-        flexWrap: 'wrap',
-      }}
-    >
-      <BackButton>
+    <div className="mb-1 mt-6 flex w-full flex-wrap items-center">
+      <BackButton className="py-4 pr-2">
         <BackArrow />
       </BackButton>
-      <TText style={{ fontSize: 30, fontWeight: 'bold' }}>
-        {t('Changelog')}
-      </TText>
-      <View style={{ flexGrow: 1 }} />
+      <div className="text-3xl font-bold">{t('Changelog')}</div>
+      <div className="flex-grow" />
       <LanguageSettings compact={true} />
-    </View>
+    </div>
   )
 }

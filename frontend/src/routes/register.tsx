@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
 
-import { BackArrow, BackButton } from 'components/back-button'
 import { LargeInput } from 'components/input'
 import { InlineLink } from 'components/interactive/inline-link'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { LoginDone } from 'components/login-done'
+import { PageHeader } from 'components/page-header'
 import { View } from 'components/pdf-render/primitives'
-import { RootView, TH2, TText } from 'components/themed'
+import { RootView, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -55,16 +55,8 @@ export default function Register() {
 
   return (
     <RootView>
-      <form
-        onSubmit={submit}
-        css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
-      >
-        <TH2>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          {t('Register')}
-        </TH2>
+      <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+        <PageHeader>{t('Register')}</PageHeader>
         {login.viewer ? (
           <LoginDone viewer={login.viewer} />
         ) : (

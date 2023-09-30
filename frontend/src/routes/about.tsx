@@ -1,6 +1,6 @@
-import { BackArrow, BackButton } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
 import { ListButton } from 'components/interactive/list-button'
+import { PageHeader } from 'components/page-header'
 import { DarkModeSettings } from 'components/settings/dark-mode'
 import { LanguageSettings } from 'components/settings/language-settings'
 import { RootView, TH2, TText } from 'components/themed'
@@ -17,12 +17,7 @@ export default function About() {
   return (
     <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
       <div className="max-w-full px-1 py-2" style={{ width: 500 }}>
-        <TH2>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          {t('Settings and about')}
-        </TH2>
+        <PageHeader>{t('Settings and about')}</PageHeader>
 
         <ListButton to="/credits">{t('Asset credits')}</ListButton>
         <Gap />

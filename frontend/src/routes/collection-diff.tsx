@@ -1,4 +1,4 @@
-import { BackArrow, BackButton } from 'components/back-button'
+import { PageHeader } from 'components/page-header'
 import { useQueryParam } from 'components/use-router'
 import React, { useMemo } from 'react'
 import type { WithMethods } from 'store/generic-store'
@@ -22,13 +22,8 @@ export default function CollectionDiff() {
   const [b, setB] = useQueryParam('b')
   const [ban, setBan] = useQueryParam('ban')
   return (
-    <div>
-      <h1 style={{ display: 'flex' }}>
-        <BackButton>
-          <BackArrow />
-        </BackButton>
-        Diff
-      </h1>
+    <div className="px-2">
+      <PageHeader>Diff</PageHeader>
       <div style={{ display: 'flex', gap: 16 }}>
         <label>
           Old:{' '}

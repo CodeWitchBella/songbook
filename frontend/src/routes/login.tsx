@@ -1,11 +1,9 @@
-/** @jsxImportSource @emotion/react */
-
-import { BackArrow, BackButton } from 'components/back-button'
 import { LargeInput } from 'components/input'
 import { InlineLink } from 'components/interactive/inline-link'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { LoginDone } from 'components/login-done'
-import { RootView, TH2, TText } from 'components/themed'
+import { PageHeader } from 'components/page-header'
+import { RootView, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -36,16 +34,8 @@ export default function Login() {
   }
   return (
     <RootView>
-      <form
-        onSubmit={submit}
-        css={{ fontSize: 20, maxWidth: 500, margin: '0 auto' }}
-      >
-        <TH2>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          {t('login-screen-title')}
-        </TH2>
+      <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+        <PageHeader backTo="/about">{t('login-screen-title')}</PageHeader>
         {login.viewer ? (
           <LoginDone viewer={login.viewer} />
         ) : (

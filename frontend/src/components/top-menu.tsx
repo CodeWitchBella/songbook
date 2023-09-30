@@ -18,7 +18,7 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
   )
   const colors = useColors()
   return (
-    <div css={{ width: 40 }}>
+    <div className="w-10">
       <button
         aria-label="Hlavní menu"
         css={{

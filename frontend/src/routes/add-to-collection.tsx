@@ -172,14 +172,14 @@ function Title({
 }) {
   return (
     <>
-      <View style={{ flexDirection: 'row', marginTop: 32 }}>
+      <div className="mt-8 flex items-center">
         {first ? (
-          <BackButton>
+          <BackButton className="px-2 py-4">
             <BackArrow />
           </BackButton>
         ) : null}
         <TText style={{ fontSize: 24 }}>{text}</TText>
-      </View>
+      </div>
       {error && first ? (
         <TText style={{ color: 'red', fontSize: 16, marginTop: 8 }}>
           {error}

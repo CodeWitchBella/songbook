@@ -1,5 +1,5 @@
-import { BackArrow, BackButton } from 'components/back-button'
 import { InlineLink } from 'components/interactive/inline-link'
+import { PageHeader } from 'components/page-header'
 import {
   AddToCollection,
   QuickSettings,
@@ -13,12 +13,7 @@ export default function Credits() {
   return (
     <RootView style={{ alignItems: 'center', paddingTop: 32 }}>
       <View style={{ maxWidth: 500 }}>
-        <View style={{ flexDirection: 'row' }}>
-          <BackButton>
-            <BackArrow />
-          </BackButton>
-          <TText style={styles.head}>{t('Asset credits')}</TText>
-        </View>
+        <PageHeader>{t('Asset credits')}</PageHeader>
         <TText style={styles.text}>
           <Trans>
             credits-blurp <InlineLink to="https://isbl.cz">author</InlineLink>
@@ -45,9 +40,6 @@ export default function Credits() {
 const iconicApp = 'iconic.app'
 
 const styles = StyleSheet.create({
-  head: {
-    fontSize: 24,
-  },
   text: {
     fontSize: 16,
     marginTop: 8,
