@@ -3,7 +3,7 @@ import { gql, UserInputError } from 'apollo-server-cloudflare'
 import { and, eq, gt, gte, sql } from 'drizzle-orm'
 import { DateTime, Duration } from 'luxon'
 
-import { schema } from '../db/drizzle.js'
+import { affectedRows, schema } from '../db/drizzle.js'
 import type { MyContext } from './context.js'
 import { randomID, slugify } from './utils.js'
 
@@ -333,11 +333,14 @@ const resolvers = {
         .set({ handle })
         .where(eq(schema.user.id, viewer.id))
 
-      await context.db.update(schema.collection).set({
-        slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${
-          schema.collection.slug
-        }, "/", -1)`,
-      })
+      await context.db
+        .update(schema.collection)
+        .set({
+          slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${
+            schema.collection.slug
+          }, "/", -1)`,
+        })
+        .where(eq(schema.collection.owner, viewer.id))
       return 'success'
     },
     createCollection: async (
@@ -407,20 +410,17 @@ const resolvers = {
       { collection }: { collection: string },
       context: MyContext,
     ) => {
-      const vsrc = await getViewerCheck(context)
-      const viewer = (await vsrc.viewer.get(context.loader))?.data()
+      const { viewer } = await getViewerCheck(context)
       if (!viewer?.admin)
         throw new UserInputError('Only admin can lock collections')
 
-      const collectionSnap =
-        (await firestoreDoc('collections/' + collection).get(context.loader)) ||
-        (await collectionBySlug(collection))
-      if (!collectionSnap) throw new UserInputError('Collection does not exist')
+      const res = await context.db
+        .update(schema.collection)
+        .set({ locked: 1 })
+        .where(eq(schema.collection.idString, collection))
+      if (!affectedRows(res))
+        throw new UserInputError('Collection does not exist')
 
-      await collectionSnap.ref.set({ locked: true }, { merge: true })
-      await firestoreFieldTransforms('collections/' + collectionSnap.id, [
-        { fieldPath: 'lastModified', setToServerValue: 'REQUEST_TIME' },
-      ])
       return 'Success!'
     },
     removeFromCollection: async (

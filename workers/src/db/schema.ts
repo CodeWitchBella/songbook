@@ -71,6 +71,7 @@ export const collection = mysqlTable('collection', {
     .onUpdateNow()
     .notNull(),
   deleted: tinyint('deleted').notNull().default(0),
+  locked: tinyint('locked').notNull().default(0),
   // global collections do not have owner
   owner: int('editor_id').references(() => user.id),
 })

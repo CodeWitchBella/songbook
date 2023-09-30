@@ -1,3 +1,4 @@
+import type { ExecutedQuery } from '@planetscale/database'
 import type { PlanetScaleDatabase } from 'drizzle-orm/planetscale-serverless'
 
 // type corresponds with production, because on localhost I'm more likely to notice
@@ -23,3 +24,7 @@ export function checkCode(error: unknown, code: string) {
 }
 
 export * as schema from './schema.js'
+
+export function affectedRows(q: ExecutedQuery): number {
+  return q.rowsAffected || (q as any)[0].affectedRows
+}
