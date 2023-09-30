@@ -488,9 +488,20 @@ const resolvers = {
       const res = await context.db
         .update(schema.song)
         .set({
-          ...Object.fromEntries(
-            Object.entries(input).filter(([, v]) => v !== null),
-          ),
+          author: input.author ?? undefined,
+          title: input.title ?? undefined,
+          text: input.text ?? undefined,
+          fontSize: input.fontSize ?? undefined,
+          paragraphSpace: input.paragraphSpace ?? undefined,
+          titleSpace: input.titleSpace ?? undefined,
+          spotify: input.spotify ?? undefined,
+          pretranspose: input.pretranspose ?? undefined,
+          extraSearchable: input.extraSearchable ?? undefined,
+          extraNonSearchable: input.extraNonSearchable ?? undefined,
+          slug:
+            input.author && input.title
+              ? slugify(`${input.title}-${input.author}`)
+              : undefined,
         })
         .where(eq(schema.song.idString, id))
       if (affectedRows(res) < 1) throw new UserInputError('Song does not exist')

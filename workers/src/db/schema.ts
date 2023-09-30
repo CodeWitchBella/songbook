@@ -42,6 +42,7 @@ export const song = mysqlTable('song', {
   insertedAt: timestamp('inserted_at', { mode: 'string' }).default(
     sql`CURRENT_TIMESTAMP`,
   ),
+  pretranspose: int('pretranspose').default(0),
   paragraphSpace: float('paragraph_space').default(1).notNull(),
   spotify: varchar('spotify', { length: 256 }),
   titleSpace: float('title_space').default(1).notNull(),
