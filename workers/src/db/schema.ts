@@ -47,7 +47,7 @@ export const song = mysqlTable('song', {
   titleSpace: float('title_space').default(1).notNull(),
   extraNonSearchable: text('extra_non_searchable'),
   extraSearchable: text('extra_searchable'),
-  editor: int('editor_id').references(() => user.id),
+  editor: int('editor_id'), //.references(() => user.id),
 })
 
 export const deletedSong = mysqlTable('deleted_song', {
@@ -73,7 +73,7 @@ export const collection = mysqlTable('collection', {
     .notNull(),
   locked: tinyint('locked').notNull().default(0),
   // global collections do not have owner
-  owner: int('editor_id').references(() => user.id),
+  owner: int('editor_id'), //.references(() => user.id),
 })
 
 export const deletedCollection = mysqlTable('deleted_collection', {
@@ -89,12 +89,8 @@ export const collectionSong = mysqlTable(
   'collection_song',
   {
     id,
-    collection: int('collection_id')
-      .references(() => collection.id)
-      .notNull(),
-    song: int('song_id')
-      .references(() => song.id)
-      .notNull(),
+    collection: int('collection_id').notNull(), //.references(() => collection.id),
+    song: int('song_id').notNull(), //.references(() => song.id),
   },
   (t) => ({
     unique_pair: unique().on(t.collection, t.song),
@@ -104,8 +100,6 @@ export const collectionSong = mysqlTable(
 export const session = mysqlTable('session', {
   id,
   token: char('token', { length: 30 }).unique().notNull(),
-  user: int('user_id')
-    .notNull()
-    .references(() => user.id),
+  user: int('user_id').notNull(), //.references(() => user.id),
   expires: timestamp('expires', { mode: 'string' }).notNull(),
 })
