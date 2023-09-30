@@ -125,7 +125,9 @@ function mapDate(date: z.infer<typeof instant>) {
   return res
 }
 function mapDateString(date: string) {
-  return DateTime.fromISO(date).toISO()
+  const res = DateTime.fromISO(date).toISO()
+  if (!res) throw new Error('Invalid!')
+  return res
 }
 
 const editors = new Set(Object.values(data.songs).map((v) => v.editor))
@@ -133,6 +135,21 @@ const editors = new Set(Object.values(data.songs).map((v) => v.editor))
 // old account does not have password, new account does not have songs,
 // merge them
 data.users['10205790966210592'] = data.users['i_guIXxwIMOpVYRgdv_JhUkupESd']
+
+const syntheticRegister = new Map<string, string>()
+for (const session of Object.values(data.sessions)) {
+  const prev = syntheticRegister.get(session.user)
+  if (!prev || session.expires < prev)
+    syntheticRegister.set(session.user, session.expires)
+}
+for (const [k, v] of [...syntheticRegister.entries()]) {
+  syntheticRegister.set(k, DateTime.fromISO(v).minus({ month: 2 }).toISO()!)
+}
+// this user account was renamed via delete+create
+syntheticRegister.set(
+  'users/293031851651049',
+  DateTime.fromISO('2019-05-16T18:48Z').toISO()!,
+)
 
 const mappedUsers = Object.entries(data.users)
   .filter(([idString, u]) => editors.has('users/' + idString) || u.registeredAt)
@@ -145,7 +162,9 @@ const mappedUsers = Object.entries(data.users)
           name: u.name,
           passwordHash: u.passwordHash,
           admin: u.admin ? 1 : 0,
-          registeredAt: u.registeredAt ? mapDate(u.registeredAt) : null,
+          registeredAt: u.registeredAt
+            ? mapDate(u.registeredAt)
+            : syntheticRegister.get('users/' + idString)!,
         }
       : null,
   )
@@ -154,9 +173,9 @@ const mappedUsers = Object.entries(data.users)
     a.registeredAt === b.registeredAt
       ? // hacky way to achieve correct ordering, only works on the particular data I have
         a.email.localeCompare(b.email)
-      : a.registeredAt === null
+      : !a.registeredAt
       ? -1
-      : b.registeredAt === null
+      : !b.registeredAt
       ? 1
       : a.registeredAt.localeCompare(b.registeredAt),
   )
@@ -204,5 +223,21 @@ await db.transaction(async (db) => {
         pretranspose: song.pretranspose,
         extraSearchable: song.extraSearchable,
       })),
+  )
+
+  await db.insert(schema.session).values(
+    Object.entries(data.sessions)
+      .map(([idString, session]) => {
+        const user = users[session.user.slice('users/'.length)]
+        const expires = mapDateString(session.expires)
+        if (session.expires < DateTime.now().toISO()!) return null
+        if (!user) return null
+        return {
+          expires,
+          token: session.token,
+          user: users[session.user.slice('users/'.length)].id,
+        }
+      })
+      .filter(notNull),
   )
 })
