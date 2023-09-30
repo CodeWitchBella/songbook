@@ -1,7 +1,7 @@
 import { connect } from '@planetscale/database'
 import { drizzle } from 'drizzle-orm/planetscale-serverless'
 
-import * as schema from '../db/schema.js'
+import * as schema from './schema.js'
 
 export function mkDrizzle() {
   const connection = connect({

@@ -1,7 +1,7 @@
 import type { PlanetScaleDatabase } from 'drizzle-orm/planetscale-serverless'
 
 // type corresponds with production, because on localhost I'm more likely to notice
-export type DB = PlanetScaleDatabase<typeof import('../db/schema.js')>
+export type DB = PlanetScaleDatabase<typeof import('./schema.js')>
 
 let db: DB | Promise<DB>
 export function drizzle() {
