@@ -491,23 +491,18 @@ const resolvers = {
       { id, input }: { input: any; id: string },
       context: MyContext,
     ) => {
-      const doc = firestoreDoc('songs/' + id)
-      const prev = await doc.get(context.loader)
-      if (!prev) throw new Error('Song does not exist')
-      console.log(JSON.stringify(input, null, 2))
-      await doc.set(
-        {
+      const res = await context.db
+        .update(schema.song)
+        .set({
           ...Object.fromEntries(
             Object.entries(input).filter(([, v]) => v !== null),
           ),
-          lastModified: serverTimestamp(),
-        },
-        { merge: true },
-      )
-      console.log(
-        JSON.stringify((await doc.get(context.loader))?.data(), null, 2),
-      )
-      return doc.get(context.loader)
+        })
+        .where(eq(schema.song.idString, id))
+      if (affectedRows(res) < 1) throw new UserInputError('Song does not exist')
+      return await context.db.query.song.findFirst({
+        where: eq(schema.song.idString, id),
+      })
     },
     async login(
       _: {},
