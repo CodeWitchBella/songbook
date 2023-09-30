@@ -1,8 +1,10 @@
 import { notNull } from '@codewitchbella/ts-utils'
 import { gql, UserInputError } from 'apollo-server-cloudflare'
 import * as bcrypt from 'bcryptjs'
+import { eq } from 'drizzle-orm'
 import { DateTime, Duration } from 'luxon'
 
+import { schema } from '../db/drizzle.js'
 import type { MyContext } from './context.js'
 import { randomID, slugify } from './utils.js'
 
@@ -129,26 +131,31 @@ const typeDefs = gql`
   }
 `
 
-async function songBySlug(slug: string) {
-  const docs = await queryFieldEquals('songs', 'slug', slug)
-
-  if (docs.length < 1) return null
-  return docs[0]
+async function songBySlug(slug: string, context: MyContext) {
+  const song = await context.db.query.song.findFirst({
+    where: (song, { eq }) => eq(song.slug, slug),
+  })
+  return song ?? null
 }
-async function collectionBySlug(slug: string) {
-  const docs = await queryFieldEquals('collections', 'slug', slug)
-
-  if (docs.length < 1) return null
-  return docs[0]
+async function collectionBySlug(slug: string, context: MyContext) {
+  const collection = await context.db.query.collection.findFirst({
+    where: (collection, { eq }) => eq(collection.slug, slug),
+  })
+  return collection ?? null
 }
 
 async function getViewer(context: MyContext) {
   const token = (context.sessionCookie || '').trim()
-  if (!token) return
-  const session = firestoreDoc('sessions/' + token)
-  const data = (await session.get(context.loader))?.data()
-  if (!data) return
-  return { viewer: firestoreDoc(data.user), session }
+  if (!token) return null
+  const sessions = await context.db
+    .select()
+    .from(schema.session)
+    .where(eq(schema.session.token, token))
+    .innerJoin(schema.user, eq(schema.user.id, schema.session.user))
+    .limit(1)
+  if (sessions.length < 1) return null
+  const session = sessions[0]
+  return { viewer: session.user, session: session.session }
 }
 
 export async function getViewerCheck(context: MyContext) {
@@ -257,8 +264,7 @@ const resolvers = {
     },
     viewer: async (_: {}, _2: {}, context: MyContext) => {
       const data = await getViewer(context)
-      if (data) return (await data.viewer.get(context.loader))?.data() ?? null
-      return null
+      return data?.viewer ?? null
     },
   },
   Song: {

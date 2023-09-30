@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm'
 import {
+  char,
   float,
   int,
   mysqlTable,
@@ -16,6 +17,8 @@ export const user = mysqlTable('user', {
 
 export const song = mysqlTable('song', {
   id,
+  slug: varchar('slug', { length: 256 }).notNull().unique(),
+
   author: varchar('author', { length: 100 }).notNull(),
   title: varchar('title', { length: 100 }).notNull(),
   text: text('text').notNull(),
@@ -27,10 +30,22 @@ export const song = mysqlTable('song', {
     .notNull(),
   insertedAt: timestamp('inserted_at').default(sql`CURRENT_TIMESTAMP`),
   paragraphSpace: float('paragraph_space').default(1).notNull(),
-  slug: varchar('slug', { length: 256 }).notNull().unique(),
   spotify: varchar('spotify', { length: 256 }),
   titleSpace: float('title_space').default(1).notNull(),
   extraNonSearchable: text('extra_non_searchable'),
   extraSearchable: text('extra_searchable'),
-  editor: int('editor').references(() => user.id),
+  editor: int('editor_id').references(() => user.id),
+})
+
+export const collection = mysqlTable('collection', {
+  id,
+  slug: varchar('slug', { length: 256 }).notNull().unique(),
+})
+
+export const session = mysqlTable('session', {
+  id,
+  token: char('token', { length: 30 }).unique().notNull(),
+  user: int('user_id')
+    .notNull()
+    .references(() => user.id),
 })

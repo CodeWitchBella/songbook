@@ -21,3 +21,5 @@ export function drizzle() {
 export function checkCode(error: unknown, code: string) {
   return typeof error === 'object' && error && (error as any).code === code
 }
+
+export * as schema from './schema.js'

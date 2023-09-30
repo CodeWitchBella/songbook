@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
 
-import * as schema from './schema.js'
+import { schema } from './drizzle.js'
 
 export async function mkDrizzle() {
   const connection = await mysql.createConnection(
