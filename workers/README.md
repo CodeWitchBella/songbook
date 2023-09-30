@@ -6,11 +6,11 @@ wrangler login
 wrangler dev
 ```
 
-put your FIREBASE_SERVICE_KEY into .dev.vars file
+put your DATABASE_URL into .dev.vars file, see .dev.vars.example
 
 ## Put secret
 
-Via web interface or `wrangler secret put FIREBASE_SERVICE_KEY`. But CLI has
+Via web interface or `wrangler secret put DATABASE_URL`. But CLI has
 stricter length limit.
 
 ## Open questions
