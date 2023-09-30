@@ -1,7 +1,7 @@
 const httpProxy = require('http-proxy')
 const devcert = require('devcert')
 
-const port = 8000
+const port = 5512
 const target = 'https://zpevnik.skorepova.info'
 
 ;(async () => {

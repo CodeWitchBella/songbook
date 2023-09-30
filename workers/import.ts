@@ -1,10 +1,14 @@
+import { notNull } from '@isbl/ts-utils'
+import { sql } from 'drizzle-orm'
 import fs from 'fs/promises'
+import { DateTime } from 'luxon'
 import { z } from 'zod'
 
 import { env } from './drizzle.js'
+import { slugify } from './src/lib/utils.js'
 
 Object.assign(process.env, env)
-globalThis.isInNodejs = true
+;(globalThis as any).isInNodejs = true
 
 const { drizzle, schema } = await import('./src/db/drizzle.js')
 
@@ -86,10 +90,14 @@ const dataSchema = z.object({
           email: z.string(),
           registeredAt: instant.optional(),
           admin: z.boolean().optional(),
-          fbId: z.string().optional(),
+          fbId: z
+            .string()
+            .optional()
+            .transform(() => undefined),
           fbToken: z
             .strictObject({ expires: z.string(), token: z.string() })
-            .optional(),
+            .optional()
+            .transform(() => undefined),
           picture: z
             .strictObject({
               is_silhouette: z.boolean(),
@@ -97,14 +105,50 @@ const dataSchema = z.object({
               height: z.number().int().positive(),
               url: z.string(),
             })
-            .optional(),
+            .optional()
+            .transform(() => undefined),
           handle: z.string().optional(),
         }),
       ),
     })
     .transform((v) => v.users),
 })
-//const db = await drizzle()
 
 const data = dataSchema.parse(dataRaw)
-console.log(data.songs)
+const db = await drizzle()
+
+function mapDate(date: z.infer<typeof instant>) {
+  return DateTime.fromMillis(
+    date._seconds * 1000 + date._nanoseconds / 1000_000,
+  ).toISO()
+}
+
+const editors = new Set(Object.values(data.songs).map((v) => v.editor))
+
+// old account does not have password, new account does not have songs,
+// merge them
+data.users['10205790966210592'] = data.users['i_guIXxwIMOpVYRgdv_JhUkupESd']
+
+const mappedUsers = Object.entries(data.users)
+  .filter(([idString, u]) => editors.has('users/' + idString))
+  .map(([idString, u]) =>
+    u.passwordHash
+      ? {
+          idString,
+          email: u.email,
+          handle: u.handle ?? slugify(u.name),
+          name: u.name,
+          passwordHash: u.passwordHash,
+          admin: u.admin ? 1 : 0,
+          registeredAt: u.registeredAt ? mapDate(u.registeredAt) : null,
+        }
+      : null,
+  )
+  .filter(notNull)
+
+await db.execute(sql`delete from collection_song;`)
+await db.execute(sql`delete from collection;`)
+await db.execute(sql`delete from song;`)
+await db.execute(sql`delete from session;`)
+await db.execute(sql`delete from user;`)
+await db.insert(schema.user).values(mappedUsers)

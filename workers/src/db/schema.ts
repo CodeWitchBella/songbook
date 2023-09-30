@@ -20,9 +20,9 @@ export const user = mysqlTable('user', {
   email: varchar('email', { length: 256 }).notNull().unique(),
   admin: tinyint('admin').notNull().default(0),
   passwordHash: varchar('password_hash', { length: 256 }).notNull(),
-  registeredAt: timestamp('registered_at', { mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  registeredAt: timestamp('registered_at', { mode: 'string' }).default(
+    sql`CURRENT_TIMESTAMP`,
+  ),
 })
 
 export const song = mysqlTable('song', {

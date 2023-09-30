@@ -25,7 +25,7 @@ export async function songDataFromLink(
       replace: { services },
     })
   }
-  const url = new URL('import', getGraphqlUrl())
+  const url = new URL('import', await getGraphqlUrl())
   url.searchParams.set('url', link)
   const res = await fetch(url.toString())
   const json = await res.json()

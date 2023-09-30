@@ -4,14 +4,14 @@ import http from 'http'
 import { env } from './drizzle.js'
 
 Object.assign(process.env, env)
-globalThis.isInNodejs = true
+;(globalThis as any).isInNodejs = true
 
 const worker = (await import('./src/index.js')).default
 
 // Converting Node.js http.IncomingMessage to Miniflare's Request
 const server = http.createServer(async (nodeReq, nodeRes) => {
   const req = await convertNodeRequest(nodeReq)
-  const res = await worker.fetch(req.request as any, {}, {})
+  const res = await worker.fetch(req.request as any, {}, {} as any)
   for (const [header, value] of res.headers.entries()) {
     nodeRes.appendHeader(header, value)
   }

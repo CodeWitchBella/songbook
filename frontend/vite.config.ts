@@ -12,6 +12,9 @@ export default defineConfig({
     jsx: 'automatic',
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
   },
+  server: {
+    port: 5513,
+  },
   plugins: [
     react(),
     myPlugin(),
