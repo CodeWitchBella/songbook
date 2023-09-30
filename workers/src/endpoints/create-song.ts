@@ -8,7 +8,7 @@ import {
   jsonResponse,
   methodNotAllowedResponse,
 } from '../lib/response.js'
-import { slugify } from '../lib/utils.js'
+import { randomID, slugify } from '../lib/utils.js'
 
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context)
@@ -19,9 +19,11 @@ export async function handleCreateSong(request: Request, context: MyContext) {
   })
 
   const slug = slugify(`${input.title}-${input.author}`)
+  const idString = await randomID(20)
   try {
     await context.db.insert(song).values({
       text: input.text || '',
+      idString,
       slug,
       editor: viewer.id,
       author: input.author,

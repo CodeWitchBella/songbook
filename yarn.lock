@@ -3044,6 +3044,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@isbl/bcryptjs@npm:^3.0.0-beta.1":
+  version: 3.0.0-beta.3
+  resolution: "@isbl/bcryptjs@npm:3.0.0-beta.3"
+  checksum: 60dc6c817d56135e3746a44a365f46ec4e23c76f6efd48bab8ebebce84950d2fe19f88b5c89c62325768ba79e53d7dc183b51e573c3cc4a0bfd26b72bd7aa393
+  languageName: node
+  linkType: hard
+
 "@isbl/ts-utils@npm:^1.0.1":
   version: 1.0.1
   resolution: "@isbl/ts-utils@npm:1.0.1"
@@ -13970,6 +13977,7 @@ __metadata:
   dependencies:
     "@cloudflare/workers-types": ^4.20230922.0
     "@codewitchbella/ts-utils": ^0.2.0
+    "@isbl/bcryptjs": ^3.0.0-beta.1
     "@miniflare/http-server": ^2.14.1
     "@planetscale/database": ^1.11.0
     "@sagi.io/workers-jwt": ^0.0.23

@@ -18,6 +18,10 @@ export async function mkDrizzle() {
         },
   )
 
-  const db = drizzle(connection, { schema, mode: 'default' })
+  const db = drizzle(connection, {
+    schema,
+    mode: 'default',
+    logger: true,
+  })
   return db
 }

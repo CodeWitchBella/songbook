@@ -1,7 +1,6 @@
-import { notNull } from '@codewitchbella/ts-utils'
+import * as bcrypt from '@isbl/bcryptjs'
 import { gql, UserInputError } from 'apollo-server-cloudflare'
-import * as bcrypt from 'bcryptjs'
-import { eq } from 'drizzle-orm'
+import { and, eq, gt, gte, sql } from 'drizzle-orm'
 import { DateTime, Duration } from 'luxon'
 
 import { schema } from '../db/drizzle.js'
@@ -131,18 +130,14 @@ const typeDefs = gql`
   }
 `
 
-async function songBySlug(slug: string, context: MyContext) {
-  const song = await context.db.query.song.findFirst({
-    where: (song, { eq }) => eq(song.slug, slug),
-  })
-  return song ?? null
-}
 async function collectionBySlug(slug: string, context: MyContext) {
   const collection = await context.db.query.collection.findFirst({
-    where: (collection, { eq }) => eq(collection.slug, slug),
+    where: eq(schema.collection.slug, slug),
   })
   return collection ?? null
 }
+
+const maxSessionDurationDays = 60
 
 async function getViewer(context: MyContext) {
   const token = (context.sessionCookie || '').trim()
@@ -150,11 +145,28 @@ async function getViewer(context: MyContext) {
   const sessions = await context.db
     .select()
     .from(schema.session)
-    .where(eq(schema.session.token, token))
+    .where(
+      and(
+        gt(schema.session.expires, sql`CURRENT_TIMESTAMP`),
+        eq(schema.session.token, token),
+      ),
+    )
     .innerJoin(schema.user, eq(schema.user.id, schema.session.user))
     .limit(1)
   if (sessions.length < 1) return null
   const session = sessions[0]
+  if (
+    DateTime.fromSQL(session.session.expires)
+      .minus({ day: maxSessionDurationDays / 2 })
+      .diffNow().milliseconds < 0
+  ) {
+    await context.db
+      .update(schema.session)
+      .set({
+        expires: sql`CURRENT_TIMESTAMP + INTERVAL ${maxSessionDurationDays} day`,
+      })
+      .where(eq(schema.session.id, session.session.id))
+  }
   return { viewer: session.user, session: session.session }
 }
 
@@ -164,27 +176,15 @@ export async function getViewerCheck(context: MyContext) {
   return viewer
 }
 
-export const comparePassword = (password: string, hash: string) => {
-  return new Promise<boolean>((resolve, reject) => {
-    bcrypt.compare(password, hash, (err, res) => {
-      if (err) reject(err)
-      else resolve(res)
-    })
-  })
+export const comparePassword = (
+  password: string,
+  hash: string,
+): Promise<boolean> => {
+  return bcrypt.compare(password, hash)
 }
 
 export const hashPassword = (password: string): Promise<string> => {
-  return new Promise((res, rej) =>
-    bcrypt.genSalt(10, (err, salt) => {
-      if (err) rej(err)
-      else {
-        bcrypt.hash(password, salt, (err2, hash) => {
-          if (err2) rej(err2)
-          else res(hash)
-        })
-      }
-    }),
-  )
+  return bcrypt.hash(password, 10)
 }
 
 // A map of functions which return data for the schema.
@@ -211,7 +211,7 @@ const resolvers = {
       const docs = await context.db.query.deletedSong.findMany({
         where: (record, { gte }) => gte(record.deletedAt, deletedAfter),
       })
-      return docs.map((d) => d.songId)
+      return docs.map((d) => d.songIdString)
     },
     collections: async (
       _: {},
@@ -221,26 +221,45 @@ const resolvers = {
       if (!modifiedAfter) {
         return await context.db.query.collection.findMany({
           // query current state -> exclude deleted
-          where: (record, { eq }) => eq(record.deleted, 0),
+          where: eq(schema.collection.deleted, 0),
         })
       }
       // query changes since -> include deleted
       const docs = await context.db.query.collection.findMany({
-        where: (record, { gte }) => gte(record.lastModified, modifiedAfter),
+        where: gte(schema.collection.lastModified, modifiedAfter),
       })
       return docs
     },
-    songsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      const list = await getAll(ids.map((id) => 'songs/' + id))
-      return list.filter(Boolean)
+    songsByIds: async (
+      _: {},
+      { ids }: { ids: string[] },
+      context: MyContext,
+    ) => {
+      const list = await context.db.query.song.findMany({
+        where: (record, { inArray }) => inArray(record.idString, ids),
+      })
+      return list
     },
-    collectionsByIds: async (_: {}, { ids }: { ids: string[] }) => {
-      const list = await getAll(ids.map((id) => 'collections/' + id))
-      return list.filter(Boolean)
+    collectionsByIds: async (
+      _: {},
+      { ids }: { ids: string[] },
+      context: MyContext,
+    ) => {
+      const list = await context.db.query.collection.findMany({
+        where: (record, { inArray, and, eq }) =>
+          and(inArray(record.idString, ids), eq(record.deleted, 0)),
+      })
+      return list
     },
-    songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }) => {
-      const songs = await Promise.all(slugs.map(songBySlug))
-      return songs.filter(notNull)
+    songsBySlugs: async (
+      _: {},
+      { slugs }: { slugs: string[] },
+      context: MyContext,
+    ) => {
+      const list = await context.db.query.song.findMany({
+        where: (record, { inArray }) => inArray(record.slug, slugs),
+      })
+      return list
     },
     viewer: async (_: {}, _2: {}, context: MyContext) => {
       const data = await getViewer(context)
@@ -248,11 +267,12 @@ const resolvers = {
     },
   },
   Song: {
-    editor: async (src: any, _: any, loader: MyContext) => {
-      if (src.editor)
-        return (
-          (await firestoreDoc(src.editor).get(loader.loader))?.data() ?? null
-        )
+    editor: async (src: any, _: any, context: MyContext) => {
+      if (src.editor) {
+        return await context.db.query.user.findFirst({
+          where: eq(schema.user.id, src.editor),
+        })
+      }
       return null
     },
     insertedAt: (src: any) => src.insertedAt || null,
@@ -262,6 +282,7 @@ const resolvers = {
     pretranspose: (src: any) => coerceNumber(src.pretranspose, 0),
   },
   SongRecord: {
+    id: (src: any) => src.idString,
     data: (src: any) => {
       const data = src.data()
       console.log(JSON.stringify(src.data(), null, 2))
@@ -270,6 +291,7 @@ const resolvers = {
     lastModified: (src: any) => src.data().lastModified,
   },
   CollectionRecord: {
+    id: (src: any) => src.idString,
     lastModified: (src: any) => src.data().lastModified,
   },
   DeletableCollectionRecord: {
@@ -306,25 +328,16 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context)
 
-      await viewer.set({ handle }, { merge: true })
-      const collections = await queryFieldEquals(
-        'collections',
-        'owner',
-        viewer.id,
-      )
-      await Promise.all(
-        collections
-          .filter((doc) => !doc.get('global'))
-          .map((doc) =>
-            doc.ref.set(
-              {
-                slug: slugify(handle) + '/' + slugify(doc.get('name') as any),
-                lastModified: serverTimestamp(),
-              },
-              { merge: true },
-            ),
-          ),
-      )
+      await context.db
+        .update(schema.user)
+        .set({ handle })
+        .where(eq(schema.user.id, viewer.id))
+
+      await context.db.update(schema.collection).set({
+        slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${
+          schema.collection.slug
+        }, "/", -1)`,
+      })
       return 'success'
     },
     createCollection: async (
@@ -335,35 +348,31 @@ const resolvers = {
       }: { name: string; global: boolean },
       context: MyContext,
     ) => {
-      const vsrc = await getViewerCheck(context)
-      const viewerId = vsrc.viewer.id
-      const viewer = (await vsrc.viewer.get(context.loader))?.data()
-      if (!viewer || !viewerId) throw new Error('Cannot load viewer')
+      const { viewer } = await getViewerCheck(context)
       if (global && !viewer.admin)
         throw new UserInputError('Only admin can create global songbooks')
 
       const slug =
         (global ? '' : slugify(viewer?.handle || viewer?.name) + '/') +
         slugify(requestedName)
-      const existing = await queryFieldEquals('collections', 'slug', slug)
-      if (existing.length > 0)
+      const existing = await context.db
+        .select({ count: sql<number>`count(*)` })
+        .from(schema.collection)
+        .where(eq(schema.collection.slug, slug))
+      // const existing = await queryFieldEquals('collections', 'slug', slug)
+      if (existing[0].count > 0)
         throw new Error('Collection with given name already exists')
 
-      const doc = firestoreDoc('collections/' + (await randomID(20)))
-      await doc.set(
-        {
-          name: requestedName,
-          owner: viewerId,
-          insertedAt: serverTimestamp(),
-          lastModified: serverTimestamp(),
-          global,
-          slug,
-          deleted: false,
-          list: [],
-        },
-        { merge: false },
-      )
-      return doc.get(context.loader)
+      const idString = await randomID(20)
+      await context.db.insert(schema.collection).values({
+        idString,
+        slug,
+        name: requestedName,
+        owner: global ? null : viewer.id,
+      })
+      return await context.db.query.collection.findFirst({
+        where: eq(schema.collection.idString, idString),
+      })
     },
     addToCollection: async (
       _: {},
@@ -469,32 +478,26 @@ const resolvers = {
       { email, password }: { email: string; password: string },
       context: MyContext,
     ) {
-      const user = await queryFieldEquals('users', 'email', email)
-      const doc = user[0]
-      if (!doc) {
+      const user = await context.db.query.user.findFirst({
+        where: eq(schema.user.email, email),
+      })
+      if (!user) {
         return {
           __typename: 'LoginError',
           message: 'Uživatel s daným emailem nenalezen',
         }
       }
 
-      const passwordHash = doc.get('passwordHash')
-      if (!passwordHash) {
-        doc.ref.set(
-          { passwordHash: await hashPassword(password) },
-          { merge: true },
-        )
-      } else {
-        if (!(await comparePassword(password, passwordHash))) {
-          return { __typename: 'LoginError', message: 'Chybné heslo' }
-        }
+      const passwordHash = user.passwordHash
+      if (!(await comparePassword(password, passwordHash))) {
+        return { __typename: 'LoginError', message: 'Chybné heslo' }
       }
 
-      await createSession(context, doc.id)
+      await createSession(context, user.id)
 
       return {
         __typename: 'LoginSuccess',
-        user: await doc.data(),
+        user,
       }
     },
     async register(
@@ -502,29 +505,33 @@ const resolvers = {
       { input }: { input: { name: string; email: string; password: string } },
       context: MyContext,
     ) {
-      if (!input.name || !input.email || !input.password)
+      if (!input.name || !input.email || !input.password) {
         return {
           __typename: 'RegisterError',
           message: 'Všechna pole jsou povinná',
         }
-      const users = await queryFieldEquals('users', 'email', input.email)
-      if (users.length > 0)
+      }
+      const existing = await context.db.query.user.findFirst({
+        where: eq(schema.user.email, input.email),
+        columns: { id: true },
+      })
+      if (existing)
         return { __typename: 'RegisterError', message: 'Email je již použit' }
-      const id = await randomID(30)
-      const doc = firestoreDoc('users/' + id)
-      await doc.set(
-        {
-          name: input.name,
-          passwordHash: await hashPassword(input.password),
-          email: input.email,
-          registeredAt: serverTimestamp(),
-        },
-        { merge: false },
-      )
-      await createSession(context, id)
+
+      await context.db.insert(schema.user).values({
+        name: input.name,
+        passwordHash: await hashPassword(input.password),
+        email: input.email,
+        handle: slugify(input.name),
+      })
+      const user = await context.db.query.user.findFirst({
+        where: eq(schema.user.email, input.email),
+      })
+      if (!user) throw new Error('Insert somehow failed')
+      await createSession(context, user.id)
       return {
         __typename: 'RegisterSuccess',
-        user: (await doc.get(context.loader))?.data(),
+        user,
       }
     },
     logout: async (_: {}, _2: {}, context: MyContext) => {
@@ -532,25 +539,23 @@ const resolvers = {
       // make it expire
       context.setSessionCookie('', Duration.fromObject({ second: 1 }))
       if (data) {
-        await data.session.delete()
+        await context.db
+          .delete(schema.session)
+          .where(eq(schema.session.id, data.session.id))
       }
       return 'Success!'
     },
   },
 }
 
-async function createSession(context: MyContext, id: string) {
+async function createSession(context: MyContext, userId: number) {
   const sessionToken = await randomID(30)
-  const session = firestoreDoc('sessions/' + sessionToken)
+  await context.db.insert(schema.session).values({
+    token: sessionToken,
+    user: userId,
+    expires: sql`CURRENT_TIMESTAMP + INTERVAL ${maxSessionDurationDays} day`,
+  })
   const sessionDuration = Duration.fromObject({ months: 2 })
-  await session.set(
-    {
-      user: 'users/' + id,
-      token: sessionToken,
-      expires: DateTime.utc().plus(sessionDuration).toISO(),
-    },
-    { merge: false },
-  )
 
   context.setSessionCookie(sessionToken, sessionDuration)
 }
