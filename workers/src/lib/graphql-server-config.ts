@@ -276,20 +276,16 @@ const resolvers = {
   },
   SongRecord: {
     id: (src: any) => src.idString,
-    data: (src: any) => {
-      const data = src.data()
-      console.log(JSON.stringify(src.data(), null, 2))
-      return data
-    },
-    lastModified: (src: any) => src.data().lastModified,
+    data: (src: any) => src,
+    lastModified: (src: any) => src.lastModified,
   },
   CollectionRecord: {
     id: (src: any) => src.idString,
-    lastModified: (src: any) => src.data().lastModified,
+    data: (src: any) => src,
+    lastModified: (src: any) => src.lastModified,
   },
   DeletableCollectionRecord: {
-    __resolveType: (src: any) =>
-      src.data().deleted ? 'Deleted' : 'CollectionRecord',
+    __resolveType: (src: any) => (src.deleted ? 'Deleted' : 'CollectionRecord'),
   },
   Collection: {
     insertedAt: (src: any) => src.insertedAt || null,

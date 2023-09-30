@@ -118,9 +118,14 @@ const data = dataSchema.parse(dataRaw)
 const db = await drizzle()
 
 function mapDate(date: z.infer<typeof instant>) {
-  return DateTime.fromMillis(
+  const res = DateTime.fromMillis(
     date._seconds * 1000 + date._nanoseconds / 1000_000,
   ).toISO()
+  if (!res) throw new Error('Invalid!')
+  return res
+}
+function mapDateString(date: string) {
+  return DateTime.fromISO(date).toISO()
 }
 
 const editors = new Set(Object.values(data.songs).map((v) => v.editor))
@@ -130,7 +135,7 @@ const editors = new Set(Object.values(data.songs).map((v) => v.editor))
 data.users['10205790966210592'] = data.users['i_guIXxwIMOpVYRgdv_JhUkupESd']
 
 const mappedUsers = Object.entries(data.users)
-  .filter(([idString, u]) => editors.has('users/' + idString))
+  .filter(([idString, u]) => editors.has('users/' + idString) || u.registeredAt)
   .map(([idString, u]) =>
     u.passwordHash
       ? {
@@ -145,10 +150,59 @@ const mappedUsers = Object.entries(data.users)
       : null,
   )
   .filter(notNull)
+  .sort((a, b) =>
+    a.registeredAt === b.registeredAt
+      ? // hacky way to achieve correct ordering, only works on the particular data I have
+        a.email.localeCompare(b.email)
+      : a.registeredAt === null
+      ? -1
+      : b.registeredAt === null
+      ? 1
+      : a.registeredAt.localeCompare(b.registeredAt),
+  )
 
-await db.execute(sql`delete from collection_song;`)
-await db.execute(sql`delete from collection;`)
-await db.execute(sql`delete from song;`)
-await db.execute(sql`delete from session;`)
-await db.execute(sql`delete from user;`)
-await db.insert(schema.user).values(mappedUsers)
+await db.transaction(async (db) => {
+  await db.execute(sql`delete from collection_song;`)
+  await db.execute(sql`delete from collection;`)
+  await db.execute(sql`delete from song;`)
+  await db.execute(sql`delete from session;`)
+  await db.execute(sql`delete from user;`)
+  await db.insert(schema.user).values(mappedUsers)
+
+  const users = Object.fromEntries(
+    (await db.query.user.findMany()).map((dbu) => [
+      mappedUsers.find((u) => u.email === dbu.email)!.idString,
+      dbu,
+    ]),
+  )
+
+  await db.insert(schema.song).values(
+    Object.entries(data.songs)
+      .filter(([idString, song]) => !song.deleted)
+      .map(([idString, song]) => ({
+        idString,
+        slug: song.slug,
+        author: song.author,
+        title: song.title,
+        editor: song.editor
+          ? users[song.editor.slice('users/'.length)].id
+          : null,
+        text: song.text,
+
+        paragraphSpace: song.paragraphSpace,
+        fontSize: song.fontSize,
+        titleSpace: song.titleSpace,
+        lastModified: mapDate(song.lastModified),
+        spotify: song.spotify,
+        insertedAt:
+          typeof song.insertedAt === 'string'
+            ? mapDateString(song.insertedAt)
+            : song.insertedAt
+            ? mapDate(song.insertedAt)
+            : null,
+        extraNonSearchable: song.extraNonSearchable,
+        pretranspose: song.pretranspose,
+        extraSearchable: song.extraSearchable,
+      })),
+  )
+})

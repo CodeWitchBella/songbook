@@ -39,9 +39,9 @@ export const song = mysqlTable('song', {
     .default(sql`CURRENT_TIMESTAMP`)
     .onUpdateNow()
     .notNull(),
-  insertedAt: timestamp('inserted_at', { mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  insertedAt: timestamp('inserted_at', { mode: 'string' }).default(
+    sql`CURRENT_TIMESTAMP`,
+  ),
   paragraphSpace: float('paragraph_space').default(1).notNull(),
   spotify: varchar('spotify', { length: 256 }),
   titleSpace: float('title_space').default(1).notNull(),
