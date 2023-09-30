@@ -5,10 +5,14 @@ import type { PlanetScaleDatabase } from 'drizzle-orm/planetscale-serverless'
 export type DB = PlanetScaleDatabase<typeof import('./schema.js')>
 
 let db: DB | Promise<DB>
+declare const isInNodejs: boolean
 export function drizzle() {
   if (!db) {
+    if (typeof isInNodejs === 'undefined')
+      (globalThis as any).isInNodejs = false
+
     db = (
-      process.env.DATABASE_SOCKET && (globalThis as any).isInNodejs
+      process.env.DATABASE_SOCKET && isInNodejs
         ? (import('./drizzle-localhost.js') as never)
         : import('./drizzle-planetscale.js')
     ).then((v) => {
