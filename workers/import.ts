@@ -224,6 +224,19 @@ await db.transaction(async (db) => {
         extraSearchable: song.extraSearchable,
       })),
   )
+  await db.insert(schema.deletedSong).values(
+    Object.entries(data.songs)
+      .filter(([idString, song]) => song.deleted)
+      .map(([idString, song]) => ({
+        deletedAt: mapDate(song.lastModified),
+        songId: -1,
+        songIdString: idString,
+      })),
+  )
+
+  const songs = Object.fromEntries(
+    (await db.query.song.findMany()).map((song) => [song.idString, song.id]),
+  )
 
   await db.insert(schema.session).values(
     Object.entries(data.sessions)
@@ -239,5 +252,43 @@ await db.transaction(async (db) => {
         }
       })
       .filter(notNull),
+  )
+
+  await db.insert(schema.deletedCollection).values(
+    Object.entries(data.collections)
+      .filter(([idString, c]) => c.deleted)
+      .map(([idString, c]) => ({
+        collectionId: -1,
+        collectionIdString: idString,
+        deletedAt: mapDate(c.lastModified),
+      })),
+  )
+
+  await db.insert(schema.collection).values(
+    Object.entries(data.collections)
+      .filter(([idString, c]) => !c.deleted)
+      .map(([idString, c]) => {
+        const owner = c.owner
+          ? users[c.owner.slice('users/'.length)] ?? null
+          : null
+        if (c.owner && !owner) throw new Error('Could not find owner')
+        if (!owner && !c.global) throw new Error('Missing owner for non-global')
+        if (!c.name) throw new Error('Missing name')
+        return {
+          idString,
+          owner: owner && !c.global ? owner.id : null,
+          insertedAt: c.insertedAt ? mapDate(c.insertedAt) : undefined,
+          name: c.name,
+          global: c.global,
+          list: c.list,
+          slug: c.slug
+            ? c.slug
+            : c.global || !owner
+            ? slugify(c.name)
+            : slugify(owner.handle) + '/' + slugify(c.name),
+          locked: c.locked ? 1 : 0,
+          lastModified: mapDate(c.lastModified),
+        }
+      }),
   )
 })

@@ -212,16 +212,20 @@ const resolvers = {
       context: MyContext,
     ) => {
       if (!modifiedAfter) {
-        return await context.db.query.collection.findMany({
-          // query current state -> exclude deleted
-          where: eq(schema.collection.deleted, 0),
-        })
+        return await context.db.query.collection.findMany()
       }
       // query changes since -> include deleted
       const docs = await context.db.query.collection.findMany({
         where: gte(schema.collection.lastModified, modifiedAfter),
       })
-      return docs
+      const deletedDocs = await context.db.query.deletedCollection.findMany({
+        where: gte(schema.collection.lastModified, modifiedAfter),
+      })
+      return docs.concat(
+        deletedDocs.map(
+          (d) => ({ id: d.collectionIdString, deleted: true }) as any,
+        ),
+      )
     },
     songsByIds: async (
       _: {},
@@ -239,8 +243,7 @@ const resolvers = {
       context: MyContext,
     ) => {
       const list = await context.db.query.collection.findMany({
-        where: (record, { inArray, and, eq }) =>
-          and(inArray(record.idString, ids), eq(record.deleted, 0)),
+        where: (record, { inArray }) => inArray(record.idString, ids),
       })
       return list
     },
@@ -377,12 +380,9 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context)
       const collectionSnap = await context.db.query.collection.findFirst({
-        where: and(
-          or(
-            eq(schema.collection.idString, collection),
-            eq(schema.collection.slug, collection),
-          ),
-          eq(schema.collection.deleted, 0),
+        where: or(
+          eq(schema.collection.idString, collection),
+          eq(schema.collection.slug, collection),
         ),
       })
       if (!collectionSnap) throw new UserInputError('Collection does not exist')
@@ -442,12 +442,9 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context)
       const collectionSnap = await context.db.query.collection.findFirst({
-        where: and(
-          or(
-            eq(schema.collection.idString, collection),
-            eq(schema.collection.slug, collection),
-          ),
-          eq(schema.collection.deleted, 0),
+        where: or(
+          eq(schema.collection.idString, collection),
+          eq(schema.collection.slug, collection),
         ),
       })
       if (!collectionSnap) throw new UserInputError('Collection does not exist')

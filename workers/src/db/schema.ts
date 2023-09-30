@@ -71,10 +71,18 @@ export const collection = mysqlTable('collection', {
     .default(sql`CURRENT_TIMESTAMP`)
     .onUpdateNow()
     .notNull(),
-  deleted: tinyint('deleted').notNull().default(0),
   locked: tinyint('locked').notNull().default(0),
   // global collections do not have owner
   owner: int('editor_id').references(() => user.id),
+})
+
+export const deletedCollection = mysqlTable('deleted_collection', {
+  id,
+  collectionIdString: char('collection_id_string', { length: 20 }).unique(),
+  collectionId: int('collection_id').notNull(),
+  deletedAt: timestamp('last_modified', { mode: 'string' })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 })
 
 export const collectionSong = mysqlTable(
