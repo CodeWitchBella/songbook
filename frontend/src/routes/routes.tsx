@@ -3,7 +3,6 @@ import { RouteRenderedMarker } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
 import React, { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router'
-import { getGraphqlUrl } from 'store/graphql'
 
 const imports = {
   CollectionList: once(() => import('./collection-list')),
@@ -79,10 +78,10 @@ function AppRoutes() {
         <Route path="chords" element={<Chords />} />
         <Route
           path="graphql"
-          element={<AbsoluteRedirect to={getGraphqlUrl()} />}
+          element={<AbsoluteRedirect to="/api/graphql" />}
         />
         <Route path="diff" element={<CollectionDiff />} />
-        <Route element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </ErrorBoundary>
   )
