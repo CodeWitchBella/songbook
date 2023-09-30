@@ -182,8 +182,10 @@ const mappedUsers = Object.entries(data.users)
 
 await db.transaction(async (db) => {
   await db.execute(sql`delete from collection_song;`)
+  await db.execute(sql`delete from deleted_collection;`)
   await db.execute(sql`delete from collection;`)
   await db.execute(sql`delete from song;`)
+  await db.execute(sql`delete from deleted_song;`)
   await db.execute(sql`delete from session;`)
   await db.execute(sql`delete from user;`)
   await db.insert(schema.user).values(mappedUsers)

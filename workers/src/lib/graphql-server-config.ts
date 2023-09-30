@@ -293,9 +293,10 @@ const resolvers = {
   Collection: {
     insertedAt: (src: any) => src.insertedAt || null,
     owner: async (src: any, _: any, context: MyContext) => {
-      return await context.db.query.user.findFirst({
+      const owner = await context.db.query.user.findFirst({
         where: eq(schema.user.id, src.owner),
       })
+      return owner ?? { name: '', admin: true }
     },
     songList: async (src: any, _: any, context: MyContext) => {
       const list = await context.db
