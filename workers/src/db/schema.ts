@@ -7,6 +7,7 @@ import {
   text,
   timestamp,
   tinyint,
+  unique,
   varchar,
 } from 'drizzle-orm/mysql-core'
 
@@ -75,6 +76,22 @@ export const collection = mysqlTable('collection', {
   // global collections do not have owner
   owner: int('editor_id').references(() => user.id),
 })
+
+export const collectionSong = mysqlTable(
+  'collection_song',
+  {
+    id,
+    collection: int('collection_id')
+      .references(() => collection.id)
+      .notNull(),
+    song: int('song_id')
+      .references(() => song.id)
+      .notNull(),
+  },
+  (t) => ({
+    unique_pair: unique().on(t.collection, t.song),
+  }),
+)
 
 export const session = mysqlTable('session', {
   id,

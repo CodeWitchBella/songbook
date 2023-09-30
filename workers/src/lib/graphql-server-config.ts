@@ -1,9 +1,9 @@
 import * as bcrypt from '@isbl/bcryptjs'
 import { gql, UserInputError } from 'apollo-server-cloudflare'
-import { and, eq, gt, gte, sql } from 'drizzle-orm'
+import { and, eq, gt, gte, or, sql } from 'drizzle-orm'
 import { DateTime, Duration } from 'luxon'
 
-import { affectedRows, schema } from '../db/drizzle.js'
+import { affectedRows, checkCode, schema } from '../db/drizzle.js'
 import type { MyContext } from './context.js'
 import { randomID, slugify } from './utils.js'
 
@@ -129,13 +129,6 @@ const typeDefs = gql`
     removeFromCollection(collection: String!, song: String!): String
   }
 `
-
-async function collectionBySlug(slug: string, context: MyContext) {
-  const collection = await context.db.query.collection.findFirst({
-    where: eq(schema.collection.slug, slug),
-  })
-  return collection ?? null
-}
 
 const maxSessionDurationDays = 60
 
@@ -301,13 +294,17 @@ const resolvers = {
   Collection: {
     insertedAt: (src: any) => src.insertedAt || null,
     owner: async (src: any, _: any, context: MyContext) => {
-      const owner = await firestoreDoc(src.owner).get(context.loader)
-      return owner?.data() ?? null
+      return await context.db.query.user.findFirst({
+        where: eq(schema.user.id, src.owner),
+      })
     },
-    songList: async (src: any) => {
-      if (src.list.length < 1) return []
-      const list = await getAll(src.list)
-      return list.filter(Boolean)
+    songList: async (src: any, _: any, context: MyContext) => {
+      const list = await context.db
+        .select()
+        .from(schema.collectionSong)
+        .where(eq(schema.collectionSong.collection, src.id))
+        .innerJoin(schema.song, eq(schema.collectionSong.song, schema.song.id))
+      return list.map((l) => l.song)
     },
     locked: (src: any) => !!src.locked,
   },
@@ -383,26 +380,45 @@ const resolvers = {
       context: MyContext,
     ) => {
       const { viewer } = await getViewerCheck(context)
-      const collectionSnap =
-        (await firestoreDoc('collections/' + collection).get(context.loader)) ||
-        (await collectionBySlug(collection))
+      const collectionSnap = await context.db.query.collection.findFirst({
+        where: and(
+          or(
+            eq(schema.collection.idString, collection),
+            eq(schema.collection.slug, collection),
+          ),
+          eq(schema.collection.deleted, 0),
+        ),
+      })
       if (!collectionSnap) throw new UserInputError('Collection does not exist')
-      if (collectionSnap.get('owner') !== viewer.id)
+      if (
+        !(
+          collectionSnap.owner === viewer.id ||
+          (!collectionSnap.owner && viewer.admin)
+        )
+      )
         throw new UserInputError('Not your collection')
-      if (collectionSnap.get('locked'))
+      if (collectionSnap.locked)
         throw new UserInputError('Collection is locked')
-      const songSnap = await firestoreDoc('songs/' + song).get(context.loader)
+
+      const songSnap = await context.db.query.song.findFirst({
+        where: or(eq(schema.song.idString, song), eq(schema.song.slug, song)),
+      })
       if (!songSnap) throw new UserInputError('Song does not exist')
 
-      await firestoreFieldTransforms('collections/' + collectionSnap.id, [
-        {
-          fieldPath: 'list',
-          appendMissingElements: {
-            values: [{ stringValue: 'songs/' + song }],
-          },
-        },
-        { fieldPath: 'lastModified', setToServerValue: 'REQUEST_TIME' },
-      ])
+      try {
+        await context.db.insert(schema.collectionSong).values({
+          collection: collectionSnap.id,
+          song: songSnap.id,
+        })
+        await context.db
+          .update(schema.collection)
+          .set({ lastModified: sql`CURRENT_TIMESTAMP` })
+          .where(eq(schema.collection.id, collectionSnap.id))
+      } catch (e: any) {
+        if (checkCode(e, 'ER_DUP_ENTRY')) return 'Already there.'
+        throw e
+      }
+
       return 'Success!'
     },
     lockCollection: async (
@@ -429,24 +445,44 @@ const resolvers = {
       context: MyContext,
     ) => {
       const { viewer } = await getViewerCheck(context)
-      const collectionSnap =
-        (await firestoreDoc('collections/' + collection).get(context.loader)) ||
-        (await collectionBySlug(collection))
+      const collectionSnap = await context.db.query.collection.findFirst({
+        where: and(
+          or(
+            eq(schema.collection.idString, collection),
+            eq(schema.collection.slug, collection),
+          ),
+          eq(schema.collection.deleted, 0),
+        ),
+      })
       if (!collectionSnap) throw new UserInputError('Collection does not exist')
-      if (collectionSnap.get('owner') !== viewer.id)
+      if (
+        !(
+          collectionSnap.owner === viewer.id ||
+          (!collectionSnap.owner && viewer.admin)
+        )
+      )
         throw new UserInputError('Not your collection')
-      if (collectionSnap.get('locked'))
+      if (collectionSnap.locked)
         throw new UserInputError('Collection is locked')
-      const songSnap = await firestoreDoc('songs/' + song).get(context.loader)
+
+      const songSnap = await context.db.query.song.findFirst({
+        where: or(eq(schema.song.idString, song), eq(schema.song.slug, song)),
+      })
       if (!songSnap) throw new UserInputError('Song does not exist')
 
-      await firestoreFieldTransforms('collections/' + collectionSnap.id, [
-        {
-          fieldPath: 'list',
-          removeAllFromArray: { values: [{ stringValue: 'songs/' + song }] },
-        },
-        { fieldPath: 'lastModified', setToServerValue: 'REQUEST_TIME' },
-      ])
+      const items = await context.db
+        .delete(schema.collectionSong)
+        .where(
+          and(
+            eq(schema.collectionSong.collection, collectionSnap.id),
+            eq(schema.collectionSong.song, songSnap.id),
+          ),
+        )
+      if (affectedRows(items) < 1) return 'Already removed.'
+      await context.db
+        .update(schema.collection)
+        .set({ lastModified: sql`CURRENT_TIMESTAMP` })
+        .where(eq(schema.collection.id, collectionSnap.id))
 
       return 'Success!'
     },
