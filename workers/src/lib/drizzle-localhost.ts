@@ -1,11 +1,15 @@
 import { drizzle } from 'drizzle-orm/mysql2'
 import mysql from 'mysql2/promise'
 
+import * as schema from '../db/schema.js'
+
 export async function mkDrizzle() {
   const connection = await mysql.createConnection(
     process.env.DATABASE_SOCKET
       ? {
           socketPath: process.env.DATABASE_SOCKET,
+          user: 'root',
+          database: 'database',
         }
       : {
           host: process.env.DATABASE_HOST,
@@ -14,6 +18,6 @@ export async function mkDrizzle() {
         },
   )
 
-  const db = drizzle(connection)
+  const db = drizzle(connection, { schema, mode: 'default' })
   return db
 }

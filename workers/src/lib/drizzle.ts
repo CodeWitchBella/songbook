@@ -1,16 +1,23 @@
-import { int, mysqlTable, serial, varchar } from 'drizzle-orm/mysql-core'
 import type { PlanetScaleDatabase } from 'drizzle-orm/planetscale-serverless'
 
 // type corresponds with production, because on localhost I'm more likely to notice
-export type DB = PlanetScaleDatabase<Record<string, never>>
+export type DB = PlanetScaleDatabase<typeof import('../db/schema.js')>
 
-export const countries = mysqlTable('countries', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 256 }),
-})
+let db: DB | Promise<DB>
+export function drizzle() {
+  if (!db) {
+    db = (
+      process.env.DATABASE_SOCKET && (globalThis as any).isInNodejs
+        ? (import('./drizzle-localhost.js') as never)
+        : import('./drizzle-planetscale.js')
+    ).then((v) => {
+      db = v.mkDrizzle()
+      return db
+    })
+  }
+  return db
+}
 
-export const cities = mysqlTable('cities', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 256 }),
-  countryId: int('country_id').references(() => countries.id),
-})
+export function checkCode(error: unknown, code: string) {
+  return typeof error === 'object' && error && (error as any).code === code
+}

@@ -1,4 +1,6 @@
+import { song } from '../db/schema.js'
 import type { MyContext } from '../lib/context.js'
+import { checkCode } from '../lib/drizzle.js'
 import { validateJsonBody } from '../lib/request.js'
 import {
   badRequestResponse,
@@ -6,7 +8,7 @@ import {
   methodNotAllowedResponse,
 } from '../lib/response.js'
 import { getViewerCheck } from '../lib/server-config.js'
-import { randomID, slugify } from '../lib/utils.js'
+import { slugify } from '../lib/utils.js'
 
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context)
@@ -17,21 +19,19 @@ export async function handleCreateSong(request: Request, context: MyContext) {
   })
 
   const slug = slugify(`${input.title}-${input.author}`)
-  const existing = await queryFieldEqualsSingle('songs', 'slug', slug)
-  if (existing !== null) return badRequestResponse('Song already exists')
-  const doc = firestoreDoc('songs/' + (await randomID(20)))
-  if (await doc.get(context.loader)) throw new Error('Generated coliding id')
-  await doc.set(
-    {
-      ...input,
+  try {
+    await context.db.insert(song).values({
       text: input.text || '',
-      deleted: false,
       slug,
       editor: viewer.id,
-      insertedAt: serverTimestamp(),
-      lastModified: serverTimestamp(),
-    },
-    { merge: false },
-  )
+      author: input.author,
+      title: input.title,
+    })
+  } catch (e) {
+    if (checkCode(e, 'ER_DUP_ENTRY'))
+      return badRequestResponse('Song already exists')
+    throw e
+  }
+
   return jsonResponse({ slug })
 }

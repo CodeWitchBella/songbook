@@ -10,6 +10,10 @@ import {
 
 const id = int('id').autoincrement().primaryKey()
 
+export const user = mysqlTable('user', {
+  id,
+})
+
 export const song = mysqlTable('song', {
   id,
   author: varchar('author', { length: 100 }).notNull(),
@@ -26,4 +30,7 @@ export const song = mysqlTable('song', {
   slug: varchar('slug', { length: 256 }).notNull().unique(),
   spotify: varchar('spotify', { length: 256 }),
   titleSpace: float('title_space').default(1).notNull(),
+  extraNonSearchable: text('extra_non_searchable'),
+  extraSearchable: text('extra_searchable'),
+  editor: int('editor').references(() => user.id),
 })

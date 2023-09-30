@@ -1,7 +1,7 @@
 import type { Duration } from 'luxon'
 
 import { createSetSessionCookieHeader, parseSessionCookie } from './cookie.js'
-import type { DB } from './drizzle.js'
+import { type DB, drizzle } from './drizzle.js'
 
 export type MyContext = {
   sessionCookie?: string
@@ -9,21 +9,6 @@ export type MyContext = {
   url: string
 
   db: DB
-}
-
-let db: DB | Promise<DB>
-function drizzle() {
-  if (!db) {
-    db = (
-      process.env.DATABASE_SOCKET && (globalThis as any).isInNodejs
-        ? (import('./drizzle-localhost.js') as never)
-        : import('./drizzle-planetscale.js')
-    ).then((v) => {
-      db = v.mkDrizzle()
-      return db
-    })
-  }
-  return db
 }
 
 export function contextPair(request: Request) {

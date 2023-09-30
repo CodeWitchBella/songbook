@@ -1,5 +1,6 @@
 import type { Config } from 'drizzle-kit'
 import fs from 'fs'
+import { fileURLToPath } from 'url'
 
 export const env = Object.fromEntries(
   fs
@@ -8,7 +9,13 @@ export const env = Object.fromEntries(
     .split('\n')
     .map((v) => v.trim())
     .filter((v) => !v.startsWith('#'))
-    .map((v) => v.split('=')),
+    .map((line) => {
+      const [k, v] = line.split('=')
+      if (k === 'DATABASE_SOCKET') {
+        return [k, fileURLToPath(new URL(v, import.meta.url))]
+      }
+      return [k, v]
+    }),
 )
 
 export default {
