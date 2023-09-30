@@ -1,7 +1,7 @@
 import type { Duration } from 'luxon'
 
+import { type DB, drizzle } from '../db/drizzle.js'
 import { createSetSessionCookieHeader, parseSessionCookie } from './cookie.js'
-import { type DB, drizzle } from './drizzle.js'
 
 export type MyContext = {
   sessionCookie?: string

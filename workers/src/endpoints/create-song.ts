@@ -7,7 +7,7 @@ import {
   jsonResponse,
   methodNotAllowedResponse,
 } from '../lib/response.js'
-import { getViewerCheck } from '../lib/server-config.js'
+import { getViewerCheck } from '../lib/graphql-server-config.js'
 import { slugify } from '../lib/utils.js'
 
 export async function handleCreateSong(request: Request, context: MyContext) {
