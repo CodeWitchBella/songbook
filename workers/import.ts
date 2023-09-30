@@ -115,7 +115,7 @@ const dataSchema = z.object({
 })
 
 const data = dataSchema.parse(dataRaw)
-const db = await drizzle()
+const db = await drizzle(process.env)
 
 function mapDate(date: z.infer<typeof instant>) {
   const res = DateTime.fromMillis(

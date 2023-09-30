@@ -11,7 +11,7 @@ export type MyContext = {
   db: DB
 }
 
-export function contextPair(request: Request) {
+export function contextPair(request: Request, env: any) {
   let hdr: ReturnType<typeof createSetSessionCookieHeader> | null = null
   return {
     createContext: async (): Promise<MyContext> => ({
@@ -20,7 +20,7 @@ export function contextPair(request: Request) {
         hdr = createSetSessionCookieHeader(value, duration)
       },
       url: request.url,
-      db: await drizzle(),
+      db: await drizzle(env),
     }),
     finishContext: (response: Response) => {
       if (hdr) response.headers.set(hdr[0], hdr[1])

@@ -50,7 +50,7 @@ const worker = {
     env: {},
     ctx: ExecutionContext,
   ): Promise<Response> {
-    const { createContext, finishContext } = contextPair(request)
+    const { createContext, finishContext } = contextPair(request, env)
     const res = await handleRequest(request, env, ctx, createContext)
     finishContext(res)
     return res

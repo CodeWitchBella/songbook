@@ -6,7 +6,7 @@ export type DB = PlanetScaleDatabase<typeof import('./schema.js')>
 
 let db: DB | Promise<DB>
 declare const isInNodejs: boolean
-export function drizzle() {
+export function drizzle(env: any) {
   if (!db) {
     if (typeof isInNodejs === 'undefined')
       (globalThis as any).isInNodejs = false
@@ -16,7 +16,7 @@ export function drizzle() {
         ? (import('./drizzle-localhost.js') as never)
         : import('./drizzle-planetscale.js')
     ).then((v) => {
-      db = v.mkDrizzle()
+      db = v.mkDrizzle(env)
       return db
     })
   }
