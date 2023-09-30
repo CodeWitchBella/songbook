@@ -10,7 +10,8 @@ export const env = Object.fromEntries(
     .map((v) => v.trim())
     .filter((v) => !v.startsWith('#'))
     .map((line) => {
-      const [k, v] = line.split('=')
+      const [k, ...varr] = line.split('=')
+      const v = varr.join('=')
       if (k === 'DATABASE_SOCKET') {
         return [k, fileURLToPath(new URL(v, import.meta.url))]
       }
@@ -18,7 +19,7 @@ export const env = Object.fromEntries(
     }),
 )
 
-export default {
+const config = {
   schema: './src/db/schema.ts',
   driver: 'mysql2',
   verbose: true,
@@ -31,8 +32,11 @@ export default {
         port: 3306,
       }
     : {
-        host: env.DATABASE_HOST,
-        user: env.DATABASE_USER,
-        database: 'database',
+        //host: env.DATABASE_HOST,
+        //user: env.DATABASE_USERNAME,
+        //password: env.DATABASE_PASSWORD,
+        //database: env.DATABASE,
+        connectionString: env.DATABASE_URL,
       },
 } satisfies Config
+export default config

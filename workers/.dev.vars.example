@@ -3,3 +3,5 @@ DATABASE_SOCKET=./.mysql/mysql.sock
 DATABASE_HOST=localhost
 DATABASE_USERNAME=user
 DATABASE_PASSWORD=password
+DATABASE=songbook
+DATABASE_URL=mysql://user:password@aws.connect.psdb.cloud/songbook?ssl={"rejectUnauthorized":true}
