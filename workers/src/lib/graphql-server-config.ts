@@ -280,12 +280,12 @@ const resolvers = {
   SongRecord: {
     id: (src: any) => src.idString,
     data: (src: any) => src,
-    lastModified: (src: any) => src.lastModified,
+    lastModified: (src: any) => DateTime.fromSQL(src.lastModified).toISO(),
   },
   CollectionRecord: {
     id: (src: any) => src.idString,
     data: (src: any) => src,
-    lastModified: (src: any) => src.lastModified,
+    lastModified: (src: any) => DateTime.fromSQL(src.lastModified).toISO(),
   },
   DeletableCollectionRecord: {
     __resolveType: (src: any) => (src.deleted ? 'Deleted' : 'CollectionRecord'),
