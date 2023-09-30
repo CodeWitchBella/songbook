@@ -271,7 +271,7 @@ const resolvers = {
       }
       return null
     },
-    insertedAt: (src: any) => src.insertedAt || null,
+    insertedAt: (src: any) => DateTime.fromSQL(src.insertedAt).toISO() || null,
     fontSize: (src: any) => coerceNumber(src.fontSize, 1),
     paragraphSpace: (src: any) => coerceNumber(src.paragraphSpace, 1),
     titleSpace: (src: any) => coerceNumber(src.titleSpace, 1),
@@ -291,7 +291,7 @@ const resolvers = {
     __resolveType: (src: any) => (src.deleted ? 'Deleted' : 'CollectionRecord'),
   },
   Collection: {
-    insertedAt: (src: any) => src.insertedAt || null,
+    insertedAt: (src: any) => DateTime.fromSQL(src.insertedAt).toISO() || null,
     owner: async (src: any, _: any, context: MyContext) => {
       const owner = await context.db.query.user.findFirst({
         where: eq(schema.user.id, src.owner),
