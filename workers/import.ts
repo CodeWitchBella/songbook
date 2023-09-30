@@ -293,4 +293,24 @@ await db.transaction(async (db) => {
         }
       }),
   )
+
+  const collections = Object.fromEntries(
+    (await db.query.collection.findMany()).map((collection) => [
+      collection.idString,
+      collection.id,
+    ]),
+  )
+
+  await db.insert(schema.collectionSong).values(
+    Object.entries(data.collections)
+      .map(([collectionIdString, collectionData]) =>
+        collectionData.list.map((songIdString) => {
+          return {
+            collection: collections[collectionIdString],
+            song: songs[songIdString.replace(/^songs\//, '')],
+          }
+        }),
+      )
+      .flat(),
+  )
 })
