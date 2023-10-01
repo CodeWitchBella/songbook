@@ -1759,7 +1759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.22.5, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.16.3, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.18.6, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.20.6, @babel/runtime@npm:^7.20.7, @babel/runtime@npm:^7.22.5, @babel/runtime@npm:^7.8.4":
   version: 7.23.1
   resolution: "@babel/runtime@npm:7.23.1"
   dependencies:
@@ -3915,24 +3915,6 @@ __metadata:
     "@types/history": ^4.7.11
     "@types/react": "*"
   checksum: 128764143473a5e9457ddc715436b5d49814b1c214dde48939b9bef23f0e77f52ffcdfa97eb8d3cc27e2c229869c0cdd90f637d887b62f2c9f065a87d6425419
-  languageName: node
-  linkType: hard
-
-"@types/react-virtualized-auto-sizer@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@types/react-virtualized-auto-sizer@npm:1.0.1"
-  dependencies:
-    "@types/react": "*"
-  checksum: 67eff0670a1991c2b16992274ada5f0b3f9d5c2d6209ef38e8f8ae2c0218211a3292882f5b7dd6f09519000dc20847629f049c9acc267e000626b7141e5927a6
-  languageName: node
-  linkType: hard
-
-"@types/react-window@npm:^1.8.6":
-  version: 1.8.6
-  resolution: "@types/react-window@npm:1.8.6"
-  dependencies:
-    "@types/react": "*"
-  checksum: 3084190ab50a84d8499a6df574ad67474566cd7aeeb8fc6ce82a7a13421fd39e21a059c51f9d12f38e5ac52eb9d65f6184e3fb6cb62841e93b197b7401b36e35
   languageName: node
   linkType: hard
 
@@ -10238,13 +10220,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"memoize-one@npm:>=3.1.1 <6":
-  version: 5.2.1
-  resolution: "memoize-one@npm:5.2.1"
-  checksum: a3cba7b824ebcf24cdfcd234aa7f86f3ad6394b8d9be4c96ff756dafb8b51c7f71320785fbc2304f1af48a0467cbbd2a409efc9333025700ed523f254cb52e3d
-  languageName: node
-  linkType: hard
-
 "memoizee@npm:^0.4.15":
   version: 0.4.15
   resolution: "memoizee@npm:0.4.15"
@@ -12335,29 +12310,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-virtualized-auto-sizer@npm:^1.0.20":
-  version: 1.0.20
-  resolution: "react-virtualized-auto-sizer@npm:1.0.20"
-  peerDependencies:
-    react: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0-rc
-    react-dom: ^15.3.0 || ^16.0.0-alpha || ^17.0.0 || ^18.0.0-rc
-  checksum: 2c616ec7587de64a46aa8c6c301e75fee87eb7a39013f25d940b0fe95eee5e8a8a3c109923e241b427752d71fba80f44cd2c8557750967df0777d99ebd16ba24
-  languageName: node
-  linkType: hard
-
-"react-window@npm:^1.8.9":
-  version: 1.8.9
-  resolution: "react-window@npm:1.8.9"
-  dependencies:
-    "@babel/runtime": ^7.0.0
-    memoize-one: ">=3.1.1 <6"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: cefa232f4f37269d292529ef15780fb108123d6bb5beee19eeac657e75cf8d4664be66f2da04baf0cb1bc64c5ab3d83a88199c3358f023b78940acd37b0673b2
-  languageName: node
-  linkType: hard
-
 "react@npm:^16.11.0":
   version: 16.14.0
   resolution: "react@npm:16.14.0"
@@ -13214,8 +13166,6 @@ __metadata:
     "@types/react-pdf": ^7.0.0
     "@types/react-router": ^5.1.20
     "@types/react-router-dom": ^5.3.3
-    "@types/react-virtualized-auto-sizer": ^1.0.1
-    "@types/react-window": ^1.8.6
     "@types/workbox-window": ^5.0.0
     "@vitejs/plugin-react-swc": ^3.4.0
     autoprefixer: ^10.4.16
@@ -13238,8 +13188,6 @@ __metadata:
     react-native-web: 0.18.7
     react-pdf: ^7.4.0
     react-router-dom: ^6.16.0
-    react-virtualized-auto-sizer: ^1.0.20
-    react-window: ^1.8.9
     remark-gfm: ^4.0.0
     tailwindcss: ^3.3.3
     three: ^0.157.0
