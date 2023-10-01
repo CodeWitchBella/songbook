@@ -4,6 +4,7 @@ import mysql from 'mysql2/promise'
 import { schema } from './drizzle.js'
 
 export async function mkDrizzle() {
+  console.info('Using the local database')
   const connection = await mysql.createConnection(
     process.env.DATABASE_SOCKET
       ? {

@@ -4,6 +4,7 @@ import { drizzle } from 'drizzle-orm/planetscale-serverless'
 import { schema } from './drizzle.js'
 
 export function mkDrizzle(env: any) {
+  console.info('Using the production database')
   const connection = connect({
     host: env.DATABASE_HOST,
     username: env.DATABASE_USERNAME,
