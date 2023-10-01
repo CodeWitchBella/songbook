@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -17,20 +17,13 @@
     />
     <title>Zpěvník</title>
     <style>
-      html.dark {
-        background-color: #121212;
-        color: white;
-      }
-      html.automatic,
-      html.light {
+      html {
         background-color: white;
         color: black;
       }
-      @media screen and (prefers-color-scheme: dark) {
-        html.automatic {
-          background-color: #121212;
-          color: white;
-        }
+      html.dark {
+        background-color: #121212;
+        color: white;
       }
 
       html {
@@ -42,9 +35,11 @@
     <script>
       ;(function () {
         var mode = localStorage.getItem('dark-mode-setting')
-        document.documentElement.classList.add(
-          mode === 'dark' || mode === 'light' ? mode : 'automatic',
-        )
+        const isDark =
+          mode === 'dark' || mode === 'light'
+            ? mode === 'dark'
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (isDark) document.documentElement.classList.add('dark')
       })()
     </script>
   </head>

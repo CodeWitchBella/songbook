@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useMediaQuery } from 'utils/utils'
 
 const key = 'dark-mode-setting'
+const query = '(prefers-color-scheme: dark)'
 
 function deserialize(val: string | null): DarkModeSetting {
   if (val === 'light' || val === 'dark') return val
@@ -13,9 +13,13 @@ function write(val: DarkModeSetting) {
   else localStorage.removeItem(key)
 }
 
-function apply(value: DarkModeSetting) {
-  document.documentElement.classList.remove('dark', 'light', 'automatic')
-  document.documentElement.classList.add(value)
+function apply(setting?: DarkModeSetting, prefersDark?: boolean) {
+  prefersDark ??= window.matchMedia(query).matches
+  setting ??= deserialize(localStorage.getItem(key))
+  const dark = setting === 'automatic' ? prefersDark : setting === 'dark'
+
+  if (dark) document.documentElement.classList.add('dark')
+  else document.documentElement.classList.remove('dark')
 }
 
 type DarkModeSetting = 'automatic' | 'light' | 'dark'
@@ -32,12 +36,9 @@ export function DarkModeProvider({
   const [setting, setSetting] = useState(() =>
     deserialize(localStorage.getItem(key)),
   )
-  const value = useMediaQuery('(prefers-color-scheme: dark)')
   useEffect(() => {
     window.addEventListener('storage', listener)
-    return () => {
-      window.removeEventListener('storage', listener)
-    }
+    return () => void window.removeEventListener('storage', listener)
     function listener(event: StorageEvent) {
       if (event.key === key) {
         const value = deserialize(event.newValue)
@@ -46,11 +47,29 @@ export function DarkModeProvider({
       }
     }
   }, [])
+
+  const [systemPreference, setSystemPreference] = useState(
+    () => !!window.matchMedia(query).matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query)
+    const handler = () => {
+      const newPreference = !!mediaQuery.matches
+      setSystemPreference(newPreference)
+      apply(undefined, newPreference)
+    }
+    mediaQuery.addEventListener('change', handler)
+    return () => mediaQuery.removeEventListener('change', handler)
+  }, [systemPreference])
+
+  const resolvedValue =
+    setting === 'automatic' ? systemPreference : setting === 'dark'
   return (
     <darkModeContext.Provider
       value={useMemo(
         () => ({
-          value: setting === 'automatic' ? value : setting === 'dark',
+          value: resolvedValue,
           setting,
           setSetting: (value) => {
             setSetting(value)
@@ -58,7 +77,7 @@ export function DarkModeProvider({
             write(value)
           },
         }),
-        [setting, value],
+        [resolvedValue, setting],
       )}
     >
       {children}

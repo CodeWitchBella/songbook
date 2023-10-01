@@ -49,21 +49,3 @@ export function collectionFullName(collection: {
       : '') + collection.name
   )
 }
-
-export function useMediaQuery(query: string) {
-  if (typeof window === 'undefined' || typeof window.matchMedia === 'undefined')
-    return false
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [match, setMatch] = useState(!!window.matchMedia(query).matches)
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query)
-    const handler = () => setMatch(!!mediaQuery.matches)
-    mediaQuery.addEventListener('change', handler)
-    return () => mediaQuery.removeEventListener('change', handler)
-  }, [query])
-
-  return !!match
-}
