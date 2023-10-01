@@ -104,14 +104,6 @@ export function SongList({ list }: { list: SongListItem[] }) {
     }
   }, [location.key])
 
-  useEffect(() => {
-    const bckp = window.document.body.style.overflow
-    window.document.body.style.overflow = 'hidden'
-    return () => {
-      window.document.body.style.overflow = bckp
-    }
-  }, [])
-
   const initialScroll = useRef(
     Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || '0'),
   )

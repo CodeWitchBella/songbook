@@ -182,7 +182,7 @@ export default function SongList({
       >
         {header ?? null}
       </Search>
-      <div className="grow">
+      <div className="min-h-0 grow">
         {songs.length !== 0 ? (
           <FilteredList
             songs={songs}
