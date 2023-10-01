@@ -1,11 +1,10 @@
-/** @jsxImportSource @emotion/react */
-
-// @ts-expect-error
 import guitar from '@tombatossals/chords-db/lib/guitar.json'
+// @ts-expect-error
 import Chord from '@tombatossals/react-chords/lib/Chord'
+import { useTranslation } from 'react-i18next'
 
 import { DumbModal } from './dumb-modal'
-import { TText, useColors } from './themed'
+import { TText } from './themed'
 
 type ChordDef = {
   frets: number[]
@@ -91,27 +90,23 @@ export function ChordHelp({
   chord: string
 }) {
   const { def, mapped } = getChordDefinition(chord)
-  const colors = useColors()
+  const [t] = useTranslation()
   if (!def) return null
 
   return (
     <DumbModal close={close}>
-      <TText style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
-        {chord}
-        {mapped !== chord ? ` (${mapped})` : null}
-      </TText>
-      <div
-        css={{
-          width: 300,
-          backgroundColor: 'white',
-          filter: colors.dark ? 'invert(1) brightness(2)' : undefined,
-        }}
-      >
-        <Chord chord={def} instrument={instrument} />
+      <div className="select-none">
+        <div className="text-center text-3xl font-bold">
+          {chord}
+          {mapped !== chord ? ` (${mapped})` : null}
+        </div>
+        <div className="w-80 bg-white dark:invert ">
+          <Chord chord={def} instrument={instrument} />
+        </div>
+        <TText style={{ fontSize: 13, marginTop: 20 }}>
+          {t('Click on the backdrop to close this')}
+        </TText>
       </div>
-      <TText style={{ fontSize: 13, marginTop: 20 }}>
-        Klikni kdekoli pro zavření
-      </TText>
     </DumbModal>
   )
 }

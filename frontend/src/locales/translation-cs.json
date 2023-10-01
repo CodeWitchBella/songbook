@@ -7,7 +7,7 @@
   "Automatic": "Automatický",
   "Changelog": "Historie změn",
   "Clear search": "Vyčistit vyhledávání",
-  "Click anywhere to close this": "Klikni kdekoli pro zavření",
+  "Click on the backdrop to close this": "Tento dialog zavřeš kliknutím na pozadí",
   "collection": {
     "Add song to collection": "Přidat píseň do kolekce",
     "Collection name": "Název kolekce",
@@ -79,7 +79,7 @@
   "I already have account, <2>log in</2>": "Už mám účet, <2>přihlásit se</2>",
   "I don't have account, <2>register</2>": "Nemám účet, <2>vytvořit nový</2>",
   "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>": "Ikonku přidání do kolekce <1></1> jsem převzala od <4>Smashicons</4>",
-  "Icon for quick settings <1></1> is taken from <4>{iconicApp}</4>": "Ikonu rychlých nastavení <1></1> jsem převzala <4>{iconicApp}</4>",
+  "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>": "Ikonu rychlých nastavení <1></1> jsem převzala z <4>{{iconicApp}}</4>",
   "info": {
     "editor-unknown": "Neznámo kdo",
     "Inserted by: {{editor}}": "Vložil/a: {{editor}}",

@@ -29,7 +29,9 @@ export default function Credits() {
         <TText style={styles.text}>
           <Trans>
             Icon for quick settings <QuickSettings /> is taken from{' '}
-            <InlineLink to="https://iconic.app/">{iconicApp}</InlineLink>
+            <InlineLink to="https://iconic.app/">
+              {{ iconicApp } as any}
+            </InlineLink>
           </Trans>
         </TText>
         <TText style={styles.text}>{t('other-icons')}</TText>

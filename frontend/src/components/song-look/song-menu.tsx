@@ -85,26 +85,28 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
   const unknownDate = t('info.inserted-before-2019-05-20')
   return (
     <DumbModal close={close}>
-      <TText style={style.modalText}>
-        {t('info.Inserted by: {{editor}}', {
-          editor: song.editor?.name || unknownEditor,
-        })}
-      </TText>
-      <TText style={style.modalText}>
-        {t('info.Inserted: {{date}}', {
-          date: song.insertedAt
-            ? song.insertedAt.toFormat('dd. MM. yyyy')
-            : unknownDate,
-        })}
-      </TText>
-      <TText style={style.modalText}>
-        {t('info.Last edit: {{date}}', {
-          date: song.lastModified.toFormat('dd. MM. yyyy'),
-        })}
-      </TText>
-      <TText style={[style.modalText, style.modalCloseInfo]}>
-        {t('Click anywhere to close this')}
-      </TText>
+      <div className="flex flex-col">
+        <TText style={style.modalText}>
+          {t('info.Inserted by: {{editor}}', {
+            editor: song.editor?.name || unknownEditor,
+          })}
+        </TText>
+        <TText style={style.modalText}>
+          {t('info.Inserted: {{date}}', {
+            date: song.insertedAt
+              ? song.insertedAt.toFormat('dd. MM. yyyy')
+              : unknownDate,
+          })}
+        </TText>
+        <TText style={style.modalText}>
+          {t('info.Last edit: {{date}}', {
+            date: song.lastModified.toFormat('dd. MM. yyyy'),
+          })}
+        </TText>
+        <TText style={[style.modalText, style.modalCloseInfo]}>
+          {t('Click on the backdrop to close this')}
+        </TText>
+      </div>
     </DumbModal>
   )
 }

@@ -1,9 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
-import { View } from 'react-native'
-
-import { useColors } from './themed'
-
 export function DumbModal({
   close,
   children,
@@ -11,37 +5,26 @@ export function DumbModal({
   close: () => void
   children: JSX.Element | readonly JSX.Element[]
 }) {
-  const colors = useColors()
   return (
-    <button
-      type="button"
-      css={{
-        all: 'unset',
-        display: 'flex',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        background: colors.dark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)',
-        pointerEvents: 'all',
-        alignItems: 'center',
-        justifyContent: 'center',
+    <dialog
+      onClose={close}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) event.currentTarget.close()
       }}
-      onClick={close}
+      ref={openModal}
+      // modal does not inhert text color by default, let's change that
+      className="border border-white bg-neutral-950 text-inherit backdrop:bg-black/70"
     >
-      <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 24,
-          backgroundColor: colors.background,
-          borderColor: colors.borders,
-          borderWidth: 1,
-          borderStyle: 'solid',
-        }}
+      <div
+        // this is separate so that clicking near border does not close the dialog
+        className="px-4 py-6"
       >
         {children}
-      </View>
-    </button>
+      </div>
+    </dialog>
   )
+}
+
+function openModal(dialog: HTMLDialogElement | null) {
+  dialog?.showModal()
 }

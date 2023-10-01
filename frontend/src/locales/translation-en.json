@@ -7,7 +7,7 @@
   "Automatic": "Automatic",
   "Changelog": "Changelog",
   "Clear search": "Clear search",
-  "Click anywhere to close this": "Click anywhere to close this",
+  "Click on the backdrop to close this": "Click on the backdrop to close this",
   "collection": {
     "Add song to collection": "Add song to collection",
     "Collection name": "Collection name",
@@ -77,7 +77,7 @@
   "I already have account, <2>log in</2>": "I already have account, <2>log in</2>",
   "I don't have account, <2>register</2>": "I don't have account, <2>register</2>",
   "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>": "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>",
-  "Icon for quick settings <1></1> is taken from <4>{iconicApp}</4>": "Icon for quick settings <1></1> is taken from <4>{iconicApp}</4>",
+  "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>": "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>",
   "info": {
     "editor-unknown": "Unknown",
     "Inserted by: {{editor}}": "Inserted by: {{editor}}",

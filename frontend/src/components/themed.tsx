@@ -11,7 +11,7 @@ import { useDarkModeSetting } from './dark-mode'
 
 const colors = {
   dark: {
-    background: '#121212',
+    background: '#09090b',
     text: 'white',
     borders: 'white',
     dark: true,
