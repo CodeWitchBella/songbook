@@ -54,13 +54,16 @@ export default function Register() {
   }
 
   return (
-    <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+    <form
+      onSubmit={submit}
+      className="mx-auto flex max-w-lg flex-col gap-4 text-xl"
+    >
       <PageHeader>{t('Register')}</PageHeader>
       {login.viewer ? (
         <LoginDone viewer={login.viewer} />
       ) : (
         <>
-          <div>{status !== 'loading' && status}</div>
+          <div className="-mt-8">{status !== 'loading' && status}</div>
           <LargeInput
             label={t('Display name')}
             type="text"

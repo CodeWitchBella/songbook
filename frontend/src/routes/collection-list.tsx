@@ -26,7 +26,7 @@ export default function CollectionList() {
     [unsortedList],
   )
   return (
-    <div className="mx-auto flex flex-col gap-4 px-4 pb-4">
+    <div className="mx-auto flex w-full max-w-max flex-col gap-4 px-4 pb-4">
       <PageHeader>{t('Collections')}</PageHeader>
       <Link to="/all-songs" className="hover:underline">
         {t('All songs')}

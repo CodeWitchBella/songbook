@@ -35,7 +35,7 @@ function Spotify({ link }: { link: string }) {
         frameBorder="0"
         allowtransparency="true"
         allow="encrypted-media"
-        css={{ pointerEvents: 'all' }}
+        className="pointer-events-auto"
       />
     </SpotifyWrap>
   )

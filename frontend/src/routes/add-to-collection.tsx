@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { BackArrow, BackButton, useGoBack } from 'components/back-button'
 import { ErrorPage } from 'components/error-page'
 import { LargeInput } from 'components/input'
@@ -72,7 +70,7 @@ export default function AddToCollection() {
   }
 
   return (
-    <div className="mx-auto max-w-xl">
+    <div className="mx-auto flex max-w-xl flex-col gap-2">
       {addable.length > 0 ? (
         <Title
           first={true}
@@ -200,7 +198,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
   }
   const { t } = useTranslation()
   return (
-    <form onSubmit={submit} css={{ fontSize: 16, marginTop: 16 }}>
+    <form onSubmit={submit} className="flex flex-col gap-4">
       <LargeInput
         label={t('collection.Collection name')}
         value={name}
@@ -221,7 +219,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
       {error ? (
         <TText style={{ color: 'red', fontSize: 16 }}>{error}</TText>
       ) : null}
-      <button css={{ display: 'none' }} disabled={disabled} />
+      <button className="hidden" disabled={disabled} />
     </form>
   )
 }

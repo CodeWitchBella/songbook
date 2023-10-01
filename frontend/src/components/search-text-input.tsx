@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, TextInput, View } from 'react-native'
 
-import { BasicButton } from './interactive/basic-button'
 import { useBasicStyle } from './themed'
 
 export function SearchTextInput({
@@ -28,6 +27,7 @@ export function SearchTextInput({
     function listener(event: KeyboardEvent) {
       // ignore shortcuts
       if (event.metaKey || event.ctrlKey || event.altKey) return
+      if (event.key.trim().length !== 1) return
       const focused = ref.current?.isFocused()
       if (event.key.length === 1) {
         onChange(prevValue.current + event.key)
@@ -58,27 +58,19 @@ export function SearchTextInput({
         accessibilityLabel="Vyhledávání"
         style={[styles.input, useBasicStyle()]}
       />
-      <ClearButton onPress={() => onChange('')} />
+      <ClearButton onClick={() => onChange('')} />
     </View>
   )
 }
 
-function ClearButton({ onPress }: { onPress: () => void }) {
+function ClearButton({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation()
   return (
-    <BasicButton
+    <button
+      type="button"
       aria-label={t('Clear search')}
-      style={{
-        position: 'absolute',
-        right: 5,
-        bottom: 0,
-        height: 40,
-        width: 40,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      onPress={onPress}
+      className="absolute bottom-0 right-1 flex h-10 w-10 items-center justify-center"
+      onClick={onClick}
     >
       <svg viewBox="0 0 47.271 47.271" height="25" width="25">
         <path
@@ -90,7 +82,7 @@ function ClearButton({ onPress }: { onPress: () => void }) {
           d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z"
         />
       </svg>
-    </BasicButton>
+    </button>
   )
 }
 

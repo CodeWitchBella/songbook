@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 
-import { TText, useBasicStyle, useColors } from './themed'
+import { TText, useBasicStyle } from './themed'
 
-const Input = ({
+export default function Input({
   label,
   value,
   onChange,
@@ -12,22 +12,14 @@ const Input = ({
   value: string
   onChange: (v: string) => any
   type?: string
-}) => {
-  const colors = useColors()
+}) {
   return (
     <label>
       <TText style={{ fontSize: 16 }}>{label}: </TText>
       <input
         type={type}
         value={value}
-        css={{
-          background: colors.inputBackground,
-          color: colors.text,
-          padding: '3px 7px',
-          borderWidth: 1,
-          borderStyle: 'solid',
-          borderColor: colors.borders,
-        }}
+        className="border border-current bg-transparent px-2 py-0.5"
         onChange={(evt) => {
           evt.preventDefault()
           onChange(evt.target.value)
@@ -36,8 +28,6 @@ const Input = ({
     </label>
   )
 }
-
-export default Input
 
 export function LargeInput({
   label,
@@ -55,18 +45,10 @@ export function LargeInput({
   name?: string
 }) {
   return (
-    <label css={{ display: 'flex', flexDirection: 'column', marginBottom: 10 }}>
-      <TText style={{ fontSize: 16 }}>{label}</TText>
+    <label className="flex flex-col gap-1">
+      <div>{label}</div>
       <input
-        css={[
-          useBasicStyle(),
-          {
-            fontSize: 24,
-            borderWidth: '1px',
-            borderStyle: 'solid',
-            padding: 10,
-          },
-        ]}
+        className="border border-current bg-transparent px-3 py-2 text-2xl"
         type={type}
         value={value}
         onChange={(evt) => {

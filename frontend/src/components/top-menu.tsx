@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import type { PropsWithChildren } from 'react'
 import { useReducer } from 'react'
 import { View } from 'react-native'
@@ -16,24 +14,11 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
     },
     { isOpen: false, wasOpen: false },
   )
-  const colors = useColors()
   return (
     <div className="w-10">
       <button
         aria-label="Hlavní menu"
-        css={{
-          all: 'unset',
-          boxSizing: 'border-box',
-          height: 40,
-          width: 40,
-          border: '1px solid',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: colors.background,
-          color: colors.text,
-          position: 'relative',
-        }}
+        className="flex h-10 w-10 items-center justify-center border border-current"
         onClick={() => setOpen(null)}
       >
         <Burger />
@@ -44,43 +29,6 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
         </MenuContent>
       )}
     </div>
-  )
-}
-
-export function TopMenuItem({
-  children,
-  as: As = 'button',
-  to,
-  onClick,
-  first,
-}: PropsWithChildren<
-  | { as?: 'button'; to?: undefined; onClick: (evt: React.MouseEvent) => void }
-  | { as: 'a'; to: string; onClick?: undefined }
-> & { first?: boolean }) {
-  return (
-    <As
-      onClick={onClick}
-      href={As === 'a' ? to : undefined}
-      css={{
-        all: 'unset',
-        boxSizing: 'border-box',
-        border: '1px solid',
-        height: 40,
-        display: 'block',
-        width: '100%',
-        lineHeight: '40px',
-        padding: '0 20px',
-        background: 'white',
-        marginTop: first ? 0 : 5,
-        cursor: 'pointer',
-        ':hover': {
-          textDecoration: 'underline',
-        },
-      }}
-      {...(As === 'a' ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-    >
-      {children}
-    </As>
   )
 }
 

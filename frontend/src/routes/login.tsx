@@ -33,13 +33,16 @@ export default function Login() {
       })
   }
   return (
-    <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+    <form
+      onSubmit={submit}
+      className="mx-auto flex max-w-lg flex-col gap-4 text-xl"
+    >
       <PageHeader backTo="/about">{t('login-screen-title')}</PageHeader>
       {login.viewer ? (
         <LoginDone viewer={login.viewer} />
       ) : (
         <>
-          <TText>{status !== 'loading' && status}</TText>
+          <div className="-mt-8">{status !== 'loading' && status}</div>
           <LargeInput
             label={t('Email')}
             value={email}

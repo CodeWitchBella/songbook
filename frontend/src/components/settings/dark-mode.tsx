@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useDarkModeSetting } from 'components/dark-mode'
 import { TText, useColors } from 'components/themed'
 import { useTranslation } from 'react-i18next'
@@ -66,7 +65,7 @@ function Option({
         padding: 4,
       }}
     >
-      <img src={src} css={{ width: '100%', aspectRatio: '1 / 1' }} alt="" />
+      <img src={src} className="aspect-square w-full" alt="" />
       <TText style={{ textAlign: 'center' }}>{text}</TText>
     </Pressable>
   )

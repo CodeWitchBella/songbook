@@ -49,25 +49,16 @@ function PlusMinus({
   onClick,
   children,
   hide,
-  className,
 }: PropsWithChildren<{
   onClick: () => void
   hide: boolean
-  className?: string
 }>) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={className}
-      css={{
-        all: 'unset',
-        border: '1px solid black',
-        width: '1.6em',
-        height: '1.6em',
-        textAlign: 'center',
-        opacity: hide ? 0 : 1,
-      }}
+      className="h-10 w-10 border border-current text-center"
+      style={{ opacity: hide ? 0 : 1 }}
     >
       {children}
     </button>
@@ -85,8 +76,8 @@ function PDFDoc({ url }: { url: string }) {
           onLoadSuccess={({ numPages }) => setNumPages(numPages)}
           renderMode="svg"
         >
-          <div css={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="set-size" css={{ position: 'relative' }}>
+          <div className="flex select-none content-center">
+            <div className="set-size relative">
               <rpdf.Page key={`page_${page}`} pageNumber={page} />
               <div
                 css={{
@@ -103,21 +94,21 @@ function PDFDoc({ url }: { url: string }) {
                   },
                 }}
               >
-                <div>
+                <div className="flex gap-2 text-black">
                   <PlusMinus
                     onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
                     hide={page === 1}
-                    css={{ marginRight: 10 }}
                   >
                     {'<'}
                   </PlusMinus>
-                  Strana {page}/{numPages}
+                  <div>
+                    Strana {page}/{numPages}
+                  </div>
                   <PlusMinus
                     onClick={() =>
                       setPage((p) => (p + 1 <= numPages ? p + 1 : p))
                     }
                     hide={page === numPages}
-                    css={{ marginLeft: 10 }}
                   >
                     {'>'}
                   </PlusMinus>

@@ -4,7 +4,6 @@ import { BackArrow, BackButton } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { DownloadPDF } from 'components/pdf'
 import { SearchTextInput } from 'components/search-text-input'
-import { useBasicStyle } from 'components/themed'
 import TopMenu from 'components/top-menu'
 import { useQueryParam } from 'components/use-router'
 import type { PropsWithChildren } from 'react'
@@ -19,24 +18,12 @@ import { FilteredList } from './filtered-list'
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   return (
-    <div
-      css={[
-        useBasicStyle(),
-        {
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderBottomWidth: 1,
-          borderBottomStyle: 'solid',
-          zIndex: 1,
-        },
-      ]}
-    >
-      <div className="relative max-w-md" style={{ width: 'calc(100% - 22px)' }}>
+    <div className="border-b">
+      <div
+        className="relative mx-auto max-w-md"
+        style={{ width: 'calc(100% - 22px)' }}
+      >
         {children}
-        <button style={{ display: 'none' }} />
       </div>
     </div>
   )

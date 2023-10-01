@@ -218,7 +218,7 @@ function CreateSongLink() {
           <PrimaryButton disabled={form.disabled} onPress={form.submit}>
             {t('create.Download')}
           </PrimaryButton>
-          <button disabled={form.disabled} css={{ display: 'none' }} />
+          <button disabled={form.disabled} className="hidden" />
           <TText style={createStyles.error}>{error}</TText>
         </Form>
       )}
@@ -268,7 +268,7 @@ function SubmitSong({
         <TText style={createStyles.label}>{t('create.Text')}:</TText>{' '}
       </TText>
       <TText style={createStyles.text}>{song.text}</TText>
-      <button disabled={form.disabled} css={{ display: 'none' }} />
+      <button disabled={form.disabled} className="hidden" />
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
         <PrimaryButton onPress={cancel} disabled={form.disabled}>
           {t('create.Cancel')}
@@ -313,7 +313,7 @@ function CreateSongManual() {
         <PrimaryButton disabled={disabled} onPress={submit}>
           {t('create.Create')}
         </PrimaryButton>
-        <button css={{ display: 'none' }} />
+        <button className="hidden" />
       </Form>
     </FormWrap>
   )
