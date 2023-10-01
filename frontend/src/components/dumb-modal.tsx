@@ -13,7 +13,7 @@ export function DumbModal({
       }}
       ref={openModal}
       // modal does not inhert text color by default, let's change that
-      className="border border-white bg-neutral-950 text-inherit backdrop:bg-black/70"
+      className="border border-black bg-white text-inherit backdrop:bg-black/70 dark:border-white dark:bg-neutral-950"
     >
       <div
         // this is separate so that clicking near border does not close the dialog
