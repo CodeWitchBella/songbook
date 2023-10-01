@@ -3,7 +3,7 @@ import { InlineLink } from 'components/interactive/inline-link'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { LoginDone } from 'components/login-done'
 import { PageHeader } from 'components/page-header'
-import { RootView, TText } from 'components/themed'
+import { TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -33,45 +33,43 @@ export default function Login() {
       })
   }
   return (
-    <RootView>
-      <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
-        <PageHeader backTo="/about">{t('login-screen-title')}</PageHeader>
-        {login.viewer ? (
-          <LoginDone viewer={login.viewer} />
-        ) : (
-          <>
-            <TText>{status !== 'loading' && status}</TText>
-            <LargeInput
-              label={t('Email')}
-              value={email}
-              onChange={setEmail}
-              disabled={status === 'loading'}
-              type="email"
-              name="email"
-            />
-            <LargeInput
-              label={t('Password')}
-              value={password}
-              onChange={setPassword}
-              disabled={status === 'loading'}
-              type="password"
-              name="password"
-            />
-            <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-              {t('Log in')}
-            </PrimaryButton>
-            <button style={{ display: 'none' }} />
-            <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
-              <TText style={{ fontSize: 16 }}>
-                <Trans>
-                  I don't have account,{' '}
-                  <InlineLink to="/register">register</InlineLink>
-                </Trans>
-              </TText>
-            </View>
-          </>
-        )}
-      </form>
-    </RootView>
+    <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+      <PageHeader backTo="/about">{t('login-screen-title')}</PageHeader>
+      {login.viewer ? (
+        <LoginDone viewer={login.viewer} />
+      ) : (
+        <>
+          <TText>{status !== 'loading' && status}</TText>
+          <LargeInput
+            label={t('Email')}
+            value={email}
+            onChange={setEmail}
+            disabled={status === 'loading'}
+            type="email"
+            name="email"
+          />
+          <LargeInput
+            label={t('Password')}
+            value={password}
+            onChange={setPassword}
+            disabled={status === 'loading'}
+            type="password"
+            name="password"
+          />
+          <PrimaryButton onPress={submit} disabled={status === 'loading'}>
+            {t('Log in')}
+          </PrimaryButton>
+          <button style={{ display: 'none' }} />
+          <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
+            <TText style={{ fontSize: 16 }}>
+              <Trans>
+                I don't have account,{' '}
+                <InlineLink to="/register">register</InlineLink>
+              </Trans>
+            </TText>
+          </View>
+        </>
+      )}
+    </form>
   )
 }

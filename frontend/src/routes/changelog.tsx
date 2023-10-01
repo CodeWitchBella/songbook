@@ -3,7 +3,7 @@ import { ChangelogEntry } from 'components/changelog-entry'
 import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
 import { LanguageSettings } from 'components/settings/language-settings'
-import { RootView, TP, TText } from 'components/themed'
+import { TP, TText } from 'components/themed'
 import { createContext } from 'react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -88,12 +88,10 @@ function ChangeBody({ body }: { body: string }) {
 }
 export default function Changelog() {
   return (
-    <RootView style={{ alignItems: 'center' }}>
-      <div className="w-full max-w-3xl">
-        <Head />
-        <ChangelogBody />
-      </div>
-    </RootView>
+    <div className="mx-auto w-full max-w-3xl">
+      <Head />
+      <ChangelogBody />
+    </div>
   )
 }
 

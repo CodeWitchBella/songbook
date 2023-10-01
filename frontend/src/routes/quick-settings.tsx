@@ -3,56 +3,54 @@ import { useDarkModeSetting } from 'components/dark-mode'
 import { InlineLink } from 'components/interactive/inline-link'
 import { useLanguage } from 'components/localisation'
 import { PageHeader } from 'components/page-header'
-import { RootView, TH2, TText } from 'components/themed'
+import { TH2, TText } from 'components/themed'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 
-export default function About() {
+export default function QuickSettings() {
   const { t } = useTranslation()
   const darkMode = useDarkModeSetting()
   const [lng, setLng] = useLanguage()
   const [continuous, setContinuous] = useContinuousModeSetting()
   return (
-    <RootView style={style.root}>
-      <View style={style.page}>
-        <PageHeader>{t('quick-settings.Quick settings')}</PageHeader>
+    <div className="mx-auto w-full max-w-lg px-1 pb-2">
+      <PageHeader>{t('quick-settings.Quick settings')}</PageHeader>
 
-        <TitledSelect
-          title={t('Appearance')}
-          value={darkMode.setting}
-          onChange={darkMode.setSetting}
-          options={[
-            ['light', t('Light')],
-            ['dark', t('Dark')],
-            ['automatic', t('Automatic')],
-          ]}
-        />
-        <TitledSelect
-          title={t('continuous.Continuous mode')}
-          value={continuous}
-          onChange={setContinuous}
-          options={[
-            ['always', t('continuous.always')],
-            ['never', t('continuous.never')],
-            ['multipage', t('continuous.multipage')],
-          ]}
-        />
-        <TText>{t('continuous.description')}</TText>
-        <TitledSelect
-          title={t('Language')}
-          value={lng}
-          onChange={setLng}
-          options={[
-            ['en', 'English'],
-            ['cs', 'Česky'],
-          ]}
-        />
-        <Titled title={t('quick-settings.More options')}>
-          <InlineLink to="/about">{t('Settings and about')}</InlineLink>
-        </Titled>
-      </View>
-    </RootView>
+      <TitledSelect
+        title={t('Appearance')}
+        value={darkMode.setting}
+        onChange={darkMode.setSetting}
+        options={[
+          ['light', t('Light')],
+          ['dark', t('Dark')],
+          ['automatic', t('Automatic')],
+        ]}
+      />
+      <TitledSelect
+        title={t('continuous.Continuous mode')}
+        value={continuous}
+        onChange={setContinuous}
+        options={[
+          ['always', t('continuous.always')],
+          ['never', t('continuous.never')],
+          ['multipage', t('continuous.multipage')],
+        ]}
+      />
+      <TText>{t('continuous.description')}</TText>
+      <TitledSelect
+        title={t('Language')}
+        value={lng}
+        onChange={setLng}
+        options={[
+          ['en', 'English'],
+          ['cs', 'Česky'],
+        ]}
+      />
+      <Titled title={t('quick-settings.More options')}>
+        <InlineLink to="/about">{t('Settings and about')}</InlineLink>
+      </Titled>
+    </div>
   )
 }
 
@@ -116,12 +114,5 @@ const style = StyleSheet.create({
   },
   titledRight: {
     paddingVertical: 16,
-  },
-  root: { justifyContent: 'center', alignItems: 'center' },
-  page: {
-    width: 500,
-    maxWidth: '100%',
-    paddingHorizontal: 4,
-    paddingBottom: 8,
   },
 })

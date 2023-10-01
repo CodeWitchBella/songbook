@@ -1,4 +1,3 @@
-import { RootView, TText } from 'components/themed'
 import React, { Component, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 let Raven: any = null
@@ -10,15 +9,9 @@ function Fallback({ reset }: { reset: () => void }) {
     if (last.current !== location) reset()
   }, [location, reset])
   return (
-    <RootView
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <TText style={{ fontSize: 30 }}>Něco se pokazilo</TText>
-    </RootView>
+    <div className="flex min-h-screen flex-col items-center justify-center text-3xl">
+      Něco se pokazilo
+    </div>
   )
 }
 

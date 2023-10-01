@@ -6,7 +6,7 @@ import { LargeInput } from 'components/input'
 import { BasicButton } from 'components/interactive/basic-button'
 import { ListButton } from 'components/interactive/list-button'
 import { PrimaryButton } from 'components/interactive/primary-button'
-import { RootView, TText } from 'components/themed'
+import { TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import ErrorBoundary from 'containers/error-boundary'
 import { useMemo, useState } from 'react'
@@ -82,12 +82,10 @@ export default function CreateSong() {
     )
   }
   return (
-    <RootView style={styles.wrap}>
-      <View style={styles.wrap2}>
-        <CreateSongSwitch />
-        {types[type] || <NotFound />}
-      </View>
-    </RootView>
+    <div className="flex min-h-screen w-full flex-col items-center justify-center">
+      <CreateSongSwitch />
+      {types[type] || <NotFound />}
+    </div>
   )
 }
 

@@ -4,7 +4,7 @@ import { BackArrow, BackButton } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { DownloadPDF } from 'components/pdf'
 import { SearchTextInput } from 'components/search-text-input'
-import { RootView, useBasicStyle } from 'components/themed'
+import { useBasicStyle } from 'components/themed'
 import TopMenu from 'components/top-menu'
 import { useQueryParam } from 'components/use-router'
 import type { PropsWithChildren } from 'react'
@@ -130,7 +130,7 @@ export default function SongList({
   const [search, setSearch] = useQueryParam('q')
 
   return (
-    <RootView>
+    <>
       <Search
         text={search || ''}
         onChange={(v) => {
@@ -194,7 +194,7 @@ export default function SongList({
           <Loader />
         ) : null}
       </div>
-    </RootView>
+    </>
   )
 }
 

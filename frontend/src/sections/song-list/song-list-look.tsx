@@ -2,47 +2,19 @@
 
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { BasicButton } from 'components/interactive/basic-button'
-import { TText } from 'components/themed'
+import type { TFunction } from 'i18next'
 import type { PropsWithChildren } from 'react'
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
-import type { TFunction } from 'react-i18next'
+import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { VariableSizeList } from 'react-window'
-
-const TheSong = styled.div`
-  all: unset;
-  font-size: 20px;
-  box-sizing: border-box;
-
-  .title {
-    display: inline-block;
-    padding: 10px;
-  }
-`
+import { Link } from 'react-router-dom'
 
 function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
   const href = `/song/${id}`
   return (
-    <BasicButton
-      style={{
-        textDecorationLine: 'none',
-        padding: 10,
-        fontSize: 20,
-        fontFamily: 'Cantarell',
-      }}
-      to={href}
-    >
+    <Link className="p-2 text-lg" to={href}>
       {children}
-    </BasicButton>
+    </Link>
   )
 }
 
@@ -69,18 +41,12 @@ function SongItem(
     t: TFunction
   },
 ) {
-  return (
-    <TheSong style={props.style}>
-      {'header' in props ? (
-        <span className="title">
-          <TText style={{ fontSize: 18, fontWeight: 'bold' }}>
-            {translateHeader(props.t, props.header)}
-          </TText>
-        </span>
-      ) : (
-        <LinkToSong id={props.slug}>{props.text}</LinkToSong>
-      )}
-    </TheSong>
+  return 'header' in props ? (
+    <div className="p-2 text-xl font-bold">
+      {translateHeader(props.t, props.header)}
+    </div>
+  ) : (
+    <LinkToSong id={props.slug}>{props.text}</LinkToSong>
   )
 }
 
@@ -110,44 +76,9 @@ const ListContainer = styled('div')<{ count: number }>`
   box-sizing: border-box;
 `
 
-function useWindowWidth() {
-  const [width, setWidth] = useState(window.innerWidth)
-  const timer = useRef<ReturnType<typeof setTimeout> | null>()
-  useEffect(() => {
-    setWidth(window.innerWidth)
-    function onResize() {
-      if (timer.current) clearTimeout(timer.current)
-      timer.current = setTimeout(() => {
-        setWidth(window.innerWidth)
-      }, 100)
-    }
-    window.addEventListener('resize', onResize, { passive: true })
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-  return width
-}
-
-export function SongList({
-  list,
-  alwaysBig,
-}: {
-  list: SongListItem[]
-  alwaysBig: boolean
-}) {
+export function SongList({ list }: { list: SongListItem[] }) {
   const { t } = useTranslation()
-  const windowWidth = useWindowWidth()
 
-  const big = alwaysBig || windowWidth >= 800
-  const key = useMemo(
-    () => Math.random() + '' + list.length + '' + windowWidth,
-    [list, windowWidth],
-  )
-  const heightCache = useMemo(() => {
-    return new Map<string, number>()
-    // we want to bust the cache if windowWidth changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windowWidth])
-  const smInnerScrollRef = useRef<HTMLDivElement>(null)
   const bigScrollRef = useRef<HTMLDivElement>()
 
   const location = useLocation()
@@ -156,28 +87,20 @@ export function SongList({
     return () => {
       /* eslint-disable react-hooks/exhaustive-deps */
       try {
+        const bigScroll = bigScrollRef.current
         if (
           typeof sessionStorage !== 'undefined' &&
-          typeof document !== 'undefined'
+          typeof document !== 'undefined' &&
+          bigScroll
         ) {
-          if (window.innerWidth >= 800) {
-            if (bigScrollRef.current) {
-              sessionStorage.setItem(
-                `scroll:${location.key}`,
-                `${bigScrollRef.current.scrollTop}`,
-              )
-            }
-          } else {
-            if (smInnerScrollRef.current) {
-              sessionStorage.setItem(
-                `scroll:${location.key}`,
-                `${smInnerScrollRef.current.parentElement!.scrollTop}`,
-              )
-            }
-          }
+          sessionStorage.setItem(
+            `scroll:${location.key}`,
+            `${bigScroll.scrollTop}`,
+          )
         }
-      } catch (e) {}
-      /* eslint-enable react-hooks/exhaustive-deps */
+      } catch (e) {
+        console.error(e)
+      }
     }
   }, [location.key])
 
@@ -189,112 +112,30 @@ export function SongList({
     }
   }, [])
 
-  const [measurer] = useState(() => {
-    const div = document.createElement('div')
-    div.style.fontWeight = 'normal'
-    div.style.fontStyle = 'normal'
-    div.style.fontSize = '20px'
-    div.style.fontFamily = 'Cantarell'
-    div.style.position = 'absolute'
-    div.style.width = '100%'
-    div.style.opacity = '0'
-    div.style.pointerEvents = 'none'
-    div.style.top = '0'
-    div.style.boxSizing = 'border-box'
-    div.style.padding = '10px'
-    return div
-  })
-  useLayoutEffect(() => {
-    document.body.appendChild(measurer)
-    return () => {
-      document.body.removeChild(measurer)
-    }
-  }, [measurer])
-
-  function indexToItem({
-    index,
-    style,
-  }: {
-    index: number
-    style?: React.CSSProperties
-  }) {
-    if (index === 0) return <div style={style} key={0} />
-    const item = list[index - 1]
-    if (!item) return null
-    if ('header' in item)
-      return <SongItem style={style} header={item.header} key={index} t={t} />
-
-    return (
-      <SongItem
-        style={style}
-        slug={item.slug}
-        text={item.text}
-        key={item.slug}
-        t={t}
-      />
-    )
-  }
-
   const initialScroll = useRef(
     Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || '0'),
   )
-
-  if (big)
-    return (
-      <AutoSizer>
-        {({ width, height }) => (
-          <div
-            css={{
-              width,
-              height,
-              overflowY: 'auto',
-              boxSizing: 'border-box',
-            }}
-          >
-            <ListContainer
-              count={list.length}
-              ref={(r) => {
-                if (r) {
-                  bigScrollRef.current = r
-                  r.scrollTo(0, initialScroll.current)
-                }
-              }}
-            >
-              {list.map((item, index) => indexToItem({ index: index + 1 }))}
-            </ListContainer>
-          </div>
-        )}
-      </AutoSizer>
-    )
-
   return (
-    <AutoSizer>
-      {({ width, height }) => (
-        <VariableSizeList
-          innerRef={smInnerScrollRef}
-          initialScrollOffset={initialScroll.current}
-          key={key}
-          width={windowWidth}
-          height={height}
-          itemCount={list.length + 1}
-          itemSize={(idx) => {
-            if (idx === 0) return 10
-            const item = list[idx - 1]
-            if (!item) return 0
-            if ('header' in item) return 46
-            const cached = heightCache.get(item.text)
-            if (cached) return cached
+    <div className="max-h-full w-full overflow-y-scroll">
+      <ListContainer
+        count={list.length}
+        ref={(r) => {
+          if (r) {
+            bigScrollRef.current = r
+            r.scrollTo(0, initialScroll.current)
+          }
+        }}
+      >
+        {list.map((item, index) => {
+          if (!item) return null
+          if ('header' in item)
+            return <SongItem header={item.header} key={index} t={t} />
 
-            measurer.style.width = windowWidth + 'px'
-            measurer.innerText = item.text
-            const v = measurer.clientHeight
-            heightCache.set(item.text, v)
-            return v
-          }}
-        >
-          {indexToItem}
-        </VariableSizeList>
-      )}
-    </AutoSizer>
+          return (
+            <SongItem slug={item.slug} text={item.text} key={item.slug} t={t} />
+          )
+        })}
+      </ListContainer>
+    </div>
   )
 }

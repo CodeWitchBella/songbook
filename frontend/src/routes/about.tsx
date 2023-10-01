@@ -3,7 +3,7 @@ import { ListButton } from 'components/interactive/list-button'
 import { PageHeader } from 'components/page-header'
 import { DarkModeSettings } from 'components/settings/dark-mode'
 import { LanguageSettings } from 'components/settings/language-settings'
-import { RootView, TH2, TText } from 'components/themed'
+import { TH2, TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { Version } from 'components/version'
 import { Trans, useTranslation } from 'react-i18next'
@@ -15,35 +15,33 @@ const googleDoc =
 export default function About() {
   const { t } = useTranslation()
   return (
-    <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <div className="max-w-full px-1 py-2" style={{ width: 500 }}>
-        <PageHeader>{t('Settings and about')}</PageHeader>
+    <div className="mx-auto w-full max-w-lg px-1 pb-2">
+      <PageHeader>{t('Settings and about')}</PageHeader>
 
-        <ListButton to="/credits">{t('Asset credits')}</ListButton>
-        <Gap />
-        <ListButton to="/changelog">{t('Changelog')}</ListButton>
-        <Gap />
-        <ListButton to={googleDoc}>{t('Suggestions')}</ListButton>
-        <TH2>{t('My account')}</TH2>
-        <User />
-        <TH2>{t('Appearance')}</TH2>
-        <DarkModeSettings />
-        <TH2>{t('Language')}</TH2>
-        <LanguageSettings />
-        <TH2>{t('About the app')}</TH2>
-        <View>
-          <TText style={style.infoText}>
-            <Trans>
-              Created by{' '}
-              <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
-            </Trans>
-            {` 2016${endash}2022`}
-          </TText>
-        </View>
-        <Gap />
-        <Version />
-      </div>
-    </RootView>
+      <ListButton to="/credits">{t('Asset credits')}</ListButton>
+      <Gap />
+      <ListButton to="/changelog">{t('Changelog')}</ListButton>
+      <Gap />
+      <ListButton to={googleDoc}>{t('Suggestions')}</ListButton>
+      <TH2>{t('My account')}</TH2>
+      <User />
+      <TH2>{t('Appearance')}</TH2>
+      <DarkModeSettings />
+      <TH2>{t('Language')}</TH2>
+      <LanguageSettings />
+      <TH2>{t('About the app')}</TH2>
+      <View>
+        <TText style={style.infoText}>
+          <Trans>
+            Created by{' '}
+            <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
+          </Trans>
+          {` 2016${endash}2022`}
+        </TText>
+      </View>
+      <Gap />
+      <Version />
+    </div>
   )
 }
 

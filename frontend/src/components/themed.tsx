@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import { forwardRef } from 'react'
 import type { TextProps, TextStyle, ViewProps } from 'react-native'
 import {
@@ -144,18 +144,4 @@ export function useBasicStyle() {
     backgroundColor: colors.background,
     color: colors.text,
   }
-}
-
-export function RootView({
-  children,
-  style,
-}: PropsWithChildren<{ style?: ViewProps['style'] }>) {
-  const colors = useColors()
-  return (
-    <View
-      style={[{ backgroundColor: colors.background, minHeight: '100%' }, style]}
-    >
-      {children}
-    </View>
-  )
 }

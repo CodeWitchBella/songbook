@@ -1,5 +1,4 @@
 import { PageHeader } from 'components/page-header'
-import { RootView } from 'components/themed'
 import { DateTime } from 'luxon'
 import { useEffect } from 'react'
 import { useMemo } from 'react'
@@ -27,22 +26,20 @@ export default function CollectionList() {
     [unsortedList],
   )
   return (
-    <RootView style={{ padding: 10 }}>
-      <div className="mx-auto flex flex-col gap-4">
-        <PageHeader>{t('Collections')}</PageHeader>
-        <Link to="/all-songs" className="hover:underline">
-          {t('All songs')}
+    <div className="mx-auto flex flex-col gap-4 px-4 pb-4">
+      <PageHeader>{t('Collections')}</PageHeader>
+      <Link to="/all-songs" className="hover:underline">
+        {t('All songs')}
+      </Link>
+      {sortedList.map(({ item: collection }) => (
+        <Link
+          key={collection.id}
+          to={`/collections/${collection.slug}`}
+          className="hover:underline"
+        >
+          {collectionFullName(collection)}
         </Link>
-        {sortedList.map(({ item: collection }) => (
-          <Link
-            key={collection.id}
-            to={`/collections/${collection.slug}`}
-            className="hover:underline"
-          >
-            {collectionFullName(collection)}
-          </Link>
-        ))}
-      </div>
-    </RootView>
+      ))}
+    </div>
   )
 }

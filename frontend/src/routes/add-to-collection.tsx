@@ -5,7 +5,7 @@ import { ErrorPage } from 'components/error-page'
 import { LargeInput } from 'components/input'
 import { BasicButton } from 'components/interactive/basic-button'
 import { ListButton } from 'components/interactive/list-button'
-import { RootView, TText } from 'components/themed'
+import { TText } from 'components/themed'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -54,110 +54,98 @@ export default function AddToCollection() {
 
   if (!viewer) {
     return (
-      <RootView
-        style={{
-          justifyContent: 'center',
-          paddingTop: 32,
-          flexDirection: 'row',
-        }}
-      >
-        <View>
-          <Title
-            text="Pro přidání písně do kolekce musíš mít účet."
-            first={true}
-          />
-          <View style={{ paddingTop: 16 }} />
-          <ListButton to="/login">Přihlásit se</ListButton>
-          <View style={{ paddingTop: 8 }} />
-          <ListButton to="/register">Vytvořit účet</ListButton>
-          {locked.length > 0 ? (
-            <Title text="Píseň je v kolekcích" first={false} />
-          ) : null}
-          <CollectionList list={locked.sort(collectionCompare)} />
-        </View>
-      </RootView>
+      <div className="mx-auto max-w-xl">
+        <Title
+          text="Pro přidání písně do kolekce musíš mít účet."
+          first={true}
+        />
+        <View style={{ paddingTop: 16 }} />
+        <ListButton to="/login">Přihlásit se</ListButton>
+        <View style={{ paddingTop: 8 }} />
+        <ListButton to="/register">Vytvořit účet</ListButton>
+        {locked.length > 0 ? (
+          <Title text="Píseň je v kolekcích" first={false} />
+        ) : null}
+        <CollectionList list={locked.sort(collectionCompare)} />
+      </div>
     )
   }
 
   return (
-    <RootView
-      style={{ justifyContent: 'center', paddingTop: 32, flexDirection: 'row' }}
-    >
-      <View style={{ maxWidth: 800 }}>
-        {addable.length > 0 ? (
-          <Title
-            first={true}
-            text={t('collection.Add song to collection')}
-            error={error}
-          />
-        ) : null}
-        <CollectionList
-          list={addable.sort(collectionCompare)}
-          onPress={(collectionId) => {
-            setError('')
-            addToCollection(song.id, collectionId).then(
-              () => {
-                refresh()
-                goBack()
-              },
-              (err) => {
-                setError('Něco se pokazilo')
-                console.error(err)
-              },
-            )
-          }}
-        />
-        {removable.length > 0 ? (
-          <Title
-            first={addable.length < 1}
-            text={t('collection.Remove song from collection')}
-            error={error}
-          />
-        ) : null}
-        <CollectionList
-          list={removable.sort(collectionCompare)}
-          onPress={(collectionId) => {
-            setError('')
-            removeFromCollection(song.id, collectionId).then(
-              () => {
-                refresh()
-                goBack()
-              },
-              (err) => {
-                setError(t('Something went wrong'))
-                console.error(err)
-              },
-            )
-          }}
-        />
+    <div className="mx-auto max-w-xl">
+      {addable.length > 0 ? (
         <Title
-          first={addable.length < 1 && removable.length < 1}
-          text={t('collection.Create new collection')}
+          first={true}
+          text={t('collection.Add song to collection')}
+          error={error}
         />
-        <NewCollection
-          onDone={(collectionId) => {
-            setError('')
-            addToCollection(song.id, collectionId).then(
-              () => {
-                refresh()
-                goBack()
-              },
-              (err) => {
-                console.error(err)
-                setError(t('Something went wrong'))
-              },
-            )
-          }}
+      ) : null}
+      <CollectionList
+        list={addable.sort(collectionCompare)}
+        onPress={(collectionId) => {
+          setError('')
+          addToCollection(song.id, collectionId).then(
+            () => {
+              refresh()
+              goBack()
+            },
+            (err) => {
+              setError('Něco se pokazilo')
+              console.error(err)
+            },
+          )
+        }}
+      />
+      {removable.length > 0 ? (
+        <Title
+          first={addable.length < 1}
+          text={t('collection.Remove song from collection')}
+          error={error}
         />
-        {locked.length > 0 ? (
-          <Title
-            first={false}
-            text={t('collection.Song is also in collections')}
-          />
-        ) : null}
-        <CollectionList list={locked.sort(collectionCompare)} />
-      </View>
-    </RootView>
+      ) : null}
+      <CollectionList
+        list={removable.sort(collectionCompare)}
+        onPress={(collectionId) => {
+          setError('')
+          removeFromCollection(song.id, collectionId).then(
+            () => {
+              refresh()
+              goBack()
+            },
+            (err) => {
+              setError(t('Something went wrong'))
+              console.error(err)
+            },
+          )
+        }}
+      />
+      <Title
+        first={addable.length < 1 && removable.length < 1}
+        text={t('collection.Create new collection')}
+      />
+      <NewCollection
+        onDone={(collectionId) => {
+          setError('')
+          addToCollection(song.id, collectionId).then(
+            () => {
+              refresh()
+              goBack()
+            },
+            (err) => {
+              console.error(err)
+              setError(t('Something went wrong'))
+            },
+          )
+        }}
+      />
+      {locked.length > 0 ? (
+        <Title
+          first={false}
+          text={t('collection.Song is also in collections')}
+        />
+      ) : null}
+      <CollectionList list={locked.sort(collectionCompare)} />
+    </div>
   )
 }
 

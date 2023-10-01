@@ -1,6 +1,6 @@
 import { getChordDefinition } from 'components/chord-help'
 import { PageHeader } from 'components/page-header'
-import { RootView, TText } from 'components/themed'
+import { TText } from 'components/themed'
 import { useMemo } from 'react'
 import { View } from 'react-native'
 import { Link } from 'react-router-dom'
@@ -59,27 +59,18 @@ export default function Chords() {
       }))
   }, [songs.songs])
   return (
-    <RootView style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <View
-        style={{
-          width: 500,
-          maxWidth: '100%',
-          paddingHorizontal: 4,
-          paddingBottom: 8,
-        }}
-      >
-        <PageHeader>Unknown chords</PageHeader>
-        {unknownChords.map(({ chord, slugs }) => (
-          <TText key={chord}>
-            {JSON.stringify(chord)}{' '}
-            <View>
-              {slugs.map((slug) => (
-                <Link to={'/song/' + slug}>{slug}</Link>
-              ))}
-            </View>
-          </TText>
-        ))}
-      </View>
-    </RootView>
+    <div className="mx-auto flex w-full max-w-lg flex-col px-1 py-2">
+      <PageHeader>Unknown chords</PageHeader>
+      {unknownChords.map(({ chord, slugs }) => (
+        <TText key={chord}>
+          {JSON.stringify(chord)}{' '}
+          <View>
+            {slugs.map((slug) => (
+              <Link to={'/song/' + slug}>{slug}</Link>
+            ))}
+          </View>
+        </TText>
+      ))}
+    </div>
   )
 }

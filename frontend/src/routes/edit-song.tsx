@@ -10,7 +10,7 @@ import { PageHeader } from 'components/page-header'
 import PDF from 'components/pdf'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongLook } from 'components/song-look/song-look'
-import { RootView, TH2, TH3, TP, TText } from 'components/themed'
+import { TH2, TH3, TP, TText } from 'components/themed'
 import Togglable from 'components/togglable'
 import { DateTime } from 'luxon'
 import type { PropsWithChildren } from 'react'
@@ -536,9 +536,5 @@ export default function EditSongRoute() {
   if (!slug) return <NotFound />
   if (!song || !methods) return <div>Píseň nenalezena</div>
 
-  return (
-    <RootView>
-      <EditSong song={song} refetch={methods.refresh} />
-    </RootView>
-  )
+  return <EditSong song={song} refetch={methods.refresh} />
 }

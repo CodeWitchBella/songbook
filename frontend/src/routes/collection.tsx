@@ -48,25 +48,23 @@ export default function Collection() {
       </div>
     )
   return (
-    <div css={{ height: '100%' }}>
-      <SongList
-        filter={filter}
-        header={
-          <View style={{ paddingTop: 12 }}>
-            <TText
-              style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}
-            >
-              {(collection.slug.includes('/')
-                ? (collection.owner.handle || collection.owner.name) + ' > '
-                : '') + collection.name}
-            </TText>
-          </View>
-        }
-        slug={collection.slug}
-        title={collection.name}
-        menu={<Stats set={set} songCount={collection.songList.length} />}
-      />
-    </div>
+    <SongList
+      filter={filter}
+      header={
+        <View style={{ paddingTop: 12 }}>
+          <TText
+            style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}
+          >
+            {(collection.slug.includes('/')
+              ? (collection.owner.handle || collection.owner.name) + ' > '
+              : '') + collection.name}
+          </TText>
+        </View>
+      }
+      slug={collection.slug}
+      title={collection.name}
+      menu={<Stats set={set} songCount={collection.songList.length} />}
+    />
   )
 }
 

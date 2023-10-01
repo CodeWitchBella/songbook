@@ -4,7 +4,6 @@ import { css, Global } from '@emotion/react'
 import { DarkModeProvider } from 'components/dark-mode'
 import { InstallProvider } from 'components/install'
 import { LanguageProvider } from 'components/localisation'
-import { RootView, TText } from 'components/themed'
 import ErrorBoundary from 'containers/error-boundary'
 import React, { Suspense } from 'react'
 import Routes from 'routes/routes'
@@ -60,11 +59,9 @@ export default function App() {
           <InstallProvider>
             <Suspense
               fallback={
-                <RootView
-                  style={{ alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <TText style={{ fontSize: 24 }}>Načítám...</TText>
-                </RootView>
+                <div className="flex min-h-screen flex-col items-center justify-center text-3xl">
+                  Načítám...
+                </div>
               }
             >
               <ErrorBoundary>

@@ -145,5 +145,5 @@ export function FilteredList({
     }
   }, [search, songs, worker])
 
-  return <SongList list={list} alwaysBig={list.length < 30 && !!search} />
+  return <SongList list={list} />
 }

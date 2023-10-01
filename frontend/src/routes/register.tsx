@@ -6,7 +6,7 @@ import { PrimaryButton } from 'components/interactive/primary-button'
 import { LoginDone } from 'components/login-done'
 import { PageHeader } from 'components/page-header'
 import { View } from 'components/pdf-render/primitives'
-import { RootView, TText } from 'components/themed'
+import { TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -54,54 +54,52 @@ export default function Register() {
   }
 
   return (
-    <RootView>
-      <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
-        <PageHeader>{t('Register')}</PageHeader>
-        {login.viewer ? (
-          <LoginDone viewer={login.viewer} />
-        ) : (
-          <>
-            <div>{status !== 'loading' && status}</div>
-            <LargeInput
-              label={t('Display name')}
-              type="text"
-              name="name"
-              disabled={status === 'loading'}
-              value={name}
-              onChange={setName}
-            />
-            <LargeInput
-              label={t('Email')}
-              value={email}
-              onChange={setEmail}
-              disabled={status === 'loading'}
-              type="email"
-              name="email"
-            />
-            <LargeInput
-              label={t('Password')}
-              value={password}
-              onChange={setPassword}
-              disabled={status === 'loading'}
-              type="password"
-              name="password"
-            />
+    <form onSubmit={submit} className="mx-auto max-w-lg text-xl">
+      <PageHeader>{t('Register')}</PageHeader>
+      {login.viewer ? (
+        <LoginDone viewer={login.viewer} />
+      ) : (
+        <>
+          <div>{status !== 'loading' && status}</div>
+          <LargeInput
+            label={t('Display name')}
+            type="text"
+            name="name"
+            disabled={status === 'loading'}
+            value={name}
+            onChange={setName}
+          />
+          <LargeInput
+            label={t('Email')}
+            value={email}
+            onChange={setEmail}
+            disabled={status === 'loading'}
+            type="email"
+            name="email"
+          />
+          <LargeInput
+            label={t('Password')}
+            value={password}
+            onChange={setPassword}
+            disabled={status === 'loading'}
+            type="password"
+            name="password"
+          />
 
-            <PrimaryButton onPress={submit} disabled={status === 'loading'}>
-              {t('Create account')}
-            </PrimaryButton>
-            <button style={{ display: 'none' }} />
-            <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
-              <TText style={{ fontSize: 16 }}>
-                <Trans>
-                  I already have account,{' '}
-                  <InlineLink to="/login">log in</InlineLink>
-                </Trans>
-              </TText>
-            </View>
-          </>
-        )}
-      </form>
-    </RootView>
+          <PrimaryButton onPress={submit} disabled={status === 'loading'}>
+            {t('Create account')}
+          </PrimaryButton>
+          <button style={{ display: 'none' }} />
+          <View style={{ marginTop: 16, alignItems: 'flex-end' }}>
+            <TText style={{ fontSize: 16 }}>
+              <Trans>
+                I already have account,{' '}
+                <InlineLink to="/login">log in</InlineLink>
+              </Trans>
+            </TText>
+          </View>
+        </>
+      )}
+    </form>
   )
 }
