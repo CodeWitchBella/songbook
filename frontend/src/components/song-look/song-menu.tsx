@@ -1,8 +1,6 @@
-/** @jsxImportSource @emotion/react */
-
 import styled from '@emotion/styled'
 import { DumbModal } from 'components/dumb-modal'
-import { TText, useColors } from 'components/themed'
+import { TText } from 'components/themed'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet } from 'react-native'
@@ -42,35 +40,30 @@ const MenuList = styled.ul({
   margin: 0,
 })
 
-function useMenuStyle() {
-  const colors = useColors()
-  return {
-    all: 'unset',
-    padding: 10,
-    fontSize: 25,
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: colors.borders,
-    color: colors.text,
-    background: colors.background,
-    textAlign: 'right',
-    height: 32,
-  } as const
-}
-
 function MenuButton(
   props: React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
   >,
 ) {
-  return <button type="button" css={useMenuStyle()} {...props} />
+  return (
+    <button
+      type="button"
+      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      {...props}
+    />
+  )
 }
 
 function MenuLink(props: LinkProps) {
   const to = props.to
   return (
-    <Link css={useMenuStyle()} {...props} to={to} state={{ canGoBack: true }} />
+    <Link
+      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      {...props}
+      to={to}
+      state={{ canGoBack: true }}
+    />
   )
 }
 
@@ -134,7 +127,6 @@ export default function SongMenu({
   const navigate = useNavigate()
   const location = useLocation()
   const getRandomSong = useGetRandomSong()
-  const menuStyle = useMenuStyle()
 
   return (
     <MenuWrap>
@@ -142,12 +134,10 @@ export default function SongMenu({
         {open ? (
           <>
             {transposition ? (
-              <TText
-                style={[menuStyle, { borderStyle: 'dotted', borderWidth: 0 }]}
-              >
+              <span className="h-[50px] bg-transparent p-2  text-right text-2xl">
                 {transposition > 0 ? '+' : ''}
                 {transposition}
-              </TText>
+              </span>
             ) : null}
             <MenuButton onClick={() => setTransposition(transposition + 1)}>
               +1
@@ -196,10 +186,7 @@ export default function SongMenu({
             >
               <RandomButton />
             </MenuButton>
-            <MenuLink
-              css={{ textAlign: 'center', fontWeight: 'bold' }}
-              to={'/add-to-collection/' + slug}
-            >
+            <MenuLink to={'/add-to-collection/' + slug}>
               <AddToCollection />
             </MenuLink>
             <MenuLink to="/quick-settings">
