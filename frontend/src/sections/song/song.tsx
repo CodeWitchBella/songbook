@@ -1,11 +1,8 @@
-/** @jsxImportSource @emotion/react */
-
 import styled from '@emotion/styled'
 import { ChordHelp } from 'components/chord-help'
 import { useContinuousModeSetting } from 'components/continuous-mode'
 import { SongLook } from 'components/song-look/song-look'
 import SongMenu from 'components/song-look/song-menu'
-import { useBasicStyle } from 'components/themed'
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSong } from 'store/store'
@@ -61,7 +58,6 @@ export default function SongSection({
   const location = useLocation()
   const navigate = useNavigate()
   const [chordHelp, setChordHelp] = useState('')
-  const basicStyle = useBasicStyle()
 
   if (!song || !parsed) return null
 
@@ -74,14 +70,7 @@ export default function SongSection({
 
   return (
     <React.Fragment>
-      <div
-        css={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          ...basicStyle,
-        }}
-      >
+      <div className="flex flex-wrap justify-center">
         <SongLook
           song={song}
           parsed={parsed}

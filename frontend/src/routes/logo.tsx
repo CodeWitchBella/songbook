@@ -12,10 +12,12 @@ import { useRef } from 'react'
 
 export default function LogoRoute() {
   return (
-    <div
-      css={{ canvas: { touchAction: 'none' }, width: '100%', height: '100%' }}
-    >
-      <Canvas shadows camera={{ position: [0, 1, 4], fov: 50 }}>
+    <div className="h-full w-full">
+      <Canvas
+        className="touch-none"
+        shadows
+        camera={{ position: [0, 1, 4], fov: 50 }}
+      >
         <ambientLight intensity={0.5} />
         <spotLight
           penumbra={1}

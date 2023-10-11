@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { TText } from 'components/themed'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,15 +33,7 @@ export default function Collection() {
   }, [collectionId])
   if (!collection)
     return (
-      <div
-        css={{
-          fontSize: 20,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-        }}
-      >
+      <div className="flex h-full items-center justify-center text-xl">
         Kolekce se načítá nebo neexistuje
       </div>
     )
