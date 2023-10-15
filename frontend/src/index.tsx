@@ -9,7 +9,7 @@ import * as ReactDOM from 'react-dom/client'
 import Loadable from 'react-loadable'
 import { BrowserRouter } from 'react-router-dom'
 
-import App, { InjectGlobal } from './app'
+import App from './app'
 import * as serviceWorker from './serviceWorker'
 
 // workaround for something removing import React from 'react'
@@ -23,7 +23,6 @@ Loadable.preloadReady().then(() => {
   const root = ReactDOM.createRoot(app)
   root.render(
     <React.Fragment>
-      <InjectGlobal />
       <ErrorBoundary>
         <BrowserRouter>
           <ServiceWorkerStatusProvider register={serviceWorker.register}>
