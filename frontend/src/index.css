@@ -5,8 +5,8 @@
 @font-face {
   font-family: 'Cantarell';
   src:
-    url('./webfonts/cantarell-bold.woff2') format('woff2'),
-    url('./webfonts/cantarell-bold.woff') format('woff');
+    url('./webfonts/cantarell-regular.woff2') format('woff2'),
+    url('./webfonts/cantarell-regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -14,8 +14,8 @@
 @font-face {
   font-family: 'Cantarell';
   src:
-    url('./webfonts/cantarell-regular.woff2') format('woff2'),
-    url('./webfonts/cantarell-regular.woff') format('woff');
+    url('./webfonts/cantarell-bold.woff2') format('woff2'),
+    url('./webfonts/cantarell-bold.woff') format('woff');
   font-weight: bold;
   font-style: normal;
 }
@@ -28,5 +28,74 @@ body,
   @media not print {
     width: 100%;
     height: 100%;
+  }
+}
+
+.indexcss-pdf-render .react-pdf__Page__svg, .indexcss-pdf-render .set-size {
+  height: var(--a-fit-height, 100vh) !important;
+  width: var(--a-fit-width, 70.71067811865474vh /* 100/sqrt(2) */) !important;
+}
+
+@media (max-width: 70.71067811865474vh /* 100/sqrt(2) */) {
+  .indexcss-pdf-render .react-pdf__Page__svg, .indexcss-pdf-render .set-size {
+    width: var(--a-fit-width, 100vw) !important;
+    height: var(--a-fit-height, 141.4213562373095vw /* 100*sqrt(2) */) !important;
+  }
+}
+
+.indexcss-pdf-render .react-pdf__Page__svg {
+  margin: 0 auto;
+  border: 1px solid black;
+}
+
+.indexcss-pdf-render svg {
+  width: 100%;
+  height: 100%;
+}
+
+.indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+  height: 100%;
+  display: flex;
+}
+.indexcss-edit-song-columns > * {
+  width: 100%;
+}
+.indexcss-edit-song-columns--preview > * {
+  width: 50%;
+}
+
+@media (min-height: 70.71067811865476vw /* 50*sqrt(2) */) {
+  .indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+    --a-fit-height: calc(50vw * 1.4142135623730951); /* sqrt(2) */
+    --a-fit-width: 50vw;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .indexcss-edit-song-columns {
+    width: 100vw;
+  }
+  .indexcss-edit-song-columns--preview {
+    width: 200vw;
+  }
+  .indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+    max-width: 1200px;
+    --a-fit-width: 600px;
+    --a-fit-height: 848.5281374238571px /* 600*sqrt(2) */;
+  }
+}
+
+.indexcss-sizer-page {
+  font-size: 3.4vw;
+  width: 100vw;
+  height: 181.84281842818427vw; /* 100 / ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
+  --vh: 1.8184281842818428vw; /* 1 / ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
+  --vw: 1vw;
+  @media (min-width: 54.992548435171386vh) { /* 100 * ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
+    font-size: 1.87vh;
+    width: 54.992548435171386vh; /* 100 * ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
+    height: calc(100vh);
+    --vh: 1vw;
+    --vw: 0.5499254843517138vh; /* (105 - 12.4 - 18.8) / (148 - 6 - 7.8) */
   }
 }

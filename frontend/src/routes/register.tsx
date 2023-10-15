@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { LargeInput } from 'components/input'
 import { InlineLink } from 'components/interactive/inline-link'
 import { PrimaryButton } from 'components/interactive/primary-button'

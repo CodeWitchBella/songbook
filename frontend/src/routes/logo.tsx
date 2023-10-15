@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 // @ts-nocheck
 import {
   ContactShadows,

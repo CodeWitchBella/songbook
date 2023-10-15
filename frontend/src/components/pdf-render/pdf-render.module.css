@@ -1,0 +1,17 @@
+.aPaper {
+  position: absolute;
+  font-size: calc(10px + 1.4142135623730951vh); /* sqrt 2 */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1em 0;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 70.71067811865474vh) {
+  /* 100 / sqrt(2) */
+  .aPaper {
+    font-size: calc(10px + 1vw);
+  }
+}

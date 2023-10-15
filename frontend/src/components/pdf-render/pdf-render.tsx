@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { saveAs } from 'file-saver'
 import { DateTime } from 'luxon'
 import type { PropsWithChildren } from 'react'
@@ -13,6 +11,7 @@ import { once } from 'utils/utils'
 
 import { useQueryParam } from '../use-router'
 import { PDFBookletDouble, PDFBookletQuad } from './pdf-page'
+import classes from './pdf-render.module.css'
 import { PDFSettingsProvider } from './pdf-settings'
 import { PDFSongPage } from './pdf-song-page'
 import { PDFTitlePage } from './pdf-title-page'
@@ -79,21 +78,7 @@ function PDFDoc({ url }: { url: string }) {
           <div className="flex select-none content-center">
             <div className="set-size relative">
               <rpdf.Page key={`page_${page}`} pageNumber={page} />
-              <div
-                css={{
-                  position: 'absolute',
-                  fontSize: `calc(10px + ${Math.sqrt(2)}vh)`,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  padding: '1em 0',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  [`@media (max-width: ${100 / Math.sqrt(2)}vh)`]: {
-                    fontSize: 'calc(10px + 1vw)',
-                  },
-                }}
-              >
+              <div className={classes.aPaper}>
                 <div className="flex gap-2 text-black">
                   <PlusMinus
                     onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
@@ -148,28 +133,8 @@ export default function PDFRender({ song }: Props) {
     </PDFDocument>
   )
 
-  const sqrt2 = Math.sqrt(2)
   return (
-    <div
-      css={{
-        '.react-pdf__Page__svg, .set-size': {
-          height: 'var(--a-fit-height, 100vh) !important',
-          width: `var(--a-fit-width, ${100 / sqrt2}vh) !important`,
-          [`@media (max-width: ${100 / sqrt2}vh)`]: {
-            width: `var(--a-fit-width, 100vw) !important`,
-            height: `var(--a-fit-height, calc(100vw * ${sqrt2})) !important`,
-          },
-        },
-        '.react-pdf__Page__svg': {
-          margin: '0 auto',
-          border: '1px solid black',
-        },
-        svg: {
-          width: '100%',
-          height: '100%',
-        },
-      }}
-    >
+    <div className="indexcss-pdf-render">
       <PDFProvider>
         <PDFBlobProvider document={doc}>
           {

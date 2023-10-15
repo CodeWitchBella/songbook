@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import styled from '@emotion/styled'
 import { ErrorPage, NotFound } from 'components/error-page'
 import { LargeInput } from 'components/input'

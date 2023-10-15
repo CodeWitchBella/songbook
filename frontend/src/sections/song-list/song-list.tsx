@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import { BackArrow, BackButton } from 'components/back-button'
 import { ListButton } from 'components/interactive/list-button'
 import { DownloadPDF } from 'components/pdf'

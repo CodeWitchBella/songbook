@@ -1,11 +1,8 @@
-/** @jsxImportSource @emotion/react */
-
-import { css, Global } from '@emotion/react'
 import { DarkModeProvider } from 'components/dark-mode'
 import { InstallProvider } from 'components/install'
 import { LanguageProvider } from 'components/localisation'
 import ErrorBoundary from 'containers/error-boundary'
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import Routes from 'routes/routes'
 import { StoreProvider } from 'store/store'
 import OutlineHandler from 'utils/outline-handler'

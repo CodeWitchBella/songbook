@@ -1,6 +1,4 @@
-/** @jsxImportSource @emotion/react */
-
-import { TText, useBasicStyle } from './themed'
+import { TText } from './themed'
 
 export default function Input({
   label,

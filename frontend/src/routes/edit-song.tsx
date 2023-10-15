@@ -1,6 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
-import { css } from '@emotion/react'
 import styled from '@emotion/styled'
 import Checkbox from 'components/checkbox'
 import { NotFound } from 'components/error-page'
@@ -64,37 +61,16 @@ const Textarea = ({
   />
 )
 
-function aFit(availableVw: number) {
-  const sqrt2 = Math.sqrt(2)
-  return {
-    [`@media (min-height: ${availableVw * sqrt2}vw)`]: {
-      '--a-fit-height': `calc(${availableVw}vw * ${sqrt2})`,
-      '--a-fit-width': `${availableVw}vw`,
-    },
-  }
-}
-
 const Columns = ({
   children,
-  number,
-}: PropsWithChildren<{ number: number }>) => (
+  previewActive,
+}: PropsWithChildren<{ previewActive: boolean }>) => (
   <div
-    css={css`
-      height: 100%;
-      display: flex;
-      > * {
-        width: ${100 / number}%;
-      }
-
-      ${aFit(50)}
-
-      @media screen and (max-width: 1200px) {
-        width: ${number * 100}vw;
-        max-width: 1200px;
-        --a-fit-width: 600px;
-        --a-fit-height: ${600 * Math.sqrt(2)}px;
-      }
-    `}
+    className={
+      previewActive
+        ? 'indexcss-edit-song-columns--preview'
+        : 'indexcss-edit-song-columns'
+    }
   >
     {children}
   </div>
