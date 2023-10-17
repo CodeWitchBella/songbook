@@ -1,5 +1,4 @@
 import { NotFound } from 'components/error-page'
-import { ScrollToTopOnMount } from 'components/scroll'
 import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import Song from 'sections/song/song'
@@ -10,7 +9,6 @@ function SongRoute() {
   if (!slug) return <NotFound />
   return (
     <main>
-      <ScrollToTopOnMount />
       <Song slug={slug} enableMenu />
     </main>
   )
