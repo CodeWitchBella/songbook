@@ -1,4 +1,3 @@
-import styled from '@emotion/styled'
 import { DumbModal } from 'components/dumb-modal'
 import { useLanguage } from 'components/localisation'
 import { TText } from 'components/themed'
@@ -21,27 +20,6 @@ import {
   RandomButton,
 } from './song-menu-icons'
 
-const MenuWrap = styled.div({
-  display: 'flex',
-  position: 'absolute',
-  bottom: 0,
-  width: '100%',
-  justifyContent: 'flex-end',
-  alignIems: 'start',
-  pointerEvents: 'none',
-  '> *': {
-    pointerEvents: 'auto',
-  },
-})
-
-const MenuList = styled.ul({
-  unset: 'all',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'right',
-  margin: 0,
-})
-
 function MenuButton(
   props: React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -51,6 +29,21 @@ function MenuButton(
   return (
     <button
       type="button"
+      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      {...props}
+    />
+  )
+}
+
+function MenuAnchor(
+  props: React.DetailedHTMLProps<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    HTMLAnchorElement
+  >,
+) {
+  return (
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
+    <a
       className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
       {...props}
     />
@@ -111,14 +104,10 @@ export default function SongMenu({
   song,
   transposition,
   setTransposition,
-  setSpotifyVisible,
-  showSpotify,
 }: {
   song: SongType
   transposition: number
   setTransposition: (v: number) => void
-  setSpotifyVisible: (v: boolean | ((v: boolean) => boolean)) => void
-  showSpotify: boolean
 }) {
   const { slug } = song
   const [open, setOpen] = useState(false)
@@ -132,8 +121,8 @@ export default function SongMenu({
   const getRandomSong = useGetRandomSong()
 
   return (
-    <MenuWrap>
-      <MenuList>
+    <div className="fixed bottom-0 right-0 flex">
+      <ul className="flex flex-col">
         {open ? (
           <>
             {transposition ? (
@@ -154,14 +143,14 @@ export default function SongMenu({
             <MenuButton onClick={() => setInfo((o) => !o)}>
               <InfoButton />
             </MenuButton>
-            {showSpotify ? (
-              <MenuButton
-                onClick={() => {
-                  setSpotifyVisible((v) => !v)
-                }}
+            {song.spotify ? (
+              <MenuAnchor
+                href={song.spotify}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <PlayButton />
-              </MenuButton>
+              </MenuAnchor>
             ) : null}
             <MenuButton
               onClick={() => {
@@ -200,8 +189,8 @@ export default function SongMenu({
         <MenuButton onClick={() => setOpen((o) => !o)}>
           <Burger />
         </MenuButton>
-      </MenuList>
+      </ul>
       {info && <Info song={song} close={() => setInfo(false)} />}
-    </MenuWrap>
+    </div>
   )
 }

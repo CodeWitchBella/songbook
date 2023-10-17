@@ -1,4 +1,3 @@
-import styled from '@emotion/styled'
 import type { PropsWithChildren } from 'react'
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,17 +45,6 @@ const useInstall = () => {
   return install ?? null
 }
 
-const InstallContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  pointer-events: none;
-  > * {
-    pointer-events: auto;
-  }
-`
-
 export const InstallButtonLook = ({ children }: PropsWithChildren<{}>) => {
   const install = useInstall()
   const [t] = useTranslation()
@@ -64,11 +52,9 @@ export const InstallButtonLook = ({ children }: PropsWithChildren<{}>) => {
 
   return (
     <>
-      <InstallContainer>
-        <PrimaryButton onPress={install ?? undefined}>
-          {t('Install as an app')}
-        </PrimaryButton>
-      </InstallContainer>
+      <PrimaryButton onPress={install ?? undefined}>
+        {t('Install as an app')}
+      </PrimaryButton>
       {children}
     </>
   )

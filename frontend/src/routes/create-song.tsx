@@ -1,4 +1,3 @@
-import styled from '@emotion/styled'
 import { ErrorPage, NotFound } from 'components/error-page'
 import { LargeInput } from 'components/input'
 import { BasicButton } from 'components/interactive/basic-button'
@@ -14,22 +13,6 @@ import { useLocation, useParams } from 'react-router-dom'
 import { useNewSong } from 'store/store'
 import type { IntermediateSongData } from 'utils/song-from-link'
 import { convertToSong, songDataFromLink } from 'utils/song-from-link'
-
-const FormWrap = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-  marginTop: '50px',
-  maxWidth: '100%',
-})
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  font-size: 18px;
-  max-width: calc(100% - 16px);
-  width: 43ch;
-  padding: 8px;
-`
 
 const types: { [type: string]: JSX.Element } = {
   link: <CreateSongLink />,
@@ -198,7 +181,7 @@ function CreateSongLink() {
   })
 
   return (
-    <FormWrap>
+    <div className="mt-12 flex max-w-full justify-center">
       {downloadedSong ? (
         <ErrorBoundary>
           <SubmitSong
@@ -207,20 +190,24 @@ function CreateSongLink() {
           />
         </ErrorBoundary>
       ) : (
-        <Form onSubmit={form.submit}>
+        <form
+          className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
+          onSubmit={form.submit}
+        >
           <LargeInput
             label={t('create.Link')}
             value={link}
             onChange={setLink}
           />
+          <div className="h-2" />
           <PrimaryButton disabled={form.disabled} onPress={form.submit}>
             {t('create.Download')}
           </PrimaryButton>
           <button disabled={form.disabled} className="hidden" />
           <TText style={createStyles.error}>{error}</TText>
-        </Form>
+        </form>
       )}
-    </FormWrap>
+    </div>
   )
 }
 
@@ -248,7 +235,10 @@ function SubmitSong({
   })
 
   return (
-    <Form onSubmit={form.submit}>
+    <form
+      className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
+      onSubmit={form.submit}
+    >
       <TText style={createStyles.error}>{error}</TText>
       <TText style={createStyles.line}>
         <TText style={createStyles.label}>{t('create.Song name')}:</TText>{' '}
@@ -279,7 +269,7 @@ function SubmitSong({
           {t('create.Confirm')}
         </PrimaryButton>
       </View>
-    </Form>
+    </form>
   )
 }
 
@@ -296,8 +286,11 @@ function CreateSongManual() {
   const { t } = useTranslation()
 
   return (
-    <FormWrap>
-      <Form onSubmit={submit}>
+    <div className="mt-12 flex max-w-full justify-center">
+      <form
+        className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
+        onSubmit={submit}
+      >
         <LargeInput
           label={t('create.Song author')}
           value={author}
@@ -308,11 +301,12 @@ function CreateSongManual() {
           value={title}
           onChange={setTitle}
         />
+        <div className="h-2" />
         <PrimaryButton disabled={disabled} onPress={submit}>
           {t('create.Create')}
         </PrimaryButton>
         <button className="hidden" />
-      </Form>
-    </FormWrap>
+      </form>
+    </div>
   )
 }

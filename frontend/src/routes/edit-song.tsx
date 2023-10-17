@@ -18,47 +18,24 @@ import type { SongType } from 'store/store-song'
 import { updateSong } from 'store/store-song'
 import * as parser from 'utils/song-parser/song-parser'
 
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  font-size: 18px;
-  max-width: 600px;
-  margin: 20px auto 0 auto;
-`
-
-const TextAreaC = styled.textarea`
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  min-width: 100%;
-  height: 30em;
-  padding: 5px;
-
-  border: 1px solid black;
-  background: #eee;
-  color: black;
-  @media screen and (prefers-color-scheme: dark) {
-    background-color: #222;
-    color: white;
-    border: 1px solid white;
-  }
-`
-
-const Textarea = ({
+function Textarea({
   value,
   onChange,
 }: {
   value: string
   onChange: (v: string) => any
-}) => (
-  <TextAreaC
-    value={value}
-    onChange={(evt) => {
-      evt.preventDefault()
-      onChange(evt.target.value)
-    }}
-  />
-)
+}) {
+  return (
+    <textarea
+      className="h-96 min-w-full border border-black bg-slate-100 p-2 text-black dark:border-white dark:bg-slate-900 dark:text-white"
+      value={value}
+      onChange={(evt) => {
+        evt.preventDefault()
+        onChange(evt.target.value)
+      }}
+    />
+  )
+}
 
 const Columns = ({
   children,
@@ -75,12 +52,6 @@ const Columns = ({
   </div>
 )
 
-const HelpWrap = styled.div`
-  font-size: 18px;
-  max-width: 600px;
-  margin: 40px auto 0 auto;
-`
-
 function Help({
   children,
   title,
@@ -92,12 +63,12 @@ function Help({
 }) {
   const [toggled, setToggled] = useState(false)
   return (
-    <HelpWrap>
+    <div className="mx-auto mt-10 max-w-prose text-lg">
       <ListButton onPress={() => void setToggled((v) => !v)}>
         {toggled ? title : hiddenTitle}
       </ListButton>
       {toggled && children}
-    </HelpWrap>
+    </div>
   )
 }
 
@@ -130,13 +101,6 @@ function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
     SAVED: 'Uloženo',
   }[saveStatus]
 }
-
-const IFrameSizer = styled.div`
-  > iframe {
-    width: 100%;
-    height: 100%;
-  }
-`
 
 function safeParseFloat(text: string, fallback: number) {
   const res = Number.parseFloat(text)
@@ -317,7 +281,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   return (
     <Columns previewActive={state.preview}>
       <div>
-        <Form onSubmit={submit}>
+        <form className="mx-auto flex max-w-prose flex-col" onSubmit={submit}>
           <PageHeader backTo={'/song/' + props.song.slug}>
             {t('edit.Edit song')}
           </PageHeader>
@@ -393,7 +357,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             <button>{t('edit.Save changes')}</button>
           )}
           <i>{translateStatus(state.saveStatus)}</i>
-        </Form>
+        </form>
         <Help title={t('edit.Hide help')} hiddenTitle={t('edit.Show help')}>
           <TH2>Jak se tahle věc ovládá?</TH2>
           <TP>
@@ -485,7 +449,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
         </Help>
       </div>
       {state.preview && (
-        <IFrameSizer>
+        <div className="max-h-full overflow-hidden">
           {state.pdfPreview ? (
             <PDF song={getResult(props.song, state)} />
           ) : (
@@ -497,7 +461,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
               noBack
             />
           )}
-        </IFrameSizer>
+        </div>
       )}
     </Columns>
   )
