@@ -99,3 +99,24 @@ body,
     --vw: 0.5499254843517138vh; /* (105 - 12.4 - 18.8) / (148 - 6 - 7.8) */
   }
 }
+
+
+/* BEGIN: outline handler */
+/* a subtle focus style for keyboard-input elements */
+*:focus {
+  outline: 1px solid #aaa;
+}
+
+/* no focus style for non-keyboard-inputs elements */
+button:focus,
+select:focus {
+  outline: none;
+}
+
+/* and for keyboard users, override everything with
+   a Big Blue Border when focused on any element */
+body.keyboard *:focus {
+  outline: 2px solid #7aacfe !important; /* for non-webkit browsers */
+  outline: 5px auto -webkit-focus-ring-color !important;
+}
+/* END: outline handler */

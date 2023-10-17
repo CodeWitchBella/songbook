@@ -1,5 +1,4 @@
-import { css, Global } from '@emotion/react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 
 export default function OutlineHandler() {
   useEffect(() => {
@@ -16,27 +15,7 @@ export default function OutlineHandler() {
     }
   })
 
-  return (
-    <Global
-      styles={css`
-        /* a subtle focus style for keyboard-input elements */
-        *:focus {
-          outline: 1px solid #aaa;
-        }
-
-        /* no focus style for non-keyboard-inputs elements */
-        button:focus,
-        select:focus {
-          outline: none;
-        }
-
-        /* and for keyboard users, override everything with
-           a Big Blue Border when focused on any element */
-        body.keyboard *:focus {
-          outline: 2px solid #7aacfe !important; /* for non-webkit browsers */
-          outline: 5px auto -webkit-focus-ring-color !important;
-        }
-      `}
-    />
-  )
+  // depends on outline handler section in index.css
+  // TODO: move to :focus-visible
+  return null
 }
