@@ -315,7 +315,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     )
 
   return (
-    <Columns number={state.preview ? 2 : 1}>
+    <Columns previewActive={state.preview}>
       <div>
         <Form onSubmit={submit}>
           <PageHeader backTo={'/song/' + props.song.slug}>
