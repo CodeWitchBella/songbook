@@ -36,8 +36,8 @@ export function InlineLink({
           : null,
       ]}
       onPress={useLinkOnPress(to)}
-      // @ts-expect-error FIXME
       href={to}
+      // @ts-expect-error FIXME
       onMouseEnter={() => {
         ref.current?.measure((x, y, width, height) => {
           setHover([width, height])

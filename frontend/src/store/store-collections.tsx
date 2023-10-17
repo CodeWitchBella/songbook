@@ -82,8 +82,8 @@ export function createCollectionStore() {
     serialize: (item) => {
       return {
         ...item,
-        lastModified: item.lastModified.toISO(),
-        insertedAt: item.insertedAt.toISO(),
+        lastModified: item.lastModified.toISO()!, // <- todo fixme
+        insertedAt: item.insertedAt.toISO()!, // <- todo fixme
       }
     },
     deserialize: (item) => {

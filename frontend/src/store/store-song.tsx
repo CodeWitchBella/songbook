@@ -151,7 +151,7 @@ export function createSongStore({
     serialize: (item) => {
       return {
         ...item,
-        lastModified: item.lastModified.toISO(),
+        lastModified: item.lastModified.toISO()!, // <- todo fixme
         insertedAt: item.insertedAt ? item.insertedAt.toISO() : null,
       }
     },
