@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import { DumbModal } from 'components/dumb-modal'
+import { useLanguage } from 'components/localisation'
 import { TText } from 'components/themed'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,6 +9,7 @@ import type { LinkProps } from 'react-router-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useGetRandomSong } from 'store/store'
 import type { SongType } from 'store/store-song'
+import { formatDate } from 'utils/format-date'
 
 import {
   AddToCollection,
@@ -74,6 +76,7 @@ const style = StyleSheet.create({
 
 function Info({ close, song }: { close: () => void; song: SongType }) {
   const { t } = useTranslation()
+  const [lng] = useLanguage()
   const unknownEditor = t('info.editor-unknown')
   const unknownDate = t('info.inserted-before-2019-05-20')
   return (
@@ -87,13 +90,13 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
         <TText style={style.modalText}>
           {t('info.Inserted: {{date}}', {
             date: song.insertedAt
-              ? song.insertedAt.toFormat('dd. MM. yyyy')
+              ? formatDate(lng, t, song.insertedAt.toISO())
               : unknownDate,
           })}
         </TText>
         <TText style={style.modalText}>
           {t('info.Last edit: {{date}}', {
-            date: song.lastModified.toFormat('dd. MM. yyyy'),
+            date: formatDate(lng, t, song.lastModified.toISO()),
           })}
         </TText>
         <TText style={[style.modalText, style.modalCloseInfo]}>
