@@ -8,10 +8,9 @@ import PDF from 'components/pdf'
 import { SongTextEditor } from 'components/song-editor/song-text-editor'
 import { SongLook } from 'components/song-look/song-look'
 import { TH2, TH3, TP, TText } from 'components/themed'
-import Togglable from 'components/togglable'
 import { DateTime } from 'luxon'
 import type { PropsWithChildren } from 'react'
-import React, { useReducer, useRef } from 'react'
+import React, { useReducer, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams } from 'react-router'
 import { useSong } from 'store/store'
@@ -91,17 +90,14 @@ function Help({
   hiddenTitle: string
   children: React.ReactNode
 }) {
+  const [toggled, setToggled] = useState(false)
   return (
-    <Togglable defaultState={false}>
-      {({ toggled, toggle }) => (
-        <HelpWrap>
-          <ListButton onPress={toggle}>
-            {toggled ? title : hiddenTitle}
-          </ListButton>
-          {toggled && children}
-        </HelpWrap>
-      )}
-    </Togglable>
+    <HelpWrap>
+      <ListButton onPress={() => void setToggled((v) => !v)}>
+        {toggled ? title : hiddenTitle}
+      </ListButton>
+      {toggled && children}
+    </HelpWrap>
   )
 }
 
