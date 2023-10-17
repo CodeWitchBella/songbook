@@ -1,20 +1,8 @@
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
 import type { TFunction } from 'i18next'
-import type { PropsWithChildren } from 'react'
-import React, { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router'
 import { Link } from 'react-router-dom'
-
-function LinkToSong({ id, children }: PropsWithChildren<{ id: string }>) {
-  const href = `/song/${id}`
-  return (
-    <Link className="p-2 text-lg" to={href}>
-      {children}
-    </Link>
-  )
-}
 
 function translateHeader(
   t: TFunction,
@@ -32,47 +20,6 @@ export type SongListItem =
   | { slug: string; text: string }
   | { header: HeaderType }
   | null
-
-function SongItem(
-  props: ({ text: string; slug: string } | { header: HeaderType }) & {
-    style?: React.CSSProperties
-    t: TFunction
-  },
-) {
-  return 'header' in props ? (
-    <div className="p-2 text-xl font-bold">
-      {translateHeader(props.t, props.header)}
-    </div>
-  ) : (
-    <LinkToSong id={props.slug}>{props.text}</LinkToSong>
-  )
-}
-
-const columns = (n: number) => (p: { count: number }) => css`
-  @media (min-width: ${n * 400}px) {
-    grid-template-columns: repeat(${n}, 400px);
-    grid-template-rows: repeat(${Math.ceil(p.count / n)}, auto);
-  }
-`
-
-const ListContainer = styled('div')<{ count: number }>`
-  display: grid;
-  grid-template-columns: repeat(1, 100%);
-  grid-template-rows: repeat(${(props) => Math.ceil(props.count / 1)}, auto);
-  padding-top: 10px;
-
-  ${columns(2)}
-  ${columns(3)}
-  ${columns(4)}
-  ${columns(5)}
-  ${columns(6)}
-  ${columns(7)}
-  ${columns(8)}
-
-  grid-auto-flow: column;
-  justify-content: center;
-  box-sizing: border-box;
-`
 
 export function SongList({ list }: { list: SongListItem[] }) {
   const { t } = useTranslation()
@@ -107,8 +54,11 @@ export function SongList({ list }: { list: SongListItem[] }) {
   )
   return (
     <div className="max-h-full w-full overflow-y-scroll">
-      <ListContainer
-        count={list.length}
+      <div
+        style={{
+          columnWidth: 400,
+          columnCount: 'auto',
+        }}
         ref={(r) => {
           if (r) {
             bigScrollRef.current = r
@@ -119,13 +69,22 @@ export function SongList({ list }: { list: SongListItem[] }) {
         {list.map((item, index) => {
           if (!item) return null
           if ('header' in item)
-            return <SongItem header={item.header} key={index} t={t} />
+            return (
+              <div className="p-2 text-xl font-bold" key={index}>
+                {translateHeader(t, item.header)}
+              </div>
+            )
 
           return (
-            <SongItem slug={item.slug} text={item.text} key={item.slug} t={t} />
+            <Link
+              className="block w-full p-2 text-lg"
+              to={`/song/${item.slug}`}
+            >
+              {item.text}
+            </Link>
           )
         })}
-      </ListContainer>
+      </div>
     </div>
   )
 }
