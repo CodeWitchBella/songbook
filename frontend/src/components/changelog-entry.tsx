@@ -1,24 +1,6 @@
-import styled from '@emotion/styled'
-import { View } from 'react-native'
+import { formatDate } from 'utils/format-date'
 
 import { useLanguage } from './localisation'
-import { TText } from './themed'
-
-// prettier-ignore
-const months = {
-  cs: [ 'ledna', 'února', 'března', 'dubna', 'května', 'června', 'července', 'srpna', 'září', 'října', 'listopadu', 'prosince' ],
-  en: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
-}
-
-const Entry = styled.div`
-  font-size: 20px;
-  padding: 0 10px;
-  ul {
-    margin: 0;
-  }
-  max-width: 80ch;
-  margin-top: 16px;
-`
 
 export function ChangelogEntry({
   date,
@@ -29,16 +11,9 @@ export function ChangelogEntry({
 }) {
   const [lng] = useLanguage()
   return (
-    <Entry>
-      <TText style={{ fontSize: 20, fontWeight: 'bold' }}>
-        {(() => {
-          const parts = date.split('-').map((n) => Number.parseInt(n, 10))
-          return `${parts[2]}${lng === 'cs' ? '.' : ''} ${
-            months[lng][parts[1] - 1]
-          } ${parts[0]}`
-        })()}
-      </TText>
-      <View>{children}</View>
-    </Entry>
+    <div className="py-3">
+      <h2 className="text-lg font-semibold">{formatDate(lng, date)}</h2>
+      <div className="prose dark:prose-invert ">{children}</div>
+    </div>
   )
 }
