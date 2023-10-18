@@ -21,7 +21,7 @@ export type SongListItem =
   | { header: HeaderType }
   | null
 
-export function SongList({ list }: { list: SongListItem[] }) {
+export function SongListLook({ list }: { list: SongListItem[] }) {
   const { t } = useTranslation()
 
   const bigScrollRef = useRef<HTMLDivElement>()
@@ -77,6 +77,7 @@ export function SongList({ list }: { list: SongListItem[] }) {
 
           return (
             <Link
+              key={item.slug}
               className="block w-full p-2 text-lg"
               to={`/song/${item.slug}`}
             >
