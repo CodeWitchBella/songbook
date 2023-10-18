@@ -15,7 +15,6 @@ type ChordDef = {
 }
 
 const getChordsMap = (() => {
-  console.log(guitar.chords.Csharp)
   let cache: ReturnType<typeof compute> | null = null
   return () => {
     if (!cache) cache = compute()
