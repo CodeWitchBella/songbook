@@ -1,6 +1,5 @@
-import type { PropsWithChildren, ReactNode } from 'react'
 import { forwardRef } from 'react'
-import type { TextProps, TextStyle, ViewProps } from 'react-native'
+import type { TextProps, TextStyle } from 'react-native'
 import {
   // eslint-disable-next-line no-restricted-imports
   Text as RNText,

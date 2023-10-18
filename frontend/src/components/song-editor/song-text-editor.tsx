@@ -133,7 +133,7 @@ export function SongTextEditor(props: {
     if (!model) return
 
     let timeout: ReturnType<typeof setTimeout> | null = null
-    const unsub = model.onDidChangeContent((event) => {
+    const unsub = model.onDidChangeContent((_) => {
       if (timeout) clearTimeout(timeout)
       timeout = setTimeout(() => {
         timeout = null

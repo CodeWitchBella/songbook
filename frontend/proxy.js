@@ -14,7 +14,7 @@ const target = 'https://zpevnik.skorepova.info'
       changeOrigin: true,
       secure: true,
     })
-    .on('proxyReq', (proxyReq, req, res, options) => {
+    .on('proxyReq', (proxyReq, req, res, _) => {
       const origin = req.headers['origin']
       proxyReq.setHeader('Origin', target)
 

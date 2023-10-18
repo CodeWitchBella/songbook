@@ -1,6 +1,6 @@
 import { useIsInPDF } from './primitives'
 
-export default function V(props: any) {
+export default function V() {
   const inPdf = useIsInPDF()
   const Path: typeof import('@react-pdf/renderer').Path = (
     inPdf ? 'PATH' : 'path'

@@ -62,11 +62,11 @@ export function register(config: ServiceWorkerRegisterConfig = {}) {
 function registerValidSW(swUrl: string, config: ServiceWorkerRegisterConfig) {
   const wb = new Workbox(swUrl)
 
-  wb.addEventListener('controlling', (event) => {
+  wb.addEventListener('controlling', () => {
     window.location.reload()
   })
 
-  wb.addEventListener('waiting', (event) => {
+  wb.addEventListener('waiting', () => {
     // At this point, the updated precached content has been fetched,
     // but the previous service worker will still serve the older
     // content until all client tabs are closed.

@@ -57,7 +57,7 @@ export function isChord(text: string) {
 ////////////////////////////////////////////////////////////////////////////////
 
 type ChordDefSrc = (string | (string | { czech: string; inter: string })[])[]
-function chordsForLang(src: ChordDefSrc, lang: 'czech' | 'inter') {
+function chordsForLang(src: ChordDefSrc, _: 'czech' | 'inter') {
   return src.map((note) =>
     typeof note === 'string'
       ? [note]

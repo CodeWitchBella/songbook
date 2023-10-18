@@ -4,29 +4,30 @@ import getFilteredSongList from './alg'
 let songs: SearchableSong[] = []
 let search = ''
 
-function onlyCallLast(f: (arg: string) => void) {
+function onlyCallLast(f: () => void) {
   let calculating = false
   let shouldRecalculate: false | string = false
-  return (arg: string) => {
+  const result = () => {
     if (calculating) {
       shouldRecalculate = origin
       return
     }
     shouldRecalculate = false
     calculating = true
-    f(arg)
+    f()
     if (shouldRecalculate === false) {
       calculating = false
     } else {
       Promise.resolve().then(() => {
         calculating = false
-        if (shouldRecalculate) recalculate(shouldRecalculate)
+        if (shouldRecalculate) result()
       })
     }
   }
+  return result
 }
 
-const recalculate = onlyCallLast((origin: string) => {
+const recalculate = onlyCallLast(() => {
   ;(postMessage as any)({
     type: 'setList',
     value: {
@@ -39,13 +40,12 @@ const recalculate = onlyCallLast((origin: string) => {
 
 onmessage = function (evt) {
   const { type, value } = evt.data
-  const { origin } = evt
   if (type === 'setSongs') {
     songs = value
-    recalculate(origin)
+    recalculate()
   } else if (type === 'setSearch') {
     search = value
-    recalculate(origin)
+    recalculate()
   } else {
     console.warn('Unknown message type ' + type)
   }

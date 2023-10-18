@@ -79,7 +79,7 @@ export function FilteredList({
       return filteredToComponents(showTitles, ids, songItem)
     },
     null,
-    (_arg: null) => {
+    () => {
       return filteredToComponents(
         !!search,
         getFilteredSongList(songs, search),
