@@ -1,3 +1,4 @@
+import { lezer } from '@lezer/generator/rollup'
 import react from '@vitejs/plugin-react-swc'
 import fs from 'fs'
 import { defineConfig } from 'vite'
@@ -16,6 +17,7 @@ export default defineConfig({
     port: 5513,
   },
   plugins: [
+    lezer(),
     react(),
     myPlugin(),
     VitePWA({

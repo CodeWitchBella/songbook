@@ -280,7 +280,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   return (
     <Columns previewActive={state.preview}>
       <div>
-        <form className="mx-auto flex max-w-prose flex-col" onSubmit={submit}>
+        <form className="mx-auto flex max-w-3xl flex-col" onSubmit={submit}>
           <PageHeader backTo={'/song/' + props.song.slug}>
             {t('edit.Edit song')}
           </PageHeader>

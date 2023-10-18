@@ -1,0 +1,28 @@
+@top File { (Line | PageBreak)+ }
+
+Chord { chordStart chordContent chordEnd }
+
+Line {
+  (SectionStart | lineStart | Chord)
+  (text | Chord)*
+  (newline | EOF)
+}
+
+SectionStart {
+  ("R" digit* ":")
+  | ("S:" digit*)
+}
+
+@tokens {
+  digit { $[0-9] }
+  newline { '\n' }
+  lineStart { ![RS\[\n] }
+  chordStart { "[" }
+  chordEnd { "]" }
+  chordContent { ![\n\]]+ }
+  text { ![\n\[]+ }
+  PageBreak { "--- page break ---\n" }
+  EOF { @eof }
+  @precedence { digit, text }
+}
+
