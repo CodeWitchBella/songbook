@@ -1,7 +1,18 @@
+import {
+  cursorSyntaxLeft,
+  deleteCharBackward,
+  selectSyntaxRight,
+  simplifySelection,
+} from '@codemirror/commands'
 import { LanguageSupport, LRLanguage } from '@codemirror/language'
 import { styleTags, Tag } from '@lezer/highlight'
 import { createTheme } from '@uiw/codemirror-themes'
-import CodeMirror from '@uiw/react-codemirror'
+import type { EditorView, Extension } from '@uiw/react-codemirror'
+import CodeMirror, {
+  EditorSelection,
+  keymap,
+  Transaction,
+} from '@uiw/react-codemirror'
 import { useColors } from 'components/themed'
 import { useMemo } from 'react'
 
@@ -59,7 +70,57 @@ function songLang() {
     languageData: {},
   })
 
-  return new LanguageSupport(exampleLanguage, [])
+  return new LanguageSupport(exampleLanguage, [songExtension()])
+}
+
+function songExtension(): Extension {
+  return keymap.of([
+    // Not Mod-h as Cmd-h by default hides the window, so we allow the usage of both
+    { key: 'Ctrl-h', run: moveLeft },
+    { key: 'Cmd-h', run: moveLeft },
+    { key: 'Ctrl-l', run: moveRight },
+    { key: 'Cmd-l', run: moveRight },
+  ])
+  // this needs to be refactored to not break all the rules but it works
+  function moveLeft(target: EditorView): boolean {
+    cursorSyntaxLeft(target)
+    selectSyntaxRight(target)
+    const sel = target.state.selection.asSingle()
+    const start = sel.ranges[0].from
+    const char = target.state.doc.slice(start - 1, start)
+    if (char) {
+      target.dispatch(
+        target.state.update({
+          changes: [
+            { from: sel.ranges[0].to, insert: char },
+            { from: start - 1, to: start },
+          ],
+        }),
+      )
+    }
+    return true
+  }
+
+  // this needs to be refactored to not break all the rules but it works
+  function moveRight(target: EditorView): boolean {
+    cursorSyntaxLeft(target)
+    selectSyntaxRight(target)
+    const sel = target.state.selection.asSingle()
+    const end = sel.ranges[0].to
+    const char = target.state.doc.slice(end, end + 1)
+    console.log({ char })
+    if (char) {
+      target.dispatch(
+        target.state.update({
+          changes: [
+            { from: sel.ranges[0].from, insert: char },
+            { from: end, to: end + 1 },
+          ],
+        }),
+      )
+    }
+    return true
+  }
 }
 
 export function SongTextEditor(props: {
