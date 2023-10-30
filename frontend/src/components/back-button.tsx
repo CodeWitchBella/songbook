@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import type { CSSProperties, PropsWithChildren } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 
 import { useUpdateAfterNavigate } from './service-worker-status'
@@ -26,12 +26,14 @@ export function BackButton({
   children,
   to = '/',
   className,
+  style,
 }: PropsWithChildren<{
   to?: string
   className?: string
+  style?: CSSProperties
 }>) {
   return (
-    <button onClick={useGoBack(to)} className={className}>
+    <button onClick={useGoBack(to)} className={className} style={style}>
       {children}
     </button>
   )

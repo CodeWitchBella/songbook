@@ -190,24 +190,13 @@ function SongHeaderWithBack({
         flexDirection: 'row',
         paddingBottom: em(titleSpace * 1.75),
         marginTop: em(0.75),
+        alignItems: 'center',
       }}
     >
       {back ? (
-        <View
-          style={{
-            alignSelf: 'center',
-            height: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingTop: em(0.2),
-          }}
-        >
-          <DefaultStyleText>
-            <BackButton className="py-4 pr-4">
-              <BackArrow height={em(0.75)} />
-            </BackButton>
-          </DefaultStyleText>
-        </View>
+        <BackButton style={{ paddingRight: em(0.5) }}>
+          <BackArrow height={em(0.75)} />
+        </BackButton>
       ) : null}
       <SongHeader title={title} author={author} />
     </View>

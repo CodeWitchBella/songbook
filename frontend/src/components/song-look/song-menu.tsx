@@ -29,7 +29,7 @@ function MenuButton(
   return (
     <button
       type="button"
-      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
       {...props}
     />
   )
@@ -44,7 +44,7 @@ function MenuAnchor(
   return (
     // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a
-      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
       {...props}
     />
   )
@@ -54,7 +54,7 @@ function MenuLink(props: LinkProps) {
   const to = props.to
   return (
     <Link
-      className="h-[50px] border border-solid border-black bg-transparent p-2  text-right text-2xl dark:border-white"
+      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
       {...props}
       to={to}
       state={{ canGoBack: true }}
