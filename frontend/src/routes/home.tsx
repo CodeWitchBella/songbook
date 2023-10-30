@@ -30,7 +30,7 @@ export default function Home() {
           paddingBottom: 40,
         }}
       >
-        <Link to="/logo">
+        <Link state={{ canGoBack: true }} to="/logo">
           <Image
             source={{ uri: '/static/full.svg' }}
             style={{

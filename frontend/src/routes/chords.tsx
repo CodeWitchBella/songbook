@@ -66,7 +66,9 @@ export default function Chords() {
           {JSON.stringify(chord)}{' '}
           <View>
             {slugs.map((slug) => (
-              <Link to={'/song/' + slug}>{slug}</Link>
+              <Link state={{ canGoBack: true }} to={'/song/' + slug}>
+                {slug}
+              </Link>
             ))}
           </View>
         </TText>

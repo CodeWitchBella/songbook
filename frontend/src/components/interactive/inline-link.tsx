@@ -12,6 +12,7 @@ export function InlineLink({
     <Link
       className="border-current text-black underline hover:italic dark:text-white"
       to={to}
+      state={{ canGoBack: true }}
     >
       {children}
     </Link>

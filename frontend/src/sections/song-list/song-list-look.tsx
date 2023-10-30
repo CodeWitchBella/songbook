@@ -77,6 +77,7 @@ export function SongListLook({ list }: { list: SongListItem[] }) {
 
           return (
             <Link
+              state={{ canGoBack: true }}
               key={item.slug}
               className="block w-full p-2 text-lg"
               to={`/song/${item.slug}`}

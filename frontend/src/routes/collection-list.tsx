@@ -28,11 +28,16 @@ export default function CollectionList() {
   return (
     <div className="mx-auto flex w-full max-w-max flex-col gap-4 px-4 pb-4">
       <PageHeader>{t('Collections')}</PageHeader>
-      <Link to="/all-songs" className="hover:underline">
+      <Link
+        state={{ canGoBack: true }}
+        to="/all-songs"
+        className="hover:underline"
+      >
         {t('All songs')}
       </Link>
       {sortedList.map(({ item: collection }) => (
         <Link
+          state={{ canGoBack: true }}
           key={collection.id}
           to={`/collections/${collection.slug}`}
           className="hover:underline"
