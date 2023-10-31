@@ -1,7 +1,7 @@
 import { NotFound } from 'components/error-page'
 import { RouteRenderedMarker } from 'components/service-worker-status'
-import ErrorBoundary from 'containers/error-boundary'
-import React, { useEffect } from 'react'
+import React, { Component, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   createRoutesFromElements,
   Navigate,
@@ -9,6 +9,7 @@ import {
   Route,
   RouterProvider,
   useLocation,
+  useNavigate,
 } from 'react-router'
 import { createBrowserRouter } from 'react-router-dom'
 
@@ -119,6 +120,54 @@ function RootRoute() {
         <Outlet />
       </ErrorBoundary>
     </>
+  )
+}
+
+class ErrorBoundary extends Component<{
+  children: React.ReactNode
+}> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  componentDidCatch(error: Error, info: any) {
+    console.error({ error, info })
+  }
+
+  reset = () => {
+    this.setState({ hasError: false })
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <Fallback reset={this.reset} />
+    }
+    return this.props.children
+  }
+}
+
+function Fallback({ reset }: { reset: () => void }) {
+  const location = useLocation()
+  const last = useRef(location)
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (last.current !== location) reset()
+  }, [location, reset])
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-2">
+      <div className="text-3xl">{t('Something went wrong')}</div>
+      {location.state?.canGoBack ? (
+        <button className="underline" onClick={() => void navigate(-1)}>
+          {t('Go back')}
+        </button>
+      ) : location.pathname === '/' ? null : (
+        <button className="underline" onClick={() => void navigate('/')}>
+          {t('Go to home screen')}
+        </button>
+      )}
+    </div>
   )
 }
 
