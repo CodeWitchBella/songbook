@@ -1,16 +1,14 @@
-//import { Buffer } from 'buffer'
 import 'inter-ui/inter.css'
 import './index.css'
 
-import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
 import React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import Loadable from 'react-loadable'
 import { BrowserRouter } from 'react-router-dom'
+import Routes from 'routes/routes'
 
-import App from './app'
-import * as serviceWorker from './serviceWorker'
+import { EverythingProvider } from './everything-provider'
 
 // workaround for something removing import React from 'react'
 ;(window as any).React = React
@@ -22,14 +20,12 @@ Loadable.preloadReady().then(() => {
   const app = document.getElementById('root')!
   const root = ReactDOM.createRoot(app)
   root.render(
-    <React.Fragment>
-      <ErrorBoundary>
-        <BrowserRouter>
-          <ServiceWorkerStatusProvider register={serviceWorker.register}>
-            <App />
-          </ServiceWorkerStatusProvider>
-        </BrowserRouter>
-      </ErrorBoundary>
-    </React.Fragment>,
+    <ErrorBoundary>
+      <BrowserRouter>
+        <EverythingProvider>
+          <Routes />
+        </EverythingProvider>
+      </BrowserRouter>
+    </ErrorBoundary>,
   )
 })
