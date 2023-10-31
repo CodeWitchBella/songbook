@@ -14,12 +14,12 @@
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230922.0",
+    "@cloudflare/workers-types": "^4.20231025.0",
     "@miniflare/http-server": "^2.14.1",
-    "@types/bcryptjs": "^2.4.4",
-    "@types/latinize": "^0.2.16",
-    "@types/luxon": "^3.3.2",
-    "graphql": "^15.5.0",
+    "@types/bcryptjs": "^2.4.5",
+    "@types/latinize": "^0.2.17",
+    "@types/luxon": "^3.3.3",
+    "graphql": "^15.8.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
@@ -27,10 +27,10 @@
   },
   "dependencies": {
     "@codewitchbella/ts-utils": "^0.2.0",
-    "@isbl/bcryptjs": "^3.0.0-beta.1",
+    "@isbl/bcryptjs": "^3.0.0-beta.3",
     "@planetscale/database": "^1.11.0",
     "@sagi.io/workers-jwt": "^0.0.23",
-    "apollo-server": "^2.25.0",
+    "apollo-server": "^2.26.2",
     "apollo-server-cloudflare": "^3.12.1",
     "bcryptjs": "^2.4.3",
     "buffer": "^6.0.3",
@@ -39,10 +39,10 @@
     "dotenv": "^16.3.1",
     "drizzle-kit": "^0.19.13",
     "drizzle-orm": "^0.28.6",
-    "latinize": "^0.5.0",
+    "latinize": "^2.0.0",
     "luxon": "^3.4.3",
-    "mysql2": "^3.6.1",
+    "mysql2": "^3.6.2",
     "setimmediate": "^1.0.5",
-    "zod": "^3.22.2"
+    "zod": "^3.22.4"
   }
 }
