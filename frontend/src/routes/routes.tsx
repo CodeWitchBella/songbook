@@ -2,7 +2,15 @@ import { NotFound } from 'components/error-page'
 import { RouteRenderedMarker } from 'components/service-worker-status'
 import ErrorBoundary from 'containers/error-boundary'
 import React, { useEffect } from 'react'
-import { Navigate, Route, Routes, useLocation } from 'react-router'
+import {
+  createRoutesFromElements,
+  Navigate,
+  Outlet,
+  Route,
+  RouterProvider,
+  useLocation,
+} from 'react-router'
+import { createBrowserRouter } from 'react-router-dom'
 
 const imports = {
   CollectionList: once(() => import('./collection-list')),
@@ -49,10 +57,12 @@ function AbsoluteRedirect({ to }: { to: string }) {
   return null
 }
 
-function AppRoutes() {
-  return (
-    <ErrorBoundary>
-      <Routes>
+const router = createBrowserRouter([
+  {
+    path: '*',
+    element: <RootRoute />,
+    children: createRoutesFromElements(
+      <>
         <Route index={true} element={<Home />} />
         <Route path="logo" element={<Logo />} />
         <Route
@@ -67,7 +77,6 @@ function AppRoutes() {
         <Route path="about" element={<About />} />
         <Route path="add-to-collection/:slug" element={<AddToCollection />} />
         <Route path="collections" element={<CollectionList />} />
-
         <Route path="collections/:slug/:slug2" element={<Collection />} />
         <Route path="collections/:slug" element={<Collection />} />
         <Route path="song/:slug" element={<Song />} />
@@ -82,12 +91,18 @@ function AppRoutes() {
         />
         <Route path="diff" element={<CollectionDiff />} />
         <Route path="*" element={<NotFound />} />
-      </Routes>
-    </ErrorBoundary>
+      </>,
+    ),
+  },
+])
+
+export function Routes() {
+  return (
+    <RouterProvider router={router} future={{ v7_startTransition: true }} />
   )
 }
 
-export default function WrappedRoutes() {
+function RootRoute() {
   const location = useLocation()
 
   // effects are only trigger after suspense resolves, so that is ideal time to
@@ -100,7 +115,9 @@ export default function WrappedRoutes() {
     <>
       <RouteRenderedMarker key={location.pathname} />
       <LoadAllRoutes />
-      <AppRoutes />
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
     </>
   )
 }

@@ -2,7 +2,6 @@ import { DarkModeProvider } from 'components/dark-mode'
 import { InstallProvider } from 'components/install'
 import { LanguageProvider } from 'components/localisation'
 import { ServiceWorkerStatusProvider } from 'components/service-worker-status'
-import ErrorBoundary from 'containers/error-boundary'
 import type { ReactNode } from 'react'
 import { Suspense } from 'react'
 import { StoreProvider } from 'store/store'
@@ -25,7 +24,7 @@ export function EverythingProvider({ children }: { children: ReactNode }) {
                   </div>
                 }
               >
-                <ErrorBoundary>{children}</ErrorBoundary>
+                {children}
               </Suspense>
             </InstallProvider>
           </StoreProvider>

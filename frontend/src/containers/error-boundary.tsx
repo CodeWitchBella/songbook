@@ -2,7 +2,7 @@ import React, { Component, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 let Raven: any = null
 
-function Fallback({ reset }: { reset: () => void }) {
+export function Fallback({ reset }: { reset: () => void }) {
   const location = useLocation()
   const last = useRef(location)
   useEffect(() => {

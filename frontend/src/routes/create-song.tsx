@@ -5,7 +5,6 @@ import { ListButton } from 'components/interactive/list-button'
 import { PrimaryButton } from 'components/interactive/primary-button'
 import { TText } from 'components/themed'
 import { useLogin } from 'components/use-login'
-import ErrorBoundary from 'containers/error-boundary'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -183,12 +182,10 @@ function CreateSongLink() {
   return (
     <div className="mt-12 flex max-w-full justify-center">
       {downloadedSong ? (
-        <ErrorBoundary>
-          <SubmitSong
-            cancel={() => setDownloadedSong(null)}
-            songData={downloadedSong}
-          />
-        </ErrorBoundary>
+        <SubmitSong
+          cancel={() => setDownloadedSong(null)}
+          songData={downloadedSong}
+        />
       ) : (
         <form
           className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"

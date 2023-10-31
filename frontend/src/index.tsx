@@ -1,12 +1,10 @@
 import 'inter-ui/inter.css'
 import './index.css'
 
-import ErrorBoundary from 'containers/error-boundary'
 import React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import Loadable from 'react-loadable'
-import { BrowserRouter } from 'react-router-dom'
-import Routes from 'routes/routes'
+import { Routes } from 'routes/routes'
 
 import { EverythingProvider } from './everything-provider'
 
@@ -20,12 +18,8 @@ Loadable.preloadReady().then(() => {
   const app = document.getElementById('root')!
   const root = ReactDOM.createRoot(app)
   root.render(
-    <ErrorBoundary>
-      <BrowserRouter>
-        <EverythingProvider>
-          <Routes />
-        </EverythingProvider>
-      </BrowserRouter>
-    </ErrorBoundary>,
+    <EverythingProvider>
+      <Routes />
+    </EverythingProvider>,
   )
 })
