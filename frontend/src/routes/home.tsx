@@ -6,7 +6,6 @@ import { useLogin } from 'components/use-login'
 import { Version } from 'components/version'
 import { useTranslation } from 'react-i18next'
 import { Image, View } from 'react-native'
-import { Link } from 'react-router-dom'
 
 export default function Home() {
   const login = useLogin()
@@ -30,17 +29,15 @@ export default function Home() {
           paddingBottom: 40,
         }}
       >
-        <Link state={{ canGoBack: true }} to="/logo">
-          <Image
-            source={{ uri: '/static/full.svg' }}
-            style={{
-              width: '100%',
-              aspectRatio: 1,
-              paddingBottom: '100%',
-              marginBottom: '16px',
-            }}
-          />
-        </Link>
+        <Image
+          source={{ uri: '/static/full.svg' }}
+          style={{
+            width: '100%',
+            aspectRatio: 1,
+            paddingBottom: '100%',
+            marginBottom: '16px',
+          }}
+        />
         <PrimaryButton to="/all-songs">{t('All songs')}</PrimaryButton>
         <Gap height={8} />
         {login.viewer ? null : (

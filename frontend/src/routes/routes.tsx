@@ -18,7 +18,6 @@ const imports = {
   Collection: once(() => import('./collection')),
   AllSongs: once(() => import('./all-songs')),
   Home: once(() => import('./home')),
-  Logo: once(() => import('./logo')),
   Song: once(() => import('./song')),
   AddToCollection: once(() => import('./add-to-collection')),
   CreateSong: once(() => import('./create-song')),
@@ -37,7 +36,6 @@ const CollectionList = React.lazy(imports.CollectionList)
 const Collection = React.lazy(imports.Collection)
 const AllSongs = React.lazy(imports.AllSongs)
 const Home = React.lazy(imports.Home)
-const Logo = React.lazy(imports.Logo)
 const Song = React.lazy(imports.Song)
 const CreateSong = React.lazy(imports.CreateSong)
 const EditSong = React.lazy(imports.EditSong)
@@ -65,7 +63,6 @@ const router = createBrowserRouter([
     children: createRoutesFromElements(
       <>
         <Route index={true} element={<Home />} />
-        <Route path="logo" element={<Logo />} />
         <Route
           path="installed-home"
           element={<Navigate to="/" replace={true} />}
