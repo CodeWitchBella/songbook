@@ -56,43 +56,51 @@ function AbsoluteRedirect({ to }: { to: string }) {
   return null
 }
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '*',
+      element: <RootRoute />,
+      children: createRoutesFromElements(
+        <>
+          <Route index={true} element={<Home />} />
+          <Route
+            path="installed-home"
+            element={<Navigate to="/" replace={true} />}
+          />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="all-songs" element={<AllSongs />} />
+          <Route path="credits" element={<Credits />} />
+          <Route path="quick-settings" element={<QuickSettings />} />
+          <Route path="about" element={<About />} />
+          <Route path="add-to-collection/:slug" element={<AddToCollection />} />
+          <Route path="collections" element={<CollectionList />} />
+          <Route path="collections/:slug/:slug2" element={<Collection />} />
+          <Route path="collections/:slug" element={<Collection />} />
+          <Route path="song/:slug" element={<Song />} />
+          <Route path="new" element={<CreateSong />} />
+          <Route path="new/:type" element={<CreateSong />} />
+          <Route path="edit/:slug" element={<EditSong />} />
+          <Route path="changelog" element={<Changelog />} />
+          <Route path="chords" element={<Chords />} />
+          <Route
+            path="graphql"
+            element={<AbsoluteRedirect to="/api/graphql" />}
+          />
+          <Route path="diff" element={<CollectionDiff />} />
+          <Route path="*" element={<NotFound />} />
+        </>,
+      ),
+    },
+  ],
   {
-    path: '*',
-    element: <RootRoute />,
-    children: createRoutesFromElements(
-      <>
-        <Route index={true} element={<Home />} />
-        <Route
-          path="installed-home"
-          element={<Navigate to="/" replace={true} />}
-        />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="all-songs" element={<AllSongs />} />
-        <Route path="credits" element={<Credits />} />
-        <Route path="quick-settings" element={<QuickSettings />} />
-        <Route path="about" element={<About />} />
-        <Route path="add-to-collection/:slug" element={<AddToCollection />} />
-        <Route path="collections" element={<CollectionList />} />
-        <Route path="collections/:slug/:slug2" element={<Collection />} />
-        <Route path="collections/:slug" element={<Collection />} />
-        <Route path="song/:slug" element={<Song />} />
-        <Route path="new" element={<CreateSong />} />
-        <Route path="new/:type" element={<CreateSong />} />
-        <Route path="edit/:slug" element={<EditSong />} />
-        <Route path="changelog" element={<Changelog />} />
-        <Route path="chords" element={<Chords />} />
-        <Route
-          path="graphql"
-          element={<AbsoluteRedirect to="/api/graphql" />}
-        />
-        <Route path="diff" element={<CollectionDiff />} />
-        <Route path="*" element={<NotFound />} />
-      </>,
-    ),
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+    },
   },
-])
+)
 
 export function Routes() {
   return (
