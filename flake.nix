@@ -17,19 +17,33 @@
       url = "github:CodeWitchBella/corepack-overlay/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
-  outputs = { self, flake-utils, devshell, nixpkgs, corepack-overlay, ... }:
+  outputs = { self, flake-utils, devshell, nixpkgs, corepack-overlay, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShell = let
         pkgs = import nixpkgs {
           inherit system;
 
-          overlays = [ (import corepack-overlay ./package.json) devshell.overlays.default ];
+          overlays = [
+            (import rust-overlay)
+            (import corepack-overlay ./package.json)
+            devshell.overlays.default
+          ];
         };
       in pkgs.devshell.mkShell {
         imports = [ (pkgs.devshell.importTOML ./devshell.toml) ];
-        devshell.packages = [ pkgs.nodejs_20 pkgs.corepack pkgs.nodePackages.wrangler ];
+        devshell.packages = with pkgs; [
+          nodejs_20
+          corepack
+          nodePackages.wrangler
+          (rust-bin.fromRustupToolchainFile ./rust/rust-toolchain.toml)
+        ];
       };
     });
 }
