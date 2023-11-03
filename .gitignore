@@ -34,6 +34,8 @@ frontend/bundle
 /workers/drizzle
 /workers/export
 
+/rust/target
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
