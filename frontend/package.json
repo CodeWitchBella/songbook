@@ -42,6 +42,7 @@
     "react-pdf": "^7.5.1",
     "react-router-dom": "^6.18.0",
     "remark-gfm": "^4.0.0",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.2.2",
     "vite": "^4.5.0",
     "vite-plugin-pwa": "^0.16.6",
