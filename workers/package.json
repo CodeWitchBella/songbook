@@ -23,7 +23,8 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "wrangler": "^3.15.0"
   },
   "dependencies": {
     "@codewitchbella/ts-utils": "^0.2.0",

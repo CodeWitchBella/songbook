@@ -41,7 +41,6 @@
         devshell.packages = with pkgs; [
           nodejs_20
           corepack
-          nodePackages.wrangler
           (rust-bin.fromRustupToolchainFile ./rust/rust-toolchain.toml)
           stdenv.cc
         ];

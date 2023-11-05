@@ -19,5 +19,4 @@ jobs:
         run: |
           set -xe
           cd workers
-          which wrangler
-          wrangler deploy --define isInNodejs:false
+          yarn wrangler deploy --define isInNodejs:false

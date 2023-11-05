@@ -11,7 +11,6 @@ runs:
         export PATH=`nix develop -c bash -c 'echo $PATH'`
         echo PATH=$PATH >> ${GITHUB_ENV}
 
-
     - name: 🙈 Cache
       uses: actions/cache@v3
       with:
