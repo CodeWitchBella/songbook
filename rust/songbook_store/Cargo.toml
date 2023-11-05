@@ -1,0 +1,15 @@
+[package]
+name = "songbook"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = { version = "0.4.31", features = ["serde"] }
+operational-transform = { version = "0.6.1", features = ["serde"] }
+ordered-float = { version = "4.1.1", features = ["serde"] }
+serde = { version = "1.0.190", features = ["derive"] }
+serde_json = "1.0.108"
+wasm-bindgen = "0.2.88"
+otmerge = { path = "../otmerge" }

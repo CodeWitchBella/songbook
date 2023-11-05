@@ -158,6 +158,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "otmerge"
+version = "0.1.0"
+dependencies = [
+ "operational-transform",
+ "serde",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -238,6 +246,7 @@ dependencies = [
  "chrono",
  "operational-transform",
  "ordered-float",
+ "otmerge",
  "serde",
  "serde_json",
  "wasm-bindgen",

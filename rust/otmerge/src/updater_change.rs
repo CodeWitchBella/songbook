@@ -49,7 +49,7 @@ impl KeyedChange {
  * list of changes will make sure to remove redundant changes.
  */
 #[derive(Default, Debug, PartialEq, Clone)]
-pub(crate) struct ChangeSeq {
+pub struct ChangeSeq {
     items: Vec<KeyedChange>,
 }
 
@@ -83,18 +83,18 @@ impl ChangeSeq {
         Ok(())
     }
 
-    pub(crate) fn set(&mut self, key: &str, value: Value) {
+    pub fn set(&mut self, key: &str, value: Value) {
         self.items.retain(|item| *item.0 != *key);
         self.items
             .push(KeyedChange(key.to_owned(), Change::Set(value)));
     }
 
-    pub(crate) fn delete(&mut self, key: &str) {
+    pub fn delete(&mut self, key: &str) {
         self.items.retain(|item| *item.0 != *key);
         self.items.push(KeyedChange(key.to_owned(), Change::Delete));
     }
 
-    pub(crate) fn ot(&mut self, key: &str, seq: OperationSeq) -> Result<(), OTError> {
+    pub fn ot(&mut self, key: &str, seq: OperationSeq) -> Result<(), OTError> {
         // Assert the invariant that document does not contain redundant changes.
         // At least for OT.
         let mut found_ot = false;

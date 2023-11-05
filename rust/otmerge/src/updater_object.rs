@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Clone)]
 #[repr(u8)]
-pub(crate) enum Value {
+pub enum Value {
     // We don't support nulls here. Unset the field instead.
     Invalid = 0,
     Bool(bool),
@@ -20,6 +20,6 @@ impl From<&str> for Value {
 }
 
 #[derive(Debug, PartialEq, Clone, Default)]
-pub(crate) struct Object {
+pub struct Object {
     pub(crate) data: HashMap<String, Value>,
 }
