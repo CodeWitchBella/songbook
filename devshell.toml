@@ -1,5 +1,5 @@
 [devshell]
-packages = ["mysql80"]
+packages = ["mysql80", "trunk"]
 
 [[commands]]
 name = "dev-frontend-vite"
