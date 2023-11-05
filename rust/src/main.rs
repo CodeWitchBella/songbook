@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use updater_change::ChangeSeq;
 
 mod data;
@@ -13,3 +14,9 @@ fn main() {
 
     println!("changes: {changes:?}");
 }
+
+/*
+ * TODO:
+ *  - replace OTError with more specific error
+ *  - remove allow(dead_code)
+ */
