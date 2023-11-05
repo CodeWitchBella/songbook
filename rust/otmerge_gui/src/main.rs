@@ -10,7 +10,20 @@ fn App() -> impl IntoView {
     let (count, set_count) = create_signal(0);
 
     view! {
-        <>
+        <div class="flex flex-col gap-2 p-2">
+            <label class="flex gap-2 items-baseline">
+                <div class="text-xl font-semibold">"Key:"</div>
+                <input type="text" class="rounded-md text-inherit bg-inherit dark:bg-stone-800" />
+            </label>
+            <div class="border border-solid rounded-md p-2 flex items-baseline gap-2">
+                <h2 class="text-xl font-semibold">"Set to:"</h2>
+                <input type="text" class="h-9 px-3 rounded-md text-inherit bg-inherit dark:bg-stone-800" />
+                <Button on_click=move |_| {}>Execute</Button>
+            </div>
+            <div class="border border-solid rounded-md p-2 flex items-baseline gap-2">
+                <h2 class="text-xl font-semibold">"Delete"</h2>
+                <Button on_click=move |_| {}>Execute</Button>
+            </div>
             <Button
                 on_click=move |_| {
                     set_count.update(|n| *n += 1);
@@ -19,7 +32,7 @@ fn App() -> impl IntoView {
                 "Click me: "
                 {move || count.get()}
             </Button>
-        </>
+        </div>
     }
 }
 
