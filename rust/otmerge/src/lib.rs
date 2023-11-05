@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 
-mod updater_change;
+mod change;
 mod updater_object;
 
-pub use updater_change::*;
+pub use change::*;
 pub use updater_object::*;
 
 /*
