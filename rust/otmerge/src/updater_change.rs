@@ -83,17 +83,50 @@ impl ChangeSeq {
         Ok(())
     }
 
+    /**
+     * Adds a change to set a value associated to the key.
+     *
+     * ```
+     * # use otmerge::ChangeSeq;
+     * let mut seq = ChangeSeq::default();
+     * seq.set("key", "value".into());
+     * ```
+     */
     pub fn set(&mut self, key: &str, value: Value) {
         self.items.retain(|item| *item.0 != *key);
         self.items
             .push(KeyedChange(key.to_owned(), Change::Set(value)));
     }
 
+    /**
+     * Adds a change to delete a value associated to the key.
+     *
+     * ```
+     * # use otmerge::ChangeSeq;
+     * let mut seq = ChangeSeq::default();
+     * seq.delete("key");
+     * ```
+     */
     pub fn delete(&mut self, key: &str) {
         self.items.retain(|item| *item.0 != *key);
         self.items.push(KeyedChange(key.to_owned(), Change::Delete));
     }
 
+    /**
+     * Adds a change to apply operational-transform to a given key. The change
+     * can only be applied if the value is of type string. See documentation of
+     * [`operational_transform`] on how to construct the OT.
+     *
+     * ```
+     * # use otmerge::ChangeSeq;
+     * use operational_transform::OperationSeq;
+     *
+     * let mut seq = ChangeSeq::default();
+     * let mut ot = OperationSeq::default();
+     * ot.insert("abc");
+     * seq.ot("key", ot);
+     * ```
+     */
     pub fn ot(&mut self, key: &str, seq: OperationSeq) -> Result<(), OTError> {
         // Assert the invariant that document does not contain redundant changes.
         // At least for OT.
