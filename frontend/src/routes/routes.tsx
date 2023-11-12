@@ -30,6 +30,7 @@ const imports = {
   QuickSettings: once(() => import('./quick-settings')),
   Chords: once(() => import('./chords')),
   CollectionDiff: once(() => import('./collection-diff')),
+  AutomergePlayground: once(() => import('./automerge-playground')),
 }
 
 const CollectionList = React.lazy(imports.CollectionList)
@@ -48,6 +49,7 @@ const About = React.lazy(imports.About)
 const QuickSettings = React.lazy(imports.QuickSettings)
 const Chords = React.lazy(imports.Chords)
 const CollectionDiff = React.lazy(imports.CollectionDiff)
+const AutomergePlayground = React.lazy(imports.AutomergePlayground)
 
 function AbsoluteRedirect({ to }: { to: string }) {
   useEffect(() => {
@@ -89,6 +91,10 @@ const router = createBrowserRouter(
             element={<AbsoluteRedirect to="/api/graphql" />}
           />
           <Route path="diff" element={<CollectionDiff />} />
+          <Route
+            path="automerge-playground"
+            element={<AutomergePlayground />}
+          />
           <Route path="*" element={<NotFound />} />
         </>,
       ),

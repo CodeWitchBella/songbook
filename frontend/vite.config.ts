@@ -1,8 +1,10 @@
+// @ts-expect-error
 import { lezer } from '@lezer/generator/rollup'
 import react from '@vitejs/plugin-react-swc'
 import fs from 'fs'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import wasm from 'vite-plugin-wasm'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,6 +20,7 @@ export default defineConfig({
   },
   plugins: [
     lezer(),
+    wasm(),
     react(),
     myPlugin(),
     VitePWA({

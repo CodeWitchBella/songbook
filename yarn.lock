@@ -13046,6 +13046,7 @@ __metadata:
     typescript: "npm:^5.2.2"
     vite: "npm:^4.5.0"
     vite-plugin-pwa: "npm:^0.16.6"
+    vite-plugin-wasm: "npm:^3.2.2"
     workbox-window: "npm:^7.0.0"
     xorshift: "npm:^1.2.0"
   languageName: unknown
@@ -14510,6 +14511,15 @@ __metadata:
     workbox-build: ^7.0.0
     workbox-window: ^7.0.0
   checksum: 9d6d051e044f2a2b5b8adc34ae10a849eb6b1e98d3a3cdd5630e9043ab12b46edd0d9e410d9733ad30af2b0fbfa62a4f739a3b021d09f26e1cefc79a632d9454
+  languageName: node
+  linkType: hard
+
+"vite-plugin-wasm@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "vite-plugin-wasm@npm:3.2.2"
+  peerDependencies:
+    vite: ^2 || ^3 || ^4
+  checksum: e5ab0080e65c377554e28eb7f6df889dd53170a28bf0b9df03816dd0b92c9fbc34637c834319d4ec732fd8fa4a4f096f0ca531cfdc0125a92a473936fa0be192
   languageName: node
   linkType: hard
 
