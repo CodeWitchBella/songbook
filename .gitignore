@@ -35,6 +35,7 @@ frontend/bundle
 /workers/export
 dist
 target
+data
 
 /rust/target
 
