@@ -39,8 +39,8 @@ const server = app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
 })
 
-server.on('upgrade', (request, socket, head) => {
-  socket.handleUpgrade(request, socket, head, (socket) => {
+server.on('upgrade', (request, s, head) => {
+  socket.handleUpgrade(request, s, head, (socket) => {
     socket.emit('connection', socket, request)
   })
 })
