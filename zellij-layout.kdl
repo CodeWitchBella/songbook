@@ -1,0 +1,5 @@
+layout {
+  pane command="dev-db" size=8
+  pane command="dev-frontend-vite"
+  pane command="dev-server"
+}

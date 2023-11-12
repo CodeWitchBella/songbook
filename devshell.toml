@@ -1,5 +1,5 @@
 [devshell]
-packages = ["mysql80"]
+packages = ["mysql80", "zellij"]
 
 [[commands]]
 name = "dev-frontend-vite"
@@ -45,6 +45,6 @@ category = "fullstack"
 
 [[commands]]
 name = "dev"
-command = "yarn full"
+command = "zellij --layout zellij-layout.kdl"
 help = "Start everything needed for fullstack development"
 category = "fullstack"
