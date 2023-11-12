@@ -40,8 +40,8 @@ const server = app.listen(PORT, () => {
 })
 
 server.on('upgrade', (request, s, head) => {
-  socket.handleUpgrade(request, s, head, (socket) => {
-    socket.emit('connection', socket, request)
+  socket.handleUpgrade(request, s, head, (s2) => {
+    socket.emit('connection', s2, request)
   })
 })
 
