@@ -33,6 +33,11 @@ export function DarkModeProvider({
 }: {
   children: JSX.Element | readonly JSX.Element[]
 }) {
+  const [urlValue] = useState(() => {
+    if (new URLSearchParams(window.location.search).has('light'))
+      return { bool: false, string: 'light' as const }
+    return null
+  })
   const [setting, setSetting] = useState(() =>
     deserialize(localStorage.getItem(key)),
   )
@@ -43,10 +48,10 @@ export function DarkModeProvider({
       if (event.key === key) {
         const value = deserialize(event.newValue)
         setSetting(value)
-        apply(value)
+        apply(urlValue?.string ?? value)
       }
     }
-  }, [])
+  }, [urlValue])
 
   const [systemPreference, setSystemPreference] = useState(
     () => !!window.matchMedia(query).matches,
@@ -57,11 +62,12 @@ export function DarkModeProvider({
     const handler = () => {
       const newPreference = !!mediaQuery.matches
       setSystemPreference(newPreference)
-      apply(undefined, newPreference)
+      apply(urlValue?.string ?? undefined, newPreference)
     }
+    handler()
     mediaQuery.addEventListener('change', handler)
     return () => mediaQuery.removeEventListener('change', handler)
-  }, [systemPreference])
+  }, [systemPreference, urlValue?.string])
 
   const resolvedValue =
     setting === 'automatic' ? systemPreference : setting === 'dark'
@@ -69,7 +75,7 @@ export function DarkModeProvider({
     <darkModeContext.Provider
       value={useMemo(
         () => ({
-          value: resolvedValue,
+          value: urlValue?.bool ?? resolvedValue,
           setting,
           setSetting: (value) => {
             setSetting(value)
@@ -77,7 +83,7 @@ export function DarkModeProvider({
             write(value)
           },
         }),
-        [resolvedValue, setting],
+        [resolvedValue, setting, urlValue],
       )}
     >
       {children}

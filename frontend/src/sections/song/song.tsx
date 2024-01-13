@@ -15,9 +15,11 @@ function queryJoin(path: string, query: string) {
 export default function SongSection({
   slug,
   enableMenu = false,
+  embed = false,
 }: {
   slug: string
   enableMenu?: boolean
+  embed?: boolean
 }) {
   const { song } = useSong({ slug })
   const [continuous] = useContinuousModeSetting()
@@ -44,6 +46,7 @@ export default function SongSection({
           parsed={parsed}
           transposition={transposition}
           onChordPress={setChordHelp}
+          noBack={embed}
         />
       </div>
       {enableMenu && (
