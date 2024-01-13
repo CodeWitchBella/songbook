@@ -24,7 +24,15 @@
     };
   };
 
-  outputs = { self, flake-utils, devshell, nixpkgs, corepack-overlay, rust-overlay, ... }:
+  outputs = {
+    self,
+    flake-utils,
+    devshell,
+    nixpkgs,
+    corepack-overlay,
+    rust-overlay,
+    ...
+  }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShell = let
         pkgs = import nixpkgs {
@@ -36,14 +44,16 @@
             devshell.overlays.default
           ];
         };
-      in pkgs.devshell.mkShell {
-        imports = [ (pkgs.devshell.importTOML ./devshell.toml) ];
-        devshell.packages = with pkgs; [
-          nodejs_20
-          corepack
-          nodePackages.wrangler
-          (rust-bin.fromRustupToolchainFile ./rust/rust-toolchain.toml)
-        ];
-      };
+      in
+        pkgs.devshell.mkShell {
+          imports = [(pkgs.devshell.importTOML ./devshell.toml)];
+          devshell.packages = with pkgs; [
+            nodejs_20
+            corepack
+            nodePackages.wrangler
+            openssl
+            (rust-bin.fromRustupToolchainFile ./rust/rust-toolchain.toml)
+          ];
+        };
     });
 }
