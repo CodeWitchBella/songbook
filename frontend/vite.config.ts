@@ -14,6 +14,7 @@ export default defineConfig({
   esbuild: {
     jsx: 'automatic',
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    supported: { 'top-level-await': true },
   },
   server: {
     port: 5513,
