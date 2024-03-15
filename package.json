@@ -7,11 +7,10 @@
     "frontend": "run-p \"frontend:*\"",
     "full:server": "yarn workspace songbook-workers dev",
     "full:frontend": "yarn frontend:dev",
-    "full:db": "node workers/mysql.js",
+    "full:db": "node workers/postgresql.js",
     "full": "run-p \"full:*\"",
     "lint": "eslint --cache frontend workers"
   },
-  "packageManager": "yarn@4.0.1+sha256.5a9d054e67fbbae8774cd3667736fd74407ffbbb336898523ca1fe87b3fc4ee3",
   "workspaces": [
     "frontend",
     "workers",

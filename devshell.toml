@@ -1,5 +1,5 @@
 [devshell]
-packages = ["mysql80", "zellij"]
+packages = ["mysql80", "zellij", "postgresql_16"]
 
 [[commands]]
 name = "dev-frontend-vite"

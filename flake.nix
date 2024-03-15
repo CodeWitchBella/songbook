@@ -11,11 +11,6 @@
     devshell = {
       url = "github:numtide/devshell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.systems.follows = "systems";
-    };
-    corepack-overlay = {
-      url = "github:CodeWitchBella/corepack-overlay/main";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
@@ -29,7 +24,6 @@
     flake-utils,
     devshell,
     nixpkgs,
-    corepack-overlay,
     rust-overlay,
     ...
   }:
@@ -40,19 +34,20 @@
 
           overlays = [
             (import rust-overlay)
-            (import corepack-overlay ./package.json)
             devshell.overlays.default
           ];
         };
+        yarnProject = pkgs.callPackage ./.yarn/yarn-project.nix {} {src = pkgs.lib.cleanSource ./.;};
       in
         pkgs.devshell.mkShell {
           imports = [(pkgs.devshell.importTOML ./devshell.toml)];
           devshell.packages = with pkgs; [
             nodejs_20
-            corepack
             nodePackages.wrangler
             openssl
             (rust-bin.fromRustupToolchainFile ./rust/rust-toolchain.toml)
+            #yarn-berry
+            yarnProject
           ];
         };
     });
