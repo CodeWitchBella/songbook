@@ -18,6 +18,9 @@ export default defineConfig({
   },
   server: {
     port: 5513,
+    proxy: {
+      '/api': { target: 'http://localhost:5512', changeOrigin: true },
+    },
   },
   plugins: [
     lezer(),

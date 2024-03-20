@@ -1,21 +1,9 @@
-const url = (async () => {
-  if (
-    window.location.hostname !== 'localhost' &&
-    window.location.hostname !== '127.0.0.1'
-  )
-    return '/api/graphql'
-  try {
-    await fetch('http://localhost:5512')
-    return 'http://localhost:5512/api/graphql'
-  } catch {
-    return 'https://localhost:5512/api/graphql'
-  }
-})()
+const url = '/api/graphql'
 
-export async function getGraphqlUrl() {
+export function getGraphqlUrl() {
   if (typeof window === 'undefined')
     throw new Error('This is only available in browser')
-  return new URL(await url, window.location.toString()).toString()
+  return new URL(url, window.location.toString()).toString()
 }
 
 let promise = Promise.resolve(null as any)
@@ -30,7 +18,7 @@ export function graphqlFetch<V = any>({
   const p = promise
     .catch(() => {})
     .then(async () => {
-      const req = await fetch(await url, {
+      const req = await fetch(url, {
         credentials: 'include',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({

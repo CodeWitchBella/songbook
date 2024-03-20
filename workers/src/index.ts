@@ -6,7 +6,7 @@ import { forward } from './forward.js'
 import type { MyContext } from './lib/context.js'
 import { contextPair } from './lib/context.js'
 
-globalThis.setImmediate = undefined as any
+//globalThis.setImmediate = undefined as any
 
 async function handleRequest(
   request: Request,
@@ -50,7 +50,7 @@ const worker = {
     env: {},
     ctx: ExecutionContext,
   ): Promise<Response> {
-    const { createContext, finishContext } = contextPair(request, env)
+    const { createContext, finishContext } = contextPair(request)
     const res = await handleRequest(request, env, ctx, createContext)
     finishContext(res)
     return res

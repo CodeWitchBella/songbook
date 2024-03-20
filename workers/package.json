@@ -19,6 +19,7 @@
     "@types/bcryptjs": "^2.4.5",
     "@types/latinize": "^0.2.17",
     "@types/luxon": "^3.3.3",
+    "@types/pg": "^8.11.4",
     "graphql": "^15.8.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
@@ -42,6 +43,7 @@
     "latinize": "^2.0.0",
     "luxon": "^3.4.3",
     "mysql2": "^3.6.2",
+    "pg": "^8.11.3",
     "postgres": "^3.4.3",
     "setimmediate": "^1.0.5",
     "zod": "^3.22.4"
