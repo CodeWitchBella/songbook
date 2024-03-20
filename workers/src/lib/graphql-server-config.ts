@@ -336,6 +336,7 @@ const resolvers = {
           slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${
             schema.collection.slug
           }, "/", -1)`,
+          lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.collection.owner, viewer.id))
       return 'success'
@@ -429,7 +430,7 @@ const resolvers = {
 
       const res = await context.db
         .update(schema.collection)
-        .set({ locked: 1 })
+        .set({ locked: true, lastModified: sql`CURRENT_TIMESTAMP` })
         .where(eq(schema.collection.idString, collection))
       if (!affectedRows(res))
         throw new UserInputError('Collection does not exist')
@@ -502,6 +503,7 @@ const resolvers = {
             input.author && input.title
               ? slugify(`${input.title}-${input.author}`)
               : undefined,
+          lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.song.idString, id))
       if (affectedRows(res) < 1) throw new UserInputError('Song does not exist')

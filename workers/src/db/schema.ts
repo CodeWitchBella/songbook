@@ -1,31 +1,32 @@
 import { sql } from 'drizzle-orm'
 import {
+  boolean,
   char,
-  float,
-  int,
-  mysqlTable,
+  integer,
+  pgTable,
+  real,
+  serial,
   text,
   timestamp,
-  tinyint,
   unique,
   varchar,
-} from 'drizzle-orm/mysql-core'
+} from 'drizzle-orm/pg-core'
 
-const id = int('id').autoincrement().primaryKey()
+const id = serial('id').primaryKey()
 
-export const user = mysqlTable('user', {
+export const user = pgTable('user', {
   id,
   handle: varchar('handle', { length: 30 }).unique().notNull(),
   name: varchar('name', { length: 256 }).notNull(),
   email: varchar('email', { length: 256 }).notNull().unique(),
-  admin: tinyint('admin').notNull().default(0),
+  admin: boolean('admin').notNull().default(false),
   passwordHash: varchar('password_hash', { length: 256 }).notNull(),
   registeredAt: timestamp('registered_at', { mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
 
-export const song = mysqlTable('song', {
+export const song = pgTable('song', {
   id,
   idString: char('id_string', { length: 20 }).unique().notNull(),
   slug: varchar('slug', { length: 256 }).notNull().unique(),
@@ -34,33 +35,32 @@ export const song = mysqlTable('song', {
   title: varchar('title', { length: 100 }).notNull(),
   text: text('text').notNull(),
 
-  fontSize: float('font_size').default(1).notNull(),
+  fontSize: real('font_size').default(1).notNull(),
   lastModified: timestamp('last_modified', { mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
-    .onUpdateNow()
     .notNull(),
   insertedAt: timestamp('inserted_at', { mode: 'string' }).default(
     sql`CURRENT_TIMESTAMP`,
   ),
-  pretranspose: int('pretranspose').default(0),
-  paragraphSpace: float('paragraph_space').default(1).notNull(),
+  pretranspose: integer('pretranspose').default(0),
+  paragraphSpace: real('paragraph_space').default(1).notNull(),
   spotify: varchar('spotify', { length: 256 }),
-  titleSpace: float('title_space').default(1).notNull(),
+  titleSpace: real('title_space').default(1).notNull(),
   extraNonSearchable: text('extra_non_searchable'),
   extraSearchable: text('extra_searchable'),
-  editor: int('editor_id'), //.references(() => user.id),
+  editor: integer('editor_id'), //.references(() => user.id),
 })
 
-export const deletedSong = mysqlTable('deleted_song', {
+export const deletedSong = pgTable('deleted_song', {
   id,
   songIdString: char('song_id_string', { length: 20 }).unique(),
-  songId: int('song_id').notNull(),
+  songId: integer('song_id').notNull(),
   deletedAt: timestamp('last_modified', { mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
 
-export const collection = mysqlTable('collection', {
+export const collection = pgTable('collection', {
   id,
   idString: char('id_string', { length: 20 }).unique(),
   slug: varchar('slug', { length: 256 }).notNull().unique(),
@@ -70,37 +70,36 @@ export const collection = mysqlTable('collection', {
     .notNull(),
   lastModified: timestamp('last_modified', { mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
-    .onUpdateNow()
     .notNull(),
-  locked: tinyint('locked').notNull().default(0),
+  locked: boolean('locked').notNull().default(false),
   // global collections do not have owner
-  owner: int('editor_id'), //.references(() => user.id),
+  owner: integer('editor_id'), //.references(() => user.id),
 })
 
-export const deletedCollection = mysqlTable('deleted_collection', {
+export const deletedCollection = pgTable('deleted_collection', {
   id,
   collectionIdString: char('collection_id_string', { length: 20 }).unique(),
-  collectionId: int('collection_id').notNull(),
+  collectionId: integer('collection_id').notNull(),
   deletedAt: timestamp('last_modified', { mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
 
-export const collectionSong = mysqlTable(
+export const collectionSong = pgTable(
   'collection_song',
   {
     id,
-    collection: int('collection_id').notNull(), //.references(() => collection.id),
-    song: int('song_id').notNull(), //.references(() => song.id),
+    collection: integer('collection_id').notNull(), //.references(() => collection.id),
+    song: integer('song_id').notNull(), //.references(() => song.id),
   },
   (t) => ({
     unique_pair: unique().on(t.collection, t.song),
   }),
 )
 
-export const session = mysqlTable('session', {
+export const session = pgTable('session', {
   id,
   token: char('token', { length: 30 }).unique().notNull(),
-  user: int('user_id').notNull(), //.references(() => user.id),
+  user: integer('user_id').notNull(), //.references(() => user.id),
   expires: timestamp('expires', { mode: 'string' }).notNull(),
 })
