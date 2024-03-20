@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'child_process'
 import fs from 'fs'
 
-const dirname = path.dirname(fileURLToPath(import.meta.url))
+const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 const cmds = {
   init,
   start,
@@ -19,6 +19,8 @@ const cmd = process.argv[2]
 if (!cmd) throw new Error('Missing command')
 if (!cmds[cmd]) throw new Error(`Unknown command ${cmd}`)
 
+process.chdir(dirname)
+
 Promise.resolve()
   .then(cmds[cmd])
   .catch((err) => {
@@ -29,14 +31,15 @@ Promise.resolve()
 
 async function init() {
   // Create a database with the data stored in the current directory
-  runSync('initdb', ['-D', '.tmp/mydb', '--no-locale', '--encoding=UTF8'])
+  runSync('initdb', ['-D', '.tmp/songbook', '--no-locale', '--encoding=UTF8'])
 
   start()
 
   // Create a database
-  runSync('createdb', ['-h', path.join(dirname, '.tmp'), 'mydb'])
+  runSync('createdb', ['-h', path.join(dirname, '.tmp'), 'songbook'])
 
-  await restore()
+  //await restore()
+  console.log('Skipping restore')
 
   stop()
 }
@@ -46,7 +49,7 @@ function start() {
   // and with the Unix socket in the current directory
   runSync('pg_ctl', [
     '-D',
-    '.tmp/mydb',
+    '.tmp/songbook',
     '-l',
     '.tmp/logfile',
     '-o',
@@ -56,20 +59,20 @@ function start() {
 }
 
 async function run() {
-  if (!fs.existsSync(path.join(dirname, '.tmp/mydb'))) {
+  if (!fs.existsSync(path.join(dirname, '.tmp/songbook'))) {
     await init()
   }
   // Start PostgreSQL running as the current user
   // and with the Unix socket in the current directory
   runSync('postgres', [
     '-D',
-    '.tmp/mydb',
+    '.tmp/songbook',
     '--unix_socket_directories=' + path.join(dirname, '.tmp'),
   ])
 }
 
 function stop() {
-  runSync('pg_ctl', ['-D', '.tmp/mydb', 'stop'])
+  runSync('pg_ctl', ['-D', '.tmp/songbook', 'stop'])
 }
 
 async function pull() {
@@ -94,7 +97,7 @@ async function restore() {
   console.log('Restoring database data...')
   runSync('pg_restore', [
     '--host=localhost',
-    '--dbname=mydb',
+    '--dbname=songbook',
     '--no-acl',
     '--no-owner',
     '--clean',

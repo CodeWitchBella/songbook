@@ -7,7 +7,7 @@
     "frontend": "run-p \"frontend:*\"",
     "full:server": "yarn workspace songbook-workers dev",
     "full:frontend": "yarn frontend:dev",
-    "full:db": "node workers/postgresql.js",
+    "full:db": "node workers/postgresql.mjs run",
     "full": "run-p \"full:*\"",
     "lint": "eslint --cache frontend workers"
   },

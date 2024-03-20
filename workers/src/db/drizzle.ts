@@ -1,25 +1,28 @@
 import type { ExecutedQuery } from '@planetscale/database'
-import type { PlanetScaleDatabase } from 'drizzle-orm/planetscale-serverless'
+import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js'
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js/driver.js'
+import postgres from 'postgres'
 
-// type corresponds with production, because on localhost I'm more likely to notice
-export type DB = PlanetScaleDatabase<typeof import('./schema.js')>
+import { schema } from './drizzle.js'
 
-let db: DB | Promise<DB>
-declare const isInNodejs: boolean
+export type DB = PostgresJsDatabase<typeof import('./schema.js')>
+
+let db: DB
 export function drizzle(env: any) {
   if (!db) {
-    if (typeof isInNodejs === 'undefined')
-      (globalThis as any).isInNodejs = false
-
-    db = (
-      process.env.DATABASE_SOCKET && isInNodejs
-        ? (import('./drizzle-localhost.js') as never)
-        : import('./drizzle-planetscale.js')
-    ).then((v) => {
-      db = v.mkDrizzle(env)
-      return db
-    })
+    db = mkDrizzle(env)
   }
+  return db
+}
+
+function mkDrizzle(max?: number) {
+  console.info('Using the local database')
+  const connection = postgres(
+    'postgres://postgres:adminadmin@0.0.0.0:5432/db',
+    { max },
+  )
+
+  const db = pgDrizzle(connection, { schema })
   return db
 }
 

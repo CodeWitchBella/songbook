@@ -12087,6 +12087,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postgres@npm:^3.4.3":
+  version: 3.4.3
+  resolution: "postgres@npm:3.4.3"
+  checksum: 10c0/859b02a1659a0c4139e20880bd15b238f755ae1dbdeb7e2e027e31667cfa32fa502bfa5a2bb955353f36c236ebf8b62e90830d005f81438d165910cc3b8fade0
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -13507,6 +13514,7 @@ __metadata:
     luxon: "npm:^3.4.3"
     mysql2: "npm:^3.6.2"
     nodemon: "npm:^3.0.1"
+    postgres: "npm:^3.4.3"
     prettier: "npm:^3.0.3"
     setimmediate: "npm:^1.0.5"
     ts-node: "npm:^10.9.1"

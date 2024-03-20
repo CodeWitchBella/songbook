@@ -20,7 +20,7 @@ export function contextPair(request: Request, env: any) {
         hdr = createSetSessionCookieHeader(value, duration)
       },
       url: request.url,
-      db: await drizzle(env),
+      db: drizzle(env),
     }),
     finishContext: (response: Response) => {
       if (hdr) response.headers.set(hdr[0], hdr[1])

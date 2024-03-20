@@ -42,6 +42,7 @@
     "latinize": "^2.0.0",
     "luxon": "^3.4.3",
     "mysql2": "^3.6.2",
+    "postgres": "^3.4.3",
     "setimmediate": "^1.0.5",
     "zod": "^3.22.4"
   }

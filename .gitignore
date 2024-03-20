@@ -36,6 +36,7 @@ frontend/bundle
 dist
 target
 data
+.tmp
 
 /rust/target
 
