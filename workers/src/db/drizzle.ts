@@ -1,4 +1,3 @@
-import type { ExecutedQuery } from '@planetscale/database'
 import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js/driver.js'
 import postgres from 'postgres'
@@ -32,6 +31,7 @@ export function checkCode(error: unknown, code: string) {
 
 export * as schema from './schema.js'
 
-export function affectedRows(q: ExecutedQuery): number {
-  return q.rowsAffected || (q as any)[0].affectedRows
+export function affectedRows(q: postgres.RowList<any[]>): number {
+  throw new Error('not updated yet')
+  //return q.rowsAffected || (q as any)[0].affectedRows
 }
