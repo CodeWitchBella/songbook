@@ -8,8 +8,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "NODE_OPTIONS=\"--loader ts-node/esm\" nodemon index.ts",
-    "db-push": "yarn drizzle-kit push:mysql --config=drizzle.ts",
-    "db-migrate": "yarn drizzle-kit generate:mysql --config=drizzle.ts"
+    "db-push": "yarn drizzle-kit push:pg --config=drizzle.config.ts"
   },
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "license": "UNLICENSED",
@@ -44,7 +43,7 @@
     "luxon": "^3.4.3",
     "mysql2": "^3.6.2",
     "pg": "^8.11.3",
-    "postgres": "^3.4.3",
+    "postgres": "^3.4.4",
     "setimmediate": "^1.0.5",
     "zod": "^3.22.4"
   }

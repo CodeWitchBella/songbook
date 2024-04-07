@@ -95,16 +95,31 @@
 
         devshells.default = {
           packages = with pkgs; [
-            #yarnProject
+            yarnProject
             yarnProject.yarn-freestanding
             mysql80
             zellij
             psql
             nodejs_20
-            wasmer
+            bun
+            #wasmer
             #winterjs
           ];
-          commands = [
+          commands = let
+            cd = ''
+              set -e
+              pushd .
+              while true; do
+                if [ "$PWD" = "/" ]; then
+                  echo "Can't find project \$ROOT"
+                  exit 1
+                elif [ -f flake.nix ]; then
+                  break
+                fi
+                cd ..
+              done
+            '';
+          in [
             {
               name = "dev-frontend-vite";
               command = "yarn frontend:dev";
@@ -127,7 +142,10 @@
             }
             {
               name = "dev-server";
-              command = "yarn full:server";
+              command = ''
+                ${cd}
+                bun --watch workers/src/index.ts
+              '';
               help = "Start dev server for backend code";
             }
             {
@@ -142,24 +160,16 @@
             }
             {
               name = "dev";
-              command = "zellij --layout zellij-layout.kdl";
+              command = ''
+                ${cd}
+                ${pkgs.zellij}/bin/zellij --layout zellij-layout.kdl
+              '';
               help = "Start everything needed for fullstack development";
             }
             {
               name = "psql-local";
               command = ''
-                set -e
-                pushd .
-                while true; do
-                  if [ "$PWD" = "/" ]; then
-                    echo "Can't find project \$ROOT"
-                    exit 1
-                  elif [ -f flake.nix ]; then
-                    break
-                  fi
-                  cd ..
-                done
-                URL=$(echo $POSTGRESQL_URL | sed "s|\$ROOT|$PWD|" -)
+                ${cd}
                 ${psql}/bin/psql $URL $@
               '';
             }
@@ -167,7 +177,7 @@
           env = [
             {
               name = "POSTGRESQL_URL";
-              value = "postgresql://songbook?host=$ROOT/.tmp&dbname=songbook";
+              value = "postgresql://localhost/songbook";
             }
           ];
         };

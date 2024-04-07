@@ -1,13 +1,10 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-import { drizzle as pgDrizzle } from 'drizzle-orm/node-postgres'
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres/driver.js'
-import pg from 'pg'
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 
 import { schema } from './drizzle.js'
 
-export type DB = NodePgDatabase<typeof import('./schema.js')>
+export type DB = PostgresJsDatabase<typeof import('./schema.js')>
 
 let db: DB
 export function drizzle() {
@@ -21,9 +18,7 @@ function mkDrizzle(): DB {
   console.info('Using the local database')
   let url = process.env.POSTGRESQL_URL
   if (!url) throw new Error('Missing POSTGRESQL_URL env')
-  const __dirname = path.dirname(fileURLToPath(import.meta.url))
-  url = url.replace('$ROOT', path.join(__dirname, '..', '..', '..'))
-  const connection = new pg.Client(url)
+  const connection = postgres(url)
 
   const db = pgDrizzle(connection, { schema })
   return db

@@ -45,6 +45,7 @@ async function handleRequest(
 }
 
 const worker = {
+  port: 5512,
   async fetch(
     request: Request,
     env: {},
@@ -56,4 +57,4 @@ const worker = {
     return res
   },
 }
-export default worker
+Bun.serve(worker)

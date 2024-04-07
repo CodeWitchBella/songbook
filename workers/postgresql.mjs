@@ -38,6 +38,8 @@ async function init() {
   // Create a database
   runSync('createdb', ['-h', path.join(dirname, '.tmp'), 'songbook'])
 
+  runSync('bun', ['db-push'], path.join(dirname, 'workers'))
+
   //await restore()
   console.log('Skipping restore')
 
@@ -113,9 +115,9 @@ async function readDbUrl() {
   ).DATABASE_URL
 }
 
-function runSync(cmd, args) {
+function runSync(cmd, args, cwd = dirname) {
   console.log('Running', cmd)
-  const res = spawnSync(cmd, args, { stdio: 'inherit', cwd: dirname })
+  const res = spawnSync(cmd, args, { stdio: 'inherit', cwd })
   if (res.error) throw res.error
   if (res.status !== 0)
     throw new Error(`${cmd} exited with status ${res.status}`)

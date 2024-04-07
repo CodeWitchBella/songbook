@@ -8,10 +8,7 @@ const config = {
   driver: 'pg',
   verbose: true,
   dbCredentials: {
-    connectionString: process.env.POSTGRESQL_URL!.replace(
-      '$ROOT',
-      path.join(__dirname, '..'),
-    ),
+    connectionString: process.env.POSTGRESQL_URL!,
   },
 } satisfies Config
 export default config
