@@ -170,7 +170,7 @@
               name = "psql-local";
               command = ''
                 ${cd}
-                ${psql}/bin/psql $URL $@
+                ${psql}/bin/psql $POSTGRESQL_URL $@
               '';
             }
           ];
