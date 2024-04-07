@@ -101,6 +101,7 @@
             zellij
             psql
             nodejs_20
+            wasmer
             #winterjs
           ];
           commands = [
