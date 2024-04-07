@@ -13,6 +13,7 @@ import {
 } from 'drizzle-orm/pg-core'
 
 const id = serial('id').primaryKey()
+const timestampCfg = { mode: 'string', withTimezone: true } as const
 
 export const user = pgTable('user', {
   id,
@@ -21,7 +22,7 @@ export const user = pgTable('user', {
   email: varchar('email', { length: 256 }).notNull().unique(),
   admin: boolean('admin').notNull().default(false),
   passwordHash: varchar('password_hash', { length: 256 }).notNull(),
-  registeredAt: timestamp('registered_at', { mode: 'string' })
+  registeredAt: timestamp('registered_at', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
@@ -36,10 +37,10 @@ export const song = pgTable('song', {
   text: text('text').notNull(),
 
   fontSize: real('font_size').default(1).notNull(),
-  lastModified: timestamp('last_modified', { mode: 'string' })
+  lastModified: timestamp('last_modified', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  insertedAt: timestamp('inserted_at', { mode: 'string' }).default(
+  insertedAt: timestamp('inserted_at', timestampCfg).default(
     sql`CURRENT_TIMESTAMP`,
   ),
   pretranspose: integer('pretranspose').default(0),
@@ -55,7 +56,7 @@ export const deletedSong = pgTable('deleted_song', {
   id,
   songIdString: char('song_id_string', { length: 20 }).unique(),
   songId: integer('song_id').notNull(),
-  deletedAt: timestamp('last_modified', { mode: 'string' })
+  deletedAt: timestamp('last_modified', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
@@ -65,10 +66,10 @@ export const collection = pgTable('collection', {
   idString: char('id_string', { length: 20 }).unique(),
   slug: varchar('slug', { length: 256 }).notNull().unique(),
   name: varchar('name', { length: 256 }).notNull(),
-  insertedAt: timestamp('inserted_at', { mode: 'string' })
+  insertedAt: timestamp('inserted_at', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  lastModified: timestamp('last_modified', { mode: 'string' })
+  lastModified: timestamp('last_modified', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   locked: boolean('locked').notNull().default(false),
@@ -80,7 +81,7 @@ export const deletedCollection = pgTable('deleted_collection', {
   id,
   collectionIdString: char('collection_id_string', { length: 20 }).unique(),
   collectionId: integer('collection_id').notNull(),
-  deletedAt: timestamp('last_modified', { mode: 'string' })
+  deletedAt: timestamp('last_modified', timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 })
@@ -101,5 +102,5 @@ export const session = pgTable('session', {
   id,
   token: char('token', { length: 30 }).unique().notNull(),
   user: integer('user_id').notNull(), //.references(() => user.id),
-  expires: timestamp('expires', { mode: 'string' }).notNull(),
+  expires: timestamp('expires', timestampCfg).notNull(),
 })

@@ -18,7 +18,16 @@ function mkDrizzle(): DB {
   console.info('Using the local database')
   let url = process.env.POSTGRESQL_URL
   if (!url) throw new Error('Missing POSTGRESQL_URL env')
-  const connection = postgres(url)
+  const connection = postgres(url, {
+    types: {
+      date: {
+        to: 1184,
+        from: [1082, 1083, 1114, 1184],
+        serialize: (x: any) => x,
+        parse: (x: any) => x,
+      },
+    },
+  })
 
   const db = pgDrizzle(connection, { schema })
   return db
