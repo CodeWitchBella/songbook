@@ -44,13 +44,10 @@
           packages = with pkgs; [
             yarnProject
             yarnProject.yarn-freestanding
-            mysql80
             zellij
             psql
             nodejs_20
             bun
-            #wasmer
-            #winterjs
           ];
           commands = let
             cd = ''
@@ -128,6 +125,8 @@
             }
           ];
         };
+
+        default = {};
 
         process-compose = {};
       };
