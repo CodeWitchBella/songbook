@@ -506,10 +506,11 @@ const resolvers = {
           lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.song.idString, id))
-      if (affectedRows(res) < 1) throw new UserInputError('Song does not exist')
-      return await context.db.query.song.findFirst({
+      const value = await context.db.query.song.findFirst({
         where: eq(schema.song.idString, id),
       })
+      if (!value) throw new UserInputError('Song does not exist')
+      return value
     },
     async login(
       _: {},
