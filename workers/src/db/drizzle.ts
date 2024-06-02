@@ -40,6 +40,5 @@ export function checkCode(error: unknown, code: string) {
 export * as schema from './schema.js'
 
 export function affectedRows(q: postgres.RowList<any[]>): number {
-  throw new Error('not updated yet')
-  //return q.rowsAffected || (q as any)[0].affectedRows
+  return q.count
 }
