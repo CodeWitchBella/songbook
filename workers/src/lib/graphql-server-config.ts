@@ -156,7 +156,7 @@ async function getViewer(context: MyContext) {
     await context.db
       .update(schema.session)
       .set({
-        expires: sql`CURRENT_TIMESTAMP + INTERVAL ${maxSessionDurationDays} day`,
+        expires: sql`CURRENT_TIMESTAMP + ${maxSessionDurationDays + ' days'}`,
       })
       .where(eq(schema.session.id, session.session.id))
   }
@@ -591,7 +591,7 @@ async function createSession(context: MyContext, userId: number) {
   await context.db.insert(schema.session).values({
     token: sessionToken,
     user: userId,
-    expires: sql`CURRENT_TIMESTAMP + INTERVAL ${maxSessionDurationDays} day`,
+    expires: sql`CURRENT_TIMESTAMP + ${maxSessionDurationDays + ' days'}`,
   })
   const sessionDuration = Duration.fromObject({ months: 2 })
 
