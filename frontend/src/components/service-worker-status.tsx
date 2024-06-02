@@ -3,7 +3,6 @@ import type { ServiceWorkerRegisterConfig } from 'serviceWorker'
 import type { Workbox } from 'workbox-window'
 
 const context = React.createContext({
-  updateAfterNavigate: () => {},
   routeRendered: () => {},
 })
 
@@ -15,7 +14,6 @@ export function ServiceWorkerStatusProvider({
   register: (config?: ServiceWorkerRegisterConfig) => void
 }) {
   const updatedRef = useRef(null as null | Workbox)
-  const updateAfterNavigate = useRef(false)
 
   useEffect(() => {
     register({
@@ -30,10 +28,6 @@ export function ServiceWorkerStatusProvider({
     <context.Provider
       value={useMemo(
         () => ({
-          updateAfterNavigate: () => {
-            console.log('ServiceWorkerStatusProvider:updateAfterNavigate')
-            updateAfterNavigate.current = true
-          },
           routeRendered: () => {
             console.log('ServiceWorkerStatusProvider:routeRendered')
             const updated = updatedRef.current
@@ -50,10 +44,6 @@ export function ServiceWorkerStatusProvider({
       {children}
     </context.Provider>
   )
-}
-
-export function useUpdateAfterNavigate() {
-  return useContext(context).updateAfterNavigate
 }
 
 export function RouteRenderedMarker() {

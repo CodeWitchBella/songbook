@@ -1,15 +1,11 @@
 import type { CSSProperties, PropsWithChildren } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 
-import { useUpdateAfterNavigate } from './service-worker-status'
-
 export function useGoBack(to = '/') {
   const navigate = useNavigate()
   const location = useLocation()
-  const updateAfterNavigate = useUpdateAfterNavigate()
   return () => {
     const canGoBack = location.state && (location.state as any).canGoBack
-    updateAfterNavigate()
     if (canGoBack) {
       navigate(typeof canGoBack === 'number' ? -canGoBack : -1)
     } else {

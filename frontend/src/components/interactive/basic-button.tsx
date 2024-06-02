@@ -1,4 +1,3 @@
-import { useUpdateAfterNavigate } from 'components/service-worker-status'
 import type { TStyleProp } from 'components/themed'
 import { TText, useColors } from 'components/themed'
 import type { PropsWithChildren } from 'react'
@@ -30,18 +29,16 @@ export function useLinkOnPress(
   { replace = false }: { replace?: boolean } = {},
 ) {
   const navigate = useNavigate()
-  const updateAfterNavigate = useUpdateAfterNavigate()
   return useCallback(
     (event?: { preventDefault?: () => any }) => {
       event?.preventDefault?.()
       if (to.startsWith('http://') || to.startsWith('https://')) {
         window.open(to, '_blank', 'noopener,noreferrer')
       } else {
-        updateAfterNavigate()
         navigate(to, { state: { canGoBack: true }, replace })
       }
     },
-    [navigate, replace, to, updateAfterNavigate],
+    [navigate, replace, to],
   )
 }
 
