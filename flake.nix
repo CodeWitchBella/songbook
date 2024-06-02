@@ -28,8 +28,9 @@
         system,
         ...
       }: let
-        yarnProject = pkgs.callPackage ./.yarn/yarn-project.nix {} {src = pkgs.lib.cleanSource ./.;};
         psql = pkgs.postgresql_16;
+
+        frontend = import ./frontend/frontend.nix {inherit inputs pkgs;};
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
@@ -42,8 +43,6 @@
 
         devshells.default = {
           packages = with pkgs; [
-            yarnProject
-            yarnProject.yarn-freestanding
             zellij
             psql
             nodejs_20
@@ -66,23 +65,12 @@
           in [
             {
               name = "dev-frontend-vite";
-              command = "yarn frontend:dev";
+              command = ''
+                ${cd}
+                cd frontend
+                npm run dev
+              '';
               help = "Start dev server for frontend code";
-            }
-            {
-              name = "dev-proxy";
-              command = "yarn frontend:proxy";
-              help = "Start proxy to access production from frontend";
-            }
-            {
-              name = "dev-frontend";
-              command = "yarn frontend";
-              help = "Start everything for frontend-only development";
-            }
-            {
-              name = "dev-frontend-local";
-              command = "yarn full:frontend";
-              help = "Start frontend";
             }
             {
               name = "dev-server";
@@ -94,13 +82,8 @@
             }
             {
               name = "dev-db";
-              command = "yarn full:db";
+              command = "node workers/postgresql.mjs run";
               help = "Start database";
-            }
-            {
-              name = "db-push";
-              command = "yarn workspace songbook-workers db-push";
-              help = "Apply changes to database";
             }
             {
               name = "dev";
@@ -126,7 +109,7 @@
           ];
         };
 
-        default = {};
+        packages.default = frontend.packages.default;
 
         process-compose = {};
       };
