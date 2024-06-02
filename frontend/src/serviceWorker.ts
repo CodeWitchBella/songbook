@@ -81,6 +81,7 @@ function registerValidSW(swUrl: string, config: ServiceWorkerRegisterConfig) {
   })
 
   wb.register()
+  wb.update()
 }
 
 function checkValidServiceWorker(
