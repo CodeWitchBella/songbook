@@ -18,3 +18,22 @@ export function InlineLink({
     </Link>
   )
 }
+
+export function ExternalInlineLink({
+  children,
+  to,
+}: {
+  to: string
+  children: ReactNode
+}) {
+  return (
+    <Link
+      className="border-current text-black underline hover:italic dark:text-white"
+      to={to}
+      target='_blank'
+      rel="noopener"
+    >
+      {children}
+    </Link>
+  )
+}
