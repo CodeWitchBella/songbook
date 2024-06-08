@@ -1,14 +1,14 @@
 import * as bcrypt from '@isbl/bcryptjs'
-import { gql, UserInputError } from 'apollo-server-cloudflare'
 import { and, eq, gt, gte, or, sql } from 'drizzle-orm'
 import { DateTime, Duration } from 'luxon'
 
 import { affectedRows, checkCode, schema } from '../db/drizzle.js'
 import type { MyContext } from './context.js'
 import { randomID, slugify } from './utils.js'
+import { GraphQLError } from 'graphql'
 
 // Construct a schema, using GraphQL schema language
-const typeDefs = gql`
+const typeDefs = `
   type Song {
     slug: String!
     author: String!
@@ -165,7 +165,7 @@ async function getViewer(context: MyContext) {
 
 export async function getViewerCheck(context: MyContext) {
   const viewer = await getViewer(context)
-  if (!viewer) throw new UserInputError('Not logged in')
+  if (!viewer) throw new GraphQLError('Not logged in')
   return viewer
 }
 
@@ -351,7 +351,7 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context)
       if (global && !viewer.admin)
-        throw new UserInputError('Only admin can create global songbooks')
+        throw new GraphQLError('Only admin can create global songbooks')
 
       const slug =
         (global ? '' : slugify(viewer?.handle || viewer?.name) + '/') +
@@ -387,21 +387,20 @@ const resolvers = {
           eq(schema.collection.slug, collection),
         ),
       })
-      if (!collectionSnap) throw new UserInputError('Collection does not exist')
+      if (!collectionSnap) throw new GraphQLError('Collection does not exist')
       if (
         !(
           collectionSnap.owner === viewer.id ||
           (!collectionSnap.owner && viewer.admin)
         )
       )
-        throw new UserInputError('Not your collection')
-      if (collectionSnap.locked)
-        throw new UserInputError('Collection is locked')
+        throw new GraphQLError('Not your collection')
+      if (collectionSnap.locked) throw new GraphQLError('Collection is locked')
 
       const songSnap = await context.db.query.song.findFirst({
         where: or(eq(schema.song.idString, song), eq(schema.song.slug, song)),
       })
-      if (!songSnap) throw new UserInputError('Song does not exist')
+      if (!songSnap) throw new GraphQLError('Song does not exist')
 
       try {
         await context.db.insert(schema.collectionSong).values({
@@ -426,14 +425,14 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context)
       if (!viewer?.admin)
-        throw new UserInputError('Only admin can lock collections')
+        throw new GraphQLError('Only admin can lock collections')
 
       const res = await context.db
         .update(schema.collection)
         .set({ locked: true, lastModified: sql`CURRENT_TIMESTAMP` })
         .where(eq(schema.collection.idString, collection))
       if (!affectedRows(res))
-        throw new UserInputError('Collection does not exist')
+        throw new GraphQLError('Collection does not exist')
 
       return 'Success!'
     },
@@ -449,21 +448,20 @@ const resolvers = {
           eq(schema.collection.slug, collection),
         ),
       })
-      if (!collectionSnap) throw new UserInputError('Collection does not exist')
+      if (!collectionSnap) throw new GraphQLError('Collection does not exist')
       if (
         !(
           collectionSnap.owner === viewer.id ||
           (!collectionSnap.owner && viewer.admin)
         )
       )
-        throw new UserInputError('Not your collection')
-      if (collectionSnap.locked)
-        throw new UserInputError('Collection is locked')
+        throw new GraphQLError('Not your collection')
+      if (collectionSnap.locked) throw new GraphQLError('Collection is locked')
 
       const songSnap = await context.db.query.song.findFirst({
         where: or(eq(schema.song.idString, song), eq(schema.song.slug, song)),
       })
-      if (!songSnap) throw new UserInputError('Song does not exist')
+      if (!songSnap) throw new GraphQLError('Song does not exist')
 
       const items = await context.db
         .delete(schema.collectionSong)
@@ -506,11 +504,11 @@ const resolvers = {
           lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.song.idString, id))
-      if (!affectedRows(res)) throw new UserInputError('Song does not exist')
+      if (!affectedRows(res)) throw new GraphQLError('Song does not exist')
       const value = await context.db.query.song.findFirst({
         where: eq(schema.song.idString, id),
       })
-      if (!value) throw new UserInputError('Song does not exist')
+      if (!value) throw new GraphQLError('Song does not exist')
       return value
     },
     async login(

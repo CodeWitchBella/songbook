@@ -33,6 +33,7 @@
 
         frontend = import ./frontend/frontend.nix {inherit inputs pkgs;};
         backend = import ./backend/backend.nix {inherit inputs pkgs;};
+        backend-run = "${pkgs.deno}/bin/deno run --unstable-sloppy-imports --unstable-byonm -A";
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
@@ -59,8 +60,16 @@
             psql
             nodejs
             pkgs.bun
+            pkgs.deno
           ];
           commands = [
+            {
+              name = "backend";
+              command = ''
+                cd ${root}/backend
+                ${backend-run} src/index.ts
+              '';
+            }
             {
               name = "dev";
               command = ''
@@ -82,7 +91,10 @@
           };
           processes = {
             postgres.command = "${pkgs.nodejs}/bin/node backend/postgresql.mjs run";
-            backend.command = "${pkgs.bun}/bin/bun --watch backend/src/index.ts";
+            backend = {
+              command = "${backend-run} --watch src/index.ts";
+              working_dir = "backend";
+            };
             frontend = {
               command = "${nodejs}/bin/npm run dev";
               working_dir = "frontend";

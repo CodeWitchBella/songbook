@@ -1,6 +1,4 @@
-import { renderPlaygroundPage } from '@apollographql/graphql-playground-html'
-import { ApolloServer } from 'apollo-server-cloudflare'
-import { graphqlCloudflare } from 'apollo-server-cloudflare/dist/cloudflareApollo.js'
+import { ApolloServer, HeaderMap } from '@apollo/server'
 
 import type { MyContext } from '../lib/context.js'
 import serverConfig from '../lib/graphql-server-config.js'
@@ -21,14 +19,16 @@ export async function handleGraphql(
   context: MyContext,
 ): Promise<Response> {
   const server = getServer()
-  if (request.method === 'GET') {
-    return new Response(renderPlaygroundPage({}), {
-      headers: { 'content-type': 'text/html; charset=utf-8' },
-    })
-  }
-  const response = await graphqlCloudflare(async () => ({
-    ...(await server.createGraphQLServerOptions(request as any)),
-    context,
-  }))(request as any)
-  return response as any
+  const response = await server.executeHTTPGraphQLRequest({
+    httpGraphQLRequest: {
+      method: request.method,
+      body: await request.json(),
+      headers: new HeaderMap(request.headers.entries()),
+      search: new URL(request.url).search,
+    },
+    context: () => context as any,
+  })
+  return new Response(
+    response.body.kind === 'complete' ? response.body.string : null,
+  )
 }

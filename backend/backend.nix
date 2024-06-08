@@ -1,7 +1,4 @@
 {pkgs, ...}: let
-  run = pkgs.writeShellScript "songbook-backend" ''
-    ${pkgs.bun}/bin/bun workers/src/index.ts
-  '';
   songbook = pkgs.stdenv.mkDerivation {
     name = "songbook";
     version = "0.1.0";

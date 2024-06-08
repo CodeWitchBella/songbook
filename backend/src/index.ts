@@ -10,7 +10,6 @@ import { contextPair } from './lib/context.js'
 
 async function handleRequest(
   request: Request,
-  env: {},
   ctx: ExecutionContext,
   createContext: () => Promise<MyContext>,
 ): Promise<Response> {
@@ -46,17 +45,18 @@ async function handleRequest(
 
 const worker = {
   port: 5512,
-  async fetch(
+}
+Deno.serve(
+  worker,
+  async function fetch(
     request: Request,
-    env: {},
     ctx: ExecutionContext,
   ): Promise<Response> {
     const { createContext, finishContext } = contextPair(request)
-    const res = await handleRequest(request, env, ctx, createContext)
+    const res = await handleRequest(request, ctx, createContext)
     finishContext(res)
     return res
   },
-}
-Bun.serve(worker)
+)
 
 console.log('listening on http://localhost:5512')

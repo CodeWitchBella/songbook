@@ -37,6 +37,7 @@ dist
 target
 data
 .tmp
+*.psql
 
 /rust/target
 result
