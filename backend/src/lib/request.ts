@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { badRequestResponse } from './response.js'
 
 export async function parseJsonBody(request: Request) {
@@ -76,4 +77,16 @@ export async function validateJsonBody<
   }
 
   return json
+}
+
+export async function validateZodJsonBody<T>(
+  request: Request,
+  schema: z.Schema<T>,
+): Promise<T> {
+  const json: any = await parseJsonBody(request)
+  const res = schema.safeParse(json)
+  if (res.error) {
+    throw badRequestResponse(JSON.stringify(res.error))
+  }
+  return res.data
 }

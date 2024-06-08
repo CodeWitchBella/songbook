@@ -531,7 +531,8 @@ const resolvers = {
         return { __typename: 'LoginError', message: 'Chybné heslo' }
       }
 
-      await createSession(context, user.id)
+      const sess = await createSession(context, user.id)
+      context.setSessionCookie(sess.token, sess.duration)
 
       return {
         __typename: 'LoginSuccess',
@@ -566,7 +567,8 @@ const resolvers = {
         where: eq(schema.user.email, input.email),
       })
       if (!user) throw new Error('Insert somehow failed')
-      await createSession(context, user.id)
+      const sess = await createSession(context, user.id)
+      context.setSessionCookie(sess.token, sess.duration)
       return {
         __typename: 'RegisterSuccess',
         user,
@@ -586,7 +588,10 @@ const resolvers = {
   },
 }
 
-async function createSession(context: MyContext, userId: number) {
+export async function createSession(
+  context: MyContext,
+  userId: number,
+): Promise<{ token: string; duration: Duration<true> }> {
   const sessionToken = await randomID(30)
   await context.db.insert(schema.session).values({
     token: sessionToken,
@@ -595,7 +600,10 @@ async function createSession(context: MyContext, userId: number) {
   })
   const sessionDuration = Duration.fromObject({ months: 2 })
 
-  context.setSessionCookie(sessionToken, sessionDuration)
+  return {
+    token: sessionToken,
+    duration: sessionDuration,
+  }
 }
 
 const serverConfig = {

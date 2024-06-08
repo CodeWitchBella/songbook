@@ -1,6 +1,7 @@
 import { handleCreateSong } from './endpoints/create-song.js'
 import { handleGraphql } from './endpoints/graphql.js'
 import { handleImport } from './endpoints/import.js'
+import { handleLogin } from './endpoints/login.js'
 import { handleReleases } from './endpoints/releases.js'
 import { forward } from './forward.js'
 import type { MyContext } from './lib/context.js'
@@ -19,6 +20,8 @@ async function handleRequest(
     if (url.pathname === '/hello') return new Response('World')
     if (url.pathname === '/graphql')
       return await handleGraphql(request, await createContext())
+    if (url.pathname === '/login')
+      return await handleLogin(request, await createContext())
     if (url.pathname === '/ultimate-guitar' || url.pathname === '/import')
       return await handleImport(request)
     if (url.pathname === '/releases') return await handleReleases(request, ctx)
