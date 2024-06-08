@@ -3,11 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@automerge/automerge": "^2.2.2",
-    "@automerge/automerge-repo": "^1.1.12",
-    "@automerge/automerge-repo-network-websocket": "^1.1.12",
-    "@automerge/automerge-repo-react-hooks": "^1.1.12",
-    "@automerge/automerge-repo-storage-indexeddb": "^1.1.12",
     "@isbl/ts-utils": "^1.0.1",
     "@lezer/lr": "^1.4.1",
     "@react-pdf/renderer": "^3.4.4",
