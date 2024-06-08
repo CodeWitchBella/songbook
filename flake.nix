@@ -71,7 +71,7 @@
           ];
         };
 
-        #packages.default = frontend.packages.default;
+        packages.frontend = frontend.packages.default;
 
         process-compose.default.settings = {
           environment = {

@@ -1,4 +1,4 @@
-{pkgs}: let
+{pkgs, ...}: let
   # The path to the npm project
   src = ./.;
 
@@ -19,13 +19,17 @@
   # Write a file with the list of tarballs
   tarballsFile = pkgs.writeTextFile {
     name = "tarballs";
-    text = builtins.concatStringsSep "\n" tarballs;
+    text = "${builtins.concatStringsSep "\n" tarballs}\n";
   };
   node_modules = pkgs.stdenv.mkDerivation {
     inherit (packageLock) name version;
-    inherit src;
+    src = pkgs.lib.fileset.toSource {
+      root = ./.;
+      fileset = pkgs.lib.fileset.union ./package.json ./package-lock.json;
+    };
     buildInputs = [pkgs.nodejs];
     buildPhase = ''
+      set -xe
       export HOME=$PWD/.home
       export npm_config_cache=$PWD/.npm
       mkdir -p $out/js
@@ -45,6 +49,23 @@
       ln -s $out/js/node_modules/.bin $out/bin
     '';
   };
+  songbook = pkgs.stdenv.mkDerivation {
+    name = "songbook";
+    version = "0.1.0";
+    src = pkgs.lib.cleanSource ./.;
+    buildInputs = [pkgs.nodejs node_modules];
+
+    buildPhase = ''
+      cp -r ${node_modules}/js/node_modules .
+      cp -r $src/. .
+      npm run build-ci
+
+      cp -r dist $out/
+    '';
+  };
 in {
-  packages.default = node_modules;
+  packages = {
+    inherit node_modules songbook;
+    default = songbook;
+  };
 }
