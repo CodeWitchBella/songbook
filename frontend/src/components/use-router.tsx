@@ -1,14 +1,14 @@
-import { useCallback } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useCallback } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 type Setter = (
   value: string | null,
   opts?: { push?: boolean; state?: any },
-) => void
+) => void;
 export function useQueryParam(param: string): [string | null, Setter] {
-  const [params, setParam] = useSearchParams()
-  const value = params.get(param)
-  const location = useLocation()
+  const [params, setParam] = useSearchParams();
+  const value = params.get(param);
+  const location = useLocation();
 
   const setValueOnRouter = useCallback<Setter>(
     (
@@ -18,16 +18,16 @@ export function useQueryParam(param: string): [string | null, Setter] {
         state: locationState,
       }: { push?: boolean; state?: any } = {},
     ) => {
-      const copy = new URLSearchParams(params)
-      if (value) copy.set(param, value)
-      else copy.delete(param)
+      const copy = new URLSearchParams(params);
+      if (value) copy.set(param, value);
+      else copy.delete(param);
       setParam(copy, {
         replace: !push,
         state: locationState || location.state,
-      })
+      });
     },
     [location.state, param, params, setParam],
-  )
+  );
 
-  return [value, setValueOnRouter]
+  return [value, setValueOnRouter];
 }

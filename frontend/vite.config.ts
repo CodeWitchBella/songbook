@@ -1,10 +1,10 @@
 // @ts-expect-error
-import { lezer } from '@lezer/generator/rollup'
-import react from '@vitejs/plugin-react-swc'
-import fs from 'fs'
-import { defineConfig } from 'vite'
-import { VitePWA } from 'vite-plugin-pwa'
-import wasm from 'vite-plugin-wasm'
+import { lezer } from "@lezer/generator/rollup";
+import react from "@vitejs/plugin-react-swc";
+import fs from "fs";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
+import wasm from "vite-plugin-wasm";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,14 +12,14 @@ export default defineConfig({
     sourcemap: true,
   },
   esbuild: {
-    jsx: 'automatic',
-    logOverride: { 'this-is-undefined-in-esm': 'silent' },
-    supported: { 'top-level-await': true },
+    jsx: "automatic",
+    logOverride: { "this-is-undefined-in-esm": "silent" },
+    supported: { "top-level-await": true },
   },
   server: {
     port: 5513,
     proxy: {
-      '/api': { target: 'http://localhost:5512', changeOrigin: true },
+      "/api": { target: "http://localhost:5512", changeOrigin: true },
     },
   },
   plugins: [
@@ -28,52 +28,52 @@ export default defineConfig({
     react(),
     myPlugin(),
     VitePWA({
-      strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'service-worker.ts',
-      manifestFilename: 'manifest.json',
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "service-worker.ts",
+      manifestFilename: "manifest.json",
       manifest: JSON.parse(
         fs.readFileSync(
-          new URL('./src/manifest.json', import.meta.url),
-          'utf-8',
+          new URL("./src/manifest.json", import.meta.url),
+          "utf-8",
         ),
       ),
       injectManifest: {
         maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
-        globPatterns: ['**/*.{js,css,html,woff2,svg,wasm}'],
+        globPatterns: ["**/*.{js,css,html,woff2,svg,wasm}"],
       },
     }),
   ],
   resolve: {
-    extensions: ['.web.js', '.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    extensions: [".web.js", ".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
     alias: [
       {
         find: /^(utils|store|routes|containers|sections|webfonts|components)\//,
-        replacement: '/src/$1/',
+        replacement: "/src/$1/",
       },
-      { find: 'build-data', replacement: '/src/build-data' },
-      { find: 'react-native', replacement: 'react-native-web' },
+      { find: "build-data", replacement: "/src/build-data" },
+      { find: "react-native", replacement: "react-native-web" },
       {
-        find: 'react-native-svg',
-        replacement: 'react-native-svg/lib/commonjs/index.js',
+        find: "react-native-svg",
+        replacement: "react-native-svg/lib/commonjs/index.js",
       },
     ],
   },
-})
+});
 
 const file =
-  'node_modules/@react-pdf/unicode-properties/lib/unicode-properties.es.js'
+  "node_modules/@react-pdf/unicode-properties/lib/unicode-properties.es.js";
 function myPlugin() {
   return {
-    name: 'transform-file',
+    name: "transform-file",
 
     transform(src, id) {
       if (id.endsWith(file)) {
         return {
           code: "import { Buffer } from 'buffer';" + src,
           map: null, // provide source map if available
-        }
+        };
       }
     },
-  }
+  };
 }

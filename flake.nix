@@ -44,8 +44,6 @@
             biome = {
               enable = true;
               settings.javascript.formatter = {
-                quoteStyle = "single";
-                semicolons = "asNeeded";
                 indentStyle = "space";
               };
               settings.json.formatter = {

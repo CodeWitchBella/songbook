@@ -1,23 +1,23 @@
-import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { drizzle as pgDrizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-import { schema } from './drizzle.js'
+import { schema } from "./drizzle.js";
 
-export type DB = PostgresJsDatabase<typeof import('./schema.js')>
+export type DB = PostgresJsDatabase<typeof import("./schema.js")>;
 
-let db: DB
+let db: DB;
 export function drizzle() {
   if (!db) {
-    db = mkDrizzle()
+    db = mkDrizzle();
   }
-  return db
+  return db;
 }
 
 function mkDrizzle(): DB {
-  console.info('Using the local database')
-  let url = Deno.env.get('POSTGRESQL_URL')
-  if (!url) throw new Error('Missing POSTGRESQL_URL env')
+  console.info("Using the local database");
+  let url = Deno.env.get("POSTGRESQL_URL");
+  if (!url) throw new Error("Missing POSTGRESQL_URL env");
   const connection = postgres(url, {
     types: {
       date: {
@@ -27,18 +27,18 @@ function mkDrizzle(): DB {
         parse: (x: any) => x,
       },
     },
-  })
+  });
 
-  const db = pgDrizzle(connection, { schema })
-  return db
+  const db = pgDrizzle(connection, { schema });
+  return db;
 }
 
 export function checkCode(error: unknown, code: string) {
-  return typeof error === 'object' && error && (error as any).code === code
+  return typeof error === "object" && error && (error as any).code === code;
 }
 
-export * as schema from './schema.js'
+export * as schema from "./schema.js";
 
 export function affectedRows(q: postgres.RowList<any[]>): number {
-  return q.count
+  return q.count;
 }

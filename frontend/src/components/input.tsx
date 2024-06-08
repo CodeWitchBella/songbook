@@ -1,15 +1,15 @@
-import { TText } from './themed'
+import { TText } from "./themed";
 
 export default function Input({
   label,
   value,
   onChange,
-  type = 'text',
+  type = "text",
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => any
-  type?: string
+  label: string;
+  value: string;
+  onChange: (v: string) => any;
+  type?: string;
 }) {
   return (
     <label>
@@ -19,28 +19,28 @@ export default function Input({
         value={value}
         className="border border-current bg-transparent px-2 py-0.5"
         onChange={(evt) => {
-          evt.preventDefault()
-          onChange(evt.target.value)
+          evt.preventDefault();
+          onChange(evt.target.value);
         }}
       />
     </label>
-  )
+  );
 }
 
 export function LargeInput({
   label,
   value,
   onChange,
-  type = 'text',
+  type = "text",
   disabled,
   name,
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => any
-  type?: string
-  disabled?: boolean
-  name?: string
+  label: string;
+  value: string;
+  onChange: (v: string) => any;
+  type?: string;
+  disabled?: boolean;
+  name?: string;
 }) {
   return (
     <label className="flex flex-col gap-1">
@@ -50,12 +50,12 @@ export function LargeInput({
         type={type}
         value={value}
         onChange={(evt) => {
-          evt.preventDefault()
-          onChange(evt.target.value)
+          evt.preventDefault();
+          onChange(evt.target.value);
         }}
         disabled={disabled}
         name={name}
       />
     </label>
-  )
+  );
 }

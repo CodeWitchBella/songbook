@@ -1,21 +1,21 @@
 export function once<T>(fn: () => T): () => T {
-  let result: T
-  let done = false
+  let result: T;
+  let done = false;
   return () => {
     if (!done) {
-      done = true
-      result = fn()
+      done = true;
+      result = fn();
     }
-    return result
-  }
+    return result;
+  };
 }
 
 function prefixLength(a: string, b: string) {
-  const length = Math.min(a.length, b.length)
+  const length = Math.min(a.length, b.length);
   for (let i = 0; i < length; i++) {
-    if (a[i] !== b[i]) return i
+    if (a[i] !== b[i]) return i;
   }
-  return length
+  return length;
 }
 
 /**
@@ -26,24 +26,24 @@ export function collectionCompare(
   ai: { item: { name: string } },
   bi: { item: { name: string } },
 ) {
-  const a = ai.item.name
-  const b = bi.item.name
-  const prefix = prefixLength(a, b)
+  const a = ai.item.name;
+  const b = bi.item.name;
+  const prefix = prefixLength(a, b);
 
   if (/[0-9]/.test(a[prefix]) && /[0-9]/.test(b[prefix])) {
-    return b.localeCompare(a)
+    return b.localeCompare(a);
   }
-  return a.localeCompare(b)
+  return a.localeCompare(b);
 }
 
 export function collectionFullName(collection: {
-  slug: string
-  owner: { handle?: string; name: string }
-  name: string
+  slug: string;
+  owner: { handle?: string; name: string };
+  name: string;
 }) {
   return (
-    (collection.slug.includes('/')
-      ? (collection.owner.handle || collection.owner.name) + ' > '
-      : '') + collection.name
-  )
+    (collection.slug.includes("/")
+      ? (collection.owner.handle || collection.owner.name) + " > "
+      : "") + collection.name
+  );
 }

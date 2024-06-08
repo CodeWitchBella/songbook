@@ -1,25 +1,25 @@
-import type ReactPDFTypes from '@react-pdf/types'
-import { SizerPage } from 'components/sizer-page'
-import type { PropsWithChildren } from 'react'
-import React, { useContext } from 'react'
+import type ReactPDFTypes from "@react-pdf/types";
+import { SizerPage } from "components/sizer-page";
+import type { PropsWithChildren } from "react";
+import React, { useContext } from "react";
 
-import { usePDFSettings } from './pdf-settings'
-import { PDFPage as PrimitivePDFPage, useIsInPDF, View } from './primitives'
+import { usePDFSettings } from "./pdf-settings";
+import { PDFPage as PrimitivePDFPage, useIsInPDF, View } from "./primitives";
 
 const margin = {
   top: (7.8 / 148) * 100,
   bottom: (6 / 148) * 100,
   outer: (12.4 / 105) * 100,
   inner: (18.8 / 105) * 100,
-}
+};
 
 function DefaultPage({
   children,
   ...rest
 }: PropsWithChildren<{ bookmark?: string; id?: string }>) {
-  const isInPDF = useIsInPDF()
-  const pdfSettings = usePDFSettings()
-  if (!isInPDF) return <SizerPage>{children}</SizerPage>
+  const isInPDF = useIsInPDF();
+  const pdfSettings = usePDFSettings();
+  if (!isInPDF) return <SizerPage>{children}</SizerPage>;
   return (
     <PrimitivePDFPage
       wrap={false}
@@ -28,12 +28,12 @@ function DefaultPage({
     >
       {children}
     </PrimitivePDFPage>
-  )
+  );
 }
 
 const pageContext = React.createContext({
   Page: DefaultPage,
-})
+});
 
 export function PDFPage({
   children,
@@ -41,13 +41,13 @@ export function PDFPage({
   style,
   ...rest
 }: PropsWithChildren<{
-  left: boolean
-  style?: ReactPDFTypes.Style | ReactPDFTypes.Style[]
-  bookmark?: string
-  id?: string
+  left: boolean;
+  style?: ReactPDFTypes.Style | ReactPDFTypes.Style[];
+  bookmark?: string;
+  id?: string;
 }>) {
-  const { vw, vh, web } = usePDFSettings()
-  const { Page } = useContext(pageContext)
+  const { vw, vh, web } = usePDFSettings();
+  const { Page } = useContext(pageContext);
 
   return (
     <Page {...rest}>
@@ -55,10 +55,10 @@ export function PDFPage({
         style={[
           style as any,
           {
-            fontFamily: 'Cantarell',
-            fontWeight: 'normal',
-            height: web ? '100%' : vh(100),
-            width: web ? '100%' : vw(100),
+            fontFamily: "Cantarell",
+            fontWeight: "normal",
+            height: web ? "100%" : vh(100),
+            width: web ? "100%" : vw(100),
             paddingTop: web ? 0 : vh(margin.top),
             paddingBottom: web ? 0 : vh(margin.bottom),
             paddingRight: web ? 0 : vw(left ? margin.inner : margin.outer),
@@ -69,39 +69,39 @@ export function PDFPage({
         {children}
       </View>
     </Page>
-  )
+  );
 }
 
 function NoopPage({ children }: PropsWithChildren<{}>) {
-  const { vw, vh } = usePDFSettings()
-  return <View style={{ width: vw(100), height: vh(100) }}>{children}</View>
+  const { vw, vh } = usePDFSettings();
+  return <View style={{ width: vw(100), height: vh(100) }}>{children}</View>;
 }
 
 export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
-  const pagesCp = [...pages]
+  const pagesCp = [...pages];
   const physicalPages: (readonly [
     readonly [JSX.Element, JSX.Element],
     readonly [JSX.Element, JSX.Element],
-  ])[] = []
-  let keygen = 0
+  ])[] = [];
+  let keygen = 0;
   while (pagesCp.length > 0) {
     const a = [
       pagesCp.splice(pagesCp.length - 1, 1)[0],
       pagesCp.splice(0, 1)[0] || (
         <PDFPage left={false} key={`booklet-${keygen++}`} />
       ),
-    ] as const
+    ] as const;
     const b = [
       pagesCp.splice(0, 1)[0] || <PDFPage left={true} />,
       pagesCp.splice(pagesCp.length - 1, 1)[0] || (
         <PDFPage left={false} key={`booklet-${keygen++}`} />
       ),
-    ] as const
-    physicalPages.push([a, b])
-    physicalPages.push([a, b])
+    ] as const;
+    physicalPages.push([a, b]);
+    physicalPages.push([a, b]);
   }
 
-  const { pageSize } = usePDFSettings()
+  const { pageSize } = usePDFSettings();
 
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
@@ -114,25 +114,25 @@ export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
         >
           <View
             style={{
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: '100vh',
-              transform: i % 2 === 0 ? [{ rotate: '180deg' }] : [],
-              flexWrap: 'wrap',
+              flexDirection: "column",
+              justifyContent: "space-between",
+              height: "100vh",
+              transform: i % 2 === 0 ? [{ rotate: "180deg" }] : [],
+              flexWrap: "wrap",
             }}
           >
-            <View style={{ flexDirection: 'row' }}>{page[0]}</View>
+            <View style={{ flexDirection: "row" }}>{page[0]}</View>
             <View
               style={{
                 borderBottomWidth: 0.1,
-                borderStyle: 'dashed',
-                borderColor: 'gray',
+                borderStyle: "dashed",
+                borderColor: "gray",
               }}
             />
             <View
               style={{
-                flexDirection: 'row',
-                transform: [{ rotate: '180deg' }],
+                flexDirection: "row",
+                transform: [{ rotate: "180deg" }],
               }}
             >
               {page[1]}
@@ -141,20 +141,20 @@ export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
         </PrimitivePDFPage>
       ))}
     </pageContext.Provider>
-  )
+  );
 }
 
 export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
-  const pagesCp = [...pages]
-  const physicalPages: (readonly [JSX.Element, JSX.Element])[] = []
-  let keygen = 0
+  const pagesCp = [...pages];
+  const physicalPages: (readonly [JSX.Element, JSX.Element])[] = [];
+  let keygen = 0;
   while (pagesCp.length > 0) {
     physicalPages.push([
       pagesCp.splice(pagesCp.length - 1, 1)[0],
       pagesCp.splice(0, 1)[0] || (
         <PDFPage left={false} key={`booklet-${keygen++}`} />
       ),
-    ])
+    ]);
     physicalPages.push([
       pagesCp.splice(0, 1)[0] || (
         <PDFPage left={false} key={`booklet-${keygen++}`} />
@@ -162,10 +162,10 @@ export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
       pagesCp.splice(pagesCp.length - 1, 1)[0] || (
         <PDFPage left={false} key={`booklet-${keygen++}`} />
       ),
-    ])
+    ]);
   }
 
-  const { pageSize } = usePDFSettings()
+  const { pageSize } = usePDFSettings();
 
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
@@ -178,20 +178,20 @@ export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
         >
           <View
             style={{
-              display: 'flex',
-              width: '100vw',
-              height: '100vh',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              width: "100vw",
+              height: "100vh",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <View
               style={{
-                width: '100vh',
-                height: '100vw',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                transform: [{ rotate: i % 2 === 0 ? '90deg' : '-90deg' }],
+                width: "100vh",
+                height: "100vw",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                transform: [{ rotate: i % 2 === 0 ? "90deg" : "-90deg" }],
               }}
             >
               {page}
@@ -200,5 +200,5 @@ export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
         </PrimitivePDFPage>
       ))}
     </pageContext.Provider>
-  )
+  );
 }

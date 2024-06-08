@@ -1,67 +1,67 @@
-import { notNull } from '@isbl/ts-utils'
-import { BackArrow, BackButton } from 'components/back-button'
-import type { PropsWithChildren } from 'react'
-import { StyleSheet } from 'react-native'
-import type { Line, Paragraph } from 'utils/song-parser/song-parser'
+import { notNull } from "@isbl/ts-utils";
+import { BackArrow, BackButton } from "components/back-button";
+import type { PropsWithChildren } from "react";
+import { StyleSheet } from "react-native";
+import type { Line, Paragraph } from "utils/song-parser/song-parser";
 
-import { Chord } from './chord'
-import { PDFPage } from './pdf-page'
-import { usePDFSettings } from './pdf-settings'
-import type { PropsOf } from './primitives'
-import { Text, View } from './primitives'
+import { Chord } from "./chord";
+import { PDFPage } from "./pdf-page";
+import { usePDFSettings } from "./pdf-settings";
+import type { PropsOf } from "./primitives";
+import { Text, View } from "./primitives";
 
 const nbsp = (text: string) =>
-  '\u00A0'.repeat(text.length - text.trimLeft().length) +
+  "\u00A0".repeat(text.length - text.trimLeft().length) +
   text.trim() +
-  '\u00A0'.repeat(text.length - text.trimRight().length)
+  "\u00A0".repeat(text.length - text.trimRight().length);
 
-const hasChord = (l: Line) => l.content.some((el) => !!el.ch)
+const hasChord = (l: Line) => l.content.some((el) => !!el.ch);
 
 const style = StyleSheet.create({
   line: {
-    textVerticalAlign: 'baseline',
-    alignItems: 'flex-end',
-    flexDirection: 'row',
+    textVerticalAlign: "baseline",
+    alignItems: "flex-end",
+    flexDirection: "row",
   },
   lineWrap: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 'auto',
+    flexDirection: "row",
+    alignItems: "flex-end",
+    height: "auto",
   },
-  bold: { fontWeight: 'bold' },
+  bold: { fontWeight: "bold" },
   transparent: { opacity: 0 },
   zIndexTop: { zIndex: 2 },
-  defaultStyleText: { fontFamily: 'Cantarell' },
-})
+  defaultStyleText: { fontFamily: "Cantarell" },
+});
 
 function DefaultStyleText(props: PropsOf<typeof Text>) {
-  const { em, fontSize } = usePDFSettings()
+  const { em, fontSize } = usePDFSettings();
   return (
     <Text
       {...props}
       style={[{ fontSize: em(fontSize) }, style.defaultStyleText, props.style]}
     />
-  )
+  );
 }
 
 function ChordLine({ l }: { l: Line }) {
-  const { em, vw, fontSize } = usePDFSettings()
+  const { em, vw, fontSize } = usePDFSettings();
   return (
-    <View style={{ height: em(fontSize * 2.2), flexDirection: 'row' }}>
+    <View style={{ height: em(fontSize * 2.2), flexDirection: "row" }}>
       {l.content
         .map((cur, i) => (
           <DefaultStyleText
             selectable={false}
             key={i}
-            style={{ position: 'absolute', width: vw(100) }}
+            style={{ position: "absolute", width: vw(100) }}
           >
             <Text style={[style.transparent, style.line]}>
               {l.content.slice(0, i).map((t, i2) => (
                 <Text key={i2} style={t.bold ? style.bold : {}}>
                   {t.text}
-                  {t.ch?.startsWith('_') ? (
+                  {t.ch?.startsWith("_") ? (
                     <Text style={style.bold}>
-                      <Chord spacer={true}>{t.ch.replace('_', '')}</Chord>
+                      <Chord spacer={true}>{t.ch.replace("_", "")}</Chord>
                     </Text>
                   ) : null}
                 </Text>
@@ -70,21 +70,21 @@ function ChordLine({ l }: { l: Line }) {
             <Text
               style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop]}
             >
-              <Chord>{cur.ch.replace(/^[_^]+/, '')}</Chord>
+              <Chord>{cur.ch.replace(/^[_^]+/, "")}</Chord>
             </Text>
           </DefaultStyleText>
         ))
         .filter(notNull)}
       <DefaultStyleText style={style.bold} />
     </View>
-  )
+  );
 }
 
 function LineWrap({
   children,
   hasChord,
 }: PropsWithChildren<{ hasChord: boolean }>) {
-  const { em, fontSize } = usePDFSettings()
+  const { em, fontSize } = usePDFSettings();
   return (
     <View
       style={[
@@ -94,11 +94,11 @@ function LineWrap({
     >
       {children}
     </View>
-  )
+  );
 }
 
 function LineC({ l }: { l: Line }) {
-  const hasText = l.content.some((c) => !!c.text)
+  const hasText = l.content.some((c) => !!c.text);
   if (!hasText) {
     return (
       <LineWrap hasChord={false}>
@@ -111,7 +111,7 @@ function LineC({ l }: { l: Line }) {
           </DefaultStyleText>
         ))}
       </LineWrap>
-    )
+    );
   }
   return (
     <LineWrap hasChord={hasChord(l)}>
@@ -123,9 +123,9 @@ function LineC({ l }: { l: Line }) {
       <DefaultStyleText style={style.line}>
         {l.content
           .map((c, i) => [
-            c.ch && c.ch.startsWith('_') ? (
+            c.ch && c.ch.startsWith("_") ? (
               <Text key={i * 2} style={{ opacity: 0 }}>
-                <Chord spacer={true}>{c.ch.replace(/^_/, '')}</Chord>
+                <Chord spacer={true}>{c.ch.replace(/^_/, "")}</Chord>
               </Text>
             ) : null,
             c.text ? (
@@ -137,11 +137,11 @@ function LineC({ l }: { l: Line }) {
           .filter(notNull)}
       </DefaultStyleText>
     </LineWrap>
-  )
+  );
 }
 
 const ParagraphC = ({ p }: { p: Paragraph }) => {
-  const { em, paragraphSpace } = usePDFSettings()
+  const { em, paragraphSpace } = usePDFSettings();
   return (
     <>
       {p.map((line, i) => (
@@ -149,21 +149,21 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
       ))}
       <View style={{ height: em(paragraphSpace) }} />
     </>
-  )
-}
+  );
+};
 
 function SongHeader({ title, author }: { title: string; author: string }) {
-  const { em } = usePDFSettings()
+  const { em } = usePDFSettings();
   const textStyle = {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: em(1.2),
-  } as const
+  } as const;
   return (
     <View
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
         margin: 0,
         flexGrow: 1,
       }}
@@ -171,7 +171,7 @@ function SongHeader({ title, author }: { title: string; author: string }) {
       <DefaultStyleText style={textStyle}>{title}</DefaultStyleText>
       <DefaultStyleText style={textStyle}>{author}</DefaultStyleText>
     </View>
-  )
+  );
 }
 
 function SongHeaderWithBack({
@@ -179,18 +179,18 @@ function SongHeaderWithBack({
   author,
   back,
 }: {
-  title: string
-  author: string
-  back: boolean
+  title: string;
+  author: string;
+  back: boolean;
 }) {
-  const { em, titleSpace } = usePDFSettings()
+  const { em, titleSpace } = usePDFSettings();
   return (
     <View
       style={{
-        flexDirection: 'row',
+        flexDirection: "row",
         paddingBottom: em(titleSpace * 1.75),
         marginTop: em(0.75),
-        alignItems: 'center',
+        alignItems: "center",
       }}
     >
       {back ? (
@@ -200,7 +200,7 @@ function SongHeaderWithBack({
       ) : null}
       <SongHeader title={title} author={author} />
     </View>
-  )
+  );
 }
 
 export function PDFSongContent({
@@ -211,14 +211,14 @@ export function PDFSongContent({
   footer,
   back = false,
 }: {
-  page: Line[][]
-  left: boolean
-  title: string
-  author: string
-  footer: string
-  back?: boolean
+  page: Line[][];
+  left: boolean;
+  title: string;
+  author: string;
+  footer: string;
+  back?: boolean;
 }) {
-  const { em } = usePDFSettings()
+  const { em } = usePDFSettings();
   return (
     <>
       <SongHeaderWithBack title={title} author={author} back={back} />
@@ -228,9 +228,9 @@ export function PDFSongContent({
       {left ? null : (
         <DefaultStyleText
           style={{
-            position: 'absolute',
+            position: "absolute",
             bottom: 0,
-            textAlign: 'center',
+            textAlign: "center",
             fontSize: em(1),
           }}
         >
@@ -238,7 +238,7 @@ export function PDFSongContent({
         </DefaultStyleText>
       )}
     </>
-  )
+  );
 }
 
 export function PDFSongPage({
@@ -252,38 +252,38 @@ export function PDFSongPage({
   firstPage,
   slug,
 }: {
-  page: Line[][]
-  left: boolean
-  title: string
-  titleExtra?: string
-  author: string
-  footer: string
-  back?: boolean
-  firstPage: boolean
-  slug: string
+  page: Line[][];
+  left: boolean;
+  title: string;
+  titleExtra?: string;
+  author: string;
+  footer: string;
+  back?: boolean;
+  firstPage: boolean;
+  slug: string;
 }) {
-  console.log({ firstPage, slug, title, author })
+  console.log({ firstPage, slug, title, author });
   return (
     <PDFPage
       left={left}
-      bookmark={firstPage ? title + ' – ' + author : undefined}
+      bookmark={firstPage ? title + " – " + author : undefined}
       id={firstPage ? slug : undefined}
     >
       <View
         style={{
-          position: 'relative',
-          height: '100%',
+          position: "relative",
+          height: "100%",
         }}
       >
         <PDFSongContent
           page={page}
           left={left}
-          title={title + (titleExtra ? ' ' + titleExtra : '')}
+          title={title + (titleExtra ? " " + titleExtra : "")}
           author={author}
           footer={footer}
           back={back}
         />
       </View>
     </PDFPage>
-  )
+  );
 }

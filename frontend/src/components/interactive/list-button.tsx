@@ -1,6 +1,6 @@
-import { useBasicStyle } from '../themed'
-import type { ButtonProps } from './basic-button'
-import { BasicButton } from './basic-button'
+import { useBasicStyle } from "../themed";
+import type { ButtonProps } from "./basic-button";
+import { BasicButton } from "./basic-button";
 
 export function ListButton({ style, children, ...rest }: ButtonProps) {
   return (
@@ -9,11 +9,11 @@ export function ListButton({ style, children, ...rest }: ButtonProps) {
         useBasicStyle(),
         {
           borderWidth: 1,
-          borderStyle: 'solid',
+          borderStyle: "solid",
           padding: 10,
           fontSize: 15,
 
-          textAlign: 'center',
+          textAlign: "center",
         },
         style,
       ]}
@@ -21,5 +21,5 @@ export function ListButton({ style, children, ...rest }: ButtonProps) {
     >
       {children}
     </BasicButton>
-  )
+  );
 }

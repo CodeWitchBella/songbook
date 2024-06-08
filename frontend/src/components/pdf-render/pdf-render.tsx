@@ -1,56 +1,56 @@
-import { saveAs } from 'file-saver'
-import { DateTime } from 'luxon'
-import type { PropsWithChildren } from 'react'
-import { useEffect, useState } from 'react'
-import React from 'react'
+import { saveAs } from "file-saver";
+import { DateTime } from "luxon";
+import type { PropsWithChildren } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
 //import 'react-pdf/dist/Page/AnnotationLayer.css'
-import type { SongType } from 'store/store-song'
-import type { Line } from 'utils/song-parser/song-parser'
-import { parseSong } from 'utils/song-parser/song-parser'
-import { once } from 'utils/utils'
+import type { SongType } from "store/store-song";
+import type { Line } from "utils/song-parser/song-parser";
+import { parseSong } from "utils/song-parser/song-parser";
+import { once } from "utils/utils";
 
-import { useQueryParam } from '../use-router'
-import { PDFBookletDouble, PDFBookletQuad } from './pdf-page'
-import classes from './pdf-render.module.css'
-import { PDFSettingsProvider } from './pdf-settings'
-import { PDFSongPage } from './pdf-song-page'
-import { PDFTitlePage } from './pdf-title-page'
-import { PDFToc } from './pdf-toc'
-import { PDFBlobProvider, PDFDocument, PDFProvider } from './primitives'
-import { getSongbookMeta } from './songbook-meta'
+import { useQueryParam } from "../use-router";
+import { PDFBookletDouble, PDFBookletQuad } from "./pdf-page";
+import classes from "./pdf-render.module.css";
+import { PDFSettingsProvider } from "./pdf-settings";
+import { PDFSongPage } from "./pdf-song-page";
+import { PDFTitlePage } from "./pdf-title-page";
+import { PDFToc } from "./pdf-toc";
+import { PDFBlobProvider, PDFDocument, PDFProvider } from "./primitives";
+import { getSongbookMeta } from "./songbook-meta";
 
 const ReactPDF = React.lazy(
   once(() =>
-    import('react-pdf').then((rpdf) => {
-      rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`
+    import("react-pdf").then((rpdf) => {
+      rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`;
       return {
         default: ({
           children,
         }: {
-          children: (rpdf: typeof import('react-pdf')) => React.ReactElement
+          children: (rpdf: typeof import("react-pdf")) => React.ReactElement;
         }) => children(rpdf),
-      }
+      };
     }),
   ),
-)
+);
 
 type Props = {
-  song: SongType
-}
+  song: SongType;
+};
 
 export type PDFRenderMultipleSongsProps = {
-  list: SongType[]
-  slug: string | null
-  title: string
-}
+  list: SongType[];
+  slug: string | null;
+  title: string;
+};
 
 function PlusMinus({
   onClick,
   children,
   hide,
 }: PropsWithChildren<{
-  onClick: () => void
-  hide: boolean
+  onClick: () => void;
+  hide: boolean;
 }>) {
   return (
     <button
@@ -61,12 +61,12 @@ function PlusMinus({
     >
       {children}
     </button>
-  )
+  );
 }
 
 function PDFDoc({ url }: { url: string }) {
-  const [numPages, setNumPages] = useState(0)
-  const [page, setPage] = useState(1)
+  const [numPages, setNumPages] = useState(0);
+  const [page, setPage] = useState(1);
   return (
     <ReactPDF>
       {(rpdf) => (
@@ -84,7 +84,7 @@ function PDFDoc({ url }: { url: string }) {
                     onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
                     hide={page === 1}
                   >
-                    {'<'}
+                    {"<"}
                   </PlusMinus>
                   <div>
                     Strana {page}/{numPages}
@@ -95,7 +95,7 @@ function PDFDoc({ url }: { url: string }) {
                     }
                     hide={page === numPages}
                   >
-                    {'>'}
+                    {">"}
                   </PlusMinus>
                 </div>
               </div>
@@ -104,15 +104,15 @@ function PDFDoc({ url }: { url: string }) {
         </rpdf.Document>
       )}
     </ReactPDF>
-  )
+  );
 }
 
 export default function PDFRender({ song }: Props) {
-  const { pages } = parseSong('my', song.text, { continuous: 'never' })
+  const { pages } = parseSong("my", song.text, { continuous: "never" });
 
-  const [footer] = useQueryParam('footer')
+  const [footer] = useQueryParam("footer");
 
-  const pageSize = 6
+  const pageSize = 6;
 
   const doc = (
     <PDFDocument>
@@ -124,14 +124,14 @@ export default function PDFRender({ song }: Props) {
             left={i % 2 === 0}
             title={song.title}
             author={song.author}
-            footer={footer || ''}
+            footer={footer || ""}
             firstPage={i === 0}
             slug={song.slug}
           />
         ))}
       </PDFSettingsProvider>
     </PDFDocument>
-  )
+  );
 
   return (
     <div className="indexcss-pdf-render">
@@ -148,7 +148,7 @@ export default function PDFRender({ song }: Props) {
         </PDFBlobProvider>
       </PDFProvider>
     </div>
-  )
+  );
 }
 
 function Save({
@@ -156,15 +156,15 @@ function Save({
   onDone,
   slug,
 }: {
-  blob: Blob
-  onDone: () => void
-  slug: string | null
+  blob: Blob;
+  onDone: () => void;
+  slug: string | null;
 }) {
   useEffect(() => {
-    saveAs(blob, `zpevnik${slug ? '-' + slug : ''}.pdf`)
-    onDone()
-  }, [blob, onDone, slug])
-  return null
+    saveAs(blob, `zpevnik${slug ? "-" + slug : ""}.pdf`);
+    onDone();
+  }, [blob, onDone, slug]);
+  return null;
 }
 
 export function PDFDownload({
@@ -174,55 +174,55 @@ export function PDFDownload({
   title,
 }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
   const songPages = [] as (SongType & {
-    page: Line[][]
-    counter: number
-    firstPage: boolean
-    titleExtra?: string
-  })[]
-  const delayedPages = [] as typeof songPages
-  let songCounter = 0
-  const [bookletV] = useQueryParam('booklet')
-  const booklet = bookletV === null ? false : bookletV || 'true'
+    page: Line[][];
+    counter: number;
+    firstPage: boolean;
+    titleExtra?: string;
+  })[];
+  const delayedPages = [] as typeof songPages;
+  let songCounter = 0;
+  const [bookletV] = useQueryParam("booklet");
+  const booklet = bookletV === null ? false : bookletV || "true";
 
   for (const song of list) {
-    songCounter += 1
-    const { pages } = parseSong('my', song.text, { continuous: 'never' })
-    let pageCounter = 0
-    const thisSongPages = [] as typeof songPages
-    let firstPage = true
+    songCounter += 1;
+    const { pages } = parseSong("my", song.text, { continuous: "never" });
+    let pageCounter = 0;
+    const thisSongPages = [] as typeof songPages;
+    let firstPage = true;
     for (const page of pages) {
-      pageCounter += 1
+      pageCounter += 1;
       thisSongPages.push({
         ...song,
         page,
         counter: songCounter,
         firstPage,
-        titleExtra: pages.length > 1 ? `(${pageCounter}/${pages.length})` : '',
-      })
-      firstPage = false
+        titleExtra: pages.length > 1 ? `(${pageCounter}/${pages.length})` : "",
+      });
+      firstPage = false;
     }
     if (thisSongPages.length === 2 && songPages.length % 2 === 1) {
-      delayedPages.push(...thisSongPages)
+      delayedPages.push(...thisSongPages);
     } else {
-      songPages.push(...thisSongPages)
+      songPages.push(...thisSongPages);
     }
-    if (songPages.length % 2 === 0) songPages.push(...delayedPages.splice(0))
+    if (songPages.length % 2 === 0) songPages.push(...delayedPages.splice(0));
   }
-  songPages.push(...delayedPages.splice(0))
+  songPages.push(...delayedPages.splice(0));
 
-  const idToCounter = new Map<string, number>()
-  let counter = 0
+  const idToCounter = new Map<string, number>();
+  let counter = 0;
   for (const page of songPages) {
-    counter++
+    counter++;
     if (idToCounter.has(page.id)) {
-      page.counter = idToCounter.get(page.id)!
+      page.counter = idToCounter.get(page.id)!;
     } else {
-      page.counter = counter
-      idToCounter.set(page.id, counter)
+      page.counter = counter;
+      idToCounter.set(page.id, counter);
     }
   }
 
-  const pageSize = 5
+  const pageSize = 5;
 
   const pages = [
     <PDFTitlePage title={title} key="title" />,
@@ -231,7 +231,7 @@ export function PDFDownload({
         <PDFSongPage
           page={song.page}
           left={i % 2 === 0}
-          title={song.counter + '. ' + song.title}
+          title={song.counter + ". " + song.title}
           titleExtra={song.titleExtra}
           author={song.author}
           footer={getSongbookMeta(title, DateTime.utc()).footer}
@@ -246,7 +246,7 @@ export function PDFDownload({
       key="toc"
       booklet={booklet !== false}
     />,
-  ]
+  ];
 
   const doc = (
     <PDFDocument>
@@ -260,14 +260,14 @@ export function PDFDownload({
       >
         {!booklet ? (
           pages
-        ) : booklet === 'quad' ? (
+        ) : booklet === "quad" ? (
           <PDFBookletQuad pages={pages} />
         ) : (
           <PDFBookletDouble pages={pages} />
         )}
       </PDFSettingsProvider>
     </PDFDocument>
-  )
+  );
   return (
     <PDFProvider>
       <PDFBlobProvider document={doc}>
@@ -279,7 +279,7 @@ export function PDFDownload({
               slug={
                 slug +
                 (booklet
-                  ? `-booklet-a${pageSize - (booklet === 'quad' ? 2 : 1)}`
+                  ? `-booklet-a${pageSize - (booklet === "quad" ? 2 : 1)}`
                   : `-a${pageSize}`)
               }
             />
@@ -287,5 +287,5 @@ export function PDFDownload({
         }
       </PDFBlobProvider>
     </PDFProvider>
-  )
+  );
 }

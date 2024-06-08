@@ -1,52 +1,52 @@
-import { BackArrow, BackButton, useGoBack } from 'components/back-button'
-import { ErrorPage } from 'components/error-page'
-import { LargeInput } from 'components/input'
-import { BasicButton } from 'components/interactive/basic-button'
-import { ListButton } from 'components/interactive/list-button'
-import { TText } from 'components/themed'
-import { useEffect } from 'react'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
-import { useParams } from 'react-router-dom'
-import type { WithMethods } from 'store/generic-store'
-import { graphqlFetch } from 'store/graphql'
-import { useCollectionList, useSong, useViewer } from 'store/store'
-import type { CollectionType } from 'store/store-collections'
-import { collectionCompare, collectionFullName } from 'utils/utils'
+import { BackArrow, BackButton, useGoBack } from "components/back-button";
+import { ErrorPage } from "components/error-page";
+import { LargeInput } from "components/input";
+import { BasicButton } from "components/interactive/basic-button";
+import { ListButton } from "components/interactive/list-button";
+import { TText } from "components/themed";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { View } from "react-native";
+import { useParams } from "react-router-dom";
+import type { WithMethods } from "store/generic-store";
+import { graphqlFetch } from "store/graphql";
+import { useCollectionList, useSong, useViewer } from "store/store";
+import type { CollectionType } from "store/store-collections";
+import { collectionCompare, collectionFullName } from "utils/utils";
 
 export default function AddToCollection() {
-  const { t } = useTranslation()
-  const { refresh, list } = useCollectionList()
-  const params = useParams<{ slug: string }>()
-  if (!params.slug) throw new Error('Invalid route')
-  const { song } = useSong({ slug: params.slug })
-  const [viewer] = useViewer()
-  const [error, setError] = useState('')
-  const goBack = useGoBack()
+  const { t } = useTranslation();
+  const { refresh, list } = useCollectionList();
+  const params = useParams<{ slug: string }>();
+  if (!params.slug) throw new Error("Invalid route");
+  const { song } = useSong({ slug: params.slug });
+  const [viewer] = useViewer();
+  const [error, setError] = useState("");
+  const goBack = useGoBack();
 
   useEffect(() => {
-    refresh()
-  }, [refresh])
+    refresh();
+  }, [refresh]);
 
   if (!song) {
-    return <ErrorPage text="Píseň nenalezena." />
+    return <ErrorPage text="Píseň nenalezena." />;
   }
 
-  const addable: typeof list = []
-  const removable: typeof list = []
-  const locked: typeof list = []
+  const addable: typeof list = [];
+  const removable: typeof list = [];
+  const locked: typeof list = [];
   for (const c of list) {
-    const isInCollection = c.item.songList.includes(song.id)
-    const editable = !c.item.locked && c.item.owner.name === viewer?.name
+    const isInCollection = c.item.songList.includes(song.id);
+    const editable = !c.item.locked && c.item.owner.name === viewer?.name;
     if (editable) {
       if (isInCollection) {
-        removable.push(c)
+        removable.push(c);
       } else {
-        addable.push(c)
+        addable.push(c);
       }
     } else if (isInCollection) {
-      locked.push(c)
+      locked.push(c);
     }
   }
 
@@ -66,7 +66,7 @@ export default function AddToCollection() {
         ) : null}
         <CollectionList list={locked.sort(collectionCompare)} />
       </div>
-    )
+    );
   }
 
   return (
@@ -74,77 +74,77 @@ export default function AddToCollection() {
       {addable.length > 0 ? (
         <Title
           first={true}
-          text={t('collection.Add song to collection')}
+          text={t("collection.Add song to collection")}
           error={error}
         />
       ) : null}
       <CollectionList
         list={addable.sort(collectionCompare)}
         onPress={(collectionId) => {
-          setError('')
+          setError("");
           addToCollection(song.id, collectionId).then(
             () => {
-              refresh()
-              goBack()
+              refresh();
+              goBack();
             },
             (err) => {
-              setError('Něco se pokazilo')
-              console.error(err)
+              setError("Něco se pokazilo");
+              console.error(err);
             },
-          )
+          );
         }}
       />
       {removable.length > 0 ? (
         <Title
           first={addable.length < 1}
-          text={t('collection.Remove song from collection')}
+          text={t("collection.Remove song from collection")}
           error={error}
         />
       ) : null}
       <CollectionList
         list={removable.sort(collectionCompare)}
         onPress={(collectionId) => {
-          setError('')
+          setError("");
           removeFromCollection(song.id, collectionId).then(
             () => {
-              refresh()
-              goBack()
+              refresh();
+              goBack();
             },
             (err) => {
-              setError(t('Something went wrong'))
-              console.error(err)
+              setError(t("Something went wrong"));
+              console.error(err);
             },
-          )
+          );
         }}
       />
       <Title
         first={addable.length < 1 && removable.length < 1}
-        text={t('collection.Create new collection')}
+        text={t("collection.Create new collection")}
       />
       <NewCollection
         onDone={(collectionId) => {
-          setError('')
+          setError("");
           addToCollection(song.id, collectionId).then(
             () => {
-              refresh()
-              goBack()
+              refresh();
+              goBack();
             },
             (err) => {
-              console.error(err)
-              setError(t('Something went wrong'))
+              console.error(err);
+              setError(t("Something went wrong"));
             },
-          )
+          );
         }}
       />
       {locked.length > 0 ? (
         <Title
           first={false}
-          text={t('collection.Song is also in collections')}
+          text={t("collection.Song is also in collections")}
         />
       ) : null}
       <CollectionList list={locked.sort(collectionCompare)} />
     </div>
-  )
+  );
 }
 
 function Title({
@@ -152,9 +152,9 @@ function Title({
   text,
   error,
 }: {
-  first: boolean
-  text: string
-  error?: string | null
+  first: boolean;
+  text: string;
+  error?: string | null;
 }) {
   return (
     <>
@@ -167,40 +167,40 @@ function Title({
         <TText style={{ fontSize: 24 }}>{text}</TText>
       </div>
       {error && first ? (
-        <TText style={{ color: 'red', fontSize: 16, marginTop: 8 }}>
+        <TText style={{ color: "red", fontSize: 16, marginTop: 8 }}>
           {error}
         </TText>
       ) : null}
     </>
-  )
+  );
 }
 
 function NewCollection({ onDone }: { onDone: (id: string) => void }) {
-  const [name, setName] = useState('')
-  const [disabled, setDisabled] = useState(false)
-  const [error, setError] = useState('')
+  const [name, setName] = useState("");
+  const [disabled, setDisabled] = useState(false);
+  const [error, setError] = useState("");
   const submit = (event: { preventDefault(): any }) => {
-    event.preventDefault()
-    if (disabled) return
-    setDisabled(true)
-    setError('')
+    event.preventDefault();
+    if (disabled) return;
+    setDisabled(true);
+    setError("");
     createCollection(name).then(
       (id) => {
-        setDisabled(false)
-        onDone(id)
+        setDisabled(false);
+        onDone(id);
       },
       (err) => {
-        setDisabled(false)
-        console.error(err)
-        setError(t('Something went wrong'))
+        setDisabled(false);
+        console.error(err);
+        setError(t("Something went wrong"));
       },
-    )
-  }
-  const { t } = useTranslation()
+    );
+  };
+  const { t } = useTranslation();
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <LargeInput
-        label={t('collection.Collection name')}
+        label={t("collection.Collection name")}
         value={name}
         onChange={setName}
       />
@@ -214,24 +214,24 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
         }}
         onPress={submit}
       >
-        {t('collection.Create collection and add song to it')}
+        {t("collection.Create collection and add song to it")}
       </BasicButton>
       {error ? (
-        <TText style={{ color: 'red', fontSize: 16 }}>{error}</TText>
+        <TText style={{ color: "red", fontSize: 16 }}>{error}</TText>
       ) : null}
       <button className="hidden" disabled={disabled} />
     </form>
-  )
+  );
 }
 
 function CollectionList({
   list,
   onPress,
 }: {
-  list: readonly WithMethods<CollectionType>[]
-  onPress?: (id: string) => void
+  list: readonly WithMethods<CollectionType>[];
+  onPress?: (id: string) => void;
 }) {
-  if (list.length < 1) return null
+  if (list.length < 1) return null;
   return (
     <>
       {onPress
@@ -239,7 +239,7 @@ function CollectionList({
             <ListButton
               key={item.item.id}
               onPress={() => {
-                onPress(item.item.id)
+                onPress(item.item.id);
               }}
               style={{ marginTop: 8 }}
             >
@@ -252,20 +252,20 @@ function CollectionList({
             </TText>
           ))}
     </>
-  )
+  );
 }
 function addToCollection(song: string, collection: string) {
   return graphqlFetch({
     query: `mutation($collection: String! $song: String!) { addToCollection(collection: $collection song: $song) }`,
     variables: { collection, song },
-  })
+  });
 }
 
 function removeFromCollection(song: string, collection: string) {
   return graphqlFetch({
     query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
     variables: { collection, song },
-  })
+  });
 }
 
 function createCollection(name: string): Promise<string> {
@@ -273,11 +273,11 @@ function createCollection(name: string): Promise<string> {
     query: `mutation($name: String!) { createCollection(name: $name) { id } }`,
     variables: { name },
   }).then((v) => {
-    const id = v.data.createCollection.id
+    const id = v.data.createCollection.id;
     if (!id) {
-      console.log(v)
-      throw new Error('Failed to create collection')
+      console.log(v);
+      throw new Error("Failed to create collection");
     }
-    return id
-  })
+    return id;
+  });
 }

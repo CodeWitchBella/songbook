@@ -1,11 +1,11 @@
-import { PDFSettingsProvider } from 'components/pdf-render/pdf-settings'
+import { PDFSettingsProvider } from "components/pdf-render/pdf-settings";
 import {
   PDFSongContent,
   PDFSongPage,
-} from 'components/pdf-render/pdf-song-page'
-import { ContinuousPage } from 'components/sizer-page'
-import type { SongType } from 'store/store-song'
-import type * as parser from 'utils/song-parser/song-parser'
+} from "components/pdf-render/pdf-song-page";
+import { ContinuousPage } from "components/sizer-page";
+import type { SongType } from "store/store-song";
+import type * as parser from "utils/song-parser/song-parser";
 
 function SongPage({
   song,
@@ -16,16 +16,16 @@ function SongPage({
   onChordPress = null,
   firstPage,
 }: {
-  song: SongType
-  pageData: parser.Paragraph[]
-  transposition?: number
-  pageNumber?: number
-  noBack?: boolean
-  onChordPress?: null | ((chord: string) => void)
-  firstPage: boolean
+  song: SongType;
+  pageData: parser.Paragraph[];
+  transposition?: number;
+  pageNumber?: number;
+  noBack?: boolean;
+  onChordPress?: null | ((chord: string) => void);
+  firstPage: boolean;
 }) {
   const pretranspose =
-    typeof song.pretranspose === 'number' ? song.pretranspose : 0
+    typeof song.pretranspose === "number" ? song.pretranspose : 0;
   return (
     <PDFSettingsProvider
       value={{
@@ -39,7 +39,7 @@ function SongPage({
       <PDFSongPage
         author={song.author}
         footer=""
-        left={typeof pageNumber === 'number' && pageNumber % 2 === 0}
+        left={typeof pageNumber === "number" && pageNumber % 2 === 0}
         page={pageData}
         title={song.title}
         back={!noBack}
@@ -47,7 +47,7 @@ function SongPage({
         slug={song.slug}
       />
     </PDFSettingsProvider>
-  )
+  );
 }
 
 function SongContinuousPage({
@@ -56,13 +56,13 @@ function SongContinuousPage({
   transposition = 0,
   onChordPress = null,
 }: {
-  song: SongType
-  pageData: parser.Paragraph[]
-  transposition?: number
-  onChordPress?: null | ((chord: string) => void)
+  song: SongType;
+  pageData: parser.Paragraph[];
+  transposition?: number;
+  onChordPress?: null | ((chord: string) => void);
 }) {
   const pretranspose =
-    typeof song.pretranspose === 'number' ? song.pretranspose : 0
+    typeof song.pretranspose === "number" ? song.pretranspose : 0;
   return (
     <PDFSettingsProvider
       value={{
@@ -84,7 +84,7 @@ function SongContinuousPage({
         />
       </ContinuousPage>
     </PDFSettingsProvider>
-  )
+  );
 }
 
 export function SongLook({
@@ -94,11 +94,11 @@ export function SongLook({
   transposition = 0,
   onChordPress,
 }: {
-  song: SongType
-  parsed: parser.ParsedSong
-  noBack?: boolean
-  transposition?: number
-  onChordPress?: (chord: string) => void
+  song: SongType;
+  parsed: parser.ParsedSong;
+  noBack?: boolean;
+  transposition?: number;
+  onChordPress?: (chord: string) => void;
 }) {
   if (parsed.continuous) {
     return (
@@ -108,7 +108,7 @@ export function SongLook({
         transposition={transposition}
         onChordPress={onChordPress}
       />
-    )
+    );
   }
   return (
     <>
@@ -130,5 +130,5 @@ export function SongLook({
         />
       ))}
     </>
-  )
+  );
 }

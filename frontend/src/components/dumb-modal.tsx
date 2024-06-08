@@ -2,14 +2,14 @@ export function DumbModal({
   close,
   children,
 }: {
-  close: () => void
-  children: JSX.Element | readonly JSX.Element[]
+  close: () => void;
+  children: JSX.Element | readonly JSX.Element[];
 }) {
   return (
     <dialog
       onClose={close}
       onClick={(event) => {
-        if (event.target === event.currentTarget) event.currentTarget.close()
+        if (event.target === event.currentTarget) event.currentTarget.close();
       }}
       ref={openModal}
       // modal does not inhert text color by default, let's change that
@@ -22,9 +22,9 @@ export function DumbModal({
         {children}
       </div>
     </dialog>
-  )
+  );
 }
 
 function openModal(dialog: HTMLDialogElement | null) {
-  dialog?.showModal()
+  dialog?.showModal();
 }

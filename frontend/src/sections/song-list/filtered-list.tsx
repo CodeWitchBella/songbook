@@ -1,25 +1,25 @@
-import { notNull } from '@isbl/ts-utils'
-import React, { useEffect, useReducer } from 'react'
-import type { SongType } from 'store/store-song'
+import { notNull } from "@isbl/ts-utils";
+import React, { useEffect, useReducer } from "react";
+import type { SongType } from "store/store-song";
 
-import type { SearchableSong } from './alg'
-import getFilteredSongList from './alg'
-import type { SongListItem } from './song-list-look'
-import { SongListLook } from './song-list-look'
+import type { SearchableSong } from "./alg";
+import getFilteredSongList from "./alg";
+import type { SongListItem } from "./song-list-look";
+import { SongListLook } from "./song-list-look";
 
 const SearchWorker = () =>
-  new Worker(new URL('./worker', import.meta.url), { type: 'module' })
+  new Worker(new URL("./worker", import.meta.url), { type: "module" });
 
 const getWorker = (() => {
-  let worker: null | ReturnType<typeof SearchWorker> = null
+  let worker: null | ReturnType<typeof SearchWorker> = null;
   return function getOrCreateWorker() {
-    if (!('Worker' in window)) return null
-    if (!worker) worker = SearchWorker()
-    return worker
-  }
-})()
+    if (!("Worker" in window)) return null;
+    if (!worker) worker = SearchWorker();
+    return worker;
+  };
+})();
 
-type FilteredSongs = ReturnType<typeof getFilteredSongList>
+type FilteredSongs = ReturnType<typeof getFilteredSongList>;
 const filteredToComponents = (
   showTitles: boolean,
   filtered: FilteredSongs,
@@ -27,25 +27,25 @@ const filteredToComponents = (
 ): SongListItem[] => {
   return [
     showTitles && filtered.byTitle.length > 0
-      ? { header: 'title' as const }
+      ? { header: "title" as const }
       : null,
     ...filtered.byTitle.map(songItem),
 
     showTitles && filtered.byAuthor.length > 0
-      ? { header: 'author' as const }
+      ? { header: "author" as const }
       : null,
     ...filtered.byAuthor.map(songItem),
 
     showTitles && filtered.byText.length > 0
-      ? { header: 'text' as const }
+      ? { header: "text" as const }
       : null,
     ...filtered.byText.map(songItem),
     showTitles && filtered.byExtra.length > 0
-      ? { header: 'other' as const }
+      ? { header: "other" as const }
       : null,
     ...filtered.byExtra.map(songItem),
-  ].filter(notNull)
-}
+  ].filter(notNull);
+};
 
 export function FilteredList({
   search,
@@ -53,14 +53,14 @@ export function FilteredList({
   sortByAuthor,
   getSongById,
 }: {
-  search: string
-  songs: SongType[]
-  sortByAuthor: boolean
-  getSongById: (id: string) => SongType | null
+  search: string;
+  songs: SongType[];
+  sortByAuthor: boolean;
+  getSongById: (id: string) => SongType | null;
 }) {
   function songItem(id: string) {
-    const song = getSongById(id)
-    if (!song) return null
+    const song = getSongById(id);
+    if (!song) return null;
     return {
       text:
         !song.author || !song.title
@@ -69,14 +69,14 @@ export function FilteredList({
             ? `${song.author} - ${song.title}`
             : `${song.title} - ${song.author}`,
       slug: song.slug,
-    }
+    };
   }
   const [list, setList] = useReducer(
     (
       _prevState: any,
       { showTitles, ids }: { showTitles: boolean; ids: FilteredSongs },
     ) => {
-      return filteredToComponents(showTitles, ids, songItem)
+      return filteredToComponents(showTitles, ids, songItem);
     },
     null,
     () => {
@@ -84,36 +84,36 @@ export function FilteredList({
         !!search,
         getFilteredSongList(songs, search),
         songItem,
-      )
+      );
     },
-  )
+  );
 
-  const worker = getWorker()
+  const worker = getWorker();
   useEffect(() => {
     if (worker) {
       const handler = (msg: MessageEvent) => {
-        const { type, value } = msg.data
-        if (type === 'setList') {
+        const { type, value } = msg.data;
+        if (type === "setList") {
           if (
             value.search === search &&
             value.sourceListLength === songs.length
           ) {
-            setList({ showTitles: !!search, ids: value.list })
+            setList({ showTitles: !!search, ids: value.list });
           }
         } else {
-          console.warn('Unknown message type ' + type)
+          console.warn("Unknown message type " + type);
         }
-      }
-      worker.addEventListener('message', handler)
-      return () => worker.removeEventListener('message', handler)
+      };
+      worker.addEventListener("message", handler);
+      return () => worker.removeEventListener("message", handler);
     }
-    return undefined
-  }, [search, songs.length, worker])
+    return undefined;
+  }, [search, songs.length, worker]);
 
   useEffect(() => {
     if (worker) {
       worker.postMessage({
-        type: 'setSongs',
+        type: "setSongs",
         value: songs.map<SearchableSong>((song) => ({
           text: song.text,
           author: song.author,
@@ -121,9 +121,9 @@ export function FilteredList({
           extraSearchable: song.extraSearchable,
           title: song.title,
         })),
-      })
+      });
     }
-  }, [songs, worker])
+  }, [songs, worker]);
 
   useEffect(() => {
     if (!search) {
@@ -136,14 +136,14 @@ export function FilteredList({
           byText: [],
           byExtra: [],
         },
-      })
+      });
     } else if (worker) {
-      worker.postMessage({ type: 'setSearch', value: search })
+      worker.postMessage({ type: "setSearch", value: search });
     } else {
-      const filtered = getFilteredSongList(songs, search)
-      setList({ showTitles: !!search, ids: filtered })
+      const filtered = getFilteredSongList(songs, search);
+      setList({ showTitles: !!search, ids: filtered });
     }
-  }, [search, songs, worker])
+  }, [search, songs, worker]);
 
-  return <SongListLook list={list} />
+  return <SongListLook list={list} />;
 }

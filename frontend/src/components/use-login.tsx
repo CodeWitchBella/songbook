@@ -1,40 +1,40 @@
-import { login, logout, register } from 'store/graphql'
-import { useViewer } from 'store/store'
+import { login, logout, register } from "store/graphql";
+import { useViewer } from "store/store";
 
 export function useLogin() {
-  const [viewer, setViewer] = useViewer()
+  const [viewer, setViewer] = useViewer();
 
   return {
     viewer,
     login: (email: string, password: string) => {
       return login(email, password).then((viewer) => {
-        if (viewer.type === 'success') {
-          setViewer(viewer.user)
-          return null
+        if (viewer.type === "success") {
+          setViewer(viewer.user);
+          return null;
         } else {
-          return viewer.message
+          return viewer.message;
         }
-      })
+      });
     },
     register: (email: string, password: string, name: string) => {
       return register(email, password, name).then((viewer) => {
-        if (viewer.type === 'success') {
-          setViewer(viewer.user)
-          return null
+        if (viewer.type === "success") {
+          setViewer(viewer.user);
+          return null;
         } else {
-          return viewer.message
+          return viewer.message;
         }
-      })
+      });
     },
     logout: (evt?: any) => {
-      if (evt) evt.preventDefault()
+      if (evt) evt.preventDefault();
       logout()
         .then(() => {
-          setViewer(null)
+          setViewer(null);
         })
         .catch((e) => {
-          console.error(e)
-        })
+          console.error(e);
+        });
     },
-  }
+  };
 }

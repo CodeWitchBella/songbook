@@ -1,26 +1,26 @@
-import type { PropsWithChildren } from 'react'
-import React, { useContext, useMemo } from 'react'
+import type { PropsWithChildren } from "react";
+import React, { useContext, useMemo } from "react";
 
 type CtxIn = {
-  fontSize: number
-  paragraphSpace: number
-  titleSpace: number
-  pageSize: number
+  fontSize: number;
+  paragraphSpace: number;
+  titleSpace: number;
+  pageSize: number;
   web: null | {
-    onChordPress: null | ((chord: string) => void)
-  }
-  transpose: number
-}
+    onChordPress: null | ((chord: string) => void);
+  };
+  transpose: number;
+};
 type Ctx = CtxIn & {
-  em: (v: number) => number
-  vw: (v: number) => number
-  vh: (v: number) => number
-}
-const settingsCtx = React.createContext(null as null | Ctx)
+  em: (v: number) => number;
+  vw: (v: number) => number;
+  vh: (v: number) => number;
+};
+const settingsCtx = React.createContext(null as null | Ctx);
 export function usePDFSettings() {
-  const ret = useContext(settingsCtx)
-  if (!ret) throw new Error('No context provider')
-  return ret
+  const ret = useContext(settingsCtx);
+  if (!ret) throw new Error("No context provider");
+  return ret;
 }
 
 const aSizes = [
@@ -34,7 +34,7 @@ const aSizes = [
   [74, 105],
   [52, 74],
   [37, 52],
-]
+];
 
 export function PDFSettingsProvider(
   props: PropsWithChildren<{ value: Partial<CtxIn> }>,
@@ -49,8 +49,8 @@ export function PDFSettingsProvider(
   } = {
     ...(useContext(settingsCtx) || {}),
     ...props.value,
-  }
-  const em = 7.2 * Math.sqrt(2) ** (6 - pageSize)
+  };
+  const em = 7.2 * Math.sqrt(2) ** (6 - pageSize);
 
   return (
     <settingsCtx.Provider
@@ -77,5 +77,5 @@ export function PDFSettingsProvider(
     >
       {props.children}
     </settingsCtx.Provider>
-  )
+  );
 }

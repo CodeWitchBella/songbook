@@ -1,20 +1,20 @@
-import { InstallButtonLook } from 'components/install'
+import { InstallButtonLook } from "components/install";
 import {
   ExternalInlineLink,
   InlineLink,
-} from 'components/interactive/inline-link'
-import { ListButton } from 'components/interactive/list-button'
-import { PrimaryButton } from 'components/interactive/primary-button'
-import { useColors } from 'components/themed'
-import { useLogin } from 'components/use-login'
-import { Version } from 'components/version'
-import { useTranslation } from 'react-i18next'
-import { Image, View } from 'react-native'
+} from "components/interactive/inline-link";
+import { ListButton } from "components/interactive/list-button";
+import { PrimaryButton } from "components/interactive/primary-button";
+import { useColors } from "components/themed";
+import { useLogin } from "components/use-login";
+import { Version } from "components/version";
+import { useTranslation } from "react-i18next";
+import { Image, View } from "react-native";
 
 export default function Home() {
-  const login = useLogin()
-  const colors = useColors()
-  const { t } = useTranslation()
+  const login = useLogin();
+  const colors = useColors();
+  const { t } = useTranslation();
   return (
     <div>
       <div
@@ -25,37 +25,37 @@ export default function Home() {
       >
         <View
           style={{
-            flexDirection: 'column',
-            alignItems: 'stretch',
+            flexDirection: "column",
+            alignItems: "stretch",
             maxWidth: 300,
             paddingTop: 20,
             paddingBottom: 40,
           }}
         >
           <Image
-            source={{ uri: '/static/full.svg' }}
+            source={{ uri: "/static/full.svg" }}
             style={{
-              width: '100%',
+              width: "100%",
               aspectRatio: 1,
-              paddingBottom: '100%',
-              marginBottom: '16px',
+              paddingBottom: "100%",
+              marginBottom: "16px",
             }}
           />
-          <PrimaryButton to="/all-songs">{t('All songs')}</PrimaryButton>
+          <PrimaryButton to="/all-songs">{t("All songs")}</PrimaryButton>
           <Gap height={8} />
           {login.viewer ? null : (
             <>
               <Gap />
-              <ListButton to="/login">{t('Log in')}</ListButton>
+              <ListButton to="/login">{t("Log in")}</ListButton>
             </>
           )}
           <Gap />
-          <ListButton to="/new">{t('Add song')}</ListButton>
+          <ListButton to="/new">{t("Add song")}</ListButton>
           <Gap />
-          <ListButton to="/collections">{t('Song collections')}</ListButton>
+          <ListButton to="/collections">{t("Song collections")}</ListButton>
           <Gap />
 
-          <ListButton to="/about">{t('Settings and about')}</ListButton>
+          <ListButton to="/about">{t("Settings and about")}</ListButton>
           <Gap />
         </View>
         <View style={{ maxWidth: 400 }}>
@@ -63,7 +63,7 @@ export default function Home() {
             <Gap height={30} />
           </InstallButtonLook>
         </View>
-        <View style={{ position: 'absolute', right: 16, bottom: 8 }}>
+        <View style={{ position: "absolute", right: 16, bottom: 8 }}>
           <Version />
         </View>
       </div>
@@ -97,9 +97,9 @@ export default function Home() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function Gap({ height = 10 }: { height?: number }) {
-  return <View style={{ height }} />
+  return <View style={{ height }} />;
 }

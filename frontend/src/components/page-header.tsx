@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
-import { BackArrow, BackButton } from './back-button'
+import { BackArrow, BackButton } from "./back-button";
 
 export function PageHeader({
   backTo,
   children,
 }: {
-  backTo?: string
-  children: ReactNode
+  backTo?: string;
+  children: ReactNode;
 }) {
   return (
     <div className="mb-4 mt-8 flex items-center">
@@ -16,5 +16,5 @@ export function PageHeader({
       </BackButton>
       <div className="text-xl">{children}</div>
     </div>
-  )
+  );
 }

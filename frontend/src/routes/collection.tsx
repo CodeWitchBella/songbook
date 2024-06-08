@@ -1,53 +1,53 @@
-import { TText } from 'components/themed'
-import { useCallback, useEffect, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
-import { useParams } from 'react-router'
-import SongList from 'sections/song-list/song-list'
-import { useCollection, usePagesNum } from 'store/store'
+import { TText } from "components/themed";
+import { useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import { useParams } from "react-router";
+import SongList from "sections/song-list/song-list";
+import { useCollection, usePagesNum } from "store/store";
 
-const emptyArray: never[] = []
+const emptyArray: never[] = [];
 function useColectionWithSet(slug: string) {
-  const { collection } = useCollection({ slug })
-  const songList = collection ? collection.songList : emptyArray
+  const { collection } = useCollection({ slug });
+  const songList = collection ? collection.songList : emptyArray;
   const set = useMemo(() => {
-    const v = new Set<string>()
-    for (const id of songList) v.add(id)
-    return v
-  }, [songList])
-  if (!collection) return null
-  return { set, ...collection }
+    const v = new Set<string>();
+    for (const id of songList) v.add(id);
+    return v;
+  }, [songList]);
+  if (!collection) return null;
+  return { set, ...collection };
 }
 
 export default function Collection() {
-  const params = useParams()
-  const slug = params.slug + (params.slug2 ? '/' + params.slug2 : '')
-  console.log(slug)
-  const collection = useColectionWithSet(slug)
-  const set = collection?.set
-  const filter = useCallback((id: string) => set?.has(id) || false, [set])
+  const params = useParams();
+  const slug = params.slug + (params.slug2 ? "/" + params.slug2 : "");
+  console.log(slug);
+  const collection = useColectionWithSet(slug);
+  const set = collection?.set;
+  const filter = useCallback((id: string) => set?.has(id) || false, [set]);
 
-  const collectionId = collection?.id
+  const collectionId = collection?.id;
   useEffect(() => {
-    if (collectionId) console.log('Collection id:', collectionId)
-  }, [collectionId])
+    if (collectionId) console.log("Collection id:", collectionId);
+  }, [collectionId]);
   if (!collection)
     return (
       <div className="flex h-full items-center justify-center text-xl">
         Kolekce se načítá nebo neexistuje
       </div>
-    )
+    );
   return (
     <SongList
       filter={filter}
       header={
         <View style={{ paddingTop: 12 }}>
           <TText
-            style={{ fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}
+            style={{ fontWeight: "bold", fontSize: 16, textAlign: "center" }}
           >
-            {(collection.slug.includes('/')
-              ? (collection.owner.handle || collection.owner.name) + ' > '
-              : '') + collection.name}
+            {(collection.slug.includes("/")
+              ? (collection.owner.handle || collection.owner.name) + " > "
+              : "") + collection.name}
           </TText>
         </View>
       }
@@ -55,31 +55,31 @@ export default function Collection() {
       title={collection.name}
       menu={<Stats set={set} songCount={collection.songList.length} />}
     />
-  )
+  );
 }
 
 function Stats({
   set,
   songCount,
 }: {
-  set: Set<string> | undefined
-  songCount: number
+  set: Set<string> | undefined;
+  songCount: number;
 }) {
-  const pagesNum = usePagesNum(set || null)
-  const { t } = useTranslation()
+  const pagesNum = usePagesNum(set || null);
+  const { t } = useTranslation();
   return (
     <View style={styles.stat}>
       <TText style={styles.statItem}>
-        {t('count-pages-songs', { pagesNum, songCount })}
+        {t("count-pages-songs", { pagesNum, songCount })}
       </TText>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   stat: {
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
     paddingHorizontal: 20,
     marginTop: 16,
     marginBottom: 4,
@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
   statItem: {
     fontSize: 18,
   },
-})
+});

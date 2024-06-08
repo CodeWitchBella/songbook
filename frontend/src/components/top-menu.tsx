@@ -1,19 +1,19 @@
-import type { PropsWithChildren } from 'react'
-import { useReducer } from 'react'
-import { View } from 'react-native'
+import type { PropsWithChildren } from "react";
+import { useReducer } from "react";
+import { View } from "react-native";
 
-import { OnPressOutside } from './interactive/press-outside'
-import { Burger } from './song-look/song-menu-icons'
-import { useColors } from './themed'
+import { OnPressOutside } from "./interactive/press-outside";
+import { Burger } from "./song-look/song-menu-icons";
+import { useColors } from "./themed";
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
     (st: { isOpen: boolean; wasOpen: boolean }, action: null | false) => {
-      if (action === false) return { isOpen: false, wasOpen: true }
-      return { isOpen: !st.isOpen, wasOpen: true }
+      if (action === false) return { isOpen: false, wasOpen: true };
+      return { isOpen: !st.isOpen, wasOpen: true };
     },
     { isOpen: false, wasOpen: false },
-  )
+  );
   return (
     <div className="w-10">
       <button
@@ -29,7 +29,7 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
         </MenuContent>
       )}
     </div>
-  )
+  );
 }
 
 function MenuContent({
@@ -37,34 +37,34 @@ function MenuContent({
   children,
   onClose,
 }: PropsWithChildren<{
-  visible: boolean
-  onClose: () => void
+  visible: boolean;
+  onClose: () => void;
 }>) {
-  const colors = useColors()
+  const colors = useColors();
   return (
     <OnPressOutside onPressOutside={visible ? onClose : null}>
       {(ref) => (
         <View
           ref={ref}
           style={{
-            position: 'absolute',
+            position: "absolute",
             right: 4,
             marginTop: 2,
 
             backgroundColor: colors.background,
             borderWidth: 1,
             borderColor: colors.borders,
-            borderStyle: 'solid',
+            borderStyle: "solid",
 
             padding: 10,
 
-            display: visible ? 'flex' : 'none',
-            flexDirection: 'column',
+            display: visible ? "flex" : "none",
+            flexDirection: "column",
           }}
         >
           {children}
         </View>
       )}
     </OnPressOutside>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 export function InlineLink({
   children,
   to,
 }: {
-  to: string
-  children: ReactNode
+  to: string;
+  children: ReactNode;
 }) {
   return (
     <Link
@@ -16,15 +16,15 @@ export function InlineLink({
     >
       {children}
     </Link>
-  )
+  );
 }
 
 export function ExternalInlineLink({
   children,
   to,
 }: {
-  to: string
-  children: ReactNode
+  to: string;
+  children: ReactNode;
 }) {
   return (
     <Link
@@ -35,5 +35,5 @@ export function ExternalInlineLink({
     >
       {children}
     </Link>
-  )
+  );
 }

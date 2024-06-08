@@ -1,39 +1,39 @@
-import Checkbox from 'components/checkbox'
-import { NotFound } from 'components/error-page'
-import Input from 'components/input'
-import { ListButton } from 'components/interactive/list-button'
-import { PageHeader } from 'components/page-header'
-import PDF from 'components/pdf'
-import { SongTextEditor } from 'components/song-editor/song-text-editor'
-import { SongLook } from 'components/song-look/song-look'
-import { TH2, TH3, TP, TText } from 'components/themed'
-import { DateTime } from 'luxon'
-import type { PropsWithChildren } from 'react'
-import React, { useReducer, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useParams } from 'react-router'
-import { useSong } from 'store/store'
-import type { SongType } from 'store/store-song'
-import { updateSong } from 'store/store-song'
-import * as parser from 'utils/song-parser/song-parser'
+import Checkbox from "components/checkbox";
+import { NotFound } from "components/error-page";
+import Input from "components/input";
+import { ListButton } from "components/interactive/list-button";
+import { PageHeader } from "components/page-header";
+import PDF from "components/pdf";
+import { SongTextEditor } from "components/song-editor/song-text-editor";
+import { SongLook } from "components/song-look/song-look";
+import { TH2, TH3, TP, TText } from "components/themed";
+import { DateTime } from "luxon";
+import type { PropsWithChildren } from "react";
+import React, { useReducer, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
+import { useSong } from "store/store";
+import type { SongType } from "store/store-song";
+import { updateSong } from "store/store-song";
+import * as parser from "utils/song-parser/song-parser";
 
 function Textarea({
   value,
   onChange,
 }: {
-  value: string
-  onChange: (v: string) => any
+  value: string;
+  onChange: (v: string) => any;
 }) {
   return (
     <textarea
       className="h-96 min-w-full border border-black bg-slate-100 p-2 text-black dark:border-white dark:bg-slate-900 dark:text-white"
       value={value}
       onChange={(evt) => {
-        evt.preventDefault()
-        onChange(evt.target.value)
+        evt.preventDefault();
+        onChange(evt.target.value);
       }}
     />
-  )
+  );
 }
 
 const Columns = ({
@@ -43,24 +43,24 @@ const Columns = ({
   <div
     className={
       previewActive
-        ? 'indexcss-edit-song-columns--preview'
-        : 'indexcss-edit-song-columns'
+        ? "indexcss-edit-song-columns--preview"
+        : "indexcss-edit-song-columns"
     }
   >
     {children}
   </div>
-)
+);
 
 function Help({
   children,
   title,
   hiddenTitle,
 }: {
-  title: string
-  hiddenTitle: string
-  children: React.ReactNode
+  title: string;
+  hiddenTitle: string;
+  children: React.ReactNode;
 }) {
-  const [toggled, setToggled] = useState(false)
+  const [toggled, setToggled] = useState(false);
   return (
     <div className="mx-auto mt-10 max-w-prose text-lg">
       <ListButton onPress={() => void setToggled((v) => !v)}>
@@ -68,54 +68,54 @@ function Help({
       </ListButton>
       {toggled && children}
     </div>
-  )
+  );
 }
 
-type SaveStatus = 'NO_CHANGES' | 'SAVING' | 'UNSAVED' | 'FAILED' | 'SAVED'
+type SaveStatus = "NO_CHANGES" | "SAVING" | "UNSAVED" | "FAILED" | "SAVED";
 type State = {
-  author: string
-  title: string
-  textWithChords: string
-  fontSize: string
-  paragraphSpace: string
-  titleSpace: string
-  spotify: string
-  pretranspose: string
-  advanced: boolean
-  preview: boolean
-  pdfPreview: boolean
-  simpleEditor: boolean
-  extraSearchable: string | null
-  extraNonSearchable: string | null
-  saveStatus: SaveStatus
-  continuousMode: boolean
-}
+  author: string;
+  title: string;
+  textWithChords: string;
+  fontSize: string;
+  paragraphSpace: string;
+  titleSpace: string;
+  spotify: string;
+  pretranspose: string;
+  advanced: boolean;
+  preview: boolean;
+  pdfPreview: boolean;
+  simpleEditor: boolean;
+  extraSearchable: string | null;
+  extraNonSearchable: string | null;
+  saveStatus: SaveStatus;
+  continuousMode: boolean;
+};
 
 function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
   return {
-    NO_CHANGES: outputOnNoChange ? 'Nebyly provedeny žádné změny' : '',
-    SAVING: 'Ukládám…',
-    UNSAVED: 'Formulář obsahuje neuložené změny',
-    FAILED: 'Ukládání selhalo',
-    SAVED: 'Uloženo',
-  }[saveStatus]
+    NO_CHANGES: outputOnNoChange ? "Nebyly provedeny žádné změny" : "",
+    SAVING: "Ukládám…",
+    UNSAVED: "Formulář obsahuje neuložené změny",
+    FAILED: "Ukládání selhalo",
+    SAVED: "Uloženo",
+  }[saveStatus];
 }
 
 function safeParseFloat(text: string, fallback: number) {
-  const res = Number.parseFloat(text)
-  if (!Number.isFinite(res)) return fallback
-  return res
+  const res = Number.parseFloat(text);
+  if (!Number.isFinite(res)) return fallback;
+  return res;
 }
 
 function safeParseInt(text: string, fallback: number) {
-  const res = Number.parseFloat(text)
-  if (!Number.isFinite(res)) return fallback
-  if (!Number.isSafeInteger(res)) return fallback
-  return res
+  const res = Number.parseFloat(text);
+  if (!Number.isFinite(res)) return fallback;
+  if (!Number.isSafeInteger(res)) return fallback;
+  return res;
 }
 
 const getResult = (propsSong: SongType, theState: State): SongType => {
-  const { author, title, textWithChords } = theState
+  const { author, title, textWithChords } = theState;
   return {
     author,
     title,
@@ -134,17 +134,17 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
     insertedAt: propsSong.insertedAt,
     id: propsSong.id,
     slug: propsSong.slug,
-  }
-}
+  };
+};
 
 function EditSong(props: { song: SongType; refetch: () => void }) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const initialState: State = {
     author: props.song.author,
     title: props.song.title,
     textWithChords: props.song.text,
-    spotify: props.song.spotify || '',
-    pretranspose: props.song.pretranspose?.toFixed(0) || '0',
+    spotify: props.song.spotify || "",
+    pretranspose: props.song.pretranspose?.toFixed(0) || "0",
     extraSearchable: props.song.extraSearchable,
     extraNonSearchable: props.song.extraNonSearchable,
     fontSize: props.song.fontSize.toFixed(2),
@@ -154,32 +154,32 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     preview: false,
     pdfPreview: false,
     simpleEditor: window.screen.width < 980,
-    saveStatus: 'NO_CHANGES',
+    saveStatus: "NO_CHANGES",
     continuousMode: false,
-  }
-  const latestState = useRef<State>(initialState)
+  };
+  const latestState = useRef<State>(initialState);
   const [state, setState] = useReducer(
     (state: State, patch: Partial<State>) => {
-      latestState.current = { ...state, ...patch }
-      return latestState.current
+      latestState.current = { ...state, ...patch };
+      return latestState.current;
     },
     initialState,
-  )
+  );
 
-  const changeCounterRef = useRef(0)
+  const changeCounterRef = useRef(0);
 
   const submit = (evt?: React.FormEvent<HTMLFormElement>) => {
-    if (evt) evt.preventDefault()
-    const { author, title, saveStatus } = state
-    console.log('submit before check', state)
-    if (!author || !title || saveStatus === 'SAVING') return
-    console.log('submit', state)
-    setState({ saveStatus: 'SAVING' })
-    saveTimeoutRef.current = null
+    if (evt) evt.preventDefault();
+    const { author, title, saveStatus } = state;
+    console.log("submit before check", state);
+    if (!author || !title || saveStatus === "SAVING") return;
+    console.log("submit", state);
+    setState({ saveStatus: "SAVING" });
+    saveTimeoutRef.current = null;
 
-    const version = changeCounterRef.current
+    const version = changeCounterRef.current;
 
-    const result = getResult(props.song, latestState.current)
+    const result = getResult(props.song, latestState.current);
     updateSong(props.song.id, {
       author: result.author,
       title: result.title,
@@ -187,83 +187,83 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       fontSize: result.fontSize,
       paragraphSpace: result.paragraphSpace,
       titleSpace: result.titleSpace,
-      spotify: result.spotify || '',
-      extraSearchable: result.extraSearchable || '',
-      extraNonSearchable: result.extraNonSearchable || '',
+      spotify: result.spotify || "",
+      extraSearchable: result.extraSearchable || "",
+      extraNonSearchable: result.extraNonSearchable || "",
       pretranspose: result.pretranspose || 0,
     })
       .then(() => props.refetch())
       .then(() => {
         if (version === changeCounterRef.current) {
-          setState({ saveStatus: 'SAVED' })
+          setState({ saveStatus: "SAVED" });
         } else {
-          change({})
+          change({});
         }
       })
       .catch((e) => {
-        console.error(e)
-        setState({ saveStatus: 'FAILED' })
-      })
-  }
+        console.error(e);
+        setState({ saveStatus: "FAILED" });
+      });
+  };
 
-  const saveTimeoutRef = useRef<any>(null)
+  const saveTimeoutRef = useRef<any>(null);
 
   const change = (val: Partial<State>) => {
-    changeCounterRef.current += 1
-    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
-    saveTimeoutRef.current = setTimeout(submit, 500)
-    setState(Object.assign({ saveStatus: 'UNSAVED' }, val as any))
-  }
+    changeCounterRef.current += 1;
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current);
+    saveTimeoutRef.current = setTimeout(submit, 500);
+    setState(Object.assign({ saveStatus: "UNSAVED" }, val as any));
+  };
 
-  const authorChange = (val: string) => change({ author: val })
-  const titleChange = (val: string) => change({ title: val })
-  const textWithChordsChange = (val: string) => change({ textWithChords: val })
+  const authorChange = (val: string) => change({ author: val });
+  const titleChange = (val: string) => change({ title: val });
+  const textWithChordsChange = (val: string) => change({ textWithChords: val });
 
   const checkFloat = (val: string) => {
     // only allow - at start, only one . and otherwise numeric
-    if (!/^-?[0-9]*\.?[0-9]*$/.test(val)) return false
-    if (val === '') return true
-    return Number.isFinite(Number.parseFloat(val))
-  }
+    if (!/^-?[0-9]*\.?[0-9]*$/.test(val)) return false;
+    if (val === "") return true;
+    return Number.isFinite(Number.parseFloat(val));
+  };
   const checkInt = (val: string) => {
     // only allow - at start, only one . and otherwise numeric
-    if (!/^-?[0-9]*$/.test(val)) return false
-    if (val === '' || val === '-') return true
-    return Number.isSafeInteger(Number.parseFloat(val))
-  }
+    if (!/^-?[0-9]*$/.test(val)) return false;
+    if (val === "" || val === "-") return true;
+    return Number.isSafeInteger(Number.parseFloat(val));
+  };
 
   const fontSizeChange = (val: string) => {
-    if (!checkFloat(val)) return
-    change({ fontSize: val })
-  }
+    if (!checkFloat(val)) return;
+    change({ fontSize: val });
+  };
   const paragraphSpaceChange = (val: string) => {
-    if (!checkFloat(val)) return
-    change({ paragraphSpace: val })
-  }
+    if (!checkFloat(val)) return;
+    change({ paragraphSpace: val });
+  };
   const titleSpaceChange = (val: string) => {
-    if (!checkFloat(val)) return
-    change({ titleSpace: val })
-  }
+    if (!checkFloat(val)) return;
+    change({ titleSpace: val });
+  };
   const onPretransposeChange = (val: string) => {
-    if (!checkInt(val)) return
-    change({ pretranspose: val })
-  }
-  const spotifyChange = (val: string) => change({ spotify: val })
+    if (!checkInt(val)) return;
+    change({ pretranspose: val });
+  };
+  const spotifyChange = (val: string) => change({ spotify: val });
   const extraSearchableChange = (val: string) =>
-    change({ extraSearchable: val })
+    change({ extraSearchable: val });
   const extraNonSearchableChange = (val: string) =>
-    change({ extraNonSearchable: val })
+    change({ extraNonSearchable: val });
 
-  const advancedChange = (value: boolean) => setState({ advanced: value })
+  const advancedChange = (value: boolean) => setState({ advanced: value });
   const simpleEditorChange = (value: boolean) =>
-    setState({ simpleEditor: value })
-  const previewChange = (value: boolean) => setState({ preview: value })
-  const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value })
+    setState({ simpleEditor: value });
+  const previewChange = (value: boolean) => setState({ preview: value });
+  const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value });
   const continuousModeChange = (value: boolean) =>
-    setState({ continuousMode: value })
+    setState({ continuousMode: value });
 
   const editor = (
-    lang: 'song' | 'none',
+    lang: "song" | "none",
     value: string,
     onChange: (v: string) => void,
   ) =>
@@ -275,41 +275,41 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
         onChange={onChange}
         language={lang}
       />
-    )
+    );
 
   return (
     <Columns previewActive={state.preview}>
       <div>
         <form className="mx-auto flex max-w-3xl flex-col" onSubmit={submit}>
-          <PageHeader backTo={'/song/' + props.song.slug}>
-            {t('edit.Edit song')}
+          <PageHeader backTo={"/song/" + props.song.slug}>
+            {t("edit.Edit song")}
           </PageHeader>
           <Input label="Autor" value={state.author} onChange={authorChange} />
           <Input
-            label={t('edit.Song name')}
+            label={t("edit.Song name")}
             value={state.title}
             onChange={titleChange}
           />
           <Input
-            label={t('edit.Spotify link')}
+            label={t("edit.Spotify link")}
             value={state.spotify}
             onChange={spotifyChange}
           />
           <div className="mb-0.5">
             <Checkbox
-              label={t('edit.Show preview')}
+              label={t("edit.Show preview")}
               checked={state.preview}
               onChange={previewChange}
             />
             {state.preview ? (
               <>
                 <Checkbox
-                  label={t('edit.PDF preview')}
+                  label={t("edit.PDF preview")}
                   checked={state.pdfPreview}
                   onChange={pdfPreviewChange}
                 />
                 <Checkbox
-                  label={t('edit.Continuous mode')}
+                  label={t("edit.Continuous mode")}
                   checked={state.continuousMode}
                   onChange={continuousModeChange}
                 />
@@ -317,47 +317,47 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             ) : null}
           </div>
           <Checkbox
-            label={t('edit.Simplified editor (use this on phones)')}
+            label={t("edit.Simplified editor (use this on phones)")}
             checked={state.simpleEditor}
             onChange={simpleEditorChange}
           />
           <Checkbox
-            label={t('edit.Advanced settings')}
+            label={t("edit.Advanced settings")}
             checked={state.advanced}
             onChange={advancedChange}
           />
           {state.advanced && (
             <>
               <Input
-                label={t('edit.Font size')}
+                label={t("edit.Font size")}
                 value={state.fontSize}
                 onChange={fontSizeChange}
               />
               <Input
-                label={t('edit.Space between paragraphs')}
+                label={t("edit.Space between paragraphs")}
                 value={state.paragraphSpace}
                 onChange={paragraphSpaceChange}
               />
               <Input
-                label={t('edit.Space below title')}
+                label={t("edit.Space below title")}
                 value={state.titleSpace}
                 onChange={titleSpaceChange}
               />
               <Input
-                label={t('edit.Predefined transposition')}
+                label={t("edit.Predefined transposition")}
                 value={state.pretranspose}
                 onChange={onPretransposeChange}
               />
             </>
           )}
-          {editor('song', state.textWithChords, textWithChordsChange)}
+          {editor("song", state.textWithChords, textWithChordsChange)}
 
-          {state.saveStatus === 'FAILED' && (
-            <button>{t('edit.Save changes')}</button>
+          {state.saveStatus === "FAILED" && (
+            <button>{t("edit.Save changes")}</button>
           )}
           <i>{translateStatus(state.saveStatus)}</i>
         </form>
-        <Help title={t('edit.Hide help')} hiddenTitle={t('edit.Show help')}>
+        <Help title={t("edit.Hide help")} hiddenTitle={t("edit.Show help")}>
           <TH2>Jak se tahle věc ovládá?</TH2>
           <TP>
             Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
@@ -369,7 +369,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           </TP>
           <TP>
             Změny se automaticky ukládají, nebo je můžeš uložit ručně kliknutím
-            na tlačítko uložit. Současný stav je:{' '}
+            na tlačítko uložit. Současný stav je:{" "}
             <i>{translateStatus(state.saveStatus, true)}</i>
           </TP>
           <TP>
@@ -379,7 +379,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             refrénů víc <b>R1:</b>, <b>R2:</b> atd
           </TP>
           <TP>
-            Pokud potřebuješ udělat oddělovač stran tak napiš{' '}
+            Pokud potřebuješ udělat oddělovač stran tak napiš{" "}
             <b>---&nbsp;page&nbsp;break&nbsp;---</b>
           </TP>
           <TP>
@@ -419,30 +419,30 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             např. slova refrénů.
           </TP>
           <TP>
-            Konkrétně jde o příkazy <b>{'[>chords'}&nbsp;off]</b> a{' '}
-            <b>{'[>chords'}&nbsp;on]</b>, které zapínají a vypínají zobrazování
-            akordů ve stránkované verzi. Druhá sada příkazů je{' '}
-            <b>{'[>variant'}&nbsp;long]</b>, <b>{'[>variant'}&nbsp;paged]</b> a{' '}
-            <b>{'[>variant'}&nbsp;both]</b>, které přepínají mezi stránkovanou
+            Konkrétně jde o příkazy <b>{"[>chords"}&nbsp;off]</b> a{" "}
+            <b>{"[>chords"}&nbsp;on]</b>, které zapínají a vypínají zobrazování
+            akordů ve stránkované verzi. Druhá sada příkazů je{" "}
+            <b>{"[>variant"}&nbsp;long]</b>, <b>{"[>variant"}&nbsp;paged]</b> a{" "}
+            <b>{"[>variant"}&nbsp;both]</b>, které přepínají mezi stránkovanou
             variantou a variantou pro "plynulé" zobrazení.
           </TP>
           <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
         <Help
-          title={t('edit.Hide extra information')}
-          hiddenTitle={t('edit.Show extra information')}
+          title={t("edit.Hide extra information")}
+          hiddenTitle={t("edit.Show extra information")}
         >
-          <TH3>{t('edit.Searchable')}</TH3>
+          <TH3>{t("edit.Searchable")}</TH3>
           <TText>
             Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také
             dalo použít při vyhledávání
           </TText>
-          {editor('none', state.extraSearchable || '', extraSearchableChange)}
-          <TH3>{t('edit.Non-searchable')}</TH3>
+          {editor("none", state.extraSearchable || "", extraSearchableChange)}
+          <TH3>{t("edit.Non-searchable")}</TH3>
           <TText>Např: odkaz na ultimate guitar</TText>
           {editor(
-            'none',
-            state.extraNonSearchable || '',
+            "none",
+            state.extraNonSearchable || "",
             extraNonSearchableChange,
           )}
         </Help>
@@ -454,8 +454,8 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           ) : (
             <SongLook
               song={getResult(props.song, state)}
-              parsed={parser.parseSong('my', state.textWithChords, {
-                continuous: state.continuousMode ? 'always' : 'never',
+              parsed={parser.parseSong("my", state.textWithChords, {
+                continuous: state.continuousMode ? "always" : "never",
               })}
               noBack
             />
@@ -463,13 +463,13 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
         </div>
       )}
     </Columns>
-  )
+  );
 }
 export default function EditSongRoute() {
-  const { slug } = useParams()
-  const { song, methods } = useSong({ slug: slug || '' })
-  if (!slug) return <NotFound />
-  if (!song || !methods) return <div>Píseň nenalezena</div>
+  const { slug } = useParams();
+  const { song, methods } = useSong({ slug: slug || "" });
+  if (!slug) return <NotFound />;
+  if (!song || !methods) return <div>Píseň nenalezena</div>;
 
-  return <EditSong song={song} refetch={methods.refresh} />
+  return <EditSong song={song} refetch={methods.refresh} />;
 }

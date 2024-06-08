@@ -1,6 +1,6 @@
-import localForage from 'localforage'
-import { DateTime } from 'luxon'
-import type { PropsWithChildren } from 'react'
+import localForage from "localforage";
+import { DateTime } from "luxon";
+import type { PropsWithChildren } from "react";
 import React, {
   useCallback,
   useContext,
@@ -8,64 +8,64 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react'
-import xorshift from 'xorshift'
+} from "react";
+import xorshift from "xorshift";
 
-import { newSong } from './fetchers'
-import type { GenericStore, MinItem } from './generic-store'
-import type { User } from './graphql'
-import { createCollectionStore } from './store-collections'
-import { createSongStore } from './store-song'
+import { newSong } from "./fetchers";
+import type { GenericStore, MinItem } from "./generic-store";
+import type { User } from "./graphql";
+import { createCollectionStore } from "./store-collections";
+import { createSongStore } from "./store-song";
 
-const settingsStorage = localForage.createInstance({ name: 'settings' })
+const settingsStorage = localForage.createInstance({ name: "settings" });
 
 const context = React.createContext<null | {
-  store: ReturnType<typeof createSongStore>
-  collections: ReturnType<typeof createCollectionStore>
-  viewer: User | null
-  setViewer: (v: User | null) => void
-  initing: boolean
-  loading: boolean
-}>(null)
+  store: ReturnType<typeof createSongStore>;
+  collections: ReturnType<typeof createCollectionStore>;
+  viewer: User | null;
+  setViewer: (v: User | null) => void;
+  initing: boolean;
+  loading: boolean;
+}>(null);
 
 function useCachedState<T>(key: string, initial: T | null) {
-  const st = useState<T | null>(initial)
-  const [v, setV] = st
+  const st = useState<T | null>(initial);
+  const [v, setV] = st;
   useEffect(() => {
-    settingsStorage.getItem<T>(key).then((itm) => setV(itm))
-  }, [key, setV])
+    settingsStorage.getItem<T>(key).then((itm) => setV(itm));
+  }, [key, setV]);
   useEffect(() => {
-    settingsStorage.setItem<T | null>(key, v)
-  }, [key, v])
-  return st
+    settingsStorage.setItem<T | null>(key, v);
+  }, [key, v]);
+  return st;
 }
 
 function useStable<T>(gen: () => T) {
-  const ref = useRef<T | null>(null)
+  const ref = useRef<T | null>(null);
   if (ref.current === null) {
-    ref.current = gen()
+    ref.current = gen();
   }
-  return ref.current!
+  return ref.current!;
 }
 
 export function StoreProvider({ children }: PropsWithChildren<{}>) {
-  const [initing, setIniting] = useState(true)
-  const [loading, setLoading] = useState(true)
-  const [viewer, setViewer] = useCachedState<User>('viewer', null)
+  const [initing, setIniting] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [viewer, setViewer] = useCachedState<User>("viewer", null);
   const store = useStable(() =>
     createSongStore({ setIniting, setLoading, setViewer }),
-  )
+  );
 
-  const collections = useStable(() => createCollectionStore())
+  const collections = useStable(() => createCollectionStore());
 
   // clear legacy song saving mechanism
   useEffect(() => {
     localForage.keys().then((keys) =>
       keys.forEach((key) => {
-        localForage.removeItem(key)
+        localForage.removeItem(key);
       }),
-    )
-  }, [])
+    );
+  }, []);
   return (
     <context.Provider
       value={useMemo(
@@ -82,195 +82,197 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
     >
       {children}
     </context.Provider>
-  )
+  );
 }
 
 function useStoreContext() {
-  const store = useContext(context)
-  if (!store) throw new Error('No StoreProvider')
-  return store
+  const store = useContext(context);
+  if (!store) throw new Error("No StoreProvider");
+  return store;
 }
 
 export function useSongList() {
-  const { store, initing, loading } = useStoreContext()
-  const [songs, setSongs] = useState(() => store.readAll())
+  const { store, initing, loading } = useStoreContext();
+  const [songs, setSongs] = useState(() => store.readAll());
   useEffect(() => {
-    setSongs(store.readAll())
+    setSongs(store.readAll());
     return store.onChange(() => {
-      setSongs(store.readAll())
-    })
-  }, [initing, store])
+      setSongs(store.readAll());
+    });
+  }, [initing, store]);
   return useMemo(
     () => ({
       songs,
       initing,
       loading,
       getSongById: (id: string) => {
-        const song = store.readById(id)
-        return song ? song.item : null
+        const song = store.readById(id);
+        return song ? song.item : null;
       },
     }),
     [songs, initing, loading, store],
-  )
+  );
 }
 
 export function useGetRandomSong() {
-  const { store } = useStoreContext()
+  const { store } = useStoreContext();
   return useCallback(
     (currentSongId: string) => {
-      const nowReal = DateTime.utc()
-      const now = nowReal.get('hour') < 3 ? nowReal.minus({ day: 1 }) : nowReal
-      const seed = [now.get('day'), now.get('month'), now.get('year'), 0]
-      const random = new xorshift.constructor(seed)
-      const songs = store.readAll()
+      const nowReal = DateTime.utc();
+      const now = nowReal.get("hour") < 3 ? nowReal.minus({ day: 1 }) : nowReal;
+      const seed = [now.get("day"), now.get("month"), now.get("year"), 0];
+      const random = new xorshift.constructor(seed);
+      const songs = store.readAll();
       const withRandom = [...songs]
         .sort((a, b) => a.item.slug.localeCompare(b.item.slug))
         .map((song) => ({
           song,
           number: random.random(),
-        }))
-      const curRandom = withRandom.find((s) => s.song.item.id === currentSongId)
-      if (!curRandom) return songs[Math.floor(Math.random() * songs.length)]
+        }));
+      const curRandom = withRandom.find(
+        (s) => s.song.item.id === currentSongId,
+      );
+      if (!curRandom) return songs[Math.floor(Math.random() * songs.length)];
       const next = withRandom.reduce(
         (cur, t) => {
-          if (t.number < curRandom.number) return cur
-          if (t.song.item.id === currentSongId) return cur
-          if (!cur) return t
-          return cur.number < t.number ? cur : t
+          if (t.number < curRandom.number) return cur;
+          if (t.song.item.id === currentSongId) return cur;
+          if (!cur) return t;
+          return cur.number < t.number ? cur : t;
         },
         null as null | (typeof withRandom)[0],
-      )
-      if (next) return next.song
+      );
+      if (next) return next.song;
       return withRandom.reduce(
         (a, b) => (a === null ? b : a.number < b.number ? a : b),
         null as null | (typeof withRandom)[0],
-      )!.song
+      )!.song;
     },
     [store],
-  )
+  );
 }
 
 function useGenericStore<S extends MinItem, T>(store: GenericStore<S, T>) {
-  const [list, setList] = useState(() => store.readAll())
+  const [list, setList] = useState(() => store.readAll());
   useEffect(() => {
-    setList(store.readAll())
+    setList(store.readAll());
     return store.onChange(() => {
-      setList(store.readAll())
-    })
-  }, [store])
+      setList(store.readAll());
+    });
+  }, [store]);
   return useMemo(
     () => ({
       list,
       getById: (id: string) => {
-        const song = store.readById(id)
-        return song ? song.item : null
+        const song = store.readById(id);
+        return song ? song.item : null;
       },
       refresh: () => store.refresh(),
     }),
     [list, store],
-  )
+  );
 }
 
 export function useCollectionList() {
-  return useGenericStore(useStoreContext().collections)
+  return useGenericStore(useStoreContext().collections);
 }
 
 export function useCollection({ slug }: { slug: string | null }) {
-  const { collections: store } = useStoreContext()
-  const [value, setValue] = useState(() => read(store, slug))
+  const { collections: store } = useStoreContext();
+  const [value, setValue] = useState(() => read(store, slug));
   useEffect(() => {
-    setValue(read(store, slug))
+    setValue(read(store, slug));
     return store.onChange(() => {
-      setValue(read(store, slug))
-    })
-  }, [slug, store])
+      setValue(read(store, slug));
+    });
+  }, [slug, store]);
   return useMemo(
     () => ({
       collection: value ? value.item : null,
       methods: value,
     }),
     [value],
-  )
+  );
 }
 
 function read(
-  store: ReturnType<typeof useStoreContext>['collections'],
+  store: ReturnType<typeof useStoreContext>["collections"],
   slug: string | null,
 ) {
-  return slug ? store.readBySlug(slug) : undefined
+  return slug ? store.readBySlug(slug) : undefined;
 }
 
 function getSongFromStore(
-  store: ReturnType<typeof useStoreContext>['store'],
+  store: ReturnType<typeof useStoreContext>["store"],
   param: { slug: string } | { id: string },
 ) {
-  return 'slug' in param
+  return "slug" in param
     ? store.readBySlug(param.slug)
-    : store.readById(param.id)
+    : store.readById(param.id);
 }
 
 export function useSong(param: { slug: string } | { id: string }) {
-  const { store, initing } = useStoreContext()
-  const [song, setSong] = useState(() => getSongFromStore(store, param))
+  const { store, initing } = useStoreContext();
+  const [song, setSong] = useState(() => getSongFromStore(store, param));
 
   useEffect(() => {
-    setSong(getSongFromStore(store, param))
+    setSong(getSongFromStore(store, param));
     return store.onChange(() => {
-      setSong(getSongFromStore(store, param))
-    })
-  }, [param, song, store])
+      setSong(getSongFromStore(store, param));
+    });
+  }, [param, song, store]);
   return useMemo(
     () => ({ song: song ? song.item : null, initing, methods: song }),
     [initing, song],
-  )
+  );
 }
 
 function readNumPages(
-  store: ReturnType<typeof useStoreContext>['store'],
+  store: ReturnType<typeof useStoreContext>["store"],
   set: Set<string> | null,
 ) {
-  if (!set) return null
-  let num = 0
+  if (!set) return null;
+  let num = 0;
   for (const item of set) {
     num +=
-      store.readById(item)?.item.text.split('--- page break ---').length ?? 0
+      store.readById(item)?.item.text.split("--- page break ---").length ?? 0;
   }
-  return num
+  return num;
 }
 
 export function usePagesNum(set: Set<string> | null) {
-  const { store } = useStoreContext()
-  const [count, setCount] = useState(() => readNumPages(store, set))
+  const { store } = useStoreContext();
+  const [count, setCount] = useState(() => readNumPages(store, set));
 
   useEffect(() => {
-    setCount(readNumPages(store, set))
+    setCount(readNumPages(store, set));
     return store.onChange(() => {
-      setCount(readNumPages(store, set))
-    })
-  }, [set, store])
-  return count
+      setCount(readNumPages(store, set));
+    });
+  }, [set, store]);
+  return count;
 }
 
 export function useNewSong() {
-  const { store } = useStoreContext()
+  const { store } = useStoreContext();
   return async ({
     author,
     title,
     text,
     extraNonSearchable,
   }: {
-    author: string
-    title: string
-    text?: string
-    extraNonSearchable?: string
+    author: string;
+    title: string;
+    text?: string;
+    extraNonSearchable?: string;
   }) => {
-    const ret = await newSong({ author, title, text, extraNonSearchable })
-    await store.refresh()
-    return ret
-  }
+    const ret = await newSong({ author, title, text, extraNonSearchable });
+    await store.refresh();
+    return ret;
+  };
 }
 
 export function useViewer() {
-  const { viewer, setViewer } = useStoreContext()
-  return [viewer, setViewer] as const
+  const { viewer, setViewer } = useStoreContext();
+  return [viewer, setViewer] as const;
 }

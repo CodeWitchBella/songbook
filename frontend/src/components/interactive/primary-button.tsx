@@ -1,7 +1,7 @@
-import { useBasicStyle } from '../themed'
-import type { ButtonProps } from './basic-button'
-import { BasicButton } from './basic-button'
-export type { ButtonProps } from './basic-button'
+import { useBasicStyle } from "../themed";
+import type { ButtonProps } from "./basic-button";
+import { BasicButton } from "./basic-button";
+export type { ButtonProps } from "./basic-button";
 
 export function PrimaryButton({ style, children, ...rest }: ButtonProps) {
   return (
@@ -10,12 +10,12 @@ export function PrimaryButton({ style, children, ...rest }: ButtonProps) {
         useBasicStyle(),
         {
           borderWidth: 2,
-          borderStyle: 'solid',
+          borderStyle: "solid",
           padding: 20,
           borderRadius: 30,
           fontSize: 20,
 
-          textAlign: 'center',
+          textAlign: "center",
         },
         style,
       ]}
@@ -23,5 +23,5 @@ export function PrimaryButton({ style, children, ...rest }: ButtonProps) {
     >
       {children}
     </BasicButton>
-  )
+  );
 }

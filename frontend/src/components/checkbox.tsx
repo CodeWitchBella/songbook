@@ -1,13 +1,13 @@
-import { TText } from './themed'
+import { TText } from "./themed";
 
 const Checkbox = ({
   label,
   checked,
   onChange,
 }: {
-  label: string
-  checked: boolean
-  onChange: (v: boolean) => any
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => any;
 }) => (
   <label>
     <TText style={{ fontSize: 16 }}>{label}: </TText>
@@ -15,10 +15,10 @@ const Checkbox = ({
       type="checkbox"
       checked={checked}
       onChange={(evt) => {
-        onChange(evt.target.checked)
+        onChange(evt.target.checked);
       }}
     />
   </label>
-)
+);
 
-export default Checkbox
+export default Checkbox;
