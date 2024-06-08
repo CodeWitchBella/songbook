@@ -21,7 +21,10 @@ export function useQueryParam(param: string): [string | null, Setter] {
       const copy = new URLSearchParams(params)
       if (value) copy.set(param, value)
       else copy.delete(param)
-      setParam(copy, { replace: !push, state: locationState || location.state })
+      setParam(copy, {
+        replace: !push,
+        state: locationState || location.state,
+      })
     },
     [location.state, param, params, setParam],
   )

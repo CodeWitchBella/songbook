@@ -160,8 +160,8 @@ export default function SongMenu({
                   typeof canGoBackRaw === 'number'
                     ? canGoBackRaw
                     : canGoBackRaw
-                    ? 1
-                    : 0
+                      ? 1
+                      : 0
                 if (!canGoBack) {
                   navigate('/all-songs', { replace: true })
                   navigate(

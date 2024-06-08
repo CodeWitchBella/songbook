@@ -3,7 +3,6 @@ const devcert = require('devcert')
 
 const port = 5512
 const target = 'https://zpevnik.skorepova.info'
-
 ;(async () => {
   const ssl = await devcert.certificateFor('localhost')
 

@@ -30,7 +30,7 @@ export function ExternalInlineLink({
     <Link
       className="border-current text-black underline hover:italic dark:text-white"
       to={to}
-      target='_blank'
+      target="_blank"
       rel="noopener"
     >
       {children}

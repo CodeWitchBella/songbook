@@ -15,10 +15,20 @@ import { once } from 'utils/utils'
 
 import { pdfSetup } from './pdf-setup'
 
-// prettier-ignore
 const InPdfCtx = createContext<Pick<
   typeof import('@react-pdf/renderer'),
-  'default' | 'BlobProvider' | 'Font' | 'PDFDownloadLink' | 'PDFViewer' | 'StyleSheet' | 'pdf' | 'renderToFile' | 'renderToStream' | 'renderToString' | 'usePDF' | 'version'
+  | 'default'
+  | 'BlobProvider'
+  | 'Font'
+  | 'PDFDownloadLink'
+  | 'PDFViewer'
+  | 'StyleSheet'
+  | 'pdf'
+  | 'renderToFile'
+  | 'renderToStream'
+  | 'renderToString'
+  | 'usePDF'
+  | 'version'
   // | 'createRenderer' | 'render'
 > | null>(null)
 
@@ -28,17 +38,40 @@ export type PropsOf<T extends React.ComponentType<any>> =
 type RecursiveArray<T> = T | RecursiveArray<T>[]
 type StyleProp<T> = RecursiveArray<T | undefined>
 // TODO: find out which ones actually collide and Omit<> or transfrom those
-// prettier-ignore
 type MergedViewStyle = StyleProp<
   Pick<
     ViewStyle,
-    | 'transform' | 'maxWidth' | 'paddingBottom' | 'paddingRight' | 'height'
-    | 'width' | 'maxHeight' | 'flexDirection' | 'flexWrap' | 'paddingTop'
-    | 'paddingHorizontal' | 'paddingVertical' | 'marginTop' | 'marginBottom'
-    | 'marginHorizontal' | 'marginVertical' | 'marginLeft' | 'marginRight'
-    | 'marginStart' | 'flexGrow' | 'justifyContent' | 'alignContent'
-    | 'alignItems' | 'alignSelf' | 'position' | 'aspectRatio' | 'display'
-    | 'borderBottomWidth' | 'borderStyle' | 'borderColor' | 'margin'
+    | 'transform'
+    | 'maxWidth'
+    | 'paddingBottom'
+    | 'paddingRight'
+    | 'height'
+    | 'width'
+    | 'maxHeight'
+    | 'flexDirection'
+    | 'flexWrap'
+    | 'paddingTop'
+    | 'paddingHorizontal'
+    | 'paddingVertical'
+    | 'marginTop'
+    | 'marginBottom'
+    | 'marginHorizontal'
+    | 'marginVertical'
+    | 'marginLeft'
+    | 'marginRight'
+    | 'marginStart'
+    | 'flexGrow'
+    | 'justifyContent'
+    | 'alignContent'
+    | 'alignItems'
+    | 'alignSelf'
+    | 'position'
+    | 'aspectRatio'
+    | 'display'
+    | 'borderBottomWidth'
+    | 'borderStyle'
+    | 'borderColor'
+    | 'margin'
   >
 >
 

@@ -1,7 +1,4 @@
-{
-  inputs,
-  pkgs,
-}: let
+{pkgs}: let
   # The path to the npm project
   src = ./.;
 

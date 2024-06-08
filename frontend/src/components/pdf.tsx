@@ -37,10 +37,10 @@ export function DownloadPDF({
         status === 'idle'
           ? t('pdf-gen.Download PDF')
           : status === 'generating'
-          ? t('pdf-gen.Generating PDF')
-          : status === 'error'
-          ? t('pdf-gen.Something went wrong')
-          : t('pdf-gen.complete'),
+            ? t('pdf-gen.Generating PDF')
+            : status === 'error'
+              ? t('pdf-gen.Something went wrong')
+              : t('pdf-gen.complete'),
         () => {
           if (status === 'generating') return
           setStatus('generating')

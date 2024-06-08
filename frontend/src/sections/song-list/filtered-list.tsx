@@ -66,8 +66,8 @@ export function FilteredList({
         !song.author || !song.title
           ? song.author || song.title
           : sortByAuthor
-          ? `${song.author} - ${song.title}`
-          : `${song.title} - ${song.author}`,
+            ? `${song.author} - ${song.title}`
+            : `${song.title} - ${song.author}`,
       slug: song.slug,
     }
   }
