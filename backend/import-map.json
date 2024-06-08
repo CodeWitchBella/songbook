@@ -1,0 +1,17 @@
+{
+  "imports": {
+    "os": "node:os",
+    "fs": "node:fs",
+    "net": "node:net",
+    "stream": "node:stream",
+    "crypto": "node:crypto",
+    "events": "node:events",
+    "https": "node:https",
+    "zlib": "node:zlib",
+    "url": "node:url",
+    "punycode": "node:punycode",
+    "http": "node:http",
+    "perf_hooks": "node:perf_hooks",
+    "tls": "node:tls"
+  }
+}

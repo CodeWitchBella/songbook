@@ -7,8 +7,6 @@ import { forward } from './forward.js'
 import type { MyContext } from './lib/context.js'
 import { contextPair } from './lib/context.js'
 
-//globalThis.setImmediate = undefined as any
-
 async function handleRequest(
   request: Request,
   ctx: ExecutionContext,

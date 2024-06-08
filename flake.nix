@@ -87,7 +87,6 @@
         process-compose.default.settings = {
           environment = {
             POSTGRESQL_URL = "postgresql://localhost/songbook";
-            #PATH = "${psql}/bin";
           };
           processes = {
             postgres.command = "${pkgs.nodejs}/bin/node backend/postgresql.mjs run";
