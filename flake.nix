@@ -32,6 +32,7 @@
         nodejs = pkgs.nodejs_22;
 
         frontend = import ./frontend/frontend.nix {inherit inputs pkgs;};
+        backend = import ./backend/backend.nix {inherit inputs pkgs;};
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
@@ -72,6 +73,7 @@
         };
 
         packages.frontend = frontend.packages.default;
+        packages.backend = backend.packages.default;
 
         process-compose.default.settings = {
           environment = {
