@@ -31,8 +31,8 @@ frontend/bundle
 .mysql
 .dev.vars
 .wrangler
-/workers/drizzle
-/workers/export
+/backend/drizzle
+/backend/export
 dist
 target
 data

@@ -7,6 +7,6 @@ DATABASE=songbook
 DATABASE_URL=mysql://user:password@aws.connect.psdb.cloud/songbook?ssl={"rejectUnauthorized":true}
 
 # Clone db locally:
-#   cd workers
+#   cd backend
 #   mysqldump --host=aws.connect.psdb.cloud --user=... --password=... songbook --result-file=.mysql/dump.sql
 #   open .mysql/dump.sql | mysql -S ./.mysql/mysql.sock --user=root database

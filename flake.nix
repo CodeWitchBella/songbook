@@ -79,8 +79,8 @@
             #PATH = "${psql}/bin";
           };
           processes = {
-            postgres.command = "${pkgs.nodejs}/bin/node workers/postgresql.mjs run";
-            backend.command = "${pkgs.bun}/bin/bun --watch workers/src/index.ts";
+            postgres.command = "${pkgs.nodejs}/bin/node backend/postgresql.mjs run";
+            backend.command = "${pkgs.bun}/bin/bun --watch backend/src/index.ts";
             frontend = {
               command = "${nodejs}/bin/npm run dev";
               working_dir = "frontend";

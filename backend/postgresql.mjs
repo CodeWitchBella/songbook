@@ -38,7 +38,7 @@ async function init() {
   // Create a database
   runSync('createdb', ['-h', path.join(dirname, '.tmp'), 'songbook'])
 
-  runSync('bun', ['db-push'], path.join(dirname, 'workers'))
+  runSync('bun', ['db-push'], path.join(dirname, 'backend'))
 
   //await restore()
   console.log('Skipping restore')
