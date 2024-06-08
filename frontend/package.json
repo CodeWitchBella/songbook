@@ -53,16 +53,9 @@
     "dev": "vite",
     "extract": "node extract.js"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "devDependencies": {
     "@lezer/generator": "^1.7.0",

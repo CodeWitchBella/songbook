@@ -58,3 +58,5 @@ const worker = {
   },
 }
 Bun.serve(worker)
+
+console.log('listening on http://localhost:5512')

@@ -1,20 +1,20 @@
 {
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     systems.url = "github:nix-systems/default";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     devshell.url = "github:numtide/devshell";
     devshell.inputs.nixpkgs.follows = "nixpkgs";
+    project-root = {
+      url = "file+file:///dev/null";
+      flake = false;
+    };
   };
 
-  outputs = inputs @ {
-    flake-parts,
-    nixpkgs,
-    ...
-  }:
+  outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = ["x86_64-linux" "aarch64-linux"];
       imports = [
@@ -25,10 +25,11 @@
       perSystem = {
         config,
         pkgs,
-        system,
         ...
       }: let
+        root = builtins.readFile inputs.project-root.outPath;
         psql = pkgs.postgresql_16;
+        nodejs = pkgs.nodejs_22;
 
         frontend = import ./frontend/frontend.nix {inherit inputs pkgs;};
       in {
@@ -53,76 +54,39 @@
         };
 
         devshells.default = {
-          packages = with pkgs; [
-            zellij
+          packages = [
             psql
-            nodejs_20
-            bun
+            nodejs
+            pkgs.bun
           ];
-          commands = let
-            cd = ''
-              set -e
-              pushd .
-              while true; do
-                if [ "$PWD" = "/" ]; then
-                  echo "Can't find project \$ROOT"
-                  exit 1
-                elif [ -f flake.nix ]; then
-                  break
-                fi
-                cd ..
-              done
-            '';
-          in [
-            {
-              name = "dev-frontend-vite";
-              command = ''
-                ${cd}
-                cd frontend
-                npm run dev
-              '';
-              help = "Start dev server for frontend code";
-            }
-            {
-              name = "dev-server";
-              command = ''
-                ${cd}
-                bun --watch workers/src/index.ts
-              '';
-              help = "Start dev server for backend code";
-            }
-            {
-              name = "dev-db";
-              command = "node workers/postgresql.mjs run";
-              help = "Start database";
-            }
+          commands = [
             {
               name = "dev";
               command = ''
-                ${cd}
-                ${pkgs.zellij}/bin/zellij --layout zellij-layout.kdl
+                cd ${root}
+                nix run
               '';
               help = "Start everything needed for fullstack development";
-            }
-            {
-              name = "psql-local";
-              command = ''
-                ${cd}
-                ${psql}/bin/psql $POSTGRESQL_URL $@
-              '';
-            }
-          ];
-          env = [
-            {
-              name = "POSTGRESQL_URL";
-              value = "postgresql://localhost/songbook";
             }
           ];
         };
 
-        packages.default = frontend.packages.default;
+        #packages.default = frontend.packages.default;
 
-        process-compose = {};
+        process-compose.default.settings = {
+          environment = {
+            POSTGRESQL_URL = "postgresql://localhost/songbook";
+            #PATH = "${psql}/bin";
+          };
+          processes = {
+            postgres.command = "${pkgs.nodejs}/bin/node workers/postgresql.mjs run";
+            backend.command = "${pkgs.bun}/bin/bun --watch workers/src/index.ts";
+            frontend = {
+              command = "${nodejs}/bin/npm run dev";
+              working_dir = "frontend";
+            };
+          };
+        };
       };
     };
 }
