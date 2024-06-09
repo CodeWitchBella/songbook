@@ -47,7 +47,9 @@ async function handleRequest(
 // @ts-expect-error
 globalThis.process = { env: {} };
 // @ts-expect-error
-globalThis.setImmediate = (cb) => Promise.resolve().then(cb);
+globalThis.setImmediate = (cb) => setTimeout(cb, 0);
+// @ts-expect-error
+globalThis.clearImmediate = (handle) => clearTimeout(handle);
 
 const worker = {
   port: 5512,
