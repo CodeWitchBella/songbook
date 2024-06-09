@@ -79,7 +79,7 @@
           ];
         };
 
-        packages.frontend = frontend.packages.default;
+        packages.frontend = frontend.packages.default {lastModified = inputs.self.lastModified;};
         packages.backend = backend.packages.default;
 
         process-compose.default.settings = {

@@ -8,7 +8,7 @@ if (process.env.LAST_MODIFIED) {
       .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
       .replace(
         /\$COMMIT_TIME/g,
-        new Date(process.env.LAST_MODIFIED * 1000).toISOString()
+        new Date(process.env.LAST_MODIFIED * 1000).toISOString(),
       );
   });
 } else {
