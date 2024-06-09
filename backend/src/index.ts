@@ -10,7 +10,7 @@ import { contextPair } from "./lib/context.js";
 async function handleRequest(
   request: Request,
   ctx: ExecutionContext,
-  createContext: () => Promise<MyContext>,
+  createContext: () => Promise<MyContext>
 ): Promise<Response> {
   try {
     const url = new URL(request.url);
@@ -28,7 +28,7 @@ async function handleRequest(
     if (url.pathname === "/beacon.min.js")
       return await forward(
         request,
-        "https://static.cloudflareinsights.com/beacon.min.js",
+        "https://static.cloudflareinsights.com/beacon.min.js"
       );
     return new Response("Not found", {
       status: 404,
@@ -44,6 +44,9 @@ async function handleRequest(
   }
 }
 
+// @ts-expect-error
+globalThis.process = { env: {} };
+
 const worker = {
   port: 5512,
 };
@@ -51,13 +54,13 @@ Deno.serve(
   worker,
   async function fetch(
     request: Request,
-    ctx: ExecutionContext,
+    ctx: ExecutionContext
   ): Promise<Response> {
     const { createContext, finishContext } = contextPair(request);
     const res = await handleRequest(request, ctx, createContext);
     finishContext(res);
     return res;
-  },
+  }
 );
 
 console.log("listening on http://localhost:5512");
