@@ -61,12 +61,11 @@
       cp -r $src/. .
       ln -s ${node_modules}/js/node_modules node_modules
       ${pkgs.esbuild}/bin/esbuild src/index.ts --bundle --platform=neutral --sourcemap --outfile=$out/bundle.mjs --format=esm --main-fields=main,module --banner:js="import{Buffer}from'node:buffer';globalThis.Buffer = Buffer;" --external:os --external:fs --external:net --external:stream --external:crypto --external:events --external:https --external:zlib --external:url --external:punycode --external:http --external:perf_hooks --external:tls
-      cp $src/import-map.json $out
     '';
     installPhase = ''
       echo "#!${pkgs.bash}/bin/bash" > $out/bin/songbook-backend
       echo "cd $out" >> $out/bin/songbook-backend
-      echo "${pkgs.deno}/bin/deno run -A --import-map $out/import-map.json $out/bundle.mjs" >> $out/bin/songbook-backend
+      echo "${pkgs.deno}/bin/deno run -A --unstable-bare-node-builtins $out/bundle.mjs" >> $out/bin/songbook-backend
       chmod +x $out/bin/songbook-backend
     '';
   };
