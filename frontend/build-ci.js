@@ -2,20 +2,30 @@ const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
 const { spawnSync } = require("child_process");
-
-getDate().then((date) => {
+if (process.env.LAST_MODIFIED) {
   patch(path.join("src", "build-data.tsx"), (content) => {
-    if (date) {
-      return content
-        .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
-        .replace(/\$COMMIT_TIME/g, date);
-    } else {
-      return content
-        .replace(/\$COMMIT_TIME_FROM_GIT/g, "false")
-        .replace(/\$COMMIT_TIME/g, new Date().toISOString());
-    }
+    return content
+      .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
+      .replace(
+        /\$COMMIT_TIME/g,
+        new Date(process.env.LAST_MODIFIED * 1000).toISOString()
+      );
   });
-});
+} else {
+  getDate().then((date) => {
+    patch(path.join("src", "build-data.tsx"), (content) => {
+      if (date) {
+        return content
+          .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
+          .replace(/\$COMMIT_TIME/g, date);
+      } else {
+        return content
+          .replace(/\$COMMIT_TIME_FROM_GIT/g, "false")
+          .replace(/\$COMMIT_TIME/g, new Date().toISOString());
+      }
+    });
+  });
+}
 
 function getDate() {
   const commitSha = spawnSync("git", ["rev-parse", "HEAD"], {

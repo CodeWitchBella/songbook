@@ -49,20 +49,22 @@
       ln -s $out/js/node_modules/.bin $out/bin
     '';
   };
-  songbook = pkgs.stdenv.mkDerivation {
-    name = "songbook";
-    version = "0.1.0";
-    src = pkgs.lib.cleanSource ./.;
-    buildInputs = [pkgs.nodejs node_modules];
+  songbook = {lastModified}:
+    pkgs.stdenv.mkDerivation {
+      name = "songbook";
+      version = "0.1.0";
+      src = pkgs.lib.cleanSource ./.;
+      buildInputs = [pkgs.nodejs node_modules];
 
-    buildPhase = ''
-      cp -r ${node_modules}/js/node_modules .
-      cp -r $src/. .
-      npm run build-ci
+      buildPhase = ''
+        export LAST_MODIFIED=${lastModified}
+        cp -r ${node_modules}/js/node_modules .
+        cp -r $src/. .
+        npm run build-ci
 
-      cp -r dist $out/
-    '';
-  };
+        cp -r dist $out/
+      '';
+    };
 in {
   packages = {
     inherit node_modules songbook;
