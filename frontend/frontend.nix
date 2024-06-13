@@ -5,22 +5,29 @@
   # Read the package-lock.json as a Nix attrset
   packageLock = builtins.fromJSON (builtins.readFile (src + "/package-lock.json"));
 
-  # Create an array of all (meaningful) dependencies
-  deps =
-    builtins.attrValues (removeAttrs packageLock.packages [""]);
-  # Turn each dependency into a fetchurl call
-  tarballs = map (p:
-    pkgs.fetchurl {
-      url = p.resolved;
-      hash = p.integrity;
-    })
-  deps;
+  newPackageLock =
+    packageLock
+    // {
+      packages = builtins.mapAttrs (name: value:
+        value
+        // (
+          if name == ""
+          then {}
+          else {
+            resolved = pkgs.fetchurl {
+              url = value.resolved;
+              hash = value.integrity;
+            };
+          }
+        ))
+      packageLock.packages;
+    };
 
-  # Write a file with the list of tarballs
-  tarballsFile = pkgs.writeTextFile {
-    name = "tarballs";
-    text = "${builtins.concatStringsSep "\n" tarballs}\n";
+  pkgLockFile = pkgs.writeTextFile {
+    name = "package-lock.json";
+    text = builtins.toJSON newPackageLock;
   };
+
   node_modules = pkgs.stdenv.mkDerivation {
     inherit (packageLock) name version;
     src = pkgs.lib.fileset.toSource {
@@ -34,13 +41,8 @@
       export npm_config_cache=$PWD/.npm
       mkdir -p $out/js
       cd $out/js
-      cp -r $src/. .
-
-      while read package
-      do
-        echo "caching $package"
-        npm cache add "$package"
-      done <${tarballsFile}
+      cp -r $src/package.json .
+      cp -r ${pkgLockFile} package-lock.json
 
       npm ci
     '';
