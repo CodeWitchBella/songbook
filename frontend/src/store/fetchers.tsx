@@ -99,3 +99,8 @@ export function useTag() {
 export function useTags() {
   return [];
 }
+
+export async function logout(): Promise<void> {
+  const res = await jsonPost("/api/logout", {});
+  if (res.success) throw new Error("Logout failed");
+}
