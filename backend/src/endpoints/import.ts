@@ -80,10 +80,9 @@ const handlers: readonly {
       }
       const html = await r.text();
 
-      const json = before(
-        after(html, 'class="js-store" data-content="'),
-        '"',
-      ).replace(/&quot;/g, '"');
+      const json = before(after(html, 'class="js-store" data-content="'), '"')
+        .replace(/&quot;/g, '"')
+        .replace(/&#([0-9]+);/g, (v) => ({ "&#039;": "'" })[v] || v);
 
       const data = JSON.parse(json);
       const pageData = data["store"]["page"]["data"];
