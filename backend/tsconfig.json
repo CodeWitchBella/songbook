@@ -13,11 +13,7 @@
     "esModuleInterop": true,
     "types": []
   },
-  "include": [
-    "./src/*.ts",
-    "./src/**/*.ts",
-    "./*.ts",
-  ],
+  "include": ["./src/*.ts", "./src/**/*.ts", "./*.ts"],
   "exclude": ["node_modules/", "dist/"],
   "ts-node": {
     "transpileOnly": true

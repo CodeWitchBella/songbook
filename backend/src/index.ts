@@ -10,7 +10,7 @@ import { contextPair } from "./lib/context.js";
 
 async function handleRequest(
   request: Request,
-  createContext: () => Promise<MyContext>
+  createContext: () => Promise<MyContext>,
 ): Promise<Response> {
   try {
     const url = new URL(request.url);
@@ -32,7 +32,7 @@ async function handleRequest(
     if (url.pathname === "/beacon.min.js")
       return await forward(
         request,
-        "https://static.cloudflareinsights.com/beacon.min.js"
+        "https://static.cloudflareinsights.com/beacon.min.js",
       );
     return new Response("Not found", {
       status: 404,

@@ -33,7 +33,7 @@ export async function handleReleases(request: Request) {
           accept: "application/vnd.github.v3+json",
           "User-Agent": "codewitchbella-songbook-workers",
         },
-      }
+      },
     );
     if (fetched.status !== 200) {
       response = new Response(
@@ -45,7 +45,7 @@ export async function handleReleases(request: Request) {
         {
           status: 500,
           headers: { "Cache-Control": "s-maxage=10" },
-        }
+        },
       );
     } else {
       const json: GithubResponse[] = await fetched.json();
@@ -59,11 +59,11 @@ export async function handleReleases(request: Request) {
               body: entry.body.replaceAll("\r\n", "\n"),
             })),
         }),
-        { status: 200 }
+        { status: 200 },
       );
       response.headers.set(
         "cache-control",
-        "s-maxage=60,s-stale-while-revalidate=1200"
+        "s-maxage=60,s-stale-while-revalidate=1200",
       );
     }
     response.headers.set("content-type", "application/json; charset=utf-8");
