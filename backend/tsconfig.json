@@ -11,13 +11,12 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "types": ["@cloudflare/workers-types"]
+    "types": []
   },
   "include": [
     "./src/*.ts",
     "./src/**/*.ts",
     "./*.ts",
-    "./node_modules/@cloudflare/workers-types/index.d.ts"
   ],
   "exclude": ["node_modules/", "dist/"],
   "ts-node": {

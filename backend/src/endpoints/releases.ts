@@ -21,15 +21,10 @@ type GithubResponse = {
   body: string; // "## English\r\n\r\n- ...\r\n\r\n## Česky\r\n\r\n- ...\r\n";
 };
 
-export async function handleReleases(request: Request, ctx: ExecutionContext) {
+export async function handleReleases(request: Request) {
   if (request.method !== "GET") return methodNotAllowedResponse();
 
   let response;
-  let cache;
-  if (typeof caches !== "undefined") {
-    cache = await caches.open("default");
-    response = await cache.match(request.url);
-  }
   if (!response) {
     const fetched = await fetch(
       "https://api.github.com/repos/CodeWitchBella/songbook/releases?per_page=100",
@@ -38,7 +33,7 @@ export async function handleReleases(request: Request, ctx: ExecutionContext) {
           accept: "application/vnd.github.v3+json",
           "User-Agent": "codewitchbella-songbook-workers",
         },
-      },
+      }
     );
     if (fetched.status !== 200) {
       response = new Response(
@@ -50,7 +45,7 @@ export async function handleReleases(request: Request, ctx: ExecutionContext) {
         {
           status: 500,
           headers: { "Cache-Control": "s-maxage=10" },
-        },
+        }
       );
     } else {
       const json: GithubResponse[] = await fetched.json();
@@ -64,15 +59,14 @@ export async function handleReleases(request: Request, ctx: ExecutionContext) {
               body: entry.body.replaceAll("\r\n", "\n"),
             })),
         }),
-        { status: 200 },
+        { status: 200 }
       );
       response.headers.set(
         "cache-control",
-        "s-maxage=60,s-stale-while-revalidate=1200",
+        "s-maxage=60,s-stale-while-revalidate=1200"
       );
     }
     response.headers.set("content-type", "application/json; charset=utf-8");
-    if (cache) ctx.waitUntil(cache.put(request.url, response.clone()));
   }
   return response;
 }

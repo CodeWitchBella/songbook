@@ -17,7 +17,7 @@ export async function handleImport(request: Request): Promise<Response> {
 const handlers: readonly {
   test: (url: string) => boolean;
   handle: (
-    target: string,
+    target: string
   ) => Promise<{ text: string; author: string; title: string }>;
 }[] = [
   {
@@ -50,7 +50,7 @@ const handlers: readonly {
       }
       async function getBody(id: string) {
         const target = new URL(
-          "https://supermusic.cz/export.php?typ=TXT&stiahni=1",
+          "https://supermusic.cz/export.php?typ=TXT&stiahni=1"
         );
         target.searchParams.set("idpiesne", id);
         const r = await fetch(target.toString());
@@ -82,7 +82,7 @@ const handlers: readonly {
 
       const json = before(
         after(html, 'class="js-store" data-content="'),
-        '"',
+        '"'
       ).replace(/&quot;/g, '"');
 
       const data = JSON.parse(json);
@@ -112,7 +112,7 @@ const handlers: readonly {
           {
             status: 424,
             headers: { "content-type": "application/json" },
-          },
+          }
         );
       }
       const html = await r.text();
@@ -145,6 +145,7 @@ const handlers: readonly {
       };
     },
   },
+  /*
   {
     test: (url) => {
       const begin = "https://akordy.kytary.cz/song/";
@@ -240,12 +241,13 @@ const handlers: readonly {
       };
     },
   },
+  */
 ];
 
 function extractSimpleTagTextContent(html: string, tag: string) {
   return before(after(after(html, `<${tag}`), ">"), `</${tag}>`).replace(
     /<[^>]+>/g,
-    "",
+    ""
   );
 }
 

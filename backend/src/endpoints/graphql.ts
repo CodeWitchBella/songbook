@@ -4,7 +4,7 @@ import type { MyContext } from "../lib/context.js";
 import serverConfig from "../lib/graphql-server-config.js";
 
 const getServer = (() => {
-  let cache: ApolloServer;
+  let cache: ApolloServer<MyContext>;
   return () => {
     if (!cache) {
       cache = new ApolloServer(serverConfig);
@@ -16,7 +16,7 @@ const getServer = (() => {
 
 export async function handleGraphql(
   request: Request,
-  context: MyContext,
+  context: MyContext
 ): Promise<Response> {
   const server = getServer();
   const response = await server.executeHTTPGraphQLRequest({
@@ -29,6 +29,6 @@ export async function handleGraphql(
     context: () => context as any,
   });
   return new Response(
-    response.body.kind === "complete" ? response.body.string : null,
+    response.body.kind === "complete" ? response.body.string : null
   );
 }

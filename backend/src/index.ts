@@ -9,7 +9,6 @@ import { contextPair } from "./lib/context.js";
 
 async function handleRequest(
   request: Request,
-  ctx: ExecutionContext,
   createContext: () => Promise<MyContext>
 ): Promise<Response> {
   try {
@@ -22,7 +21,7 @@ async function handleRequest(
       return await handleLogin(request, await createContext());
     if (url.pathname === "/ultimate-guitar" || url.pathname === "/import")
       return await handleImport(request);
-    if (url.pathname === "/releases") return await handleReleases(request, ctx);
+    if (url.pathname === "/releases") return await handleReleases(request);
     if (request.method === "POST" && url.pathname === "/song")
       return await handleCreateSong(request, await createContext());
     if (url.pathname === "/beacon.min.js")
@@ -54,17 +53,11 @@ globalThis.clearImmediate = (handle) => clearTimeout(handle);
 const worker = {
   port: 5512,
 };
-Deno.serve(
-  worker,
-  async function fetch(
-    request: Request,
-    ctx: ExecutionContext
-  ): Promise<Response> {
-    const { createContext, finishContext } = contextPair(request);
-    const res = await handleRequest(request, ctx, createContext);
-    finishContext(res);
-    return res;
-  }
-);
+Deno.serve(worker, async function fetch(request: Request): Promise<Response> {
+  const { createContext, finishContext } = contextPair(request);
+  const res = await handleRequest(request, createContext);
+  finishContext(res);
+  return res;
+});
 
 console.log("listening on http://localhost:5512");

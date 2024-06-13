@@ -13,8 +13,6 @@
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240605.0",
-    "@miniflare/http-server": "^2.14.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/latinize": "^0.2.18",
     "@types/luxon": "^3.4.2",
