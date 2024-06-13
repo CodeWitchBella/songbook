@@ -145,7 +145,6 @@ const handlers: readonly {
       };
     },
   },
-  /*
   {
     test: (url) => {
       const begin = "https://akordy.kytary.cz/song/";
@@ -162,7 +161,7 @@ const handlers: readonly {
           {
             status: 424,
             headers: { "content-type": "application/json" },
-          },
+          }
         );
       }
 
@@ -241,7 +240,6 @@ const handlers: readonly {
       };
     },
   },
-  */
 ];
 
 function extractSimpleTagTextContent(html: string, tag: string) {
