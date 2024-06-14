@@ -1,4 +1,4 @@
-import { getGraphqlUrl, graphqlFetch } from "./graphql";
+import { getGraphqlUrl } from "./graphql";
 
 async function jsonPost(path: string, json: any) {
   const res = await fetch(new URL(path, getGraphqlUrl()).toString(), {
@@ -19,7 +19,7 @@ export async function jsonGet<SuccessBody = unknown>(path: string) {
 }
 
 async function parseJsonResponse<SuccessBody>(
-  res: Response,
+  res: Response
 ): Promise<
   { success: true; body: SuccessBody } | { success: false; body: any }
 > {
@@ -55,43 +55,6 @@ function pick(v: { [key: string]: any }, keys: string[]): any {
   return ret;
 }
 
-export function writeSong(song: {
-  id: string;
-  title: string;
-  author: string;
-  textWithChords: string;
-  metadata: {
-    fontSize: number | null;
-    paragraphSpace: number | null;
-    titleSpace: number | null;
-    spotify: string | null;
-    pretranspose: number | null;
-  };
-}) {
-  return graphqlFetch({
-    query: `
-      mutation($input: WriteSongInput!) {
-        writeSong(input: $input) {
-          id
-          textWithChords
-        }
-      }
-    `,
-    variables: {
-      input: {
-        ...pick(song, ["title", "author", "textWithChords"]),
-        metadata: pick(song.metadata, [
-          "fontSize",
-          "paragraphSpace",
-          "titleSpace",
-          "spotify",
-          "pretranspose",
-        ]),
-        id: song.id + ".song",
-      },
-    },
-  });
-}
 export function useTag() {
   if (false) return null;
   return { cover: "" };
