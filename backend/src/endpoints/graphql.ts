@@ -32,6 +32,10 @@ export async function handleGraphql(
     context: () => context as any,
   });
   return new Response(
-    response.body.kind === "complete" ? response.body.string : null
+    response.body.kind === "complete" ? response.body.string : null,
+    {
+      status: response.status,
+      headers: Object.fromEntries(response.headers.entries()),
+    }
   );
 }
