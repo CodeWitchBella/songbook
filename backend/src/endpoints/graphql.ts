@@ -16,19 +16,22 @@ const getServer = (() => {
 
 export async function handleGraphql(
   request: Request,
-  context: MyContext,
+  context: MyContext
 ): Promise<Response> {
   const server = getServer();
   const response = await server.executeHTTPGraphQLRequest({
     httpGraphQLRequest: {
       method: request.method,
-      body: await request.json(),
+      body:
+        request.method !== "GET" && request.method !== "HEAD"
+          ? await request.json()
+          : null,
       headers: new HeaderMap(request.headers.entries()),
       search: new URL(request.url).search,
     },
     context: () => context as any,
   });
   return new Response(
-    response.body.kind === "complete" ? response.body.string : null,
+    response.body.kind === "complete" ? response.body.string : null
   );
 }
