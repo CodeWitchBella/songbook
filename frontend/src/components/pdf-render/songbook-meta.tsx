@@ -3,6 +3,8 @@ import type { DateTime } from "luxon";
 import deti21 from "./deti21.png";
 import deti22 from "./deti22.png";
 import Deti23 from "./deti23";
+import Deti24 from "./deti24.png";
+import Vedouci24 from "./vedouci24.png";
 import extra21 from "./extra21.png";
 import vedouci21 from "./vedouci21.png";
 import Vedouci22 from "./vedouci22";
@@ -108,6 +110,26 @@ const titleMap: {
     imageWidth: 30,
     imageOnly: false,
     image: Deti23,
+  },
+  "Tábor 2024 Děti": {
+    title: "Zpěvník",
+    subtitle: "Dědečkovy oblíbené písničky",
+    footer: "Brehoni 2024",
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: Deti24,
+  },
+  "Tábor 2024 Vedoucí": {
+    title: "Zpěvník rady starších",
+    subtitle: "Co už děda nemůže ani slyšet",
+    footer: "Brehoni 2024",
+    imageViewHeight: 40,
+    imageViewPaddingTop: 0,
+    imageWidth: 30,
+    imageOnly: false,
+    image: Vedouci24,
   },
 };
 

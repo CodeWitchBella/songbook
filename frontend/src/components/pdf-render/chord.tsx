@@ -29,7 +29,7 @@ function transposeChord(chord: string, transposition: number) {
       if (chord.startsWith(note.note)) {
         return chord.replace(
           note.note,
-          list.list[remainder(note.idx + transposition, list.iterable.length)],
+          list.list[remainder(note.idx + transposition, list.iterable.length)]
         );
       }
     }
@@ -47,7 +47,12 @@ export function Chord({
   const { transpose, web } = usePDFSettings();
   const onChordPress = spacer ? null : web?.onChordPress;
   return (
-    <Text style={spacer ? {} : { position: "absolute", zIndex: 1 }}>
+    <Text
+      style={[
+        spacer ? { opacity: 0 } : { position: "absolute", zIndex: 1 },
+        { fontWeight: /^_?^/.test(children) ? "normal" : "bold" },
+      ]}
+    >
       {children.split(/ /).map((chord, index) => {
         const transposed = transposeChord(chord, transpose);
         return (

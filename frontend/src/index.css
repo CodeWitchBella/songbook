@@ -3,21 +3,41 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Cantarell';
+  font-family: "Cantarell";
   src:
-    url('./webfonts/cantarell-regular.woff2') format('woff2'),
-    url('./webfonts/cantarell-regular.woff') format('woff');
+    url("./webfonts/cantarell-regular.woff2") format("woff2"),
+    url("./webfonts/cantarell-regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Cantarell';
+  font-family: "Cantarell";
   src:
-    url('./webfonts/cantarell-bold.woff2') format('woff2'),
-    url('./webfonts/cantarell-bold.woff') format('woff');
+    url("./webfonts/cantarell-bold.woff2") format("woff2"),
+    url("./webfonts/cantarell-bold.woff") format("woff");
   font-weight: bold;
   font-style: normal;
+}
+
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("./webfonts/oswald-variable-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF,
+    U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url("./webfonts/oswald-variable-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 html,
@@ -31,15 +51,20 @@ body,
   }
 }
 
-.indexcss-pdf-render .react-pdf__Page__svg, .indexcss-pdf-render .set-size {
+.indexcss-pdf-render .react-pdf__Page__svg,
+.indexcss-pdf-render .set-size {
   height: var(--a-fit-height, 100vh) !important;
   width: var(--a-fit-width, 70.71067811865474vh /* 100/sqrt(2) */) !important;
 }
 
 @media (max-width: 70.71067811865474vh /* 100/sqrt(2) */) {
-  .indexcss-pdf-render .react-pdf__Page__svg, .indexcss-pdf-render .set-size {
+  .indexcss-pdf-render .react-pdf__Page__svg,
+  .indexcss-pdf-render .set-size {
     width: var(--a-fit-width, 100vw) !important;
-    height: var(--a-fit-height, 141.4213562373095vw /* 100*sqrt(2) */) !important;
+    height: var(
+      --a-fit-height,
+      141.4213562373095vw /* 100*sqrt(2) */
+    ) !important;
   }
 }
 
@@ -53,7 +78,8 @@ body,
   height: 100%;
 }
 
-.indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+.indexcss-edit-song-columns,
+.indexcss-edit-song-columns--preview {
   height: 100%;
   display: flex;
 }
@@ -65,7 +91,8 @@ body,
 }
 
 @media (min-height: 70.71067811865476vw /* 50*sqrt(2) */) {
-  .indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+  .indexcss-edit-song-columns,
+  .indexcss-edit-song-columns--preview {
     --a-fit-height: calc(50vw * 1.4142135623730951); /* sqrt(2) */
     --a-fit-width: 50vw;
   }
@@ -78,7 +105,8 @@ body,
   .indexcss-edit-song-columns--preview {
     width: 200vw;
   }
-  .indexcss-edit-song-columns, .indexcss-edit-song-columns--preview {
+  .indexcss-edit-song-columns,
+  .indexcss-edit-song-columns--preview {
     max-width: 1200px;
     --a-fit-width: 600px;
     --a-fit-height: 848.5281374238571px /* 600*sqrt(2) */;
@@ -91,7 +119,8 @@ body,
   height: 181.84281842818427vw; /* 100 / ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
   --vh: 1.8184281842818428vw; /* 1 / ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
   --vw: 1vw;
-  @media (min-width: 54.992548435171386vh) { /* 100 * ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
+  @media (min-width: 54.992548435171386vh) {
+    /* 100 * ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
     font-size: 1.87vh;
     width: 54.992548435171386vh; /* 100 * ((105 - 12.4 - 18.8) / (148 - 6 - 7.8)) */
     height: calc(100vh);
@@ -99,7 +128,6 @@ body,
     --vw: 0.5499254843517138vh; /* (105 - 12.4 - 18.8) / (148 - 6 - 7.8) */
   }
 }
-
 
 /* BEGIN: outline handler */
 /* a subtle focus style for keyboard-input elements */

@@ -1,5 +1,4 @@
 import { DateTime } from "luxon";
-import React from "react";
 
 import img from "./cross.png";
 import { PDFPage } from "./pdf-page";
@@ -63,7 +62,9 @@ export function PDFTitlePage({ title }: { title: string }) {
         }}
       >
         <View style={{ paddingBottom: em(1.5) }}>
-          <Text style={{ fontSize: em(3) }}>{meta.title}</Text>
+          <Text style={{ fontSize: em(3), fontFamily: "Oswald" }}>
+            {meta.title}
+          </Text>
         </View>
         <View>
           <Text style={{ fontSize: em(2) }}>{meta.subtitle}</Text>

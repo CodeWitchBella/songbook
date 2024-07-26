@@ -1,7 +1,7 @@
 import { saveAs } from "file-saver";
 import { DateTime } from "luxon";
 import type { PropsWithChildren } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 //import 'react-pdf/dist/Page/AnnotationLayer.css'
 import type { SongType } from "store/store-song";
@@ -16,7 +16,12 @@ import { PDFSettingsProvider } from "./pdf-settings";
 import { PDFSongPage } from "./pdf-song-page";
 import { PDFTitlePage } from "./pdf-title-page";
 import { PDFToc } from "./pdf-toc";
-import { PDFBlobProvider, PDFDocument, PDFProvider } from "./primitives";
+import {
+  PDFBlobProvider,
+  PDFDocument,
+  PDFProvider,
+  usePDF,
+} from "./primitives";
 import { getSongbookMeta } from "./songbook-meta";
 
 const ReactPDF = React.lazy(
@@ -30,8 +35,8 @@ const ReactPDF = React.lazy(
           children: (rpdf: typeof import("react-pdf")) => React.ReactElement;
         }) => children(rpdf),
       };
-    }),
-  ),
+    })
+  )
 );
 
 type Props = {
@@ -151,22 +156,6 @@ export default function PDFRender({ song }: Props) {
   );
 }
 
-function Save({
-  blob,
-  onDone,
-  slug,
-}: {
-  blob: Blob;
-  onDone: () => void;
-  slug: string | null;
-}) {
-  useEffect(() => {
-    saveAs(blob, `zpevnik${slug ? "-" + slug : ""}.pdf`);
-    onDone();
-  }, [blob, onDone, slug]);
-  return null;
-}
-
 export function PDFDownload({
   list,
   onDone,
@@ -270,22 +259,43 @@ export function PDFDownload({
   );
   return (
     <PDFProvider>
-      <PDFBlobProvider document={doc}>
-        {({ blob }) =>
-          !blob ? null : (
-            <Save
-              blob={blob}
-              onDone={onDone}
-              slug={
-                slug +
-                (booklet
-                  ? `-booklet-a${pageSize - (booklet === "quad" ? 2 : 1)}`
-                  : `-a${pageSize}`)
-              }
-            />
-          )
+      <Download
+        slug={
+          slug +
+          (booklet
+            ? `-booklet-a${pageSize - (booklet === "quad" ? 2 : 1)}`
+            : `-a${pageSize}`)
         }
-      </PDFBlobProvider>
+        document={doc}
+        onDone={onDone}
+      />
     </PDFProvider>
   );
+}
+
+type Surely<T> = T extends null | undefined ? never : T;
+
+function Download({
+  slug,
+  document,
+  onDone,
+}: {
+  slug: string;
+  document: Surely<Parameters<typeof usePDF>[0]>["document"];
+  onDone: () => void;
+}) {
+  const [instance] = usePDF({ document });
+  const blob = useRef<Blob | null>();
+
+  useEffect(() => {
+    if (blob.current !== instance.blob) {
+      blob.current = instance.blob;
+      if (instance.blob) {
+        saveAs(instance.blob, `zpevnik${slug ? "-" + slug : ""}.pdf`);
+        onDone();
+      }
+    }
+  });
+
+  return null;
 }

@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { lezer } from "@lezer/generator/rollup";
 import react from "@vitejs/plugin-react-swc";
 import fs from "fs";
@@ -19,14 +18,13 @@ export default defineConfig({
   server: {
     port: 5513,
     proxy: {
-      "/api": { target: "http://localhost:5512", changeOrigin: true },
+      "/api": { target: "https://zpevnik.skorepova.info", changeOrigin: true },
     },
   },
   plugins: [
     lezer(),
     wasm(),
     react(),
-    myPlugin(),
     VitePWA({
       strategies: "injectManifest",
       srcDir: "src",
@@ -35,8 +33,8 @@ export default defineConfig({
       manifest: JSON.parse(
         fs.readFileSync(
           new URL("./src/manifest.json", import.meta.url),
-          "utf-8",
-        ),
+          "utf-8"
+        )
       ),
       injectManifest: {
         maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
@@ -60,20 +58,3 @@ export default defineConfig({
     ],
   },
 });
-
-const file =
-  "node_modules/@react-pdf/unicode-properties/lib/unicode-properties.es.js";
-function myPlugin() {
-  return {
-    name: "transform-file",
-
-    transform(src, id) {
-      if (id.endsWith(file)) {
-        return {
-          code: "import { Buffer } from 'buffer';" + src,
-          map: null, // provide source map if available
-        };
-      }
-    },
-  };
-}

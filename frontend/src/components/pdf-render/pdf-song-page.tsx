@@ -28,7 +28,8 @@ const style = StyleSheet.create({
     alignItems: "flex-end",
     height: "auto",
   },
-  bold: { fontWeight: "bold" },
+  bold: { fontWeight: "700" },
+  reset: { fontWeight: "normal", fontFamily: "Cantarell" },
   transparent: { opacity: 0 },
   zIndexTop: { zIndex: 2 },
   defaultStyleText: { fontFamily: "Cantarell" },
@@ -44,35 +45,59 @@ function DefaultStyleText(props: PropsOf<typeof Text>) {
   );
 }
 
+function textLine(
+  content: {
+    ch: string;
+    text: string;
+    bold?: boolean | undefined;
+  }[]
+) {
+  return content
+    .map((t, i2) => [
+      t.ch?.startsWith("_") ? (
+        <Chord spacer={true} key={i2 + "ch"}>
+          {t.ch.replace("_", "")}
+        </Chord>
+      ) : null,
+      <Text key={i2} style={[t.bold ? style.bold : style.reset]}>
+        {t.text}
+      </Text>,
+    ])
+    .flat()
+    .filter(notNull);
+}
+
 function ChordLine({ l }: { l: Line }) {
   const { em, vw, fontSize } = usePDFSettings();
   return (
     <View style={{ height: em(fontSize * 2.2), flexDirection: "row" }}>
       {l.content
         .map((cur, i) => (
-          <DefaultStyleText
-            selectable={false}
+          <View
             key={i}
-            style={{ position: "absolute", width: vw(100) }}
+            style={{
+              position: "absolute",
+              width: vw(100),
+              flexDirection: "row",
+              marginTop: em(-0.15),
+            }}
           >
-            <Text style={[style.transparent, style.line]}>
-              {l.content.slice(0, i).map((t, i2) => (
-                <Text key={i2} style={t.bold ? style.bold : {}}>
-                  {t.text}
-                  {t.ch?.startsWith("_") ? (
-                    <Text style={style.bold}>
-                      <Chord spacer={true}>{t.ch.replace("_", "")}</Chord>
-                    </Text>
-                  ) : null}
-                </Text>
-              ))}
-            </Text>
-            <Text
-              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop]}
+            <DefaultStyleText
+              selectable={false}
+              style={[style.transparent, style.line]}
+            >
+              {textLine(l.content.slice(0, i))}
+            </DefaultStyleText>
+            <DefaultStyleText
+              style={[
+                /^_?\^/.test(cur.ch) ? {} : style.bold,
+                style.zIndexTop,
+                { fontFamily: "Oswald" },
+              ]}
             >
               <Chord>{cur.ch.replace(/^[_^]+/, "")}</Chord>
-            </Text>
-          </DefaultStyleText>
+            </DefaultStyleText>
+          </View>
         ))
         .filter(notNull)}
       <DefaultStyleText style={style.bold} />
@@ -98,7 +123,7 @@ function LineWrap({
 }
 
 function LineC({ l }: { l: Line }) {
-  const hasText = l.content.some((c) => !!c.text);
+  const hasText = l.content.some((c) => !!c.text.trim());
   if (!hasText) {
     return (
       <LineWrap hasChord={false}>
@@ -106,7 +131,7 @@ function LineC({ l }: { l: Line }) {
           <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText>
         ) : null}
         {l.content.map((c, i) => (
-          <DefaultStyleText style={style.bold} key={i}>
+          <DefaultStyleText key={i}>
             <Chord>{c.ch}</Chord>
           </DefaultStyleText>
         ))}
@@ -116,25 +141,12 @@ function LineC({ l }: { l: Line }) {
   return (
     <LineWrap hasChord={hasChord(l)}>
       {l.tag ? (
-        <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText>
+        <DefaultStyleText style={[style.bold]}>{l.tag}&nbsp;</DefaultStyleText>
       ) : null}
       {hasChord(l) ? <ChordLine l={l} /> : null}
 
       <DefaultStyleText style={style.line}>
-        {l.content
-          .map((c, i) => [
-            c.ch && c.ch.startsWith("_") ? (
-              <Text key={i * 2} style={{ opacity: 0 }}>
-                <Chord spacer={true}>{c.ch.replace(/^_/, "")}</Chord>
-              </Text>
-            ) : null,
-            c.text ? (
-              <Text style={c.bold ? style.bold : {}} key={i * 2 + 1}>
-                {nbsp(c.text)}
-              </Text>
-            ) : null,
-          ])
-          .filter(notNull)}
+        {textLine(l.content)}
       </DefaultStyleText>
     </LineWrap>
   );
@@ -155,6 +167,7 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em } = usePDFSettings();
   const textStyle = {
+    fontFamily: "Oswald",
     fontWeight: "bold",
     fontSize: em(1.2),
   } as const;
@@ -226,16 +239,26 @@ export function PDFSongContent({
         <ParagraphC p={paragraph} key={i2} />
       ))}
       {left ? null : (
-        <DefaultStyleText
+        <View
           style={{
+            width: "100%",
+            alignItems: "flex-end",
             position: "absolute",
+            // @ts-expect-error
             bottom: 0,
-            textAlign: "center",
-            fontSize: em(1),
           }}
         >
-          {footer}
-        </DefaultStyleText>
+          <DefaultStyleText
+            style={{
+              textAlign: "center",
+              fontSize: em(1),
+              marginLeft: -em(10),
+              fontFamily: "ShantellSans",
+            }}
+          >
+            {footer}
+          </DefaultStyleText>
+        </View>
       )}
     </>
   );

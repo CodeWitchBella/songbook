@@ -3,7 +3,13 @@ import type ReactPDF from "@react-pdf/renderer";
 import type ReactPDFTypes from "@react-pdf/types/style";
 import { useColors } from "components/themed";
 import type { ComponentProps, PropsWithChildren } from "react";
-import React, { createContext, useContext } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import type { TextStyle, ViewStyle } from "react-native";
 import {
   Image as RNImage,
@@ -76,7 +82,7 @@ type MergedViewStyle = StyleProp<
 >;
 
 function viewStyleForPDF(
-  st: MergedViewStyle,
+  st: MergedViewStyle
 ): ReactPDFTypes.Style | ReactPDFTypes.Style[] | undefined {
   if (!st) return;
   if (Array.isArray(st))
@@ -93,7 +99,7 @@ function viewStyleForPDF(
       ?.map((t) =>
         Object.entries(t)
           .map(([k, v]) => `${k}(${v})`)
-          .join(" "),
+          .join(" ")
       )
       .join(" "),
   } as ReactPDFTypes.Style;
@@ -103,7 +109,7 @@ function viewStyleForPDF(
 type MergedTextStyle = StyleProp<ReactPDFTypes.Style & TextStyle>;
 
 function textStyleForPDF(
-  st: MergedTextStyle,
+  st: MergedTextStyle
 ): ReactPDFTypes.Style | ReactPDFTypes.Style[] | undefined {
   if (!st) return;
   if (Array.isArray(st))
@@ -143,7 +149,7 @@ export function Image(
   props: Omit<
     PropsOf<typeof ReactPDF.Image> & PropsOf<typeof RNImage>,
     "src" | "source"
-  > & { source: string },
+  > & { source: string }
 ) {
   const pdf = useContext(InPdfCtx);
   const { source, ...rest } = props;
@@ -152,15 +158,15 @@ export function Image(
 }
 
 export function PDFDocument(
-  props: PropsWithChildren<PropsOf<typeof ReactPDF.Document>>,
+  props: PropsWithChildren<PropsOf<typeof ReactPDF.Document>>
 ) {
-  const pdf = usePDF();
+  const pdf = usePDFCtx();
   return <pdf.default.Document {...props} />;
 }
 export function PDFPage(
-  props: PropsWithChildren<PropsOf<typeof ReactPDF.Page>>,
+  props: PropsWithChildren<PropsOf<typeof ReactPDF.Page>>
 ) {
-  const pdf = usePDF();
+  const pdf = usePDFCtx();
   return <pdf.default.Page {...props} />;
 }
 
@@ -168,7 +174,7 @@ export function PDFBlobProvider({
   children,
   document,
 }: ComponentProps<typeof ReactPDF.BlobProvider>) {
-  const pdf = usePDF();
+  const pdf = usePDFCtx();
   return (
     <pdf.BlobProvider
       document={<InPdfCtx.Provider value={pdf}>{document}</InPdfCtx.Provider>}
@@ -181,25 +187,36 @@ export function PDFBlobProvider({
 export const PDFProvider = React.lazy(
   once(() =>
     import("@react-pdf/renderer")
-      .then((pdf) => {
-        pdfSetup(pdf);
-
-        return pdf;
-      })
+      .then((pdf) => pdfSetup(pdf))
       .then((pdf) => ({
         default: ({ children }: PropsWithChildren<{}>) => (
           <InPdfCtx.Provider value={pdf}>{children}</InPdfCtx.Provider>
         ),
-      })),
-  ),
+      }))
+  )
 );
 
 export function useIsInPDF() {
   return !!useContext(InPdfCtx);
 }
 
-function usePDF() {
+function usePDFCtx() {
   const pdf = useContext(InPdfCtx);
   if (!pdf) throw new Error("Not in PDF context");
   return pdf;
+}
+export function usePDF(...[opt]: Parameters<typeof ReactPDF.usePDF>) {
+  const pdf = usePDFCtx();
+  return pdf.usePDF({
+    ...opt,
+    document: useMemo(
+      () =>
+        opt?.document ? (
+          <InPdfCtx.Provider value={pdf}>{opt?.document}</InPdfCtx.Provider>
+        ) : (
+          opt?.document
+        ),
+      [opt?.document]
+    ),
+  });
 }
