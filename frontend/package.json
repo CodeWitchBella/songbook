@@ -6,6 +6,7 @@
     "@isbl/ts-utils": "^1.0.1",
     "@lezer/lr": "^1.4.1",
     "@react-pdf/renderer": "^3.4.4",
+    "@sentry/react": "^8.48.0",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.13",
     "@tombatossals/chords-db": "^0.5.1",
@@ -53,9 +54,16 @@
     "dev": "vite",
     "extract": "node extract.js"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "babel": {
-    "presets": ["react-app"]
+    "presets": [
+      "react-app"
+    ]
   },
   "devDependencies": {
     "@lezer/generator": "^1.7.0",
