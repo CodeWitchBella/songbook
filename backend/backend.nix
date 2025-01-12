@@ -62,7 +62,7 @@
       mkdir -p $out/bin
       cp -r $src/. .
       ln -s ${node_modules}/js/node_modules node_modules
-      ${pkgs.esbuild}/bin/esbuild src/index.ts --bundle --platform=neutral --sourcemap --outfile=$out/bundle.mjs --format=esm --main-fields=main,module --banner:js="import{Buffer}from'node:buffer';globalThis.Buffer = Buffer;" --external:os --external:fs --external:net --external:stream --external:crypto --external:events --external:https --external:zlib --external:url --external:punycode --external:http --external:perf_hooks --external:tls
+      ${pkgs.esbuild}/bin/esbuild src/index.ts --bundle --platform=neutral --sourcemap --outfile=$out/bundle.mjs --format=esm --main-fields=main,module --banner:js="import{Buffer}from'node:buffer';globalThis.Buffer = Buffer;import process from'node:process';globalThis.process = process;" --external:os --external:fs --external:net --external:stream --external:crypto --external:events --external:https --external:zlib --external:url --external:punycode --external:http --external:perf_hooks --external:tls
     '';
     installPhase = ''
       echo "#!${pkgs.bash}/bin/bash" > $out/bin/songbook-backend
