@@ -8,7 +8,7 @@ const getServer = (() => {
   return () => {
     if (!cache) {
       cache = new ApolloServer(serverConfig);
-      cache.start();
+      cache.startInBackgroundHandlingStartupErrorsByLoggingAndFailingAllRequests();
     }
     return cache;
   };
