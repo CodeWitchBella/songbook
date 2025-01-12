@@ -1,4 +1,5 @@
 import latinize from "latinize";
+import crypto from "crypto"
 
 export function slugify(part: string) {
   return latinize(part)
