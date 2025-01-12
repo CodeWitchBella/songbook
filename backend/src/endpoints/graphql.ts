@@ -1,7 +1,7 @@
 import { ApolloServer, HeaderMap } from "@apollo/server";
 
-import type { MyContext } from "../lib/context.js";
-import serverConfig from "../lib/graphql-server-config.js";
+import type { MyContext } from "../lib/context.ts";
+import serverConfig from "../lib/graphql-server-config.ts";
 
 const getServer = (() => {
   let cache: ApolloServer<MyContext>;

@@ -60,20 +60,27 @@
 
     buildPhase = ''
       mkdir -p $out/bin
-      cp -r $src/. .
-      ln -s ${node_modules}/js/node_modules node_modules
-      ${pkgs.esbuild}/bin/esbuild src/index.ts --bundle --platform=neutral --sourcemap --outfile=$out/bundle.mjs --format=esm --main-fields=main,module --banner:js="import{Buffer}from'node:buffer';globalThis.Buffer = Buffer;import process from'node:process';globalThis.process = process;" --external:os --external:fs --external:net --external:stream --external:crypto --external:events --external:https --external:zlib --external:url --external:punycode --external:http --external:perf_hooks --external:tls
+      cp -r $src/src $out/.
+      cp -r $src/package.json $out/.
+      ln -s ${node_modules}/js/node_modules $out/node_modules
     '';
     installPhase = ''
       echo "#!${pkgs.bash}/bin/bash" > $out/bin/songbook-backend
       echo "cd $out" >> $out/bin/songbook-backend
-      echo "${pkgs.deno}/bin/deno run -A --unstable-bare-node-builtins $out/bundle.mjs" >> $out/bin/songbook-backend
+      echo "export DENO_UNSTABLE_BYONM=1" >> $out/bin/songbook-backend
+      echo "${pkgs.deno}/bin/deno run -A --unstable-bare-node-builtins --cached-only --no-remote $out/src/index.ts" >> $out/bin/songbook-backend
       chmod +x $out/bin/songbook-backend
     '';
   };
+  docker = pkgs.dockerTools.buildImage {
+    name = "songbook-docker";
+    config = {
+      Cmd = [ "${songbook}/bin/songbook-backend" ];
+    };
+  };
 in {
   packages = {
-    inherit node_modules songbook;
+    inherit node_modules songbook docker;
     default = songbook;
   };
 }

@@ -1,12 +1,12 @@
-import { handleCreateSong } from "./endpoints/create-song.js";
-import { handleGraphql } from "./endpoints/graphql.js";
-import { handleImport } from "./endpoints/import.js";
-import { handleLogin } from "./endpoints/login.js";
-import { handleLogout } from "./endpoints/logout.js";
-import { handleReleases } from "./endpoints/releases.js";
-import { forward } from "./forward.js";
-import type { MyContext } from "./lib/context.js";
-import { contextPair } from "./lib/context.js";
+import { handleCreateSong } from "./endpoints/create-song.ts";
+import { handleGraphql } from "./endpoints/graphql.ts";
+import { handleImport } from "./endpoints/import.ts";
+import { handleLogin } from "./endpoints/login.ts";
+import { handleLogout } from "./endpoints/logout.ts";
+import { handleReleases } from "./endpoints/releases.ts";
+import { forward } from "./forward.ts";
+import type { MyContext } from "./lib/context.ts";
+import { contextPair } from "./lib/context.ts";
 
 async function handleRequest(
   request: Request,

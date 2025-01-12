@@ -1,7 +1,7 @@
 {
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     systems.url = "github:nix-systems/default";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -81,6 +81,7 @@
 
         packages.frontend = frontend.packages.default {lastModified = builtins.toString inputs.self.lastModified;};
         packages.backend = backend.packages.default;
+        packages.docker = backend.packages.docker;
 
         process-compose.default.settings = {
           environment = {

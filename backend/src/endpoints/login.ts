@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
-import { schema } from "../db/drizzle";
+import { schema } from "../db/drizzle.ts";
 import { z } from "zod";
-import { validateZodJsonBody } from "../lib/request";
-import { MyContext } from "../lib/context";
-import { comparePassword, createSession } from "../lib/graphql-server-config";
-import { createSetSessionCookieHeader } from "../lib/cookie";
+import { validateZodJsonBody } from "../lib/request.ts";
+import { MyContext } from "../lib/context.ts";
+import { comparePassword, createSession } from "../lib/graphql-server-config.ts";
+import { createSetSessionCookieHeader } from "../lib/cookie.ts";
 
 const sch = z.object({
   email: z.string(),

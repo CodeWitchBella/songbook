@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
-import { schema } from "../db/drizzle";
-import { MyContext } from "../lib/context";
-import { createSetSessionCookieHeader } from "../lib/cookie";
+import { schema } from "../db/drizzle.ts";
+import { MyContext } from "../lib/context.ts";
+import { createSetSessionCookieHeader } from "../lib/cookie.ts";
 import { Duration } from "luxon";
-import { getViewer } from "../lib/session";
+import { getViewer } from "../lib/session.ts";
 
 export async function handleLogout(context: MyContext): Promise<Response> {
   const data = await getViewer(context);

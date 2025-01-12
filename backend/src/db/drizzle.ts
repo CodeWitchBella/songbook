@@ -2,9 +2,9 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { drizzle as pgDrizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import { schema } from "./drizzle.js";
+import { schema } from "./drizzle.ts";
 
-export type DB = PostgresJsDatabase<typeof import("./schema.js")>;
+export type DB = PostgresJsDatabase<typeof import("./schema.ts")>;
 
 let db: DB;
 export function drizzle() {
@@ -37,7 +37,7 @@ export function checkCode(error: unknown, code: string) {
   return typeof error === "object" && error && (error as any).code === code;
 }
 
-export * as schema from "./schema.js";
+export * as schema from "./schema.ts";
 
 export function affectedRows(q: postgres.RowList<any[]>): number {
   return q.count;

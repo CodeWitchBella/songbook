@@ -1,4 +1,4 @@
-import { badRequestResponse, jsonResponse } from "../lib/response.js";
+import { badRequestResponse, jsonResponse } from "../lib/response.ts";
 
 export async function handleImport(request: Request): Promise<Response> {
   const url = new URL(request.url);

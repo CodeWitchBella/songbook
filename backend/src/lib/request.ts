@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { badRequestResponse } from "./response.js";
+import { badRequestResponse } from "./response.ts";
 
 export async function parseJsonBody(request: Request) {
   if (
