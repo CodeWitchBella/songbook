@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-import img from "./cross.png";
+import img from "./triquetra.png";
 import { PDFPage } from "./pdf-page";
 import { usePDFSettings } from "./pdf-settings";
 import { Image, Text, View } from "./primitives";
@@ -12,7 +12,7 @@ export function PDFTitlePage({ title }: { title: string }) {
   const ImageRef = meta.image || img;
   if (meta.imageOnly) {
     return (
-      <PDFPage left={false}>
+      <PDFPage left={false} skipPadding={Array.isArray(meta.imageOnly)}>
         <View
           style={{
             width: "100%",
@@ -24,10 +24,10 @@ export function PDFTitlePage({ title }: { title: string }) {
           {typeof ImageRef === "string" ? (
             <Image
               source={ImageRef}
-              style={{ height: vh(90), width: vh(63) }}
+              style={{ height: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[0] : 90), width: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[1]:63) }}
             />
           ) : (
-            <ImageRef style={{ height: vh(90), width: vh(63) }} />
+            <ImageRef style={{ height: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[0] :90), width: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[1] :63) }} />
           )}
         </View>
       </PDFPage>
@@ -62,7 +62,7 @@ export function PDFTitlePage({ title }: { title: string }) {
         }}
       >
         <View style={{ paddingBottom: em(1.5) }}>
-          <Text style={{ fontSize: em(3), fontFamily: "Oswald" }}>
+          <Text style={{ fontSize: em(3), fontFamily: "ShantellSans" }}>
             {meta.title}
           </Text>
         </View>

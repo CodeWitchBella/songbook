@@ -28,7 +28,7 @@ const style = StyleSheet.create({
     alignItems: "flex-end",
     height: "auto",
   },
-  bold: { fontWeight: "700" },
+  bold: { fontWeight: "bold" },
   reset: { fontWeight: "normal", fontFamily: "Cantarell" },
   transparent: { opacity: 0 },
   zIndexTop: { zIndex: 2 },
@@ -79,7 +79,8 @@ function ChordLine({ l }: { l: Line }) {
               position: "absolute",
               width: vw(100),
               flexDirection: "row",
-              marginTop: em(-0.15),
+              marginTop: em(-0),
+              marginBottom: em(-0.15),
             }}
           >
             <DefaultStyleText
@@ -167,7 +168,7 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em } = usePDFSettings();
   const textStyle = {
-    fontFamily: "Oswald",
+    fontFamily: "AtkinsonHyperlegible",
     fontWeight: "bold",
     fontSize: em(1.2),
   } as const;

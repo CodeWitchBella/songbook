@@ -39,15 +39,19 @@ export function PDFPage({
   children,
   left,
   style,
+  skipPadding = false,
   ...rest
 }: PropsWithChildren<{
   left: boolean;
   style?: ReactPDFTypes.Style | ReactPDFTypes.Style[];
   bookmark?: string;
   id?: string;
+  skipPadding?: boolean
 }>) {
   const { vw, vh, web } = usePDFSettings();
   const { Page } = useContext(pageContext);
+
+  const nopad = web || skipPadding
 
   return (
     <Page {...rest}>
@@ -59,10 +63,10 @@ export function PDFPage({
             fontWeight: "normal",
             height: web ? "100%" : vh(100),
             width: web ? "100%" : vw(100),
-            paddingTop: web ? 0 : vh(margin.top),
-            paddingBottom: web ? 0 : vh(margin.bottom),
-            paddingRight: web ? 0 : vw(left ? margin.inner : margin.outer),
-            paddingLeft: web ? 0 : vw(left ? margin.outer : margin.inner),
+            paddingTop: nopad ? 0 : vh(margin.top),
+            paddingBottom: nopad ? 0 : vh(margin.bottom),
+            paddingRight: nopad ? 0 : vw(left ? margin.inner : margin.outer),
+            paddingLeft: nopad ? 0 : vw(left ? margin.outer : margin.inner),
           },
         ]}
       >

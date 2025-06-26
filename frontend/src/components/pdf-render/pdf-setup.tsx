@@ -4,12 +4,15 @@ import OswaldBold from "webfonts/oswald-bold.ttf";
 import Oswald from "webfonts/oswald-regular.ttf";
 import ShantellSansBold from "webfonts/shantellsans-bold.ttf";
 import ShantellSans from "webfonts/shantellsans-regular.ttf";
+import AtkinsonHyperlegibleBold from "webfonts/atkinson-hyperlegible-bold.ttf";
+import AtkinsonHyperlegible from "webfonts/atkinson-hyperlegible-regular.ttf";
 
 export async function pdfSetup(pdf: typeof import("@react-pdf/renderer")) {
   const promises: Promise<unknown>[] = [];
   font("Cantarell", Cantarell, CantarellBold, true);
   font("Oswald", Oswald, OswaldBold);
-  font("ShantellSans", ShantellSans, ShantellSansBold);
+  font("ShantellSans", ShantellSans, ShantellSansBold, true);
+  font("AtkinsonHyperlegible", AtkinsonHyperlegible, AtkinsonHyperlegibleBold, true);
 
   await Promise.all(promises);
   // disable hyphenation

@@ -46,11 +46,13 @@ export function Chord({
 }) {
   const { transpose, web } = usePDFSettings();
   const onChordPress = spacer ? null : web?.onChordPress;
+  const normal = children.startsWith('^') || children.startsWith('_^')
   return (
     <Text
       style={[
         spacer ? { opacity: 0 } : { position: "absolute", zIndex: 1 },
-        { fontWeight: /^_?^/.test(children) ? "normal" : "bold" },
+        { fontWeight: normal ? "normal" : "bold", fontFamily:  "AtkinsonHyperlegible", fontStyle: "normal" },
+        { marginBottom: -20 },
       ]}
     >
       {children.split(/ /).map((chord, index) => {

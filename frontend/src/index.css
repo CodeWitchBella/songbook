@@ -20,6 +20,24 @@
   font-style: normal;
 }
 
+
+@font-face {
+  font-family: "AtkinsonHyperlegible";
+  src:
+    url("./webfonts/atkinson-hyperlegible-regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "AtkinsonHyperlegible";
+  src:
+    url("./webfonts/atkinson-hyperlegible-bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+}
+
+
 @font-face {
   font-family: "Oswald";
   font-style: normal;
