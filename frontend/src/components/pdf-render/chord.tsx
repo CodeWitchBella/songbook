@@ -1,4 +1,5 @@
 import { getChordDefinition } from "components/chord-help";
+import { useColors } from "components/themed";
 import { Fragment } from "react";
 import { Pressable } from "react-native";
 
@@ -10,11 +11,9 @@ const notes = [
   ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "B", "H"],
 ];
 
-const iterableNotes = notes.map((list) => ({
+const iterableNotes = notes.map(list => ({
   list,
-  iterable: list
-    .map((note, idx) => ({ note, idx }))
-    .sort((a, b) => b.note.length - a.note.length),
+  iterable: list.map((note, idx) => ({ note, idx })).sort((a, b) => b.note.length - a.note.length),
 }));
 
 function remainder(num: number, div: number) {
@@ -27,31 +26,25 @@ function transposeChord(chord: string, transposition: number) {
   for (const list of iterableNotes) {
     for (const note of list.iterable) {
       if (chord.startsWith(note.note)) {
-        return chord.replace(
-          note.note,
-          list.list[remainder(note.idx + transposition, list.iterable.length)]
-        );
+        return chord.replace(note.note, list.list[remainder(note.idx + transposition, list.iterable.length)]);
       }
     }
   }
   return chord;
 }
 
-export function Chord({
-  children,
-  spacer = false,
-}: {
-  children: string;
-  spacer?: boolean;
-}) {
+export function Chord({ children, spacer = false }: { children: string; spacer?: boolean }) {
   const { transpose, web } = usePDFSettings();
+  const { dark } = useColors();
   const onChordPress = spacer ? null : web?.onChordPress;
-  const normal = children.startsWith('^') || children.startsWith('_^')
+  const normal = children.startsWith("^") || children.startsWith("_^");
+  const chordColor = dark ? "#EE0" : "#9917DA";
+
   return (
     <Text
       style={[
         spacer ? { opacity: 0 } : { position: "absolute", zIndex: 1 },
-        { fontWeight: normal ? "normal" : "bold", fontFamily:  "AtkinsonHyperlegible", fontStyle: "normal" },
+        { fontWeight: normal ? "normal" : "bold", fontFamily: "AtkinsonHyperlegible", fontStyle: "normal" },
         { marginBottom: -20 },
       ]}
     >
@@ -70,7 +63,7 @@ export function Chord({
                   marginVertical: -10,
                 }}
               >
-                <Text>{transposed}</Text>
+                <Text style={{ color: chordColor }}>{transposed}</Text>
               </Pressable>
             ) : (
               transposed
