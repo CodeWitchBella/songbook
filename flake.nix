@@ -55,13 +55,22 @@
               env = {
                 CARGO_MOMMYS_MOODS = "chill/ominous/thirsty/yikes";
               };
-              packages = with pkgs; [
-                cargo
-                cargo-edit
-                cargo-watch
-                cargo-mommy
-                wasmtime
-              ];
+              packages =
+                (with pkgs; [
+                  cargo-edit
+                  cargo-watch
+                  cargo-mommy
+                  wasmtime
+                  (pkgs.writeShellScriptBin "dev-build" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web"'')
+                  (pkgs.writeShellScriptBin "dev-serve" ''python -m http.server'')
+                ])
+                ++ (with rustPkgs; [
+                  cargo
+                  rustc
+                  wasm-pack
+                  lld
+                  wasm-bindgen-cli
+                ]);
             };
 
           packages.wasm = rustPlatform.buildRustPackage {
@@ -81,8 +90,9 @@
             # Disable checks if they only work for WASM
             # doCheck = false;
           };
-          packages.run = (pkgs.writeShellScriptBin "run" "wasmtime run --dir . ${self'.packages.wasm}/lib/${packageName}.wasm");
-
+          packages.run = (
+            pkgs.writeShellScriptBin "run" "wasmtime run --dir . ${self'.packages.wasm}/lib/${packageName}.wasm"
+          );
         };
     };
 }

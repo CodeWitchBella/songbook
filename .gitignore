@@ -3,3 +3,4 @@
 /target
 /result
 *.pdf
+node_modules
