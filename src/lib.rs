@@ -6,7 +6,7 @@ use piet::{samples, RenderContext};
 use piet_web::WebRenderContext;
 
 //TODO: figure out how to dynamically select the sample?
-const SAMPLE_PICTURE_NO: usize = 11;
+const SAMPLE_PICTURE_NO: usize = 3;
 
 #[wasm_bindgen]
 pub fn run() {

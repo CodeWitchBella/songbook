@@ -7,16 +7,24 @@ const mod = await rend.default({
 console.log(mod);
 console.log(mod.run());
 
+window.addEventListener("resize", resize);
+
 reloading();
+
+function resize() {
+  mod.run();
+}
 
 async function reloading() {
   while (true) {
     await new Promise((r) => setTimeout(r, 100));
     try {
       const w2 = await fetchWasm({ cache: "reload", method: "HEAD" });
+      const cmp = (header) =>
+        w2.headers.get(header) !== wasm.headers.get(header);
       if (
         w2.status === 200 &&
-        w2.headers.get("content-length") !== wasm.headers.get("content-length")
+        (cmp("content-length") || cmp("last-modified"))
       ) {
         window.location.reload();
       }
