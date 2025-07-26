@@ -35,10 +35,9 @@ function transposeChord(chord: string, transposition: number) {
 
 export function Chord({ children, spacer = false }: { children: string; spacer?: boolean }) {
   const { transpose, web } = usePDFSettings();
-  const { dark } = useColors();
+  const { chord: chordColor } = useColors();
   const onChordPress = spacer ? null : web?.onChordPress;
   const normal = children.startsWith("^") || children.startsWith("_^");
-  const chordColor = dark ? "#EE0" : "#9917DA";
 
   return (
     <Text

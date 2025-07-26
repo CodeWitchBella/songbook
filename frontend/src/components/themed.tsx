@@ -15,6 +15,7 @@ const colors = {
     borders: "white",
     dark: true,
     inputBackground: "#111",
+    chord: "#EE0",
   },
   light: {
     background: "white",
@@ -22,6 +23,7 @@ const colors = {
     borders: "black",
     dark: false,
     inputBackground: "white",
+    chord: "#9917DA",
   },
 };
 export function getColors(dark: boolean) {
