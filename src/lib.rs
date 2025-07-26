@@ -1,3 +1,5 @@
+mod utils;
+
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use web_sys::{window, HtmlCanvasElement};
@@ -9,9 +11,17 @@ use piet_web::WebRenderContext;
 const SAMPLE_PICTURE_NO: usize = 3;
 
 #[wasm_bindgen]
-pub fn run() {
+pub fn hook() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+}
 
+#[wasm_bindgen]
+pub fn parse(song: &str) {
+    console_log!("{song}");
+}
+
+#[wasm_bindgen]
+pub fn run(song: &str) {
     let window = window().unwrap();
     let canvas = window
         .document()

@@ -1,18 +1,19 @@
-import * as rend from "./pkg/songbook_renderer.js";
+import * as renderer from "./pkg/songbook_renderer.js";
 
 const wasm = await fetchWasm();
-const mod = await rend.default({
-  module_or_path: wasm,
-});
-console.log(mod);
-console.log(mod.run());
+await renderer.default({ module_or_path: wasm });
+const song = await (
+  await fetch("/songs/never-ending-story-limahl.song")
+).text();
+renderer.hook();
+renderer.parse(song);
+reloading();
+resize();
 
 window.addEventListener("resize", resize);
 
-reloading();
-
 function resize() {
-  mod.run();
+  renderer.run(song);
 }
 
 async function reloading() {
