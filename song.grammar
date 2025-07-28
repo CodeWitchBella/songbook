@@ -1,0 +1,45 @@
+// https://codewitchbella.com/blog/2023-lezer-playground
+
+@top File {
+  (
+    (Section |  PageBreak)
+    ("\n"+ | eof)
+  )+
+}
+
+Line {
+  (Text | Command)+
+  ("\n" | eof)
+}
+
+Command {
+  "["
+  CommandLead?
+  CommandContent
+  "]"
+}
+
+CommandContent {
+  chordHead
+  chordTail?
+}
+
+CommandLead {
+  ("_"|"^"|"_^"|"^_"|">")
+}
+
+Section {
+  (SectionStart|Line)
+  Line*
+}
+
+PageBreak { @specialize<Text, "--- page break ---"> }
+
+@tokens {
+  SectionStart { $[SR] ":" " "? }
+  chordHead { ![\n\]^_>]+ }
+  chordTail { ![\n\]]+ }
+  Text { ![\n\[]+ }
+  eof { @eof }
+  @precedence{SectionStart,Text}
+}

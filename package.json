@@ -1,0 +1,22 @@
+{
+  "name": "songbook-renderer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@lezer/generator": "^1.8.0",
+    "unplugin-lezer": "^1.0.1",
+    "vite": "^7.0.6"
+  },
+  "dependencies": {
+    "@lezer/common": "^1.2.3",
+    "@lezer/lr": "^1.4.2"
+  }
+}

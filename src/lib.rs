@@ -1,10 +1,11 @@
+mod grammar;
 mod utils;
 
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
-use web_sys::{window, HtmlCanvasElement};
+use wasm_bindgen::prelude::*;
+use web_sys::{HtmlCanvasElement, window};
 
-use piet::{samples, RenderContext};
+use piet::{RenderContext, samples};
 use piet_web::WebRenderContext;
 
 //TODO: figure out how to dynamically select the sample?
@@ -17,7 +18,8 @@ pub fn hook() {
 
 #[wasm_bindgen]
 pub fn parse(song: &str) {
-    console_log!("{song}");
+    let deserialized = grammar::File::parse(&song);
+    console_log!("{deserialized:#?}");
 }
 
 #[wasm_bindgen]

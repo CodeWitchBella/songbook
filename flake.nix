@@ -61,14 +61,17 @@
                   cargo-watch
                   cargo-mommy
                   wasmtime
+                  pnpm
+                  nodejs
                   (pkgs.writeShellScriptBin "dev-build" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web"'')
-                  (pkgs.writeShellScriptBin "dev-serve" ''python -m http.server'')
+                  (pkgs.writeShellScriptBin "dev-serve" ''pnpm exec vite'')
                 ])
                 ++ (with rustPkgs; [
                   cargo
                   rustc
                   wasm-pack
                   lld
+                  rustfmt
                   wasm-bindgen-cli
                 ]);
             };
