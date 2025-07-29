@@ -1,8 +1,8 @@
-mod src;
-
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, bail, Result};
 use std::string::String;
 use std::vec::Vec;
+
+use crate::grammar::grammar_src;
 
 
 #[derive(Debug)]
@@ -12,10 +12,13 @@ pub struct Song {
 
 impl Song {
     pub fn parse(src: &str) -> Result<Self> {
-        let file: src::File = serde_json::from_str(&src)?;
+        let file = match facet_json::from_str::<grammar_src::File>(&src) {
+            Ok(val) => val,
+            Err(err) => bail!("{err}")
+        };
         Ok(Self {
             children: match file {
-                src::File::File(items) => items
+                grammar_src::File::File(items) => items
                     .into_iter()
                     .map(|item| Ok(FilePortion::from_src(item)?))
                     .collect::<Result<Vec<FilePortion>>>()?,
@@ -34,13 +37,13 @@ pub enum FilePortion {
 }
 
 impl FilePortion {
-    pub(self) fn from_src(portion: src::FilePortion) -> Result<Self> {
+    pub(self) fn from_src(portion: grammar_src::FilePortion) -> Result<Self> {
         match portion {
-            src::FilePortion::Section(contents) => {
+            grammar_src::FilePortion::Section(contents) => {
                 let header: Option<String> = match contents.get(0) {
                     Some(first) => match first {
-                        src::SectionPortion::SectionStart(start) => Some(start.clone()),
-                        src::SectionPortion::Line(_) => None,
+                        grammar_src::SectionPortion::SectionStart(start) => Some(start.clone()),
+                        grammar_src::SectionPortion::Line(_) => None,
                     },
                     _ => None,
                 };
@@ -51,20 +54,20 @@ impl FilePortion {
                         .into_iter()
                         .filter_map(|item| -> Option<Result<Line>> {
                             match item {
-                                src::SectionPortion::SectionStart(_) => None,
-                                src::SectionPortion::Line(line) => Some(Line::from_src(line)),
+                                grammar_src::SectionPortion::SectionStart(_) => None,
+                                grammar_src::SectionPortion::Line(line) => Some(Line::from_src(line)),
                             }
                         })
                         .collect::<Result<Vec<Line>>>()?,
                 })
             }
-            src::FilePortion::PageBreak(_) => Ok(Self::PageBreak),
+            grammar_src::FilePortion::PageBreak(_) => Ok(Self::PageBreak),
         }
     }
 }
 
 impl Line {
-    pub(self) fn from_src(items: Vec<src::LineContent>) -> Result<Self> {
+    pub(self) fn from_src(items: Vec<grammar_src::LineContent>) -> Result<Self> {
         Ok(Self(
             items
                 .into_iter()
@@ -87,10 +90,10 @@ pub enum LineContent {
 }
 
 impl LineContent {
-    pub(self) fn from_src(content: src::LineContent) -> Result<Self> {
+    pub(self) fn from_src(content: grammar_src::LineContent) -> Result<Self> {
         Ok(match content {
-            src::LineContent::Text(text) => Self::Text(text),
-            src::LineContent::Command(items) => {
+            grammar_src::LineContent::Text(text) => Self::Text(text),
+            grammar_src::LineContent::Command(items) => {
                 if items.len() == 0 {
                     return Ok(Self::Command {
                         lead: None,
@@ -98,8 +101,8 @@ impl LineContent {
                     });
                 }
                 let lead = match &items[0] {
-                    src::Command::CommandLead(data) => data.clone(),
-                    src::Command::CommandContent(content) => {
+                    grammar_src::Command::CommandLead(data) => data.clone(),
+                    grammar_src::Command::CommandContent(content) => {
                         return Ok(Self::Command {
                             lead: None,
                             content: content.clone(),
@@ -115,10 +118,10 @@ impl LineContent {
                 Self::Command {
                     lead: Some(lead),
                     content: match &items[1] {
-                        src::Command::CommandLead(_) => {
+                        grammar_src::Command::CommandLead(_) => {
                             return Err(anyhow!("Invalid command:: multiple leads"));
                         }
-                        src::Command::CommandContent(content) => content.clone()
+                        grammar_src::Command::CommandContent(content) => content.clone()
                     },
                 }
             }

@@ -1,7 +1,9 @@
 use anyhow::Result;
 use oxidize_pdf::{Document, Page, Font, Color};
 
-use songbook_grammar::Song;
+use crate::grammar::grammar::Song;
+
+
 
 pub(crate) fn generate_pdf(song: &Song) -> Result<()> {
     // Create a new document

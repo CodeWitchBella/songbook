@@ -3,13 +3,15 @@
 mod utils;
 mod render_song;
 mod render_pdf;
-use songbook_grammar::Song;
+mod grammar;
 
 use piet::{RenderContext};
 use piet_web::WebRenderContext;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, window};
+
+use crate::grammar::grammar::Song;
 
 #[wasm_bindgen]
 pub fn hook() {
