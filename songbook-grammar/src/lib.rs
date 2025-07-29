@@ -2,7 +2,7 @@ use anyhow::{anyhow, bail, Result};
 use std::string::String;
 use std::vec::Vec;
 
-use crate::grammar::grammar_src;
+mod grammar_src;
 
 
 #[derive(Debug)]
@@ -12,7 +12,7 @@ pub struct Song {
 
 impl Song {
     pub fn parse(src: &str) -> Result<Self> {
-        let file = match facet_json::from_str::<grammar_src::File>(&src) {
+        let file = match serde_json::from_str::<grammar_src::File>(&src) {
             Ok(val) => val,
             Err(err) => bail!("{err}")
         };

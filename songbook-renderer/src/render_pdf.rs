@@ -1,7 +1,7 @@
 use anyhow::Result;
 use oxidize_pdf::{Document, Page, Font, Color};
 
-use crate::grammar::grammar::Song;
+use songbook_grammar::Song;
 
 
 
