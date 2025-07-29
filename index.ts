@@ -15,14 +15,13 @@ const parsed = JSON.stringify(processNode(tree.resolve(0), song)[0], null, 2);
 
 console.log(parsed);
 renderer.parse(parsed);
-// reloading();
 resize();
 
 window.addEventListener("resize", resize);
 
 type Node = {
-  type: string;
-} & ({ children: Node[] } | { text: string });
+  [type: string]: Node[] | string;
+};
 
 function collectSiblings(node: SyntaxNode, text: string): [Node[], boolean] {
   const arr: Node[] = [];
@@ -39,40 +38,13 @@ function processNode(node: SyntaxNode, text: string): [Node, boolean] {
   const child = node.firstChild;
   if (child) {
     const [children, exit] = collectSiblings(child, text);
-    return [
-      {
-        [node.type.name]: children,
-      },
-      exit,
-    ];
+    return [{ [node.type.name]: children }, exit];
   }
-  return [
-    {
-      [node.type.name]: text.substring(node.from, node.to),
-    },
-    false,
-  ];
+  return [{ [node.type.name]: text.substring(node.from, node.to) }, false];
 }
 
 function resize() {
   renderer.run(song);
-}
-
-async function reloading() {
-  while (true) {
-    await new Promise((r) => setTimeout(r, 100));
-    try {
-      const w2 = await fetchWasm({ cache: "reload", method: "HEAD" });
-      const cmp = (header) =>
-        w2.headers.get(header) !== wasm.headers.get(header);
-      if (
-        w2.status === 200 &&
-        (cmp("content-length") || cmp("last-modified"))
-      ) {
-        window.location.reload();
-      }
-    } catch {}
-  }
 }
 
 function fetchWasm(opts?: RequestInit) {
