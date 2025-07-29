@@ -1,15 +1,14 @@
+#![allow(unused)]
+
 mod grammar;
 mod utils;
+mod render_song;
 
+use piet::{RenderContext};
+use piet_web::WebRenderContext;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, window};
-
-use piet::{RenderContext, samples};
-use piet_web::WebRenderContext;
-
-//TODO: figure out how to dynamically select the sample?
-const SAMPLE_PICTURE_NO: usize = 3;
 
 #[wasm_bindgen]
 pub fn hook() {
@@ -39,7 +38,7 @@ pub fn run(song: &str) {
         .dyn_into::<web_sys::CanvasRenderingContext2d>()
         .unwrap();
 
-    let sample = samples::get::<WebRenderContext>(SAMPLE_PICTURE_NO).unwrap();
+    // let sample = samples::get::<WebRenderContext>(SAMPLE_PICTURE_NO).unwrap();
     let dpr = window.device_pixel_ratio();
     canvas.set_width((canvas.offset_width() as f64 * dpr) as u32);
     canvas.set_height((canvas.offset_height() as f64 * dpr) as u32);
@@ -47,6 +46,7 @@ pub fn run(song: &str) {
 
     let mut piet_context = WebRenderContext::new(context, window);
 
-    sample.draw(&mut piet_context).unwrap();
+    // sample.draw(&mut piet_context).unwrap();
+    render_song::draw(&mut piet_context).unwrap();
     piet_context.finish().unwrap();
 }

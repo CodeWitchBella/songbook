@@ -151,7 +151,9 @@ impl LineContent {
                 Self::Command {
                     lead: Some(lead),
                     content: match &items[1] {
-                        src::Command::CommandLead(data) => return Err(anyhow!("Invalid command:: multiple leads")),
+                        src::Command::CommandLead(data) => {
+                            return Err(anyhow!("Invalid command:: multiple leads"));
+                        }
                         src::Command::CommandContent(content) => {
                             return Ok(Self::Command {
                                 lead: None,
