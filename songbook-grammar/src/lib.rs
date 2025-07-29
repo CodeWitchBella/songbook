@@ -1,54 +1,18 @@
-#![allow(unused)]
+mod src;
+
 use anyhow::{Result, anyhow};
 use std::string::String;
 use std::vec::Vec;
 
-mod src {
-    #![allow(unused)]
-
-    use anyhow::Result;
-    use serde::Deserialize;
-    use std::string::String;
-    use std::vec::Vec;
-
-    #[derive(Deserialize)]
-    pub(super) enum File {
-        File(Vec<FilePortion>),
-    }
-
-    #[derive(Deserialize)]
-    pub(super) enum FilePortion {
-        Section(Vec<SectionPortion>),
-        PageBreak(String),
-    }
-
-    #[derive(Deserialize)]
-    pub(super) enum SectionPortion {
-        SectionStart(String),
-        Line(Vec<LineContent>),
-    }
-
-    #[derive(Deserialize)]
-    pub(super) enum LineContent {
-        Text(String),
-        Command(Vec<Command>),
-    }
-
-    #[derive(Deserialize)]
-    pub(super) enum Command {
-        CommandLead(String),
-        CommandContent(String),
-    }
-}
 
 #[derive(Debug)]
-pub(crate) struct File {
-    pub(crate) children: Vec<FilePortion>,
+pub struct Song {
+    pub children: Vec<FilePortion>,
 }
 
-impl File {
-    pub(crate) fn parse(src: &str) -> Result<Self> {
-        let mut file: src::File = serde_json::from_str(&src)?;
+impl Song {
+    pub fn parse(src: &str) -> Result<Self> {
+        let file: src::File = serde_json::from_str(&src)?;
         Ok(Self {
             children: match file {
                 src::File::File(items) => items
@@ -61,7 +25,7 @@ impl File {
 }
 
 #[derive(Debug)]
-pub(crate) enum FilePortion {
+pub enum FilePortion {
     Section {
         header: Option<String>,
         lines: Vec<Line>,
@@ -111,10 +75,10 @@ impl Line {
 }
 
 #[derive(Debug)]
-pub(crate) struct Line(pub(crate) Vec<LineContent>);
+pub struct Line(pub Vec<LineContent>);
 
 #[derive(Debug)]
-pub(crate) enum LineContent {
+pub enum LineContent {
     Text(String),
     Command {
         lead: Option<String>,
@@ -151,15 +115,10 @@ impl LineContent {
                 Self::Command {
                     lead: Some(lead),
                     content: match &items[1] {
-                        src::Command::CommandLead(data) => {
+                        src::Command::CommandLead(_) => {
                             return Err(anyhow!("Invalid command:: multiple leads"));
                         }
-                        src::Command::CommandContent(content) => {
-                            return Ok(Self::Command {
-                                lead: None,
-                                content: content.clone(),
-                            });
-                        }
+                        src::Command::CommandContent(content) => content.clone()
                     },
                 }
             }

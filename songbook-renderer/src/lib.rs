@@ -1,8 +1,9 @@
 #![allow(unused)]
 
-mod grammar;
 mod utils;
 mod render_song;
+mod render_pdf;
+use songbook_grammar::Song;
 
 use piet::{RenderContext};
 use piet_web::WebRenderContext;
@@ -17,7 +18,7 @@ pub fn hook() {
 
 #[wasm_bindgen]
 pub fn parse(song: &str) {
-    let deserialized = grammar::File::parse(&song);
+    let deserialized = Song::parse(&song);
     console_log!("{deserialized:#?}");
 }
 

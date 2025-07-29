@@ -63,7 +63,7 @@
                   wasmtime
                   pnpm
                   nodejs
-                  (pkgs.writeShellScriptBin "dev-build" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web"'')
+                  (pkgs.writeShellScriptBin "dev-build" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-renderer"'')
                   (pkgs.writeShellScriptBin "dev-serve" ''pnpm exec vite'')
                 ])
                 ++ (with rustPkgs; [

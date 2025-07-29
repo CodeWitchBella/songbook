@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "@lezer/common";
 import type { LRParser } from "@lezer/lr";
-import * as renderer from "./pkg/songbook_renderer.js";
+import * as renderer from "./songbook-renderer/pkg/songbook_renderer.js";
 // @ts-expect-error
 import { parser } from "./song.grammar";
 
