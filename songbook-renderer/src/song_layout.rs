@@ -47,7 +47,7 @@ impl Layout {
             font_size: 16.,
             items: vec![
                 Item {
-                    text: "When the days".to_owned(),
+                    text: "When the gays".to_owned(),
                     bold: false,
                     pos: (0., 32.0),
                 },
@@ -57,7 +57,7 @@ impl Layout {
                     pos: (6., 16.0),
                 },
                 Item {
-                    text: "".to_owned(),
+                    text: "are old".to_owned(),
                     bold: false,
                     pos: (16., 48.0),
                 },

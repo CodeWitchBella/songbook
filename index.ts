@@ -47,7 +47,7 @@ function processNode(node: SyntaxNode, text: string): [Node, boolean] {
 }
 
 function resize() {
-  renderer.run(song);
+  renderer.run(parsed);
 }
 
 function fetchWasm(opts?: RequestInit) {

@@ -6,7 +6,7 @@ mod grammar_src;
 
 #[derive(Debug)]
 pub struct Song {
-    pub children: Vec<FilePortion>,
+    pub portions: Vec<FilePortion>,
 }
 
 impl Song {
@@ -16,7 +16,7 @@ impl Song {
             Err(err) => bail!("{err}"),
         };
         Ok(Self {
-            children: match file {
+            portions: match file {
                 grammar_src::File::File(items) => items
                     .into_iter()
                     .map(|item| Ok(FilePortion::from_src(item)?))

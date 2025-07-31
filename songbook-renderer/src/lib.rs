@@ -1,10 +1,12 @@
 #![allow(unused)]
 
+mod layout_song;
 mod render_pdf;
 mod render_song;
 mod song_layout;
 mod utils;
 
+use anyhow::Context;
 use piet::RenderContext;
 use piet_web::WebRenderContext;
 use wasm_bindgen::JsCast;
@@ -27,7 +29,12 @@ pub fn parse(song: &str) {
 }
 
 #[wasm_bindgen]
-pub fn run(song: &str) {
+pub fn run(song: &str) -> Result<(), wasm_bindgen::JsError> {
+    Ok(run_anyhow(song).unwrap())
+    //Ok(run_anyhow(song).map_err(|e| JsError::new(&format!("{e:?}")))?)
+}
+
+fn run_anyhow(song: &str) -> anyhow::Result<()> {
     let window = window().unwrap();
     let canvas = window
         .document()
@@ -51,8 +58,10 @@ pub fn run(song: &str) {
 
     let mut piet_context = WebRenderContext::new(context, window);
 
-    // sample.draw(&mut piet_context).unwrap();
-    let song = Layout::sample();
+    let parsed = Song::parse(&song).context("Song::parse failed")?;
+    let song = layout_song::layout_song(&parsed)?;
     render_song::draw(&mut piet_context, &song).unwrap();
     piet_context.finish().unwrap();
+
+    Ok(())
 }

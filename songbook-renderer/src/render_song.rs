@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use anyhow::anyhow;
 use parley::{
     Alignment, AlignmentOptions, FontContext, FontWeight, GlyphRun, InlineBox, Layout,
     LayoutContext, LineHeight, PositionedLayoutItem, StyleProperty,
@@ -14,10 +15,13 @@ use crate::song_layout;
 
 const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 
-pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> Result<(), Error> {
+pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> anyhow::Result<()> {
     rc.clear(None, Color::WHITE);
 
-    let georgia = rc.text().font_family("Georgia").ok_or(Error::MissingFont)?;
+    let georgia = rc
+        .text()
+        .font_family("Georgia")
+        .ok_or(anyhow!("Missing font"))?;
 
     for item in song.items.iter() {
         let layout = rc
@@ -30,14 +34,14 @@ pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> Result<(
                 400
             })))
             // .default_attribute(TextAttribute::TextColor(RED_ALPHA))
-            .build()?;
+            .build()
+            .map_err(|err| anyhow!(format!("{err:?}")))?;
 
-        let metric = layout.line_metric(0).expect("No lines!?");
+        let metric = layout
+            .line_metric(0)
+            .ok_or_else(|| anyhow!("Couldn't get line metric"))?;
 
-        rc.draw_text(
-            &layout,
-            (item.pos.0, item.pos.1 - (metric.baseline as f32)),
-        );
+        rc.draw_text(&layout, (item.pos.0, item.pos.1 - (metric.baseline as f32)));
 
         rc.stroke(
             Line::new(item.pos, (item.pos.0 + 10., item.pos.1)),
@@ -79,7 +83,7 @@ fn render_text(song: &Song) {
 
     // step1: figure out all the command sizing
     let mut map: HashMap<u64, (f64, f64)> = Default::default();
-    for portion in song.children.iter() {
+    for portion in song.portions.iter() {
         match portion {
             songbook_grammar::FilePortion::Section { header, lines } => {
                 for line in lines.iter() {

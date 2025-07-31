@@ -33,7 +33,7 @@ pub(crate) fn generate_pdf(song: &Song) -> Result<()> {
 
 fn render_song(song: &Song, page: &mut Page) -> Result<()> {
     let mut y = page.content_height();
-    for portion in &song.children {
+    for portion in &song.portions {
         // portion.
     }
 
