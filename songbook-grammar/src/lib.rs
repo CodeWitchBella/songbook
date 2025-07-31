@@ -1,9 +1,8 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use std::string::String;
 use std::vec::Vec;
 
 mod grammar_src;
-
 
 #[derive(Debug)]
 pub struct Song {
@@ -14,7 +13,7 @@ impl Song {
     pub fn parse(src: &str) -> Result<Self> {
         let file = match serde_json::from_str::<grammar_src::File>(&src) {
             Ok(val) => val,
-            Err(err) => bail!("{err}")
+            Err(err) => bail!("{err}"),
         };
         Ok(Self {
             children: match file {
@@ -55,7 +54,9 @@ impl FilePortion {
                         .filter_map(|item| -> Option<Result<Line>> {
                             match item {
                                 grammar_src::SectionPortion::SectionStart(_) => None,
-                                grammar_src::SectionPortion::Line(line) => Some(Line::from_src(line)),
+                                grammar_src::SectionPortion::Line(line) => {
+                                    Some(Line::from_src(line))
+                                }
                             }
                         })
                         .collect::<Result<Vec<Line>>>()?,
@@ -121,7 +122,7 @@ impl LineContent {
                         grammar_src::Command::CommandLead(_) => {
                             return Err(anyhow!("Invalid command:: multiple leads"));
                         }
-                        grammar_src::Command::CommandContent(content) => content.clone()
+                        grammar_src::Command::CommandContent(content) => content.clone(),
                     },
                 }
             }

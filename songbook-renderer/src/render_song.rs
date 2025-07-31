@@ -1,37 +1,62 @@
 use std::collections::HashMap;
 
+use parley::{
+    Alignment, AlignmentOptions, FontContext, FontWeight, GlyphRun, InlineBox, Layout,
+    LayoutContext, LineHeight, PositionedLayoutItem, StyleProperty,
+};
 use piet::{
     Color, Error, FontFamily, ImageFormat, InterpolationMode, RenderContext, Text, TextAttribute,
-    TextLayout, TextLayoutBuilder,
-};
-use parley::{
-    Alignment, AlignmentOptions, FontContext, FontWeight, GlyphRun, InlineBox, Layout, LayoutContext, LineHeight, PositionedLayoutItem, StyleProperty
+    TextLayout, TextLayoutBuilder, kurbo::Line,
 };
 use songbook_grammar::Song;
 
+use crate::song_layout;
+
 const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 
-pub fn draw(rc: &mut impl RenderContext) -> Result<(), Error> {
+pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> Result<(), Error> {
     rc.clear(None, Color::WHITE);
 
     let georgia = rc.text().font_family("Georgia").ok_or(Error::MissingFont)?;
 
-    let layout = rc
-        .text()
-        .new_text_layout("Hello there!")
-        .font(georgia, 48.0)
-        .default_attribute(TextAttribute::TextColor(RED_ALPHA))
-        .build()?;
+    for item in song.items.iter() {
+        let layout = rc
+            .text()
+            .new_text_layout(item.text.clone())
+            .font(georgia.clone(), song.font_size)
+            .default_attribute(TextAttribute::Weight(piet::FontWeight::new(if item.bold {
+                600
+            } else {
+                400
+            })))
+            // .default_attribute(TextAttribute::TextColor(RED_ALPHA))
+            .build()?;
 
-    // let w: f64 = layout.size().width;
-    rc.draw_text(&layout, (80.0, 10.0));
+        let metric = layout.line_metric(0).expect("No lines!?");
+
+        rc.draw_text(
+            &layout,
+            (item.pos.0, item.pos.1 - (metric.baseline as f32)),
+        );
+
+        rc.stroke(
+            Line::new(item.pos, (item.pos.0 + 10., item.pos.1)),
+            &RED_ALPHA,
+            1.0,
+        );
+    }
 
     Ok(())
 }
 
 type Brush = ();
 
-fn get_command_text_box(lead: Option<&str>, text: &str, font_cx: &mut FontContext, layout_cx: &mut LayoutContext<Brush>) -> (f32, f32) {
+fn get_command_text_box(
+    lead: Option<&str>,
+    text: &str,
+    font_cx: &mut FontContext,
+    layout_cx: &mut LayoutContext<Brush>,
+) -> (f32, f32) {
     // Create a `RangedBuilder` or a `TreeBuilder`, which are used to construct a `Layout`.
     const DISPLAY_SCALE: f32 = 1.0;
     let mut builder = layout_cx.ranged_builder(font_cx, &text, DISPLAY_SCALE, true);
@@ -59,25 +84,24 @@ fn render_text(song: &Song) {
             songbook_grammar::FilePortion::Section { header, lines } => {
                 for line in lines.iter() {
                     for content in line.0.iter() {
-                        if let songbook_grammar::LineContent::Command{lead, content} = content {
-
-                        }
+                        if let songbook_grammar::LineContent::Command { lead, content } = content {}
                         match content {
-                            songbook_grammar::LineContent::Text(_) => {},
+                            songbook_grammar::LineContent::Text(_) => {}
                             songbook_grammar::LineContent::Command { lead, content } => {
-                                let sz = get_command_text_box(lead.as_deref(), &content, &mut font_cx, &mut layout_cx);
-                                
-                            },
+                                let sz = get_command_text_box(
+                                    lead.as_deref(),
+                                    &content,
+                                    &mut font_cx,
+                                    &mut layout_cx,
+                                );
+                            }
                         }
                     }
                 }
-            },
-            songbook_grammar::FilePortion::PageBreak => {},
+            }
+            songbook_grammar::FilePortion::PageBreak => {}
         }
     }
-
-
-
 
     // Create a `RangedBuilder` or a `TreeBuilder`, which are used to construct a `Layout`.
     const DISPLAY_SCALE: f32 = 1.0;
@@ -124,6 +148,4 @@ fn render_text(song: &Song) {
     }
 }
 
-fn render_glyph_run(run: &GlyphRun<Brush>){
-
-}
+fn render_glyph_run(run: &GlyphRun<Brush>) {}

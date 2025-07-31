@@ -1,16 +1,19 @@
 #![allow(unused)]
 
-mod utils;
-mod render_song;
 mod render_pdf;
+mod render_song;
+mod song_layout;
+mod utils;
 
-use piet::{RenderContext};
+use piet::RenderContext;
 use piet_web::WebRenderContext;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, window};
 
 use songbook_grammar::Song;
+
+use crate::song_layout::Layout;
 
 #[wasm_bindgen]
 pub fn hook() {
@@ -20,7 +23,7 @@ pub fn hook() {
 #[wasm_bindgen]
 pub fn parse(song: &str) {
     let deserialized = Song::parse(&song);
-    console_log!("{deserialized:#?}");
+    // console_log!("{deserialized:#?}");
 }
 
 #[wasm_bindgen]
@@ -49,6 +52,7 @@ pub fn run(song: &str) {
     let mut piet_context = WebRenderContext::new(context, window);
 
     // sample.draw(&mut piet_context).unwrap();
-    render_song::draw(&mut piet_context).unwrap();
+    let song = Layout::sample();
+    render_song::draw(&mut piet_context, &song).unwrap();
     piet_context.finish().unwrap();
 }

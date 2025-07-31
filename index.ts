@@ -5,7 +5,10 @@ import * as renderer from "./songbook-renderer/pkg/songbook_renderer.js";
 import { parser } from "./song.grammar";
 
 const wasm = await fetchWasm({ cache: "reload" });
+console.log("Initializing...")
 await renderer.default({ module_or_path: wasm });
+console.log("Init done")
+
 const song = await (
   await fetch("/songs/never-ending-story-limahl.song")
 ).text();
@@ -13,8 +16,8 @@ renderer.hook();
 const tree = (parser as LRParser).parse(song);
 const parsed = JSON.stringify(processNode(tree.resolve(0), song)[0], null, 2);
 
-console.log(parsed);
-renderer.parse(parsed);
+// console.log(parsed);
+// renderer.parse(parsed);
 resize();
 
 window.addEventListener("resize", resize);
@@ -49,7 +52,7 @@ function resize() {
 
 function fetchWasm(opts?: RequestInit) {
   return fetch(
-    new URL("./pkg/songbook_renderer_bg.wasm", import.meta.url),
+    new URL("./songbook-renderer/pkg/songbook_renderer_bg.wasm", import.meta.url),
     opts,
   );
 }
