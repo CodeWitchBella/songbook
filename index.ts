@@ -10,7 +10,7 @@ await renderer.default({ module_or_path: wasm });
 console.log("Init done")
 
 const song = await (
-  await fetch("/songs/never-ending-story-limahl.song")
+  await fetch("/songs/na-kolena-ivan-hlas.song")
 ).text();
 renderer.hook();
 const tree = (parser as LRParser).parse(song);

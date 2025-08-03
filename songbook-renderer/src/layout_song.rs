@@ -3,9 +3,13 @@ use songbook_grammar::{Line, Song};
 
 use crate::song_layout::{Item, Layout};
 
+const FONT_SIZE:f64=16.;
+const SECTION_SPACE:f64=24.;
+const LINE_SPACE: f64= 4.;
+
 pub fn layout_song(song: &Song) -> Result<Layout> {
     let mut layout: Layout = Layout {
-        font_size: 16.,
+        font_size: FONT_SIZE,
         items: Default::default(),
     };
     let mut y = 0.;
@@ -15,12 +19,13 @@ pub fn layout_song(song: &Song) -> Result<Layout> {
             songbook_grammar::FilePortion::Section { header, lines } => {
                 for line in lines {
                     let mut data = layout_line(line, y)?;
-                    y += data.1;
+                    y += data.1 + LINE_SPACE;
                     layout.items.append(&mut data.0);
                 }
             }
             songbook_grammar::FilePortion::PageBreak => {}
         }
+        y += SECTION_SPACE;
     }
 
     Ok(layout)
