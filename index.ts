@@ -16,8 +16,8 @@ const song = await (
 wasm.hook();
 const renderer = new wasm.Renderer()
 console.log(renderer)
-const font = await (await fetch("songs/atkinson-hyperlegible-regular.woff2")).arrayBuffer()
-renderer.register_fonts(new Uint8Array(font), "atkinson-hyperlegible")
+const font = await (await fetch("songs/cantarell-regular.woff2")).arrayBuffer()
+renderer.register_fonts(new Uint8Array(font), "Cantarell")
 const tree = (parser as LRParser).parse(song);
 const parsed = JSON.stringify(processNode(tree.resolve(0), song)[0], null, 2);
 

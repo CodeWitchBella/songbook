@@ -1,7 +1,7 @@
 use std::any::Any;
 
 use anyhow::Result;
-use parley::{FontContext, StyleProperty};
+use parley::{layout, FontContext, LayoutContext, RangedBuilder, StyleProperty};
 use songbook_grammar::{Line, Song};
 
 use crate::{
@@ -11,7 +11,6 @@ use crate::{
 
 const FONT_SIZE: f64 = 16.;
 const SECTION_SPACE: f64 = 24.;
-const LINE_SPACE: f64 = 4.;
 
 pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Layout> {
     let mut layout: Layout = Layout {
@@ -25,7 +24,10 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Lay
                 for line in lines {
                     let mut data = layout_line(line, y, font_cx)?;
                     console_log!("{data:?}");
-                    y += data.1 + LINE_SPACE;
+                    for item in &mut data.0 {
+                        item.pos.1 += y as f32;
+                    }
+                    y += data.1;
                     layout.items.append(&mut data.0);
                 }
             }
@@ -50,42 +52,59 @@ fn collect_text(line: &Line) -> String {
     text
 }
 
-fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result<(Vec<Item>, f64)> {
-    let mut out_vec: Vec<Item> = vec![];
-    let mut layout_cx = parley::LayoutContext::new();
-
-    const DISPLAY_SCALE: f32 = 1.0; // TODO: make sure that coordinates are in pixel space
-    let mut complete_text = collect_text(line);
-    let mut builder = layout_cx.ranged_builder(font_cx, &complete_text, DISPLAY_SCALE, true);
+fn prepare_builder<'a>(layout_cx: &'a mut LayoutContext<()>, font_cx: &'a mut parley::FontContext, text: &'a str, display_scale: f32) -> RangedBuilder<'a, ()> {
+    let mut builder = layout_cx.ranged_builder(font_cx, &text, display_scale, false);
 
     // Set default styles that apply to the entire layout
     builder.push_default(StyleProperty::FontSize(FONT_SIZE as f32));
     builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(400.0)));
     // font_cx.collection.
     builder.push_default(StyleProperty::FontStack(parley::FontStack::Single(
-        parley::FontFamily::Named(std::borrow::Cow::Borrowed("atkinson-hyperlegible")),
+        parley::FontFamily::Named(std::borrow::Cow::Borrowed("Cantarell")),
     )));
-    // let mut i = 0;
-    // for item in &line.0 {
-    //     match item {
-    //         songbook_grammar::LineContent::Text(part) => {
-    //             i += part.len();
-    //         }
-    //         songbook_grammar::LineContent::Command { lead, content } => {
-    //             out_vec.push(Item {
-    //                 bold: true,
-    //                 pos: (0., 0.),
-    //                 text: content.clone(),
-    //             });
-    //             builder.push_inline_box(parley::InlineBox {
-    //                 id: out_vec.len() as u64,
-    //                 index: i,
-    //                 width: 0.0,
-    //                 height: (FONT_SIZE * 2.) as f32,
-    //             });
-    //         }
-    //     }
-    // }
+    builder.push_default(StyleProperty::LineHeight(parley::LineHeight::MetricsRelative(1.0)));
+
+    builder
+}
+
+fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result<(Vec<Item>, f64)> {
+    let mut out_vec: Vec<Item> = vec![];
+    let mut layout_cx = parley::LayoutContext::new();
+
+    const DISPLAY_SCALE: f32 = 1.0; // TODO: make sure that coordinates are in pixel space
+    let mut complete_text = collect_text(line);
+    let max_width = None;//Some(250.);
+
+
+    let cloned = complete_text.clone();
+    let mut layout_no_box = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE).build(cloned);
+    layout_no_box.break_all_lines(None);
+    let nobox_first_line = layout_no_box.lines().nth(0).unwrap();
+    let nobox_metrics = nobox_first_line.metrics();
+
+    let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE);
+
+    let mut i = 0;
+    for item in &line.0 {
+        match item {
+            songbook_grammar::LineContent::Text(part) => {
+                i += part.len();
+            }
+            songbook_grammar::LineContent::Command { lead, content } => {
+                out_vec.push(Item {
+                    bold: true,
+                    pos: (0., 0.),
+                    text: content.clone(),
+                });
+                builder.push_inline_box(parley::InlineBox {
+                    id: out_vec.len() as u64,
+                    index: i,
+                    width: 0.0,
+                    height: (nobox_metrics.line_height + nobox_metrics.baseline) as f32,
+                });
+            }
+        }
+    }
 
     // Build the builder into a Layout
     let cloned = complete_text.clone();
@@ -93,20 +112,19 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
     let mut layout: parley::Layout<()> = builder.build(&cloned);
 
     // Run line-breaking and alignment on the Layout
-    layout.break_all_lines(Some(250.));
-    // layout.align(
-    //     MAX_WIDTH,
-    //     parley::Alignment::Start,
-    //     parley::AlignmentOptions::default(),
-    // );
+
+    layout.break_all_lines(max_width);
 
     // Inspect computed layout (see examples for more details)
     let width = layout.width();
+
     let height = layout.height();
     let full_width = layout.full_width();
     console_log!("{width}x{height}; {full_width}");
+    console_log!("nobox: {nobox_metrics:?}");
     for line in layout.lines() {
-        console_log!("{:?}", line.text_range());
+        console_log!("{:?}", line.metrics());
+        
         for item in line.items() {
             match item {
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
@@ -121,12 +139,12 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
                 }
                 parley::PositionedLayoutItem::InlineBox(inline_box) => {
                     let command = &mut out_vec[(inline_box.id - 1) as usize];
-                    command.pos = (inline_box.x, inline_box.y);
+                    command.pos = (inline_box.x, inline_box.y + inline_box.height - nobox_metrics.baseline);
                     console_log!("inline_box");
                     // Render the inline box
                 }
             };
         }
     }
-    return Ok((out_vec, 32.));
+    return Ok((out_vec, layout.height() as f64));
 }

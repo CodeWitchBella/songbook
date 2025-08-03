@@ -18,16 +18,16 @@ const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> anyhow::Result<()> {
     rc.clear(None, Color::WHITE);
 
-    let georgia = rc
+    let font = rc
         .text()
-        .font_family("Georgia")
+        .font_family("Cantarell")
         .ok_or(anyhow!("Missing font"))?;
 
     for item in song.items.iter() {
         let layout = rc
             .text()
             .new_text_layout(item.text.clone())
-            .font(georgia.clone(), song.font_size)
+            .font(font.clone(), song.font_size)
             .default_attribute(TextAttribute::Weight(piet::FontWeight::new(if item.bold {
                 600
             } else {
@@ -43,11 +43,11 @@ pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> anyhow::
 
         rc.draw_text(&layout, (item.pos.0, item.pos.1 - (metric.baseline as f32)));
 
-        rc.stroke(
-            Line::new(item.pos, (item.pos.0 + 10., item.pos.1)),
-            &RED_ALPHA,
-            1.0,
-        );
+        // rc.stroke(
+        //     Line::new(item.pos, (item.pos.0 + 10., item.pos.1)),
+        //     &RED_ALPHA,
+        //     1.0,
+        // );
     }
 
     Ok(())

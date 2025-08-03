@@ -38,7 +38,7 @@ pub fn parse(song: &str) {
 
 #[wasm_bindgen]
 pub struct Renderer {
-    pub(crate) font: parley::FontContext,
+    pub(crate) font_cx: parley::FontContext,
 }
 
 #[wasm_bindgen]
@@ -46,13 +46,13 @@ impl Renderer {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Renderer {
         Renderer {
-            font: parley::FontContext::new(),
+            font_cx: parley::FontContext::new(),
         }
     }
 
     #[wasm_bindgen]
     pub fn run(self: &mut Self, song: &str) -> Result<(), wasm_bindgen::JsError> {
-        Ok(run_anyhow(song, &mut self.font).unwrap())
+        Ok(run_anyhow(song, self).unwrap())
     }
 
     #[wasm_bindgen]
@@ -68,20 +68,20 @@ impl Renderer {
         let info = if is_woff2(&data) {
             let mut bytes: Bytes = data.into();
             let ttf = convert_woff2_to_ttf(&mut bytes).unwrap();
-            self.font
+            self.font_cx
                 .collection
                 .register_fonts(ttf.into(), Some(info_override))
         } else {
-            self.font
+            self.font_cx
                 .collection
                 .register_fonts(data.to_vec().into(), Some(info_override))
         };
-        // info[0].
+
         console_log!("registered: {info:?}");
     }
 }
 
-fn run_anyhow(song: &str, font: &mut parley::FontContext) -> anyhow::Result<()> {
+fn run_anyhow(song: &str, r: &mut Renderer) -> anyhow::Result<()> {
     let window = window().unwrap();
     let canvas = window
         .document()
@@ -108,7 +108,7 @@ fn run_anyhow(song: &str, font: &mut parley::FontContext) -> anyhow::Result<()> 
     let parsed = Song::parse(&song).context("Song::parse failed")?;
     let mut font_cx = parley::FontContext::new();
     // font_cx.collection.append_generic_families(generic, families);
-    let song = layout_song_naive::layout_song(&parsed)?;
+    let song = layout_song::layout_song(&parsed, &mut r.font_cx)?;
     render_song::draw(&mut piet_context, &song).unwrap();
     piet_context.finish().unwrap();
 
