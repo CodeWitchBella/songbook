@@ -1,5 +1,6 @@
 #![feature(default_field_values)]
 
+#[derive(Debug)]
 pub(crate) struct Item {
     pub text: String,
     pub bold: bool,

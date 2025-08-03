@@ -16,6 +16,8 @@ piet = "0.7.0"
 piet-web = "0.7.0"
 wasm-bindgen = "0.2.100"
 songbook-grammar = {path="../songbook-grammar"}
+bytes = "1.10.1"
+woff2-patched = "0.4.0"
 
 [dependencies.web-sys]
 version = "0.3.77"
@@ -27,4 +29,6 @@ features = [
     "Element",
     "HtmlElement",
     "HtmlCanvasElement",
+    "Blob",
+    "FileReader",
 ]

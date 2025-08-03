@@ -11,7 +11,7 @@ use piet::{
 };
 use songbook_grammar::Song;
 
-use crate::song_layout;
+use crate::{console_log, song_layout};
 
 const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 
@@ -88,7 +88,6 @@ fn render_text(song: &Song) {
             songbook_grammar::FilePortion::Section { header, lines } => {
                 for line in lines.iter() {
                     for content in line.0.iter() {
-                        if let songbook_grammar::LineContent::Command { lead, content } = content {}
                         match content {
                             songbook_grammar::LineContent::Text(_) => {}
                             songbook_grammar::LineContent::Command { lead, content } => {
@@ -98,6 +97,7 @@ fn render_text(song: &Song) {
                                     &mut font_cx,
                                     &mut layout_cx,
                                 );
+                                println!("sz: {sz:?}");
                             }
                         }
                     }
