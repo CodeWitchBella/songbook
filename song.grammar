@@ -8,6 +8,7 @@
 }
 
 Line {
+  LineLabel?
   (Text | Command)+
   ("\n" | eof)
 }
@@ -29,17 +30,16 @@ CommandLead {
 }
 
 Section {
-  (SectionStart|Line)
-  Line*
+  Line+
 }
 
 PageBreak { @specialize<Text, "--- page break ---"> }
 
 @tokens {
-  SectionStart { $[SR] ":" " "? }
+  LineLabel { $[SR] $[0-9]? ":" " "? }
   chordHead { ![\n\]^_>]+ }
   chordTail { ![\n\]]+ }
   Text { ![\n\[]+ }
   eof { @eof }
-  @precedence{SectionStart,Text}
+  @precedence{LineLabel,Text}
 }

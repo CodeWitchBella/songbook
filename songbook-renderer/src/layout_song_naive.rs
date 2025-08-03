@@ -16,7 +16,7 @@ pub fn layout_song(song: &Song) -> Result<Layout> {
     for portion in &song.portions {
 
         match portion {
-            songbook_grammar::FilePortion::Section { header, lines } => {
+            songbook_grammar::FilePortion::Section(lines) => {
                 for line in lines {
                     let mut data = layout_line(line, y)?;
                     y += data.1 + LINE_SPACE;
@@ -36,7 +36,7 @@ fn layout_line(line: &Line, y: f64) -> Result<(Vec<Item>, f64)> {
     let mut x = 0.;
 
     let mut y_off = 16.0;
-    for part in &line.0 {
+    for part in &line.content {
         match part {
             songbook_grammar::LineContent::Text(_) => {},
             songbook_grammar::LineContent::Command { lead, content } => {
@@ -46,7 +46,7 @@ fn layout_line(line: &Line, y: f64) -> Result<(Vec<Item>, f64)> {
         }
     }
 
-    for part in &line.0 {
+    for part in &line.content {
         let bold = match part {
             songbook_grammar::LineContent::Text(_) => false,
             songbook_grammar::LineContent::Command { lead, content } => {

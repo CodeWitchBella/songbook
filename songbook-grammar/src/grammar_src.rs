@@ -18,12 +18,12 @@ pub(super) enum FilePortion {
 
 #[derive(Deserialize)]
 pub(super) enum SectionPortion {
-    SectionStart(String),
     Line(Vec<LineContent>),
 }
 
 #[derive(Deserialize)]
 pub(super) enum LineContent {
+    LineLabel(String),
     Text(String),
     Command(Vec<Command>),
 }

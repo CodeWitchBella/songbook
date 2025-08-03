@@ -20,7 +20,7 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Lay
     let mut y = 0.;
     for portion in &song.portions {
         match portion {
-            songbook_grammar::FilePortion::Section { header, lines } => {
+            songbook_grammar::FilePortion::Section (lines) => {
                 for line in lines {
                     let mut data = layout_line(line, y, font_cx)?;
                     console_log!("{data:?}");
@@ -41,7 +41,7 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Lay
 
 fn collect_text(line: &Line) -> String {
     let mut text = String::new();
-    for item in &line.0 {
+    for item in &line.content {
         // TODO: this should take into account label (S: R:,...)
         // /návěští/
         match item {
@@ -85,7 +85,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
     let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE);
 
     let mut i = 0;
-    for item in &line.0 {
+    for item in &line.content {
         match item {
             songbook_grammar::LineContent::Text(part) => {
                 i += part.len();

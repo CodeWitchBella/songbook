@@ -85,9 +85,9 @@ fn render_text(song: &Song) {
     let mut map: HashMap<u64, (f64, f64)> = Default::default();
     for portion in song.portions.iter() {
         match portion {
-            songbook_grammar::FilePortion::Section { header, lines } => {
+            songbook_grammar::FilePortion::Section (lines) => {
                 for line in lines.iter() {
-                    for content in line.0.iter() {
+                    for content in line.content.iter() {
                         match content {
                             songbook_grammar::LineContent::Text(_) => {}
                             songbook_grammar::LineContent::Command { lead, content } => {

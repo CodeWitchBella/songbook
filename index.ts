@@ -11,7 +11,7 @@ await wasm.default({ module_or_path: wasmResponse });
 console.log("Init done")
 
 const song = await (
-  await fetch("/songs/na-kolena-ivan-hlas.song")
+  await fetch("/songs/ja-s-tebou-zit-nebudu-nerez.song")
 ).text();
 wasm.hook();
 const renderer = new wasm.Renderer()
@@ -19,7 +19,9 @@ console.log(renderer)
 const font = await (await fetch("songs/cantarell-regular.woff2")).arrayBuffer()
 renderer.register_fonts(new Uint8Array(font), "Cantarell")
 const tree = (parser as LRParser).parse(song);
-const parsed = JSON.stringify(processNode(tree.resolve(0), song)[0], null, 2);
+const resolved = tree.resolve(0)
+console.log(processNode(resolved, song, false)[0])
+const parsed = JSON.stringify(processNode(resolved, song, true)[0], null, 2);
 
 // console.log(parsed);
 // renderer.parse(parsed);
@@ -30,21 +32,21 @@ type Node = {
   [type: string]: Node[] | string;
 };
 
-function collectSiblings(node: SyntaxNode, text: string): [Node[], boolean] {
+function collectSiblings(node: SyntaxNode, text: string, exitOnError: boolean): [Node[], boolean] {
   const arr: Node[] = [];
   for (let i: SyntaxNode | null = node; i; i = i.nextSibling) {
-    if (i.type.isError) return [arr, true];
-    const [node, exit] = processNode(i, text);
+    if (i.type.isError && exitOnError) return [arr, false /* if we want to end parsing put exitOnError here */];
+    const [node, exit] = processNode(i, text, exitOnError);
     arr.push(node);
     if (exit) return [arr, true];
   }
   return [arr, false];
 }
 
-function processNode(node: SyntaxNode, text: string): [Node, boolean] {
+function processNode(node: SyntaxNode, text: string, exitOnError: boolean): [Node, boolean] {
   const child = node.firstChild;
   if (child) {
-    const [children, exit] = collectSiblings(child, text);
+    const [children, exit] = collectSiblings(child, text, exitOnError);
     return [{ [node.type.name]: children }, exit];
   }
   return [{ [node.type.name]: text.substring(node.from, node.to) }, false];

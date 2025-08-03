@@ -106,6 +106,7 @@ fn run_anyhow(song: &str, r: &mut Renderer) -> anyhow::Result<()> {
     let mut piet_context = WebRenderContext::new(context, window);
 
     let parsed = Song::parse(&song).context("Song::parse failed")?;
+    console_log!("{parsed:?}");
     let mut font_cx = parley::FontContext::new();
     // font_cx.collection.append_generic_families(generic, families);
     let song = layout_song::layout_song(&parsed, &mut r.font_cx)?;

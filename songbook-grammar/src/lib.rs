@@ -28,10 +28,7 @@ impl Song {
 
 #[derive(Debug)]
 pub enum FilePortion {
-    Section {
-        header: Option<String>,
-        lines: Vec<Line>,
-    },
+    Section ( Vec<Line>),
     PageBreak,
 }
 
@@ -39,28 +36,17 @@ impl FilePortion {
     pub(self) fn from_src(portion: grammar_src::FilePortion) -> Result<Self> {
         match portion {
             grammar_src::FilePortion::Section(contents) => {
-                let header: Option<String> = match contents.get(0) {
-                    Some(first) => match first {
-                        grammar_src::SectionPortion::SectionStart(start) => Some(start.clone()),
-                        grammar_src::SectionPortion::Line(_) => None,
-                    },
-                    _ => None,
-                };
-
-                Ok(Self::Section {
-                    header,
-                    lines: contents
+                Ok(Self::Section (contents
                         .into_iter()
                         .filter_map(|item| -> Option<Result<Line>> {
                             match item {
-                                grammar_src::SectionPortion::SectionStart(_) => None,
                                 grammar_src::SectionPortion::Line(line) => {
                                     Some(Line::from_src(line))
                                 }
                             }
                         })
                         .collect::<Result<Vec<Line>>>()?,
-                })
+                ))
             }
             grammar_src::FilePortion::PageBreak(_) => Ok(Self::PageBreak),
         }
@@ -69,17 +55,36 @@ impl FilePortion {
 
 impl Line {
     pub(self) fn from_src(items: Vec<grammar_src::LineContent>) -> Result<Self> {
-        Ok(Self(
+        let label: Option<String> = match items.get(0) {
+            Some(first) => match first {
+                grammar_src::LineContent::LineLabel(label) => Some(label.clone()),
+                _ => None,
+            },
+            _ => None,
+        };
+
+        Ok(Self{
+            label,
+            content:
             items
                 .into_iter()
-                .map(|item| -> Result<LineContent> { LineContent::from_src(item) })
+                .filter_map(|item| -> Option<Result<LineContent>> { match LineContent::from_src(item) {
+                    Ok(val) => match val {
+                        Some(val) => Some(Ok(val)),
+                        None => None,
+                    },
+                    Err(err) => Some(Err(err)),
+                } })
                 .collect::<Result<Vec<LineContent>>>()?,
-        ))
+    })
     }
 }
 
 #[derive(Debug)]
-pub struct Line(pub Vec<LineContent>);
+pub struct Line{
+    pub label: Option<String>,
+    pub content: Vec<LineContent>,
+}
 
 #[derive(Debug)]
 pub enum LineContent {
@@ -91,41 +96,42 @@ pub enum LineContent {
 }
 
 impl LineContent {
-    pub(self) fn from_src(content: grammar_src::LineContent) -> Result<Self> {
+    pub(self) fn from_src(content: grammar_src::LineContent) -> Result<Option<Self>> {
         Ok(match content {
-            grammar_src::LineContent::Text(text) => Self::Text(text),
+            grammar_src::LineContent::Text(text) => Some(Self::Text(text)),
             grammar_src::LineContent::Command(items) => {
-                if items.len() == 0 {
-                    return Ok(Self::Command {
-                        lead: None,
-                        content: "".to_owned(),
-                    });
-                }
-                let lead = match &items[0] {
-                    grammar_src::Command::CommandLead(data) => data.clone(),
-                    grammar_src::Command::CommandContent(content) => {
-                        return Ok(Self::Command {
-                            lead: None,
-                            content: content.clone(),
-                        });
-                    }
-                };
-                if items.len() == 1 {
-                    return Ok(Self::Command {
-                        lead: Some(lead),
-                        content: "".to_owned(),
-                    });
-                }
-                Self::Command {
-                    lead: Some(lead),
-                    content: match &items[1] {
-                        grammar_src::Command::CommandLead(_) => {
-                            return Err(anyhow!("Invalid command:: multiple leads"));
+                        if items.len() == 0 {
+                            return Ok(Some(Self::Command {
+                                lead: None,
+                                content: "".to_owned(),
+                            }));
                         }
-                        grammar_src::Command::CommandContent(content) => content.clone(),
+                        let lead = match &items[0] {
+                            grammar_src::Command::CommandLead(data) => data.clone(),
+                            grammar_src::Command::CommandContent(content) => {
+                                return Ok(Some(Self::Command {
+                                    lead: None,
+                                    content: content.clone(),
+                                }));
+                            }
+                        };
+                        if items.len() == 1 {
+                            return Ok(Some(Self::Command {
+                                lead: Some(lead),
+                                content: "".to_owned(),
+                            }));
+                        }
+                        Some(Self::Command {
+                            lead: Some(lead),
+                            content: match &items[1] {
+                                grammar_src::Command::CommandLead(_) => {
+                                    return Err(anyhow!("Invalid command:: multiple leads"));
+                                }
+                                grammar_src::Command::CommandContent(content) => content.clone(),
+                            },
+                        })
                     },
-                }
-            }
+            grammar_src::LineContent::LineLabel(_) => None,
         })
     }
 }
