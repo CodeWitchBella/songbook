@@ -6,3 +6,7 @@ members = [
     "songbook-render-canvas",
     "songbook-render-html",
 ]
+
+[profile.release]
+lto = true
+opt-level = 's'
