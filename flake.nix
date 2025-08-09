@@ -52,7 +52,8 @@
                   cargo-mommy
                   pnpm
                   nodejs
-                  (pkgs.writeShellScriptBin "dev-build" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-renderer"'')
+                  (pkgs.writeShellScriptBin "dev-build-canvas" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-canvas"'')
+                  (pkgs.writeShellScriptBin "dev-build-html" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-html"'')
                   (pkgs.writeShellScriptBin "dev-serve" ''pnpm exec vite'')
                   wasm-pack
                   wasm-bindgen-cli

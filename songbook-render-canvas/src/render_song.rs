@@ -11,11 +11,9 @@ use piet::{
 };
 use songbook_grammar::Song;
 
-use crate::{console_log, song_layout};
-
 const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 
-pub fn draw(rc: &mut impl RenderContext, song: &song_layout::Layout) -> anyhow::Result<()> {
+pub fn draw(rc: &mut impl RenderContext, song: &songbook_layout::Layout) -> anyhow::Result<()> {
     rc.clear(None, Color::WHITE);
 
     let font = rc
@@ -85,7 +83,7 @@ fn render_text(song: &Song) {
     let mut map: HashMap<u64, (f64, f64)> = Default::default();
     for portion in song.portions.iter() {
         match portion {
-            songbook_grammar::FilePortion::Section (lines) => {
+            songbook_grammar::FilePortion::Section(lines) => {
                 for line in lines.iter() {
                     for content in line.content.iter() {
                         match content {

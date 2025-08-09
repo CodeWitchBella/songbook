@@ -1,7 +1,9 @@
 #![feature(default_field_values)]
 
-#[derive(Debug)]
-pub(crate) struct Item {
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
+pub struct Item {
     pub text: String,
     pub bold: bool,
 
@@ -35,8 +37,8 @@ pub(crate) struct Item {
 //     pub gap: f32,
 // }
 
-#[derive(Default)]
-pub(crate) struct Layout {
+#[derive(Default, Serialize)]
+pub struct Layout {
     pub font_size: f64,
     pub items: Vec<Item>,
     // pub page_breaks: Vec<PageBreak>,

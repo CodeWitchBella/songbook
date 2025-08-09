@@ -1,18 +1,16 @@
 use std::any::Any;
 
-use anyhow::Result;
 use parley::{layout, FontContext, LayoutContext, RangedBuilder, StyleProperty};
 use songbook_grammar::{Line, Song};
 
 use crate::{
-    console_log,
-    song_layout::{Item, Layout},
+    data::{Item, Layout},
 };
 
 const FONT_SIZE: f64 = 16.;
 const SECTION_SPACE: f64 = 24.;
 
-pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Layout> {
+pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Layout {
     let mut layout: Layout = Layout {
         font_size: FONT_SIZE,
         items: Default::default(),
@@ -22,8 +20,7 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Lay
         match portion {
             songbook_grammar::FilePortion::Section (lines) => {
                 for line in lines {
-                    let mut data = layout_line(line, y, font_cx)?;
-                    console_log!("{data:?}");
+                    let mut data = layout_line(line, y, font_cx);
                     for item in &mut data.0 {
                         item.pos.1 += y as f32;
                     }
@@ -36,7 +33,7 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Result<Lay
         y += SECTION_SPACE;
     }
 
-    Ok(layout)
+    layout
 }
 
 fn collect_text(line: &Line) -> String {
@@ -67,7 +64,7 @@ fn prepare_builder<'a>(layout_cx: &'a mut LayoutContext<()>, font_cx: &'a mut pa
     builder
 }
 
-fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result<(Vec<Item>, f64)> {
+fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<Item>, f64) {
     let mut out_vec: Vec<Item> = vec![];
     let mut layout_cx = parley::LayoutContext::new();
 
@@ -79,7 +76,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
     let cloned = complete_text.clone();
     let mut layout_no_box = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE).build(cloned);
     layout_no_box.break_all_lines(None);
-    let nobox_first_line = layout_no_box.lines().nth(0).unwrap();
+    let nobox_first_line = layout_no_box.lines().nth(0).unwrap(); // TODO: graceful
     let nobox_metrics = nobox_first_line.metrics();
 
     let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE);
@@ -108,7 +105,6 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
 
     // Build the builder into a Layout
     let cloned = complete_text.clone();
-    console_log!("{}", complete_text);
     let mut layout: parley::Layout<()> = builder.build(&cloned);
 
     // Run line-breaking and alignment on the Layout
@@ -120,31 +116,27 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> Result
 
     let height = layout.height();
     let full_width = layout.full_width();
-    console_log!("{width}x{height}; {full_width}");
-    console_log!("nobox: {nobox_metrics:?}");
     for line in layout.lines() {
-        console_log!("{:?}", line.metrics());
         
         for item in line.items() {
             match item {
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
-                    console_log!("glyph_run");
                     let item = Item {
                         bold: false,
                         pos: (glyph_run.offset(), glyph_run.baseline()),
                         text: complete_text[glyph_run.run().text_range()].to_owned(),
                     };
-                    console_log!("{item:?}");
+                    // console_log!("{item:?}");
                     out_vec.push(item);
                 }
                 parley::PositionedLayoutItem::InlineBox(inline_box) => {
                     let command = &mut out_vec[(inline_box.id - 1) as usize];
                     command.pos = (inline_box.x, inline_box.y + inline_box.height - nobox_metrics.baseline);
-                    console_log!("inline_box");
+                    // console_log!("inline_box");
                     // Render the inline box
                 }
             };
         }
     }
-    return Ok((out_vec, layout.height() as f64));
+    return (out_vec, layout.height() as f64);
 }

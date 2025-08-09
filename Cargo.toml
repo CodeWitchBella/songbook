@@ -1,3 +1,8 @@
 [workspace]
 resolver = "3"
-members = ["songbook-renderer", "songbook-grammar"]
+members = [
+    "songbook-grammar",
+    "songbook-layout",
+    "songbook-render-canvas",
+    "songbook-render-html",
+]

@@ -1,29 +1,22 @@
 #![allow(unused)]
 
-mod layout_song;
-mod render_pdf;
 mod render_song;
-mod song_layout;
 mod utils;
-mod layout_song_naive;
 
 use std::io::Read;
 
 use anyhow::Context;
 use bytes::Bytes;
-use parley::fontique::Blob;
-use parley::fontique::FallbackKey;
-use parley::fontique::FontInfoOverride;
 use piet::RenderContext;
 use piet_web::WebRenderContext;
+use songbook_layout::Layout;
+use songbook_layout::LayoutEngine;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, window};
-use woff2_patched::decode::{convert_woff2_to_ttf, is_woff2};
 
 use songbook_grammar::Song;
 
-use crate::song_layout::Layout;
 
 #[wasm_bindgen]
 pub fn hook() {
@@ -38,7 +31,7 @@ pub fn parse(song: &str) {
 
 #[wasm_bindgen]
 pub struct Renderer {
-    pub(crate) font_cx: parley::FontContext,
+    pub(crate) layout_engine: LayoutEngine,
 }
 
 #[wasm_bindgen]
@@ -46,42 +39,26 @@ impl Renderer {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Renderer {
         Renderer {
-            font_cx: parley::FontContext::new(),
+            layout_engine: LayoutEngine::new(),
         }
     }
 
     #[wasm_bindgen]
     pub fn run(self: &mut Self, song: &str) -> Result<(), wasm_bindgen::JsError> {
-        Ok(run_anyhow(song, self).unwrap())
+        let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
+        let layout = self.layout_engine.run(&parsed);
+        Ok(run_anyhow(song, self, &layout).unwrap())
     }
+
 
     #[wasm_bindgen]
     pub fn register_fonts(self: &mut Self, data: &js_sys::Uint8Array, name: &str) {
-        let info_override = FontInfoOverride {
-            family_name: Some(name),
-            width: None,
-            style: None,
-            weight: None,
-            axes: None,
-        };
         let mut data = data.to_vec();
-        let info = if is_woff2(&data) {
-            let mut bytes: Bytes = data.into();
-            let ttf = convert_woff2_to_ttf(&mut bytes).unwrap();
-            self.font_cx
-                .collection
-                .register_fonts(ttf.into(), Some(info_override))
-        } else {
-            self.font_cx
-                .collection
-                .register_fonts(data.to_vec().into(), Some(info_override))
-        };
-
-        console_log!("registered: {info:?}");
+        self.layout_engine.register_fonts(data, name);
     }
 }
 
-fn run_anyhow(song: &str, r: &mut Renderer) -> anyhow::Result<()> {
+fn run_anyhow(song: &str, r: &mut Renderer, layout: &Layout) -> anyhow::Result<()> {
     let window = window().unwrap();
     let canvas = window
         .document()
@@ -106,11 +83,9 @@ fn run_anyhow(song: &str, r: &mut Renderer) -> anyhow::Result<()> {
     let mut piet_context = WebRenderContext::new(context, window);
 
     let parsed = Song::parse(&song).context("Song::parse failed")?;
-    console_log!("{parsed:?}");
+    // console_log!("{parsed:?}");
     let mut font_cx = parley::FontContext::new();
-    // font_cx.collection.append_generic_families(generic, families);
-    let song = layout_song::layout_song(&parsed, &mut r.font_cx)?;
-    render_song::draw(&mut piet_context, &song).unwrap();
+    render_song::draw(&mut piet_context, &layout).unwrap();
     piet_context.finish().unwrap();
 
     Ok(())
