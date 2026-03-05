@@ -22,7 +22,10 @@ export default function CollectionList() {
     }
   }, [refresh]);
   const sortedList = useMemo(
-    () => [...unsortedList].sort(collectionCompare),
+    () =>
+      [...unsortedList]
+        .filter(({ item }) => item.name)
+        .sort(collectionCompare),
     [unsortedList],
   );
   return (

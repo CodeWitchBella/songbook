@@ -23,9 +23,15 @@ function prefixLength(a: string, b: string) {
  * in reverse order
  */
 export function collectionCompare(
-  ai: { item: { name: string } },
-  bi: { item: { name: string } },
+  ai: { item: { name: string; owner?: { name?: string } } },
+  bi: { item: { name: string; owner?: { name?: string } } },
 ) {
+  // sort by owner first, then by name
+  const ownerA = ai.item.owner?.name ?? "";
+  const ownerB = bi.item.owner?.name ?? "";
+  const ownerCompare = ownerA.localeCompare(ownerB);
+  if (ownerCompare !== 0) return ownerCompare;
+
   const a = ai.item.name;
   const b = bi.item.name;
   const prefix = prefixLength(a, b);
@@ -42,8 +48,6 @@ export function collectionFullName(collection: {
   name: string;
 }) {
   return (
-    (collection.slug.includes("/")
-      ? (collection.owner.handle || collection.owner.name) + " > "
-      : "") + collection.name
+    (collection.slug.includes("/") ? (collection.owner.handle || collection.owner.name) + " > " : "") + collection.name
   );
 }
