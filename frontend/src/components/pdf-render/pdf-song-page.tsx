@@ -124,6 +124,17 @@ function LineWrap({
 }
 
 function LineC({ l }: { l: Line }) {
+  const { em, fontSize } = usePDFSettings();
+  if (l.tab) {
+    const tabSize = em(fontSize * 0.6 * (l.tabFontSize ?? 1));
+    return (
+      <LineWrap hasChord={false}>
+        <DefaultStyleText style={{ fontFamily: "Courier", fontSize: tabSize }}>
+          {l.content.map((c) => c.text).join("")}
+        </DefaultStyleText>
+      </LineWrap>
+    );
+  }
   const hasText = l.content.some((c) => !!c.text.trim());
   if (!hasText) {
     return (

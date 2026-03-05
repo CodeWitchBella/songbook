@@ -139,18 +139,33 @@ function parseParagraph(
   pCounterInit: number,
 ): { p: Paragraph; pCounter: number } {
   let pCounter = pCounterInit;
+  const lines = p.trim().split("\n");
+  const tabMatch = /^T:(\d+(?:\.\d+)?)?\s*(.*)/.exec(lines[0]?.trimStart() ?? "");
+  if (tabMatch) {
+    const tabFontSize = tabMatch[1] ? parseFloat(tabMatch[1]) : undefined;
+    const label = tabMatch[2].trim();
+    const allLines = [label, ...lines.slice(1)];
+    return {
+      p: allLines
+        .filter((l, i) => i > 0 || l !== "")
+        .map((l) => ({
+          content: [{ ch: "", text: l }],
+          tag: null,
+          tab: true,
+          tabFontSize,
+        })),
+      pCounter,
+    };
+  }
   return {
-    p: p
-      .trim()
-      .split("\n")
-      .map((l) => {
-        const { content, tag, pCounter: n } = parseLine(l, pCounter);
-        pCounter = n;
-        return {
-          content,
-          tag: isVerse(tag) ? verseToText(tag, pCounter) : tag,
-        };
-      }),
+    p: lines.map((l) => {
+      const { content, tag, pCounter: n } = parseLine(l, pCounter);
+      pCounter = n;
+      return {
+        content,
+        tag: isVerse(tag) ? verseToText(tag, pCounter) : tag,
+      };
+    }),
     pCounter,
   };
 }

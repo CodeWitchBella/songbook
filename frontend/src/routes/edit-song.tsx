@@ -379,6 +379,14 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             refrénů víc <b>R1:</b>, <b>R2:</b> atd
           </TP>
           <TP>
+            Pro vložení tabulatury (tabů) se používá <b>T:</b> na začátku
+            odstavce. Text v takovém odstavci se zobrazí písmem s pevnou šířkou,
+            takže zarovnání znaků zůstane zachováno. Velikost textu lze
+            upravit číslem za <b>T:</b>, například <b>T:0.8</b> zobrazí text na
+            80 % výchozí velikosti tabů. Výchozí velikost je 60 % normálního
+            textu písně.
+          </TP>
+          <TP>
             Pokud potřebuješ udělat oddělovač stran tak napiš{" "}
             <b>---&nbsp;page&nbsp;break&nbsp;---</b>
           </TP>

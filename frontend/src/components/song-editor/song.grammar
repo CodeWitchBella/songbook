@@ -11,12 +11,13 @@ Line {
 SectionStart {
   ("R" digit* ":")
   | ("S:" digit*)
+  | "T:"
 }
 
 @tokens {
   digit { $[0-9] }
   newline { '\n' }
-  lineStart { ![RS\[\n] }
+  lineStart { ![RST\[\n] }
   chordStart { "[" }
   chordEnd { "]" }
   chordContent { ![\n\]]+ }
