@@ -64,10 +64,7 @@ const router = createBrowserRouter(
       children: createRoutesFromElements(
         <>
           <Route index={true} element={<Home />} />
-          <Route
-            path="installed-home"
-            element={<Navigate to="/" replace={true} />}
-          />
+          <Route path="installed-home" element={<Navigate to="/" replace={true} />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="all-songs" element={<AllSongs />} />
@@ -84,10 +81,7 @@ const router = createBrowserRouter(
           <Route path="edit/:slug" element={<EditSong />} />
           <Route path="changelog" element={<Changelog />} />
           <Route path="chords" element={<Chords />} />
-          <Route
-            path="graphql"
-            element={<AbsoluteRedirect to="/api/graphql" />}
-          />
+          <Route path="graphql" element={<AbsoluteRedirect to="/api/graphql" />} />
           <Route path="diff" element={<CollectionDiff />} />
 
           <Route path="*" element={<NotFound />} />
@@ -104,9 +98,7 @@ const router = createBrowserRouter(
 );
 
 export function Routes() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 function RootRoute() {
@@ -183,7 +175,7 @@ const loadAllRoutes = once(async () => {
       await imp();
     } catch {}
     // since script parsing may happen on main thread give it some breathing space
-    await new Promise((res) => setTimeout(res, 100));
+    await new Promise(res => setTimeout(res, 100));
   }
 });
 

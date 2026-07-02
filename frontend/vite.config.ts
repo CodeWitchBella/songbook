@@ -1,5 +1,5 @@
 import { lezer } from "@lezer/generator/rollup";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import fs from "fs";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -44,12 +44,7 @@ export default defineConfig({
         find: /^(utils|store|routes|containers|sections|webfonts|components)\//,
         replacement: "/src/$1/",
       },
-      { find: "build-data", replacement: "/src/build-data" },
       { find: "react-native", replacement: "react-native-web" },
-      {
-        find: "react-native-svg",
-        replacement: "react-native-svg/lib/commonjs/index.js",
-      },
     ],
   },
 });

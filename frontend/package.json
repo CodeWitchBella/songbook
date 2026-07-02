@@ -2,6 +2,9 @@
   "name": "songbook-frontend",
   "version": "0.1.0",
   "private": true,
+  "imports": {
+    "#/*": "./src/*"
+  },
   "dependencies": {
     "@codemirror/commands": "6.10.4",
     "@codemirror/language": "6.10.4",
@@ -25,7 +28,6 @@
     "@types/workbox-window": "^5.0.0",
     "@uiw/codemirror-themes": "^4.22.1",
     "@uiw/react-codemirror": "^4.22.1",
-    "@vitejs/plugin-react-swc": "^3.7.0",
     "devcert": "^1.2.2",
     "file-saver": "^2.0.5",
     "http-proxy": "^1.18.1",
@@ -74,6 +76,7 @@
   },
   "devDependencies": {
     "@lezer/generator": "^1.7.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.4.0",
     "postcss": "^8.4.38",
