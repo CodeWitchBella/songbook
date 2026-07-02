@@ -1,5 +1,5 @@
 import type ReactPDFTypes from "@react-pdf/types";
-import { SizerPage } from "components/sizer-page";
+import { SizerPage } from "#/components/sizer-page";
 import type { PropsWithChildren } from "react";
 import React, { useContext } from "react";
 

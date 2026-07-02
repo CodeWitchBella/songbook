@@ -4,10 +4,10 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 //import 'react-pdf/dist/Page/AnnotationLayer.css'
-import type { SongType } from "store/store-song";
-import type { Line } from "utils/song-parser/song-parser";
-import { parseSong } from "utils/song-parser/song-parser";
-import { once } from "utils/utils";
+import type { SongType } from "#/store/store-song";
+import type { Line } from "#/utils/song-parser/song-parser";
+import { parseSong } from "#/utils/song-parser/song-parser";
+import { once } from "#/utils/utils";
 
 import { useQueryParam } from "../use-router";
 import { PDFBookletDouble, PDFBookletQuad } from "./pdf-page";
@@ -16,27 +16,19 @@ import { PDFSettingsProvider } from "./pdf-settings";
 import { PDFSongPage } from "./pdf-song-page";
 import { PDFTitlePage } from "./pdf-title-page";
 import { PDFToc } from "./pdf-toc";
-import {
-  PDFBlobProvider,
-  PDFDocument,
-  PDFProvider,
-  usePDF,
-} from "./primitives";
+import { PDFBlobProvider, PDFDocument, PDFProvider, usePDF } from "./primitives";
 import { getSongbookMeta } from "./songbook-meta";
 
 const ReactPDF = React.lazy(
   once(() =>
-    import("react-pdf").then((rpdf) => {
+    import("react-pdf").then(rpdf => {
       rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`;
       return {
-        default: ({
-          children,
-        }: {
-          children: (rpdf: typeof import("react-pdf")) => React.ReactElement;
-        }) => children(rpdf),
+        default: ({ children }: { children: (rpdf: typeof import("react-pdf")) => React.ReactElement }) =>
+          children(rpdf),
       };
-    })
-  )
+    }),
+  ),
 );
 
 type Props = {
@@ -74,32 +66,20 @@ function PDFDoc({ url }: { url: string }) {
   const [page, setPage] = useState(1);
   return (
     <ReactPDF>
-      {(rpdf) => (
-        <rpdf.Document
-          file={url}
-          onLoadSuccess={({ numPages }) => setNumPages(numPages)}
-          renderMode="svg"
-        >
+      {rpdf => (
+        <rpdf.Document file={url} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
           <div className="flex select-none content-center">
             <div className="set-size relative">
               <rpdf.Page key={`page_${page}`} pageNumber={page} />
               <div className={classes.aPaper}>
                 <div className="flex gap-2 text-black">
-                  <PlusMinus
-                    onClick={() => setPage((p) => (p - 1 > 0 ? p - 1 : p))}
-                    hide={page === 1}
-                  >
+                  <PlusMinus onClick={() => setPage(p => (p - 1 > 0 ? p - 1 : p))} hide={page === 1}>
                     {"<"}
                   </PlusMinus>
                   <div>
                     Strana {page}/{numPages}
                   </div>
-                  <PlusMinus
-                    onClick={() =>
-                      setPage((p) => (p + 1 <= numPages ? p + 1 : p))
-                    }
-                    hide={page === numPages}
-                  >
+                  <PlusMinus onClick={() => setPage(p => (p + 1 <= numPages ? p + 1 : p))} hide={page === numPages}>
                     {">"}
                   </PlusMinus>
                 </div>
@@ -142,26 +122,14 @@ export default function PDFRender({ song }: Props) {
     <div className="indexcss-pdf-render">
       <PDFProvider>
         <PDFBlobProvider document={doc}>
-          {
-            (({ url }: $FixMe) =>
-              !url ? (
-                <div>Generuji PDF...</div>
-              ) : (
-                <PDFDoc url={url} />
-              )) as $FixMe
-          }
+          {(({ url }: $FixMe) => (!url ? <div>Generuji PDF...</div> : <PDFDoc url={url} />)) as $FixMe}
         </PDFBlobProvider>
       </PDFProvider>
     </div>
   );
 }
 
-export function PDFDownload({
-  list,
-  onDone,
-  slug,
-  title,
-}: PDFRenderMultipleSongsProps & { onDone: () => void }) {
+export function PDFDownload({ list, onDone, slug, title }: PDFRenderMultipleSongsProps & { onDone: () => void }) {
   const songPages = [] as (SongType & {
     page: Line[][];
     counter: number;
@@ -229,12 +197,7 @@ export function PDFDownload({
         />
       </PDFSettingsProvider>
     )),
-    <PDFToc
-      list={list}
-      idToCounter={idToCounter}
-      key="toc"
-      booklet={booklet !== false}
-    />,
+    <PDFToc list={list} idToCounter={idToCounter} key="toc" booklet={booklet !== false} />,
   ];
 
   const doc = (
@@ -247,25 +210,14 @@ export function PDFDownload({
           pageSize: pageSize,
         }}
       >
-        {!booklet ? (
-          pages
-        ) : booklet === "quad" ? (
-          <PDFBookletQuad pages={pages} />
-        ) : (
-          <PDFBookletDouble pages={pages} />
-        )}
+        {!booklet ? pages : booklet === "quad" ? <PDFBookletQuad pages={pages} /> : <PDFBookletDouble pages={pages} />}
       </PDFSettingsProvider>
     </PDFDocument>
   );
   return (
     <PDFProvider>
       <Download
-        slug={
-          slug +
-          (booklet
-            ? `-booklet-a${pageSize - (booklet === "quad" ? 2 : 1)}`
-            : `-a${pageSize}`)
-        }
+        slug={slug + (booklet ? `-booklet-a${pageSize - (booklet === "quad" ? 2 : 1)}` : `-a${pageSize}`)}
         document={doc}
         onDone={onDone}
       />

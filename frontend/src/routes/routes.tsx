@@ -1,5 +1,5 @@
-import { NotFound } from "components/error-page";
-import { RouteRenderedMarker } from "components/service-worker-status";
+import { NotFound } from "#/components/error-page";
+import { RouteRenderedMarker } from "#/components/service-worker-status";
 import React, { Component, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -105,7 +105,7 @@ const router = createBrowserRouter(
 
 export function Routes() {
   return (
-    <RouterProvider router={router} future={{ v7_startTransition: true }} />
+    <RouterProvider router={router} />
   );
 }
 

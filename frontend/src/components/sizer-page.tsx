@@ -1,5 +1,5 @@
 import type { PropsWithChildren, ReactNode } from "react";
-import * as page from "utils/page";
+import * as page from "#/utils/page";
 
 export function SizerPage({ children }: PropsWithChildren<{}>) {
   return (

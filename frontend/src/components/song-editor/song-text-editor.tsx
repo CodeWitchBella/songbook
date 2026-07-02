@@ -13,7 +13,7 @@ import CodeMirror, {
   keymap,
   Transaction,
 } from "@uiw/react-codemirror";
-import { useColors } from "components/themed";
+import { useColors } from "#/components/themed";
 import { useMemo } from "react";
 
 // @ts-expect-error

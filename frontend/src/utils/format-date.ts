@@ -1,4 +1,4 @@
-import type { Language } from "components/localisation";
+import type { Language } from "#/components/localisation";
 import type { TFunction } from "i18next";
 
 const months = {

@@ -1,27 +1,28 @@
 {
-  "extends": "./tsconfig-src.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "esnext",
-    "lib": ["es2020", "DOM"],
-    "types": ["node"],
-    "jsx": "react-jsx",
-    "noEmit": true,
-    "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
+    "checkJs": false,
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noEmit": true,
+    "noEmitOnError": true,
+    "jsx": "react-jsx",
+    "noFallthroughCasesInSwitch": true,
+    "useDefineForClassFields": true,
+    "paths": {
+      "#/*": ["./src/*"],
+    },
+    "types": ["vite/client"],
   },
   "include": ["src/**/*"],
-  "typeAcquisition": {
-    "enable": false
-  }
 }

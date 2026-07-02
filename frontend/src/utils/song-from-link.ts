@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { getGraphqlUrl } from "store/graphql";
+import { getGraphqlUrl } from "#/store/graphql";
 
 export async function songDataFromLink(
   link: string,

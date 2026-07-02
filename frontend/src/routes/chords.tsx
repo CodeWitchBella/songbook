@@ -1,11 +1,11 @@
-import { getChordDefinition } from "components/chord-help";
-import { PageHeader } from "components/page-header";
-import { TText } from "components/themed";
+import { getChordDefinition } from "#/components/chord-help";
+import { PageHeader } from "#/components/page-header";
+import { TText } from "#/components/themed";
 import { useMemo } from "react";
 import { View } from "react-native";
 import { Link } from "react-router";
-import { useSongList } from "store/store";
-import * as parser from "utils/song-parser/song-parser";
+import { useSongList } from "#/store/store";
+import * as parser from "#/utils/song-parser/song-parser";
 
 const ignore = new Set([
   "|",

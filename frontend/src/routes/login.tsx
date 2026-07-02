@@ -1,10 +1,10 @@
-import { LargeInput } from "components/input";
-import { InlineLink } from "components/interactive/inline-link";
-import { PrimaryButton } from "components/interactive/primary-button";
-import { LoginDone } from "components/login-done";
-import { PageHeader } from "components/page-header";
-import { TText } from "components/themed";
-import { useLogin } from "components/use-login";
+import { LargeInput } from "#/components/input";
+import { InlineLink } from "#/components/interactive/inline-link";
+import { PrimaryButton } from "#/components/interactive/primary-button";
+import { LoginDone } from "#/components/login-done";
+import { PageHeader } from "#/components/page-header";
+import { TText } from "#/components/themed";
+import { useLogin } from "#/components/use-login";
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { View } from "react-native";

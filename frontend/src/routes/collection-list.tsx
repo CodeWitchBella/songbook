@@ -1,11 +1,11 @@
-import { PageHeader } from "components/page-header";
+import { PageHeader } from "#/components/page-header";
 import { DateTime } from "luxon";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { useCollectionList } from "store/store";
-import { collectionCompare, collectionFullName } from "utils/utils";
+import { useCollectionList } from "#/store/store";
+import { collectionCompare, collectionFullName } from "#/utils/utils";
 
 let lastRefreshThisRefresh: DateTime | null = null;
 

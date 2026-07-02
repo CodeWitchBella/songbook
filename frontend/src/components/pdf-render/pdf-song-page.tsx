@@ -1,8 +1,8 @@
 import { notNull } from "@isbl/ts-utils";
-import { BackArrow, BackButton } from "components/back-button";
+import { BackArrow, BackButton } from "#/components/back-button";
 import type { PropsWithChildren } from "react";
 import { StyleSheet } from "react-native";
-import type { Line, Paragraph } from "utils/song-parser/song-parser";
+import type { Line, Paragraph } from "#/utils/song-parser/song-parser";
 
 import { Chord } from "./chord";
 import { PDFPage } from "./pdf-page";

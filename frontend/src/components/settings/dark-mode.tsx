@@ -1,5 +1,5 @@
-import { useDarkModeSetting } from "components/dark-mode";
-import { TText, useColors } from "components/themed";
+import { useDarkModeSetting } from "#/components/dark-mode";
+import { TText, useColors } from "#/components/themed";
 import { useTranslation } from "react-i18next";
 import { Pressable, View } from "react-native";
 

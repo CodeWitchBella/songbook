@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef } from "react";
-import type { ServiceWorkerRegisterConfig } from "serviceWorker";
+import type { ServiceWorkerRegisterConfig } from "#/serviceWorker";
 import type { Workbox } from "workbox-window";
 
 const context = React.createContext({

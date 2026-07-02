@@ -1,11 +1,11 @@
-import { InlineLink } from "components/interactive/inline-link";
-import { ListButton } from "components/interactive/list-button";
-import { PageHeader } from "components/page-header";
-import { DarkModeSettings } from "components/settings/dark-mode";
-import { LanguageSettings } from "components/settings/language-settings";
-import { TH2, TText } from "components/themed";
-import { useLogin } from "components/use-login";
-import { Version } from "components/version";
+import { InlineLink } from "#/components/interactive/inline-link";
+import { ListButton } from "#/components/interactive/list-button";
+import { PageHeader } from "#/components/page-header";
+import { DarkModeSettings } from "#/components/settings/dark-mode";
+import { LanguageSettings } from "#/components/settings/language-settings";
+import { TH2, TText } from "#/components/themed";
+import { useLogin } from "#/components/use-login";
+import { Version } from "#/components/version";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 

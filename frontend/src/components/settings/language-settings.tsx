@@ -1,5 +1,5 @@
-import { useLanguage } from "components/localisation";
-import { TText, useColors } from "components/themed";
+import { useLanguage } from "#/components/localisation";
+import { TText, useColors } from "#/components/themed";
 import { Pressable, View } from "react-native";
 
 export function LanguageSettings({ compact = false }: { compact?: boolean }) {

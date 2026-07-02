@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { formatDate } from "utils/format-date";
+import { formatDate } from "#/utils/format-date";
 
 import { useLanguage } from "./localisation";
 

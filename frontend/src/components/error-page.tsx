@@ -1,4 +1,4 @@
-import { BackButton } from "components/back-button";
+import { BackButton } from "#/components/back-button";
 import { useTranslation } from "react-i18next";
 
 import { TText } from "./themed";

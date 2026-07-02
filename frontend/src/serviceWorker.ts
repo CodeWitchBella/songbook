@@ -27,7 +27,7 @@ export type ServiceWorkerRegisterConfig = {
 };
 
 export function register(config: ServiceWorkerRegisterConfig = {}) {
-  if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+  if (import.meta.env.PROD && "serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       const swUrl = new URL("/service-worker.js", window.location.href).href;
 

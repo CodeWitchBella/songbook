@@ -1,5 +1,5 @@
-import { getChordDefinition } from "components/chord-help";
-import { useColors } from "components/themed";
+import { getChordDefinition } from "#/components/chord-help";
+import { useColors } from "#/components/themed";
 import { Fragment } from "react";
 import { Pressable } from "react-native";
 

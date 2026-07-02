@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { User } from "store/graphql";
+import type { User } from "#/store/graphql";
 
 import { InlineLink } from "./interactive/inline-link";
 

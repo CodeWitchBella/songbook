@@ -1,19 +1,19 @@
-import { BackArrow, BackButton, useGoBack } from "components/back-button";
-import { ErrorPage } from "components/error-page";
-import { LargeInput } from "components/input";
-import { BasicButton } from "components/interactive/basic-button";
-import { ListButton } from "components/interactive/list-button";
-import { TText } from "components/themed";
+import { BackArrow, BackButton, useGoBack } from "#/components/back-button";
+import { ErrorPage } from "#/components/error-page";
+import { LargeInput } from "#/components/input";
+import { BasicButton } from "#/components/interactive/basic-button";
+import { ListButton } from "#/components/interactive/list-button";
+import { TText } from "#/components/themed";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { useParams } from "react-router";
-import type { WithMethods } from "store/generic-store";
-import { graphqlFetch } from "store/graphql";
-import { useCollectionList, useSong, useViewer } from "store/store";
-import type { CollectionType } from "store/store-collections";
-import { collectionCompare, collectionFullName } from "utils/utils";
+import type { WithMethods } from "#/store/generic-store";
+import { graphqlFetch } from "#/store/graphql";
+import { useCollectionList, useSong, useViewer } from "#/store/store";
+import type { CollectionType } from "#/store/store-collections";
+import { collectionCompare, collectionFullName } from "#/utils/utils";
 
 export default function AddToCollection() {
   const { t } = useTranslation();

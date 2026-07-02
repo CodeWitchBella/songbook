@@ -1,14 +1,14 @@
-import { DumbModal } from "components/dumb-modal";
-import { useLanguage } from "components/localisation";
-import { TText } from "components/themed";
+import { DumbModal } from "#/components/dumb-modal";
+import { useLanguage } from "#/components/localisation";
+import { TText } from "#/components/themed";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 import type { LinkProps } from "react-router";
 import { Link, useLocation, useNavigate } from "react-router";
-import { useGetRandomSong } from "store/store";
-import type { SongType } from "store/store-song";
-import { formatDate } from "utils/format-date";
+import { useGetRandomSong } from "#/store/store";
+import type { SongType } from "#/store/store-song";
+import { formatDate } from "#/utils/format-date";
 
 import {
   AddToCollection,

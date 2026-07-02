@@ -1,13 +1,13 @@
-import { InstallButtonLook } from "components/install";
+import { InstallButtonLook } from "#/components/install";
 import {
   ExternalInlineLink,
   InlineLink,
-} from "components/interactive/inline-link";
-import { ListButton } from "components/interactive/list-button";
-import { PrimaryButton } from "components/interactive/primary-button";
-import { useColors } from "components/themed";
-import { useLogin } from "components/use-login";
-import { Version } from "components/version";
+} from "#/components/interactive/inline-link";
+import { ListButton } from "#/components/interactive/list-button";
+import { PrimaryButton } from "#/components/interactive/primary-button";
+import { useColors } from "#/components/themed";
+import { useLogin } from "#/components/use-login";
+import { Version } from "#/components/version";
 import { useTranslation } from "react-i18next";
 import { Image, View } from "react-native";
 

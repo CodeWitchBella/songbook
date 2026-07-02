@@ -1,7 +1,7 @@
 import { notNull } from "@isbl/ts-utils";
 import type ReactPDF from "@react-pdf/renderer";
 import type ReactPDFTypes from "@react-pdf/types/style";
-import { useColors } from "components/themed";
+import { useColors } from "#/components/themed";
 import type { ComponentProps, PropsWithChildren } from "react";
 import React, {
   createContext,
@@ -17,7 +17,7 @@ import {
   Text as RNText,
   View as RNView,
 } from "react-native";
-import { once } from "utils/utils";
+import { once } from "#/utils/utils";
 
 import { pdfSetup } from "./pdf-setup";
 

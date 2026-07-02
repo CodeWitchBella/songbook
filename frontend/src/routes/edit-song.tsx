@@ -1,21 +1,21 @@
-import Checkbox from "components/checkbox";
-import { NotFound } from "components/error-page";
-import Input from "components/input";
-import { ListButton } from "components/interactive/list-button";
-import { PageHeader } from "components/page-header";
-import PDF from "components/pdf";
-import { SongTextEditor } from "components/song-editor/song-text-editor";
-import { SongLook } from "components/song-look/song-look";
-import { TH2, TH3, TP, TText } from "components/themed";
+import Checkbox from "#/components/checkbox";
+import { NotFound } from "#/components/error-page";
+import Input from "#/components/input";
+import { ListButton } from "#/components/interactive/list-button";
+import { PageHeader } from "#/components/page-header";
+import PDF from "#/components/pdf";
+import { SongTextEditor } from "#/components/song-editor/song-text-editor";
+import { SongLook } from "#/components/song-look/song-look";
+import { TH2, TH3, TP, TText } from "#/components/themed";
 import { DateTime } from "luxon";
 import type { PropsWithChildren } from "react";
 import React, { useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
-import { useSong } from "store/store";
-import type { SongType } from "store/store-song";
-import { updateSong } from "store/store-song";
-import * as parser from "utils/song-parser/song-parser";
+import { useSong } from "#/store/store";
+import type { SongType } from "#/store/store-song";
+import { updateSong } from "#/store/store-song";
+import * as parser from "#/utils/song-parser/song-parser";
 
 function Textarea({
   value,

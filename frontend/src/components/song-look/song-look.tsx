@@ -1,11 +1,11 @@
-import { PDFSettingsProvider } from "components/pdf-render/pdf-settings";
+import { PDFSettingsProvider } from "#/components/pdf-render/pdf-settings";
 import {
   PDFSongContent,
   PDFSongPage,
-} from "components/pdf-render/pdf-song-page";
-import { ContinuousPage } from "components/sizer-page";
-import type { SongType } from "store/store-song";
-import type * as parser from "utils/song-parser/song-parser";
+} from "#/components/pdf-render/pdf-song-page";
+import { ContinuousPage } from "#/components/sizer-page";
+import type { SongType } from "#/store/store-song";
+import type * as parser from "#/utils/song-parser/song-parser";
 
 function SongPage({
   song,

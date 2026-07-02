@@ -1,5 +1,5 @@
-import type { TStyleProp } from "components/themed";
-import { TText, useColors } from "components/themed";
+import type { TStyleProp } from "#/components/themed";
+import { TText, useColors } from "#/components/themed";
 import type { PropsWithChildren } from "react";
 import { useState } from "react";
 import { useCallback } from "react";

@@ -1,9 +1,9 @@
-import { useContinuousModeSetting } from "components/continuous-mode";
-import { useDarkModeSetting } from "components/dark-mode";
-import { InlineLink } from "components/interactive/inline-link";
-import { useLanguage } from "components/localisation";
-import { PageHeader } from "components/page-header";
-import { TH2, TText } from "components/themed";
+import { useContinuousModeSetting } from "#/components/continuous-mode";
+import { useDarkModeSetting } from "#/components/dark-mode";
+import { InlineLink } from "#/components/interactive/inline-link";
+import { useLanguage } from "#/components/localisation";
+import { PageHeader } from "#/components/page-header";
+import { TH2, TText } from "#/components/themed";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";

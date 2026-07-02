@@ -1,4 +1,4 @@
-import type { ContinuousModeSetting } from "components/continuous-mode";
+import type { ContinuousModeSetting } from "#/components/continuous-mode";
 
 import type { Line, Paragraph } from "./song-parser";
 

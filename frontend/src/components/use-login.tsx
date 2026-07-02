@@ -1,6 +1,6 @@
-import { logout } from "store/fetchers";
-import { login, register } from "store/graphql";
-import { useViewer } from "store/store";
+import { logout } from "#/store/fetchers";
+import { login, register } from "#/store/graphql";
+import { useViewer } from "#/store/store";
 
 export function useLogin() {
   const [viewer, setViewer] = useViewer();

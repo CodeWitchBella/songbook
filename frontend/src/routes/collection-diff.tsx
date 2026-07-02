@@ -1,16 +1,16 @@
-import { PageHeader } from "components/page-header";
-import { useQueryParam } from "components/use-router";
+import { PageHeader } from "#/components/page-header";
+import { useQueryParam } from "#/components/use-router";
 import React, { useMemo } from "react";
-import type { WithMethods } from "store/generic-store";
-import { graphqlFetch } from "store/graphql";
+import type { WithMethods } from "#/store/generic-store";
+import { graphqlFetch } from "#/store/graphql";
 import {
   useCollection,
   useCollectionList,
   usePagesNum,
   useSongList,
-} from "store/store";
-import type { SongType } from "store/store-song";
-import { collectionCompare, collectionFullName } from "utils/utils";
+} from "#/store/store";
+import type { SongType } from "#/store/store-song";
+import { collectionCompare, collectionFullName } from "#/utils/utils";
 
 export default function CollectionDiff() {
   const { list: unsortedList } = useCollectionList();

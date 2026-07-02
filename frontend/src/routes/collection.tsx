@@ -1,10 +1,10 @@
-import { TText } from "components/themed";
+import { TText } from "#/components/themed";
 import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useParams } from "react-router";
-import SongList from "sections/song-list/song-list";
-import { useCollection, usePagesNum } from "store/store";
+import SongList from "#/sections/song-list/song-list";
+import { useCollection, usePagesNum } from "#/store/store";
 
 const emptyArray: never[] = [];
 function useColectionWithSet(slug: string) {

@@ -1,6 +1,6 @@
 import { notNull } from "@isbl/ts-utils";
 import React, { useEffect, useReducer } from "react";
-import type { SongType } from "store/store-song";
+import type { SongType } from "#/store/store-song";
 
 import type { SearchableSong } from "./alg";
 import getFilteredSongList from "./alg";

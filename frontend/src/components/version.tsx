@@ -1,4 +1,4 @@
-import { buildData } from "build-data";
+import { buildData } from "#/build-data";
 import { DateTime } from "luxon";
 import { useTranslation } from "react-i18next";
 import { Linking, Pressable } from "react-native";
@@ -16,9 +16,7 @@ export function Version() {
           Linking.openURL("https://github.com/CodeWitchBella/songbook");
         }}
       >
-        <TText style={buildData.fallback ? { fontStyle: "italic" } : {}}>
-          {format(buildData.commitTime)}
-        </TText>
+        <TText style={buildData.fallback ? { fontStyle: "italic" } : {}}>{format(buildData.commitTime)}</TText>
       </Pressable>
     </TText>
   );

@@ -1,10 +1,10 @@
-import { InlineLink } from "components/interactive/inline-link";
-import { PageHeader } from "components/page-header";
+import { InlineLink } from "#/components/interactive/inline-link";
+import { PageHeader } from "#/components/page-header";
 import {
   AddToCollection,
   QuickSettings,
-} from "components/song-look/song-menu-icons";
-import { TText } from "components/themed";
+} from "#/components/song-look/song-menu-icons";
+import { TText } from "#/components/themed";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 

@@ -1,17 +1,17 @@
-import { ErrorPage, NotFound } from "components/error-page";
-import { LargeInput } from "components/input";
-import { BasicButton } from "components/interactive/basic-button";
-import { ListButton } from "components/interactive/list-button";
-import { PrimaryButton } from "components/interactive/primary-button";
-import { TText } from "components/themed";
-import { useLogin } from "components/use-login";
+import { ErrorPage, NotFound } from "#/components/error-page";
+import { LargeInput } from "#/components/input";
+import { BasicButton } from "#/components/interactive/basic-button";
+import { ListButton } from "#/components/interactive/list-button";
+import { PrimaryButton } from "#/components/interactive/primary-button";
+import { TText } from "#/components/themed";
+import { useLogin } from "#/components/use-login";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useLocation, useParams } from "react-router";
-import { useNewSong } from "store/store";
-import type { IntermediateSongData } from "utils/song-from-link";
-import { convertToSong, songDataFromLink } from "utils/song-from-link";
+import { useNewSong } from "#/store/store";
+import type { IntermediateSongData } from "#/utils/song-from-link";
+import { convertToSong, songDataFromLink } from "#/utils/song-from-link";
 
 const types: { [type: string]: JSX.Element } = {
   link: <CreateSongLink />,

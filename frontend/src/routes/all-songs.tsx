@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import SongList from "sections/song-list/song-list";
+import SongList from "#/sections/song-list/song-list";
 
 export default function AllSongs() {
   return (
