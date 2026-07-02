@@ -161,6 +161,7 @@ export default function SongList({
                 </ListButton>
               )}
             </DownloadPDF>
+            {menu ? <Gap /> : null}
             {menu ?? null}
           </TopMenu>
         }

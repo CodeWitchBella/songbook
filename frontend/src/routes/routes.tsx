@@ -20,6 +20,8 @@ const imports = {
   Home: once(() => import("./home")),
   Song: once(() => import("./song")),
   AddToCollection: once(() => import("./add-to-collection")),
+  // Separate collection-specific picker: shows songs missing from the opened collection.
+  CollectionAddSongs: once(() => import("./collection-add")),
   CreateSong: once(() => import("./create-song")),
   EditSong: once(() => import("./edit-song")),
   Changelog: once(() => import("./changelog")),
@@ -43,6 +45,7 @@ const Changelog = React.lazy(imports.Changelog);
 const Login = React.lazy(imports.Login);
 const Register = React.lazy(imports.Register);
 const AddToCollection = React.lazy(imports.AddToCollection);
+const CollectionAddSongs = React.lazy(imports.CollectionAddSongs);
 const Credits = React.lazy(imports.Credits);
 const About = React.lazy(imports.About);
 const QuickSettings = React.lazy(imports.QuickSettings);
@@ -76,6 +79,12 @@ const router = createBrowserRouter(
           <Route path="about" element={<About />} />
           <Route path="add-to-collection/:slug" element={<AddToCollection />} />
           <Route path="collections" element={<CollectionList />} />
+          {/* Support both single- and double-segment collection slugs for the add view. */}
+          <Route path="collections/:slug/add" element={<CollectionAddSongs />} />
+          <Route
+            path="collections/:slug/:slug2/add"
+            element={<CollectionAddSongs />}
+          />
           <Route path="collections/:slug/:slug2" element={<Collection />} />
           <Route path="collections/:slug" element={<Collection />} />
           <Route path="song/:slug" element={<Song />} />

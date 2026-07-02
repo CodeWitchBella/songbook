@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { useParams } from "react-router";
+import { ListButton } from "components/interactive/list-button";
 import SongList from "sections/song-list/song-list";
 import { useCollection, usePagesNum } from "store/store";
 
@@ -20,6 +21,7 @@ function useColectionWithSet(slug: string) {
 }
 
 export default function Collection() {
+  const { t } = useTranslation();
   const params = useParams();
   const slug = params.slug + (params.slug2 ? "/" + params.slug2 : "");
   console.log(slug);
@@ -53,7 +55,20 @@ export default function Collection() {
       }
       slug={collection.slug}
       title={collection.name}
-      menu={<Stats set={set} songCount={collection.songList.length} />}
+      menu={
+        <>
+          {/* Open the collection-scoped picker that shows only songs missing from this collection. */}
+          <ListButton
+            to={`/collections/${collection.slug}/add`}
+            style={{ textAlign: "left" }}
+          >
+            {t("collection.Add more songs to collection")}
+          </ListButton>
+          {/* Keep the stats visually separated from the action button. */}
+          <View style={{ height: 16 }} />
+          <Stats set={set} songCount={collection.songList.length} />
+        </>
+      }
     />
   );
 }
@@ -69,6 +84,7 @@ function Stats({
   const { t } = useTranslation();
   return (
     <View style={styles.stat}>
+      {/* Reuse the collection set so the page can show page and song totals. */}
       <TText style={styles.statItem}>
         {t("count-pages-songs", { pagesNum, songCount })}
       </TText>
