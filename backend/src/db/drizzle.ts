@@ -16,7 +16,7 @@ export function drizzle() {
 
 function mkDrizzle(): DB {
   console.info("Using the local database");
-  let url = Deno.env.get("POSTGRESQL_URL");
+  let url = process.env.POSTGRESQL_URL;
   if (!url) throw new Error("Missing POSTGRESQL_URL env");
   const connection = postgres(url, {
     types: {

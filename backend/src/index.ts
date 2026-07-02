@@ -1,3 +1,5 @@
+import { createServer } from "node:http";
+
 import { handleCreateSong } from "./endpoints/create-song.ts";
 import { handleGraphql } from "./endpoints/graphql.ts";
 import { handleImport } from "./endpoints/import.ts";
@@ -48,21 +50,42 @@ async function handleRequest(
   }
 }
 
-// @ts-expect-error
-globalThis.process = { env: {} };
-// @ts-expect-error
-globalThis.setImmediate = (cb) => setTimeout(cb, 0);
-// @ts-expect-error
-globalThis.clearImmediate = (handle) => clearTimeout(handle);
+const port = 5512;
 
-const worker = {
-  port: 5512,
-};
-Deno.serve(worker, async function fetch(request: Request): Promise<Response> {
+const server = createServer(async (req, res) => {
+  const headers = new Headers();
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      for (const v of value) headers.append(key, v);
+    } else {
+      headers.append(key, value);
+    }
+  }
+  const hasBody = req.method !== "GET" && req.method !== "HEAD";
+  const request = new Request(`http://${req.headers.host}${req.url}`, {
+    method: req.method,
+    headers,
+    ...(hasBody ? { body: req as any, duplex: "half" } : {}),
+  });
+
   const { createContext, finishContext } = contextPair(request);
-  const res = await handleRequest(request, createContext);
-  finishContext(res);
-  return res;
+  const response = await handleRequest(request, createContext);
+  finishContext(response);
+
+  res.statusCode = response.status;
+  for (const [key, value] of response.headers) res.setHeader(key, value);
+  if (response.body) {
+    const reader = response.body.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(value);
+    }
+  }
+  res.end();
 });
 
-console.log("listening on http://localhost:5512");
+server.listen(port, () => {
+  console.log(`listening on http://localhost:${port}`);
+});

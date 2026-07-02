@@ -67,8 +67,7 @@
     installPhase = ''
       echo "#!${pkgs.bash}/bin/bash" > $out/bin/songbook-backend
       echo "cd $out" >> $out/bin/songbook-backend
-      echo "export DENO_UNSTABLE_BYONM=1" >> $out/bin/songbook-backend
-      echo "${pkgs.deno}/bin/deno run -A --unstable-bare-node-builtins --cached-only --no-remote $out/src/index.ts" >> $out/bin/songbook-backend
+      echo "${pkgs.nodejs}/bin/node $out/src/index.ts" >> $out/bin/songbook-backend
       chmod +x $out/bin/songbook-backend
     '';
   };

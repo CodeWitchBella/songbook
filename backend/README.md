@@ -1,17 +1,12 @@
 ## Developing
 
 ```
-npm i -g @cloudflare/wrangler
-wrangler login
-wrangler dev
+pnpm i
+POSTGRESQL_URL=postgresql://localhost/songbook pnpm dev
 ```
 
-put your DATABASE_URL into .dev.vars file, see .dev.vars.example
-
-## Put secret
-
-Via web interface or `wrangler secret put DATABASE_URL`. But CLI has
-stricter length limit.
+Runs the backend directly under Node.js (`node --watch src/index.ts`),
+listening on http://localhost:5512.
 
 ## Open questions
 

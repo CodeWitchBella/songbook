@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { schema } from "../db/drizzle.ts";
 import { z } from "zod";
 import { validateZodJsonBody } from "../lib/request.ts";
-import { MyContext } from "../lib/context.ts";
+import type { MyContext } from "../lib/context.ts";
 import { comparePassword, createSession } from "../lib/graphql-server-config.ts";
 import { createSetSessionCookieHeader } from "../lib/cookie.ts";
 
