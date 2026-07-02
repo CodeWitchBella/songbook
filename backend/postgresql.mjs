@@ -23,7 +23,7 @@ process.chdir(dirname);
 
 Promise.resolve()
   .then(cmds[cmd])
-  .catch((err) => {
+  .catch(err => {
     console.error(err);
     stop();
     process.exit(1);
@@ -38,7 +38,7 @@ async function init() {
   // Create a database
   runSync("createdb", ["-h", path.join(dirname, ".tmp"), "songbook"]);
 
-  runSync("bun", ["db-push"], path.join(dirname, "backend"));
+  runSync("pnpm", ["run", "db-push"], path.join(dirname, "backend"));
 
   //await restore()
   console.log("Skipping restore");
@@ -66,11 +66,7 @@ async function run() {
   }
   // Start PostgreSQL running as the current user
   // and with the Unix socket in the current directory
-  runSync("postgres", [
-    "-D",
-    ".tmp/songbook",
-    "--unix_socket_directories=" + path.join(dirname, ".tmp"),
-  ]);
+  runSync("postgres", ["-D", ".tmp/songbook", "--unix_socket_directories=" + path.join(dirname, ".tmp")]);
 }
 
 function stop() {
@@ -119,8 +115,7 @@ function runSync(cmd, args, cwd = dirname) {
   console.log("Running", cmd);
   const res = spawnSync(cmd, args, { stdio: "inherit", cwd });
   if (res.error) throw res.error;
-  if (res.status !== 0)
-    throw new Error(`${cmd} exited with status ${res.status}`);
+  if (res.status !== 0) throw new Error(`${cmd} exited with status ${res.status}`);
   if (res.signal) throw new Error(`Killed by signal ${res.signal}`);
   return res;
 }

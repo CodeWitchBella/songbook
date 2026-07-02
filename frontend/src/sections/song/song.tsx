@@ -3,7 +3,7 @@ import { useContinuousModeSetting } from "components/continuous-mode";
 import { SongLook } from "components/song-look/song-look";
 import SongMenu from "components/song-look/song-menu";
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { useSong } from "store/store";
 import * as parser from "utils/song-parser/song-parser";
 

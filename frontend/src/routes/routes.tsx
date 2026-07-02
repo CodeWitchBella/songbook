@@ -11,7 +11,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
 
 const imports = {
   CollectionList: once(() => import("./collection-list")),

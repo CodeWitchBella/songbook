@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router";
 
 type Setter = (
   value: string | null,

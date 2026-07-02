@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useCollectionList } from "store/store";
 import { collectionCompare, collectionFullName } from "utils/utils";
 

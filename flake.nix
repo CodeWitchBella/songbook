@@ -21,6 +21,7 @@
       perSystem = {
         config,
         pkgs,
+        lib,
         ...
       }: let
         psql = pkgs.postgresql_18;
@@ -50,19 +51,35 @@
         packages.backend = backend.packages.default;
         packages.docker = backend.packages.docker;
 
-        process-compose.default.settings = {
-          environment = {
-            POSTGRESQL_URL = "postgresql://localhost/songbook";
-          };
-          processes = {
-            postgres.command = "${pkgs.pnpm}/bin/pnpm run node backend/postgresql.mjs run";
-            backend = {
-              command = "pnpm run node --watch src/index.ts";
-              working_dir = "backend";
+        process-compose.default = {
+          cli.options.keep-project = true;
+          cli.options.no-server = true;
+          cli.preHook = ''
+            cd "$(${lib.getExe config.flake-root.package})"
+          '';
+          settings = {
+            environment = {
+              POSTGRESQL_URL = "postgresql://localhost/songbook";
             };
-            frontend = {
-              command = "${pkgs.pnpm}/bin/pnpm run dev";
-              working_dir = "frontend";
+            processes = {
+              postgres.command = ''
+                cd backend
+                ${pkgs.pnpm}/bin/pnpm node postgresql.mjs run
+              '';
+              backend = {
+                command = ''
+                  ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
+                  ${pkgs.pnpm}/bin/pnpm node --watch src/index.ts
+                '';
+                working_dir = "backend";
+              };
+              frontend = {
+                command = ''
+                  ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
+                  ${pkgs.pnpm}/bin/pnpm run dev
+                '';
+                working_dir = "frontend";
+              };
             };
           };
         };

@@ -1,7 +1,7 @@
 import { NotFound } from "components/error-page";
 import { useEffect } from "react";
 import { useParams } from "react-router";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import Song from "sections/song/song";
 
 function SongRoute() {

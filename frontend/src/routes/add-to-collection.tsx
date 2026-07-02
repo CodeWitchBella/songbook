@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import type { WithMethods } from "store/generic-store";
 import { graphqlFetch } from "store/graphql";
 import { useCollectionList, useSong, useViewer } from "store/store";
