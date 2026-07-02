@@ -1,14 +1,7 @@
 import localForage from "localforage";
 import { DateTime } from "luxon";
 import type { PropsWithChildren } from "react";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import xorshift from "xorshift";
 
 import { newSong } from "./fetchers";
@@ -32,7 +25,7 @@ function useCachedState<T>(key: string, initial: T | null) {
   const st = useState<T | null>(initial);
   const [v, setV] = st;
   useEffect(() => {
-    settingsStorage.getItem<T>(key).then((itm) => setV(itm));
+    settingsStorage.getItem<T>(key).then(itm => setV(itm));
   }, [key, setV]);
   useEffect(() => {
     settingsStorage.setItem<T | null>(key, v);
@@ -52,16 +45,14 @@ export function StoreProvider({ children }: PropsWithChildren<{}>) {
   const [initing, setIniting] = useState(true);
   const [loading, setLoading] = useState(true);
   const [viewer, setViewer] = useCachedState<User>("viewer", null);
-  const store = useStable(() =>
-    createSongStore({ setIniting, setLoading, setViewer }),
-  );
+  const store = useStable(() => createSongStore({ setIniting, setLoading, setViewer }));
 
   const collections = useStable(() => createCollectionStore());
 
   // clear legacy song saving mechanism
   useEffect(() => {
-    localForage.keys().then((keys) =>
-      keys.forEach((key) => {
+    localForage.keys().then(keys =>
+      keys.forEach(key => {
         localForage.removeItem(key);
       }),
     );
@@ -125,13 +116,11 @@ export function useGetRandomSong() {
       const songs = store.readAll();
       const withRandom = [...songs]
         .sort((a, b) => a.item.slug.localeCompare(b.item.slug))
-        .map((song) => ({
+        .map(song => ({
           song,
           number: random.random(),
         }));
-      const curRandom = withRandom.find(
-        (s) => s.song.item.id === currentSongId,
-      );
+      const curRandom = withRandom.find(s => s.song.item.id === currentSongId);
       if (!curRandom) return songs[Math.floor(Math.random() * songs.length)];
       const next = withRandom.reduce(
         (cur, t) => {
@@ -195,10 +184,7 @@ export function useCollection({ slug }: { slug: string | null }) {
   );
 }
 
-function read(
-  store: ReturnType<typeof useStoreContext>["collections"],
-  slug: string | null,
-) {
+function read(store: ReturnType<typeof useStoreContext>["collections"], slug: string | null) {
   return slug ? store.readBySlug(slug) : undefined;
 }
 
@@ -206,9 +192,7 @@ function getSongFromStore(
   store: ReturnType<typeof useStoreContext>["store"],
   param: { slug: string } | { id: string },
 ) {
-  return "slug" in param
-    ? store.readBySlug(param.slug)
-    : store.readById(param.id);
+  return "slug" in param ? store.readBySlug(param.slug) : store.readById(param.id);
 }
 
 export function useSong(param: { slug: string } | { id: string }) {
@@ -221,21 +205,14 @@ export function useSong(param: { slug: string } | { id: string }) {
       setSong(getSongFromStore(store, param));
     });
   }, [param, song, store]);
-  return useMemo(
-    () => ({ song: song ? song.item : null, initing, methods: song }),
-    [initing, song],
-  );
+  return useMemo(() => ({ song: song ? song.item : null, initing, methods: song }), [initing, song]);
 }
 
-function readNumPages(
-  store: ReturnType<typeof useStoreContext>["store"],
-  set: Set<string> | null,
-) {
+function readNumPages(store: ReturnType<typeof useStoreContext>["store"], set: Set<string> | null) {
   if (!set) return null;
   let num = 0;
   for (const item of set) {
-    num +=
-      store.readById(item)?.item.text.split("--- page break ---").length ?? 0;
+    num += store.readById(item)?.item.text.split("--- page break ---").length ?? 0;
   }
   return num;
 }

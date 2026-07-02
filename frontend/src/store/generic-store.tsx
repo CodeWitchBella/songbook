@@ -13,9 +13,7 @@ export type WithMethods<Item> = {
 
 type Config<Item extends MinItem, Serialized> = {
   loadInitial: () => Promise<Item[]>;
-  loadIncremental: (
-    after: DateTime,
-  ) => Promise<{ changed: Item[]; deleted: { id: string }[] }>;
+  loadIncremental: (after: DateTime) => Promise<{ changed: Item[]; deleted: { id: string }[] }>;
   serialize: (item: Item) => Serialized;
   deserialize: (item: Serialized) => Item;
   cacheKey: string;
@@ -60,8 +58,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
     this._bySlug.set(item.slug, v);
     this._changeCounter++;
     this._readAllCache = null;
-    if (this._lastModified === null || this._lastModified < item.lastModified)
-      this._lastModified = item.lastModified;
+    if (this._lastModified === null || this._lastModified < item.lastModified) this._lastModified = item.lastModified;
 
     this._triggerOnChange(save);
   }
@@ -81,10 +78,10 @@ export class GenericStore<Item extends MinItem, Serialized> {
     this._initing = true;
     return storage
       .getItem<Cache<Serialized> | null>(this._config.cacheKey)
-      .then((cached) => {
-        const items = (
-          cached && cached.version === this._config.version ? cached.items : []
-        ).map(this._config.deserialize);
+      .then(cached => {
+        const items = (cached && cached.version === this._config.version ? cached.items : []).map(
+          this._config.deserialize,
+        );
 
         for (const item of items) {
           this._setItem(item, { save: false });
@@ -101,7 +98,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
   private _refreshing = false;
   private _scheduleRefresh: (() => void)[] = [];
   refresh() {
-    const ret = new Promise<void>((res) => {
+    const ret = new Promise<void>(res => {
       this._scheduleRefresh.push(res);
     });
     this._scheduleRefresh.push();
@@ -113,19 +110,16 @@ export class GenericStore<Item extends MinItem, Serialized> {
 
       Promise.resolve()
         .then(() => {
-          if (this._lastModified)
-            return this._config.loadIncremental(this._lastModified);
-          return this._config
-            .loadInitial()
-            .then((changed) => ({ changed, deleted: [] }));
+          if (this._lastModified) return this._config.loadIncremental(this._lastModified);
+          return this._config.loadInitial().then(changed => ({ changed, deleted: [] }));
         })
-        .then((items) => {
+        .then(items => {
           for (const item of items.deleted) this._rmItem(item.id);
           for (const item of items.changed) this._setItem(item);
         })
         .catch((e: any) => console.error(e))
         .then(() => {
-          onDone.forEach((f) => f());
+          onDone.forEach(f => f());
           this._refreshing = false;
           if (this._config.onLoadingChange) this._config.onLoadingChange(false);
           if (this._scheduleRefresh.length > 0) this.refresh();
@@ -143,8 +137,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
   }
 
   readAll() {
-    if (!this._readAllCache)
-      this._readAllCache = Array.from(this._byId.values());
+    if (!this._readAllCache) this._readAllCache = Array.from(this._byId.values());
     return this._readAllCache;
   }
 
@@ -155,7 +148,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
       this._lastEmittedChange = this._changeCounter;
       if (save) this._save();
 
-      this._handlers.forEach((h) => {
+      this._handlers.forEach(h => {
         if (this._handlers.includes(h)) h();
       });
     });
@@ -170,7 +163,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
 
       const cached: Cache<Serialized> = {
         items: this.readAll()
-          .map((v) => v.item)
+          .map(v => v.item)
           .map(this._config.serialize),
         version: this._config.version,
       };
@@ -179,7 +172,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
         .then(() => {
           this._lastSavedChange = this._changeCounter;
         })
-        .catch((e) => console.error(e))
+        .catch(e => console.error(e))
         .then(() => {
           if (this._lastSavedChange !== this._changeCounter) {
             setTimeout(() => this._save(), 500);
@@ -193,7 +186,7 @@ export class GenericStore<Item extends MinItem, Serialized> {
     const v = () => handler();
     this._handlers.push(v);
     return () => {
-      this._handlers = this._handlers.filter((h) => h !== v);
+      this._handlers = this._handlers.filter(h => h !== v);
     };
   }
 }

@@ -40,22 +40,18 @@ export default function Register() {
     }
     login
       .register(email, password, name)
-      .then((result) => {
+      .then(result => {
         setStatus(result || "");
-        if (!result)
-          navigate("/login", { replace: true, state: { canGoBack: true } });
+        if (!result) navigate("/login", { replace: true, state: { canGoBack: true } });
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
         setStatus(t("Something went wrong"));
       });
   };
 
   return (
-    <form
-      onSubmit={submit}
-      className="mx-auto flex max-w-lg flex-col gap-4 text-xl"
-    >
+    <form onSubmit={submit} className="mx-auto flex max-w-lg flex-col gap-4 text-xl">
       <PageHeader>{t("Register")}</PageHeader>
       {login.viewer ? (
         <LoginDone viewer={login.viewer} />
@@ -94,8 +90,7 @@ export default function Register() {
           <View style={{ marginTop: 16, alignItems: "flex-end" }}>
             <TText style={{ fontSize: 16 }}>
               <Trans>
-                I already have account,{" "}
-                <InlineLink to="/login">log in</InlineLink>
+                I already have account, <InlineLink to="/login">log in</InlineLink>
               </Trans>
             </TText>
           </View>

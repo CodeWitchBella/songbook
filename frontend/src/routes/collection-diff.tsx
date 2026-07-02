@@ -3,21 +3,13 @@ import { useQueryParam } from "#/components/use-router";
 import React, { useMemo } from "react";
 import type { WithMethods } from "#/store/generic-store";
 import { graphqlFetch } from "#/store/graphql";
-import {
-  useCollection,
-  useCollectionList,
-  usePagesNum,
-  useSongList,
-} from "#/store/store";
+import { useCollection, useCollectionList, usePagesNum, useSongList } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
 
 export default function CollectionDiff() {
   const { list: unsortedList } = useCollectionList();
-  const sortedList = useMemo(
-    () => [...unsortedList].sort(collectionCompare),
-    [unsortedList],
-  );
+  const sortedList = useMemo(() => [...unsortedList].sort(collectionCompare), [unsortedList]);
   const [a, setA] = useQueryParam("a");
   const [b, setB] = useQueryParam("b");
   const [ban, setBan] = useQueryParam("ban");
@@ -29,7 +21,7 @@ export default function CollectionDiff() {
           Old:{" "}
           <select
             value={a ?? ""}
-            onChange={(evt) => {
+            onChange={evt => {
               setA(evt.currentTarget.value);
             }}
           >
@@ -47,7 +39,7 @@ export default function CollectionDiff() {
           New:{" "}
           <select
             value={b ?? ""}
-            onChange={(evt) => {
+            onChange={evt => {
               setB(evt.currentTarget.value);
             }}
           >
@@ -65,7 +57,7 @@ export default function CollectionDiff() {
           Ban:{" "}
           <select
             value={ban ?? ""}
-            onChange={(evt) => {
+            onChange={evt => {
               setBan(evt.currentTarget.value);
             }}
           >
@@ -83,24 +75,13 @@ export default function CollectionDiff() {
   );
 }
 
-function ActualDiff({
-  a: aSlug,
-  b: bSlug,
-  ban: banSlug,
-}: {
-  a: string;
-  b: string;
-  ban: string | null;
-}) {
+function ActualDiff({ a: aSlug, b: bSlug, ban: banSlug }: { a: string; b: string; ban: string | null }) {
   const { collection: a } = useCollection({ slug: aSlug });
   const { collection: ban } = useCollection({ slug: banSlug });
   const { collection: b, methods: methodsB } = useCollection({ slug: bSlug });
   const { songs: unsortedSongs } = useSongList();
 
-  const songs = useMemo(
-    () => unsortedSongs.sort(compareSongs),
-    [unsortedSongs],
-  );
+  const songs = useMemo(() => unsortedSongs.sort(compareSongs), [unsortedSongs]);
 
   function refresh() {
     methodsB?.refresh();
@@ -162,7 +143,7 @@ function ActualDiff({
         }}
       >
         <form
-          onSubmit={(event) => {
+          onSubmit={event => {
             event.preventDefault();
             const id = getSongId(event);
             if (!id) return;
@@ -170,76 +151,51 @@ function ActualDiff({
             removeFromCollection(id, bSlug).then(refresh);
           }}
         >
-          <SongList
-            songs={songs}
-            set={sets.kept}
-            title="Kept"
-            actionTitle="X"
-          />
+          <SongList songs={songs} set={sets.kept} title="Kept" actionTitle="X" />
         </form>
         <form
-          onSubmit={(event) => {
+          onSubmit={event => {
             event.preventDefault();
             const id = getSongId(event);
             if (!id) return;
             removeFromCollection(id, bSlug).then(refresh);
           }}
         >
-          <SongList
-            songs={songs}
-            set={sets.added}
-            title="Added"
-            actionTitle="X"
-          />
+          <SongList songs={songs} set={sets.added} title="Added" actionTitle="X" />
         </form>
 
         <form
-          onSubmit={(event) => {
+          onSubmit={event => {
             event.preventDefault();
             const id = getSongId(event);
             if (!id) return;
             addToCollection(id, bSlug).then(refresh);
           }}
         >
-          <SongList
-            songs={songs}
-            set={sets.removed}
-            title="Removed"
-            actionTitle="+"
-          />{" "}
+          <SongList songs={songs} set={sets.removed} title="Removed" actionTitle="+" />{" "}
         </form>
         {sets.bad.size > 0 ? (
           <form
-            onSubmit={(event) => {
+            onSubmit={event => {
               event.preventDefault();
               const id = getSongId(event);
               if (!id) return;
               removeFromCollection(id, bSlug).then(refresh);
             }}
           >
-            <SongList
-              songs={songs}
-              set={sets.bad}
-              title="Banned but present"
-              actionTitle="X"
-            />
+            <SongList songs={songs} set={sets.bad} title="Banned but present" actionTitle="X" />
           </form>
         ) : null}
 
         <form
-          onSubmit={(event) => {
+          onSubmit={event => {
             event.preventDefault();
             const id = getSongId(event);
             if (!id) return;
             addToCollection(id, bSlug).then(refresh);
           }}
         >
-          <SongList
-            songs={songs}
-            set={sets.neither}
-            title="In neither"
-            actionTitle="+"
-          />
+          <SongList songs={songs} set={sets.neither} title="In neither" actionTitle="+" />
         </form>
       </div>
     </>
@@ -267,15 +223,8 @@ function SongList({
       {songs.map(({ item: song }) =>
         set.has(song.id) ? (
           <div key={song.id}>
-            <input
-              type="submit"
-              name="song"
-              data-song={song.id}
-              value={actionTitle}
-            />
-            {!song.author || !song.title
-              ? song.author || song.title
-              : `${song.title} - ${song.author}`}
+            <input type="submit" name="song" data-song={song.id} value={actionTitle} />
+            {!song.author || !song.title ? song.author || song.title : `${song.title} - ${song.author}`}
           </div>
         ) : null,
       )}
@@ -297,10 +246,7 @@ function removeFromCollection(song: string, collection: string) {
   });
 }
 
-function compareSongs(
-  { item: a }: { item: SongType },
-  { item: b }: { item: SongType },
-) {
+function compareSongs({ item: a }: { item: SongType }, { item: b }: { item: SongType }) {
   const ret = a.title.localeCompare(b.title);
   if (ret !== 0) return ret;
   return a.author.localeCompare(b.author);

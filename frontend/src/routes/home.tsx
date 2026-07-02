@@ -1,8 +1,5 @@
 import { InstallButtonLook } from "#/components/install";
-import {
-  ExternalInlineLink,
-  InlineLink,
-} from "#/components/interactive/inline-link";
+import { ExternalInlineLink, InlineLink } from "#/components/interactive/inline-link";
 import { ListButton } from "#/components/interactive/list-button";
 import { PrimaryButton } from "#/components/interactive/primary-button";
 import { useColors } from "#/components/themed";
@@ -72,25 +69,17 @@ export default function Home() {
           <div>
             <h2 className="text-lg font-semibold">Oddíl Brehoni</h2>
             <div>
-              Letní tábor, víkendovky a jiné akce pro mládež 8-15 let. Nadupaný
-              příběh, hry a hlavně skvělá parta. Pojeď s námi na tábor!
+              Letní tábor, víkendovky a jiné akce pro mládež 8-15 let. Nadupaný příběh, hry a hlavně skvělá parta. Pojeď
+              s námi na tábor!
             </div>
-            <div>
-              Tento zpěvník vzniknul a je dále uržován především pro Brehonské
-              tábory!
-            </div>
-            <ExternalInlineLink to="https://brehoni.cz">
-              brehoni.cz
-            </ExternalInlineLink>
+            <div>Tento zpěvník vzniknul a je dále uržován především pro Brehonské tábory!</div>
+            <ExternalInlineLink to="https://brehoni.cz">brehoni.cz</ExternalInlineLink>
           </div>
           <div>
             <h2 className="text-lg font-semibold">Drobná reklama</h2>
             <div className="flex flex-row flex-wrap">
               <ExternalInlineLink to="https://www.taboreni.cz/?zdroj=8246">
-                <img
-                  src="https://icon.taboreni.cz/1/8246/125x62-d-t.png"
-                  alt="Dětský tábor"
-                />
+                <img src="https://icon.taboreni.cz/1/8246/125x62-d-t.png" alt="Dětský tábor" />
               </ExternalInlineLink>
             </div>
           </div>

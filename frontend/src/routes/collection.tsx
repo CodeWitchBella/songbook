@@ -32,22 +32,15 @@ export default function Collection() {
     if (collectionId) console.log("Collection id:", collectionId);
   }, [collectionId]);
   if (!collection)
-    return (
-      <div className="flex h-full items-center justify-center text-xl">
-        Kolekce se načítá nebo neexistuje
-      </div>
-    );
+    return <div className="flex h-full items-center justify-center text-xl">Kolekce se načítá nebo neexistuje</div>;
   return (
     <SongList
       filter={filter}
       header={
         <View style={{ paddingTop: 12 }}>
-          <TText
-            style={{ fontWeight: "bold", fontSize: 16, textAlign: "center" }}
-          >
-            {(collection.slug.includes("/")
-              ? (collection.owner.handle || collection.owner.name) + " > "
-              : "") + collection.name}
+          <TText style={{ fontWeight: "bold", fontSize: 16, textAlign: "center" }}>
+            {(collection.slug.includes("/") ? (collection.owner.handle || collection.owner.name) + " > " : "") +
+              collection.name}
           </TText>
         </View>
       }
@@ -58,20 +51,12 @@ export default function Collection() {
   );
 }
 
-function Stats({
-  set,
-  songCount,
-}: {
-  set: Set<string> | undefined;
-  songCount: number;
-}) {
+function Stats({ set, songCount }: { set: Set<string> | undefined; songCount: number }) {
   const pagesNum = usePagesNum(set || null);
   const { t } = useTranslation();
   return (
     <View style={styles.stat}>
-      <TText style={styles.statItem}>
-        {t("count-pages-songs", { pagesNum, songCount })}
-      </TText>
+      <TText style={styles.statItem}>{t("count-pages-songs", { pagesNum, songCount })}</TText>
     </View>
   );
 }

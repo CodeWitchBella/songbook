@@ -53,17 +53,12 @@ export default function AddToCollection() {
   if (!viewer) {
     return (
       <div className="mx-auto max-w-xl">
-        <Title
-          text="Pro přidání písně do kolekce musíš mít účet."
-          first={true}
-        />
+        <Title text="Pro přidání písně do kolekce musíš mít účet." first={true} />
         <View style={{ paddingTop: 16 }} />
         <ListButton to="/login">Přihlásit se</ListButton>
         <View style={{ paddingTop: 8 }} />
         <ListButton to="/register">Vytvořit účet</ListButton>
-        {locked.length > 0 ? (
-          <Title text="Píseň je v kolekcích" first={false} />
-        ) : null}
+        {locked.length > 0 ? <Title text="Píseň je v kolekcích" first={false} /> : null}
         <CollectionList list={locked.sort(collectionCompare)} />
       </div>
     );
@@ -71,23 +66,17 @@ export default function AddToCollection() {
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-2">
-      {addable.length > 0 ? (
-        <Title
-          first={true}
-          text={t("collection.Add song to collection")}
-          error={error}
-        />
-      ) : null}
+      {addable.length > 0 ? <Title first={true} text={t("collection.Add song to collection")} error={error} /> : null}
       <CollectionList
         list={addable.sort(collectionCompare)}
-        onPress={(collectionId) => {
+        onPress={collectionId => {
           setError("");
           addToCollection(song.id, collectionId).then(
             () => {
               refresh();
               goBack();
             },
-            (err) => {
+            err => {
               setError("Něco se pokazilo");
               console.error(err);
             },
@@ -95,67 +84,47 @@ export default function AddToCollection() {
         }}
       />
       {removable.length > 0 ? (
-        <Title
-          first={addable.length < 1}
-          text={t("collection.Remove song from collection")}
-          error={error}
-        />
+        <Title first={addable.length < 1} text={t("collection.Remove song from collection")} error={error} />
       ) : null}
       <CollectionList
         list={removable.sort(collectionCompare)}
-        onPress={(collectionId) => {
+        onPress={collectionId => {
           setError("");
           removeFromCollection(song.id, collectionId).then(
             () => {
               refresh();
               goBack();
             },
-            (err) => {
+            err => {
               setError(t("Something went wrong"));
               console.error(err);
             },
           );
         }}
       />
-      <Title
-        first={addable.length < 1 && removable.length < 1}
-        text={t("collection.Create new collection")}
-      />
+      <Title first={addable.length < 1 && removable.length < 1} text={t("collection.Create new collection")} />
       <NewCollection
-        onDone={(collectionId) => {
+        onDone={collectionId => {
           setError("");
           addToCollection(song.id, collectionId).then(
             () => {
               refresh();
               goBack();
             },
-            (err) => {
+            err => {
               console.error(err);
               setError(t("Something went wrong"));
             },
           );
         }}
       />
-      {locked.length > 0 ? (
-        <Title
-          first={false}
-          text={t("collection.Song is also in collections")}
-        />
-      ) : null}
+      {locked.length > 0 ? <Title first={false} text={t("collection.Song is also in collections")} /> : null}
       <CollectionList list={locked.sort(collectionCompare)} />
     </div>
   );
 }
 
-function Title({
-  first,
-  text,
-  error,
-}: {
-  first: boolean;
-  text: string;
-  error?: string | null;
-}) {
+function Title({ first, text, error }: { first: boolean; text: string; error?: string | null }) {
   return (
     <>
       <div className="mt-8 flex items-center">
@@ -166,11 +135,7 @@ function Title({
         ) : null}
         <TText style={{ fontSize: 24 }}>{text}</TText>
       </div>
-      {error && first ? (
-        <TText style={{ color: "red", fontSize: 16, marginTop: 8 }}>
-          {error}
-        </TText>
-      ) : null}
+      {error && first ? <TText style={{ color: "red", fontSize: 16, marginTop: 8 }}>{error}</TText> : null}
     </>
   );
 }
@@ -185,11 +150,11 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
     setDisabled(true);
     setError("");
     createCollection(name).then(
-      (id) => {
+      id => {
         setDisabled(false);
         onDone(id);
       },
-      (err) => {
+      err => {
         setDisabled(false);
         console.error(err);
         setError(t("Something went wrong"));
@@ -199,11 +164,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
   const { t } = useTranslation();
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
-      <LargeInput
-        label={t("collection.Collection name")}
-        value={name}
-        onChange={setName}
-      />
+      <LargeInput label={t("collection.Collection name")} value={name} onChange={setName} />
       <BasicButton
         disabled={disabled}
         style={{
@@ -216,9 +177,7 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
       >
         {t("collection.Create collection and add song to it")}
       </BasicButton>
-      {error ? (
-        <TText style={{ color: "red", fontSize: 16 }}>{error}</TText>
-      ) : null}
+      {error ? <TText style={{ color: "red", fontSize: 16 }}>{error}</TText> : null}
       <button className="hidden" disabled={disabled} />
     </form>
   );
@@ -235,7 +194,7 @@ function CollectionList({
   return (
     <>
       {onPress
-        ? list.map((item) => (
+        ? list.map(item => (
             <ListButton
               key={item.item.id}
               onPress={() => {
@@ -246,7 +205,7 @@ function CollectionList({
               <TText>{collectionFullName(item.item)}</TText>
             </ListButton>
           ))
-        : list.map((item) => (
+        : list.map(item => (
             <TText key={item.item.id} style={{ marginTop: 8 }}>
               {collectionFullName(item.item)}
             </TText>
@@ -272,7 +231,7 @@ function createCollection(name: string): Promise<string> {
   return graphqlFetch({
     query: `mutation($name: String!) { createCollection(name: $name) { id } }`,
     variables: { name },
-  }).then((v) => {
+  }).then(v => {
     const id = v.data.createCollection.id;
     if (!id) {
       console.log(v);

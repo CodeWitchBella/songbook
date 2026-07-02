@@ -34,8 +34,6 @@ const months = {
 
 export function formatDate(lng: Language, t: TFunction, date: string | null) {
   if (!date) return t("Invalid date");
-  const parts = date.split(/[T-]/).map((n) => Number.parseInt(n, 10));
-  return `${parts[2]}${lng === "cs" ? "." : ""} ${months[lng][parts[1] - 1]} ${
-    parts[0]
-  }`;
+  const parts = date.split(/[T-]/).map(n => Number.parseInt(n, 10));
+  return `${parts[2]}${lng === "cs" ? "." : ""} ${months[lng][parts[1] - 1]} ${parts[0]}`;
 }

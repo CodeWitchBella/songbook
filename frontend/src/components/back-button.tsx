@@ -38,12 +38,7 @@ export function BackButton({
 export function BackArrow({ height }: { height?: number | string }) {
   return (
     <svg viewBox="0 0 5.443 4.692" height={height ?? "13"}>
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeWidth=".7"
-        strokeLinecap="round"
-      >
+      <g fill="none" stroke="currentColor" strokeWidth=".7" strokeLinecap="round">
         <path d="M.907 2.346h4.236" />
         <path d="M2.276.3L.3 2.346l1.976 2.046" strokeLinejoin="round" />
       </g>

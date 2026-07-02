@@ -20,12 +20,7 @@ import {
   RandomButton,
 } from "./song-menu-icons";
 
-function MenuButton(
-  props: React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >,
-) {
+function MenuButton(props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
   return (
     <button
       type="button"
@@ -35,12 +30,7 @@ function MenuButton(
   );
 }
 
-function MenuAnchor(
-  props: React.DetailedHTMLProps<
-    React.AnchorHTMLAttributes<HTMLAnchorElement>,
-    HTMLAnchorElement
-  >,
-) {
+function MenuAnchor(props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>) {
   return (
     // eslint-disable-next-line jsx-a11y/anchor-has-content
     <a
@@ -82,9 +72,7 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
         </TText>
         <TText style={style.modalText}>
           {t("info.Inserted: {{date}}", {
-            date: song.insertedAt
-              ? formatDate(lng, t, song.insertedAt.toISO())
-              : unknownDate,
+            date: song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate,
           })}
         </TText>
         <TText style={style.modalText}>
@@ -92,9 +80,7 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
             date: formatDate(lng, t, song.lastModified.toISO()),
           })}
         </TText>
-        <TText style={[style.modalText, style.modalCloseInfo]}>
-          {t("Click on the backdrop to close this")}
-        </TText>
+        <TText style={[style.modalText, style.modalCloseInfo]}>{t("Click on the backdrop to close this")}</TText>
       </div>
     </DumbModal>
   );
@@ -131,24 +117,16 @@ export default function SongMenu({
                 {transposition}
               </span>
             ) : null}
-            <MenuButton onClick={() => setTransposition(transposition + 1)}>
-              +1
-            </MenuButton>
-            <MenuButton onClick={() => setTransposition(transposition - 1)}>
-              -1
-            </MenuButton>
+            <MenuButton onClick={() => setTransposition(transposition + 1)}>+1</MenuButton>
+            <MenuButton onClick={() => setTransposition(transposition - 1)}>-1</MenuButton>
             <MenuLink to={`/edit/${slug}`}>
               <EditButton />
             </MenuLink>
-            <MenuButton onClick={() => setInfo((o) => !o)}>
+            <MenuButton onClick={() => setInfo(o => !o)}>
               <InfoButton />
             </MenuButton>
             {song.spotify ? (
-              <MenuAnchor
-                href={song.spotify}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <MenuAnchor href={song.spotify} target="_blank" rel="noopener noreferrer">
                 <PlayButton />
               </MenuAnchor>
             ) : null}
@@ -156,18 +134,10 @@ export default function SongMenu({
               onClick={() => {
                 const nextSong = getRandomSong(song.id);
                 const canGoBackRaw = (location.state as any)?.canGoBack;
-                let canGoBack =
-                  typeof canGoBackRaw === "number"
-                    ? canGoBackRaw
-                    : canGoBackRaw
-                      ? 1
-                      : 0;
+                let canGoBack = typeof canGoBackRaw === "number" ? canGoBackRaw : canGoBackRaw ? 1 : 0;
                 if (!canGoBack) {
                   navigate("/all-songs", { replace: true });
-                  navigate(
-                    location.pathname + location.search + location.hash,
-                    { state: location.state },
-                  );
+                  navigate(location.pathname + location.search + location.hash, { state: location.state });
                   canGoBack = 1;
                 }
 
@@ -186,7 +156,7 @@ export default function SongMenu({
             </MenuLink>
           </>
         ) : null}
-        <MenuButton onClick={() => setOpen((o) => !o)}>
+        <MenuButton onClick={() => setOpen(o => !o)}>
           <Burger />
         </MenuButton>
       </ul>

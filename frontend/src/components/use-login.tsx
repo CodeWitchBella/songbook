@@ -8,7 +8,7 @@ export function useLogin() {
   return {
     viewer,
     login: (email: string, password: string) => {
-      return login(email, password).then((viewer) => {
+      return login(email, password).then(viewer => {
         if (viewer.type === "success") {
           setViewer(viewer.user);
           return null;
@@ -18,7 +18,7 @@ export function useLogin() {
       });
     },
     register: (email: string, password: string, name: string) => {
-      return register(email, password, name).then((viewer) => {
+      return register(email, password, name).then(viewer => {
         if (viewer.type === "success") {
           setViewer(viewer.user);
           return null;
@@ -33,7 +33,7 @@ export function useLogin() {
         .then(() => {
           setViewer(null);
         })
-        .catch((e) => {
+        .catch(e => {
           console.error(e);
         });
     },

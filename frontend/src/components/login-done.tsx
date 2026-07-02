@@ -8,9 +8,7 @@ export function LoginDone({ viewer }: { viewer: User }) {
   return (
     <div className="flex flex-col text-base">
       <div>{t("login.complete")}</div>
-      <div className="mb-3">
-        {t("login.Your name: {{name}}", { name: viewer.name })}
-      </div>
+      <div className="mb-3">{t("login.Your name: {{name}}", { name: viewer.name })}</div>
       <InlineLink to="/">{t("login.back-to-homepage")}</InlineLink>
     </div>
   );

@@ -139,7 +139,7 @@ const titleMap: {
     imageViewHeight: 50,
     imageViewPaddingTop: 0,
     imageWidth: 30,
-    imageOnly: [100,100 / Math.sqrt(2)],
+    imageOnly: [100, 100 / Math.sqrt(2)],
     image: Deti25,
   },
   "Tábor 2025 Bonus": {
@@ -150,15 +150,19 @@ const titleMap: {
     imageViewPaddingTop: 0,
     imageWidth: 30,
     imageOnly: false,
-  }
+  },
 };
 
 function Brehoni() {
-  return <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="100" rx="20" style={{ fill:'#263a78', fillOpacity:1 }}/>
-  <path style={{ fill:"none", stroke:'#fff', strokeWidth:9.741, strokeDasharray:"none",strokeOpacity:1}} d="M34.08 45.27c0 20.287 16.764 36.733 37.444 36.733 5.859 0 11.635-1.349 16.376-3.102-1.605-18.619-18.012-33.833-37.875-33.833-19.86 0-36.266 15.21-37.875 33.83 4.74 1.756 10.517 3.104 16.376 3.105 20.68 0 37.444-16.446 37.444-36.732 0-12.386-6.363-23.938-15.945-30.726-9.582 6.788-15.945 18.34-15.945 30.726z"/>
-</svg>
-
+  return (
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" style={{ fill: "#263a78", fillOpacity: 1 }} />
+      <path
+        style={{ fill: "none", stroke: "#fff", strokeWidth: 9.741, strokeDasharray: "none", strokeOpacity: 1 }}
+        d="M34.08 45.27c0 20.287 16.764 36.733 37.444 36.733 5.859 0 11.635-1.349 16.376-3.102-1.605-18.619-18.012-33.833-37.875-33.833-19.86 0-36.266 15.21-37.875 33.83 4.74 1.756 10.517 3.104 16.376 3.105 20.68 0 37.444-16.446 37.444-36.732 0-12.386-6.363-23.938-15.945-30.726-9.582 6.788-15.945 18.34-15.945 30.726z"
+      />
+    </svg>
+  );
 }
 
 export function getSongbookMeta(title: string, time: DateTime) {

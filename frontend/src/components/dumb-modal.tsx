@@ -1,14 +1,8 @@
-export function DumbModal({
-  close,
-  children,
-}: {
-  close: () => void;
-  children: JSX.Element | readonly JSX.Element[];
-}) {
+export function DumbModal({ close, children }: { close: () => void; children: JSX.Element | readonly JSX.Element[] }) {
   return (
     <dialog
       onClose={close}
-      onClick={(event) => {
+      onClick={event => {
         if (event.target === event.currentTarget) event.currentTarget.close();
       }}
       ref={openModal}

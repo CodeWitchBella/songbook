@@ -13,19 +13,12 @@ const margin = {
   inner: (18.8 / 105) * 100,
 };
 
-function DefaultPage({
-  children,
-  ...rest
-}: PropsWithChildren<{ bookmark?: string; id?: string }>) {
+function DefaultPage({ children, ...rest }: PropsWithChildren<{ bookmark?: string; id?: string }>) {
   const isInPDF = useIsInPDF();
   const pdfSettings = usePDFSettings();
   if (!isInPDF) return <SizerPage>{children}</SizerPage>;
   return (
-    <PrimitivePDFPage
-      wrap={false}
-      size={`A${pdfSettings.pageSize}` as $FixMe}
-      {...rest}
-    >
+    <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}` as $FixMe} {...rest}>
       {children}
     </PrimitivePDFPage>
   );
@@ -46,12 +39,12 @@ export function PDFPage({
   style?: ReactPDFTypes.Style | ReactPDFTypes.Style[];
   bookmark?: string;
   id?: string;
-  skipPadding?: boolean
+  skipPadding?: boolean;
 }>) {
   const { vw, vh, web } = usePDFSettings();
   const { Page } = useContext(pageContext);
 
-  const nopad = web || skipPadding
+  const nopad = web || skipPadding;
 
   return (
     <Page {...rest}>
@@ -83,23 +76,16 @@ function NoopPage({ children }: PropsWithChildren<{}>) {
 
 export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
   const pagesCp = [...pages];
-  const physicalPages: (readonly [
-    readonly [JSX.Element, JSX.Element],
-    readonly [JSX.Element, JSX.Element],
-  ])[] = [];
+  const physicalPages: (readonly [readonly [JSX.Element, JSX.Element], readonly [JSX.Element, JSX.Element]])[] = [];
   let keygen = 0;
   while (pagesCp.length > 0) {
     const a = [
       pagesCp.splice(pagesCp.length - 1, 1)[0],
-      pagesCp.splice(0, 1)[0] || (
-        <PDFPage left={false} key={`booklet-${keygen++}`} />
-      ),
+      pagesCp.splice(0, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ] as const;
     const b = [
       pagesCp.splice(0, 1)[0] || <PDFPage left={true} />,
-      pagesCp.splice(pagesCp.length - 1, 1)[0] || (
-        <PDFPage left={false} key={`booklet-${keygen++}`} />
-      ),
+      pagesCp.splice(pagesCp.length - 1, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ] as const;
     physicalPages.push([a, b]);
     physicalPages.push([a, b]);
@@ -110,12 +96,7 @@ export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
       {physicalPages.map((page, i) => (
-        <PrimitivePDFPage
-          key={i}
-          size={`A${pageSize - 2}` as $FixMe}
-          orientation="portrait"
-          wrap={false}
-        >
+        <PrimitivePDFPage key={i} size={`A${pageSize - 2}` as $FixMe} orientation="portrait" wrap={false}>
           <View
             style={{
               flexDirection: "column",
@@ -155,17 +136,11 @@ export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
   while (pagesCp.length > 0) {
     physicalPages.push([
       pagesCp.splice(pagesCp.length - 1, 1)[0],
-      pagesCp.splice(0, 1)[0] || (
-        <PDFPage left={false} key={`booklet-${keygen++}`} />
-      ),
+      pagesCp.splice(0, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ]);
     physicalPages.push([
-      pagesCp.splice(0, 1)[0] || (
-        <PDFPage left={false} key={`booklet-${keygen++}`} />
-      ),
-      pagesCp.splice(pagesCp.length - 1, 1)[0] || (
-        <PDFPage left={false} key={`booklet-${keygen++}`} />
-      ),
+      pagesCp.splice(0, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
+      pagesCp.splice(pagesCp.length - 1, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ]);
   }
 
@@ -174,12 +149,7 @@ export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
   return (
     <pageContext.Provider value={{ Page: NoopPage }}>
       {physicalPages.map((page, i) => (
-        <PrimitivePDFPage
-          key={i}
-          size={`A${pageSize - 1}` as $FixMe}
-          orientation="portrait"
-          wrap={false}
-        >
+        <PrimitivePDFPage key={i} size={`A${pageSize - 1}` as $FixMe} orientation="portrait" wrap={false}>
           <View
             style={{
               display: "flex",

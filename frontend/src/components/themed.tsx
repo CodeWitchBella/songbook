@@ -44,10 +44,7 @@ export type TTextProps = Omit<TextProps, "style"> & {
 // mapping function does not change anything
 // anys are inevitable in this case because there is no way to actually type this
 // if this were a professional software I would write tests for this but :meh:
-function mapStyle<In, Out>(
-  style: TStyleProp<In>,
-  mapper: (v: In) => Out,
-): TStyleProp<Out> {
+function mapStyle<In, Out>(style: TStyleProp<In>, mapper: (v: In) => Out): TStyleProp<Out> {
   if (!Array.isArray(style)) return mapper(style as any);
 
   let result: any | undefined = undefined;
@@ -62,32 +59,27 @@ function mapStyle<In, Out>(
 }
 
 export type TextRef = RNText;
-export const TText = forwardRef<TextRef, TTextProps>(
-  ({ style, ...rest }, ref) => {
-    const colors = useColors();
-    const fixedStyle = mapStyle(
-      style,
-      (v): TextStyle =>
-        typeof v === "object" && v?.fontSize
-          ? { ...v, fontSize: +v.fontSize }
-          : v,
-    );
-    return (
-      <RNText
-        ref={ref}
-        style={[
-          {
-            color: colors.text,
-            fontFamily: "inherit",
-            fontWeight: "400" as any,
-          },
-          fixedStyle,
-        ]}
-        {...rest}
-      />
-    );
-  },
-);
+export const TText = forwardRef<TextRef, TTextProps>(({ style, ...rest }, ref) => {
+  const colors = useColors();
+  const fixedStyle = mapStyle(
+    style,
+    (v): TextStyle => (typeof v === "object" && v?.fontSize ? { ...v, fontSize: +v.fontSize } : v),
+  );
+  return (
+    <RNText
+      ref={ref}
+      style={[
+        {
+          color: colors.text,
+          fontFamily: "inherit",
+          fontWeight: "400" as any,
+        },
+        fixedStyle,
+      ]}
+      {...rest}
+    />
+  );
+});
 
 export function TH2({ style, ...rest }: TTextProps) {
   return (

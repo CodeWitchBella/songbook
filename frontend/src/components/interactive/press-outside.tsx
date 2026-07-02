@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useRef } from "react";
 import type { View } from "react-native";
 
 const clickOutsideContext = createContext(false);
@@ -25,9 +19,7 @@ export function OnPressOutside({
   children,
 }: {
   onPressOutside: (() => void) | null;
-  children: (
-    ref: (view: View | null) => void,
-  ) => null | JSX.Element | readonly JSX.Element[];
+  children: (ref: (view: View | null) => void) => null | JSX.Element | readonly JSX.Element[];
 }) {
   const handlerRef = useRef(onPressOutside);
   useEffect(() => {
@@ -49,9 +41,7 @@ export function OnPressOutside({
     function listener(event: MouseEvent | TouchEvent) {
       if (
         handlerRef.current &&
-        !document
-          .querySelector(`[data-press-outside-id="${id.current}"]`)
-          ?.contains(event.target as any)
+        !document.querySelector(`[data-press-outside-id="${id.current}"]`)?.contains(event.target as any)
       ) {
         event.preventDefault();
         handlerRef.current();
@@ -67,7 +57,7 @@ export function OnPressOutside({
   return (
     <clickOutsideContext.Provider value={true}>
       {children(
-        useCallback((view) => {
+        useCallback(view => {
           if (view) {
             if (id.current === 0) {
               idCounter += 1;

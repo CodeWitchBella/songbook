@@ -2,12 +2,8 @@ import { useIsInPDF } from "./primitives";
 
 export default function V(props: any) {
   const inPdf = useIsInPDF();
-  const Path: typeof import("@react-pdf/renderer").Path = (
-    inPdf ? "PATH" : "path"
-  ) as any;
-  const Svg: typeof import("@react-pdf/renderer").Svg = (
-    inPdf ? "SVG" : "svg"
-  ) as any;
+  const Path: typeof import("@react-pdf/renderer").Path = (inPdf ? "PATH" : "path") as any;
+  const Svg: typeof import("@react-pdf/renderer").Svg = (inPdf ? "SVG" : "svg") as any;
   return (
     <Svg viewBox="0 0 207.345 211.569" {...props}>
       <Path

@@ -9,10 +9,7 @@ import cs from "../locales/translation-cs.json";
 import en from "../locales/translation-en.json";
 
 export type Language = "cs" | "en";
-const context = createContext<readonly [Language, (lng: Language) => void]>([
-  "cs",
-  () => {},
-]);
+const context = createContext<readonly [Language, (lng: Language) => void]>(["cs", () => {}]);
 
 export function useLanguage() {
   return useContext(context);
@@ -27,10 +24,7 @@ function parseLanguage(lng: string | null): Language {
   return "cs";
 }
 
-function reducer(
-  state: Language,
-  lng: Language | ((l: Language) => Language),
-): Language {
+function reducer(state: Language, lng: Language | ((l: Language) => Language)): Language {
   return parseLanguage(typeof lng === "function" ? lng(state) : lng);
 }
 
@@ -58,7 +52,7 @@ export function LanguageProvider({ children }: PropsWithChildren<{}>) {
     });
     (window as any)["setLng"] = setLng;
     (window as any)["toggleLng"] = () => {
-      setLng((prev) => (prev === "en" ? "cs" : "en"));
+      setLng(prev => (prev === "en" ? "cs" : "en"));
     };
     return () => {
       delete (window as any)["setLng"];

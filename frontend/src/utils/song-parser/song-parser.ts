@@ -12,11 +12,7 @@ export type SongPage = Paragraph[];
 
 export type ParsedSong = { pages: SongPage[]; continuous: boolean };
 
-export function parseSong(
-  format: "my",
-  text: string,
-  opts: ParserOpts,
-): ParsedSong {
+export function parseSong(format: "my", text: string, opts: ParserOpts): ParsedSong {
   if (format === "my") return parseSongMyFormat(text, opts);
   throw new Error("Unknown format");
 }

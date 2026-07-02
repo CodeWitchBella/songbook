@@ -10,7 +10,5 @@ export const requestAnimationFrame_ = (
 export const history_ = typeof history !== "undefined" ? history : null;
 export const document_ = typeof document !== "undefined" ? document : null;
 export const fetch_ = typeof fetch !== "undefined" ? fetch : null;
-export const Headers_ =
-  typeof Headers !== "undefined" ? Headers : function Headers() {};
-export const IntersectionObserver_ =
-  typeof IntersectionObserver !== "undefined" ? IntersectionObserver : null;
+export const Headers_ = typeof Headers !== "undefined" ? Headers : function Headers() {};
+export const IntersectionObserver_ = typeof IntersectionObserver !== "undefined" ? IntersectionObserver : null;

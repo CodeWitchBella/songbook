@@ -17,7 +17,7 @@ export function ServiceWorkerStatusProvider({
 
   useEffect(() => {
     register({
-      onUpdate: (wb) => {
+      onUpdate: wb => {
         console.log("Update available!");
         updatedRef.current = wb;
       },

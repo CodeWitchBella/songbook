@@ -13,9 +13,7 @@ export function PDFToc({
   idToCounter?: Map<string, number>;
   booklet?: boolean;
 }) {
-  const Link: typeof import("@react-pdf/renderer").Link = (
-    booklet ? Text : "LINK"
-  ) as any;
+  const Link: typeof import("@react-pdf/renderer").Link = (booklet ? Text : "LINK") as any;
   const { em } = usePDFSettings();
   let page = 1;
   return (
@@ -57,8 +55,7 @@ export function PDFToc({
                   color: "black",
                 }}
               >
-                {idToCounter.get(song.id) || i + 1}. {song.title}{" "}
-                {`(${song.author})`}
+                {idToCounter.get(song.id) || i + 1}. {song.title} {`(${song.author})`}
               </Link>
             </View>
           );

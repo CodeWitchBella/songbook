@@ -1,19 +1,12 @@
 const url = "/api/graphql";
 
 export function getGraphqlUrl() {
-  if (typeof window === "undefined")
-    throw new Error("This is only available in browser");
+  if (typeof window === "undefined") throw new Error("This is only available in browser");
   return new URL(url, window.location.toString()).toString();
 }
 
 let promise = Promise.resolve(null as any);
-export function graphqlFetch<V = any>({
-  query,
-  variables,
-}: {
-  query: string;
-  variables?: V;
-}) {
+export function graphqlFetch<V = any>({ query, variables }: { query: string; variables?: V }) {
   const tmpe = new Error();
   const p = promise
     .catch(() => {})
@@ -68,9 +61,7 @@ export const userFragment = `
 export async function login(
   email: string,
   password: string,
-): Promise<
-  { type: "success"; user: User } | { type: "error"; message: string }
-> {
+): Promise<{ type: "success"; user: User } | { type: "error"; message: string }> {
   const res = await fetch("/api/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -85,9 +76,7 @@ export async function register(
   email: string,
   password: string,
   name: string,
-): Promise<
-  { type: "success"; user: User } | { type: "error"; message: string }
-> {
+): Promise<{ type: "success"; user: User } | { type: "error"; message: string }> {
   return graphqlFetch({
     query: `
       mutation($input: RegisterInput!) {
@@ -106,7 +95,7 @@ export async function register(
       ${userFragment}
     `,
     variables: { input: { email, password, name } },
-  }).then((v) => {
+  }).then(v => {
     if (v.data.register.__typename !== "RegisterSuccess") {
       console.log(v.data.register);
       return { type: "error", message: v.data.register.message };

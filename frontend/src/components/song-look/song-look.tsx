@@ -1,8 +1,5 @@
 import { PDFSettingsProvider } from "#/components/pdf-render/pdf-settings";
-import {
-  PDFSongContent,
-  PDFSongPage,
-} from "#/components/pdf-render/pdf-song-page";
+import { PDFSongContent, PDFSongPage } from "#/components/pdf-render/pdf-song-page";
 import { ContinuousPage } from "#/components/sizer-page";
 import type { SongType } from "#/store/store-song";
 import type * as parser from "#/utils/song-parser/song-parser";
@@ -24,8 +21,7 @@ function SongPage({
   onChordPress?: null | ((chord: string) => void);
   firstPage: boolean;
 }) {
-  const pretranspose =
-    typeof song.pretranspose === "number" ? song.pretranspose : 0;
+  const pretranspose = typeof song.pretranspose === "number" ? song.pretranspose : 0;
   return (
     <PDFSettingsProvider
       value={{
@@ -61,8 +57,7 @@ function SongContinuousPage({
   transposition?: number;
   onChordPress?: null | ((chord: string) => void);
 }) {
-  const pretranspose =
-    typeof song.pretranspose === "number" ? song.pretranspose : 0;
+  const pretranspose = typeof song.pretranspose === "number" ? song.pretranspose : 0;
   return (
     <PDFSettingsProvider
       value={{
@@ -74,14 +69,7 @@ function SongContinuousPage({
       }}
     >
       <ContinuousPage>
-        <PDFSongContent
-          author={song.author}
-          footer=""
-          left={false}
-          page={pageData}
-          title={song.title}
-          back={true}
-        />
+        <PDFSongContent author={song.author} footer="" left={false} page={pageData} title={song.title} back={true} />
       </ContinuousPage>
     </PDFSettingsProvider>
   );
@@ -118,10 +106,7 @@ export function SongLook({
           pageData={pageData}
           song={{
             ...song,
-            title:
-              parsed.pages.length > 1
-                ? `${song.title} (${i + 1}/${parsed.pages.length})`
-                : song.title,
+            title: parsed.pages.length > 1 ? `${song.title} (${i + 1}/${parsed.pages.length})` : song.title,
           }}
           noBack={noBack || i !== 0}
           transposition={transposition}

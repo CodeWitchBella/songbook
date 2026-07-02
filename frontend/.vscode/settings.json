@@ -1,9 +1,6 @@
 {
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "oxc.lint.run": "onType",
   "typescript.tsdk": "node_modules/typescript/lib"
 }

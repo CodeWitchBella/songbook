@@ -36,9 +36,7 @@ const aSizes = [
   [37, 52],
 ];
 
-export function PDFSettingsProvider(
-  props: PropsWithChildren<{ value: Partial<CtxIn> }>,
-) {
+export function PDFSettingsProvider(props: PropsWithChildren<{ value: Partial<CtxIn> }>) {
   const {
     fontSize = 1,
     paragraphSpace = 1,
@@ -61,14 +59,8 @@ export function PDFSettingsProvider(
           titleSpace,
           pageSize,
           em: (v): any => (web ? `${v}em` : v * em),
-          vw: (v): any =>
-            web
-              ? `calc(${v} * var(--vw))`
-              : v * (aSizes[pageSize][0] / 100) * 2.8346438836889, // mm to pt
-          vh: (v): any =>
-            web
-              ? `calc(${v} * var(--vh))`
-              : v * (aSizes[pageSize][1] / 100) * 2.8346438836889, // mm to pt
+          vw: (v): any => (web ? `calc(${v} * var(--vw))` : v * (aSizes[pageSize][0] / 100) * 2.8346438836889), // mm to pt
+          vh: (v): any => (web ? `calc(${v} * var(--vh))` : v * (aSizes[pageSize][1] / 100) * 2.8346438836889), // mm to pt
           web,
           transpose,
         }),

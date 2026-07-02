@@ -12,11 +12,7 @@ export function tokenizeLine(line_: string) {
   function modifyAndPush(type: Type, length: number) {
     if (length === 0) return;
     const value = line.substring(0, length);
-    if (
-      type === "text" &&
-      ret.length > 0 &&
-      ret[ret.length - 1].type === "text"
-    ) {
+    if (type === "text" && ret.length > 0 && ret[ret.length - 1].type === "text") {
       // merge text nodes
       ret[ret.length - 1].value += value;
     } else {
@@ -56,13 +52,10 @@ export function tokenizeLine(line_: string) {
 }
 
 export function detokenize(tokens: ReturnType<typeof tokenizeLine>) {
-  return tokens.map((t) => t.value).join("");
+  return tokens.map(t => t.value).join("");
 }
 
-function parseLine(
-  line_: string,
-  pCounter: number,
-): Line & { pCounter: number } {
+function parseLine(line_: string, pCounter: number): Line & { pCounter: number } {
   let line = line_.trim();
   const content: Line["content"] = [];
   let tag: string | null = null;
@@ -113,8 +106,7 @@ function parseLine(
       line = line.substring(idx + 1);
 
       if (ch.startsWith("*")) {
-        if (ch.length > 1)
-          content.push({ text: ch.substring(1), ch: "", bold: true });
+        if (ch.length > 1) content.push({ text: ch.substring(1), ch: "", bold: true });
         content.push({ text: text, ch: "" });
       } else {
         content.push({ text, ch });
@@ -134,16 +126,13 @@ function verseToText(tag: string, pCounter: number) {
   return `${pCounter}. = ${tag.substring(2)}.`;
 }
 
-function parseParagraph(
-  p: string,
-  pCounterInit: number,
-): { p: Paragraph; pCounter: number } {
+function parseParagraph(p: string, pCounterInit: number): { p: Paragraph; pCounter: number } {
   let pCounter = pCounterInit;
   return {
     p: p
       .trim()
       .split("\n")
-      .map((l) => {
+      .map(l => {
         const { content, tag, pCounter: n } = parseLine(l, pCounter);
         pCounter = n;
         return {
@@ -155,16 +144,13 @@ function parseParagraph(
   };
 }
 
-function parsePage(
-  song: string,
-  pCounterInit: number,
-): { page: Paragraph[]; pCounter: number } {
+function parsePage(song: string, pCounterInit: number): { page: Paragraph[]; pCounter: number } {
   let pCounter = pCounterInit;
   return {
     page: song
       .trim()
       .split(/\n\n+/)
-      .map((l) => {
+      .map(l => {
         const ret = parseParagraph(l, pCounter);
         pCounter = ret.pCounter;
         return ret.p;
@@ -176,15 +162,12 @@ function parsePage(
 export type ParserOpts = {
   continuous: ContinuousModeSetting;
 };
-export function parseSongMyFormat(
-  song: string,
-  opts: ParserOpts,
-): { pages: Paragraph[][]; continuous: boolean } {
+export function parseSongMyFormat(song: string, opts: ParserOpts): { pages: Paragraph[][]; continuous: boolean } {
   let pCounter = 0;
   const pages = song
     .trim()
     .split("--- page break ---")
-    .map((page) => {
+    .map(page => {
       const ret = parsePage(page, pCounter);
       pCounter = ret.pCounter;
       return ret.page;
@@ -192,21 +175,17 @@ export function parseSongMyFormat(
   let chordsOff = false;
   let variant: "paged" | "both" | "long" = "both";
 
-  const continuous =
-    opts.continuous === "always" ||
-    (opts.continuous === "multipage" && pages.length > 1);
+  const continuous = opts.continuous === "always" || (opts.continuous === "multipage" && pages.length > 1);
   const requestedVariant = continuous ? "long" : "paged";
 
   function handleCommand(cmd: string, args: readonly string[]) {
     if (cmd === "chords") {
       if (!continuous) {
-        chordsOff =
-          args[0] === "off" ? true : args[0] === "on" ? false : chordsOff;
+        chordsOff = args[0] === "off" ? true : args[0] === "on" ? false : chordsOff;
       }
     } else if (cmd === "variant") {
       if (!args[0]) variant = "both";
-      else if (["paged", "both", "long"].includes(args[0]))
-        variant = args[0] as any;
+      else if (["paged", "both", "long"].includes(args[0])) variant = args[0] as any;
     }
   }
 
@@ -238,9 +217,9 @@ export function parseSongMyFormat(
     }
   }
   return {
-    pages: pages.map((page) =>
+    pages: pages.map(page =>
       // remove empty paragraphs
-      page.filter((paragraph) => !isParagraphEmpty(paragraph)),
+      page.filter(paragraph => !isParagraphEmpty(paragraph)),
     ),
     continuous,
   };

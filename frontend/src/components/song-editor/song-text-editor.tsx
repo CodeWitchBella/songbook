@@ -1,18 +1,9 @@
-import {
-  cursorSyntaxLeft,
-  deleteCharBackward,
-  selectSyntaxRight,
-  simplifySelection,
-} from "@codemirror/commands";
+import { cursorSyntaxLeft, deleteCharBackward, selectSyntaxRight, simplifySelection } from "@codemirror/commands";
 import { LanguageSupport, LRLanguage } from "@codemirror/language";
 import { styleTags, Tag } from "@lezer/highlight";
 import { createTheme } from "@uiw/codemirror-themes";
 import type { EditorView, Extension } from "@uiw/react-codemirror";
-import CodeMirror, {
-  EditorSelection,
-  keymap,
-  Transaction,
-} from "@uiw/react-codemirror";
+import CodeMirror, { EditorSelection, keymap, Transaction } from "@uiw/react-codemirror";
 import { useColors } from "#/components/themed";
 import { useMemo } from "react";
 
@@ -53,9 +44,7 @@ const mkTheme = (dark: boolean) =>
       },
       {
         tag: t.Chord,
-        class: dark
-          ? "text-blue-300 font-semibold"
-          : "text-blue-800 font-semibold",
+        class: dark ? "text-blue-300 font-semibold" : "text-blue-800 font-semibold",
       },
     ],
   });
@@ -135,7 +124,7 @@ export function SongTextEditor(props: {
       className="text-base"
       theme={useMemo(() => mkTheme(dark), [dark])}
       value={props.initialValue}
-      onChange={(v) => props.onChange(v)}
+      onChange={v => props.onChange(v)}
       extensions={useMemo(() => [songLang()], [])}
     />
   );

@@ -22,10 +22,7 @@ function prefixLength(a: string, b: string) {
  * Array.prototype.sort predicate which sorts alphabetically but sorts numbers
  * in reverse order
  */
-export function collectionCompare(
-  ai: { item: { name: string } },
-  bi: { item: { name: string } },
-) {
+export function collectionCompare(ai: { item: { name: string } }, bi: { item: { name: string } }) {
   const a = ai.item.name;
   const b = bi.item.name;
   const prefix = prefixLength(a, b);
@@ -42,8 +39,6 @@ export function collectionFullName(collection: {
   name: string;
 }) {
   return (
-    (collection.slug.includes("/")
-      ? (collection.owner.handle || collection.owner.name) + " > "
-      : "") + collection.name
+    (collection.slug.includes("/") ? (collection.owner.handle || collection.owner.name) + " > " : "") + collection.name
   );
 }

@@ -43,7 +43,7 @@ function MenuContent({
   const colors = useColors();
   return (
     <OnPressOutside onPressOutside={visible ? onClose : null}>
-      {(ref) => (
+      {ref => (
         <View
           ref={ref}
           style={{

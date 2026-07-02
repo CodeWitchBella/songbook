@@ -19,13 +19,9 @@ export async function jsonGet<SuccessBody = unknown>(path: string) {
 }
 
 async function parseJsonResponse<SuccessBody>(
-  res: Response
-): Promise<
-  { success: true; body: SuccessBody } | { success: false; body: any }
-> {
-  const isJson =
-    res.headers.get("content-type")?.split(";")[0].trim() ===
-    "application/json";
+  res: Response,
+): Promise<{ success: true; body: SuccessBody } | { success: false; body: any }> {
+  const isJson = res.headers.get("content-type")?.split(";")[0].trim() === "application/json";
   if (!isJson) {
     return { success: false, body: await res.text() };
   }
@@ -41,7 +37,7 @@ export function newSong(song: {
   text?: string;
   extraNonSearchable?: string;
 }): Promise<{ slug: string }> {
-  return jsonPost("/api/song", song).then((v) => {
+  return jsonPost("/api/song", song).then(v => {
     if (v?.body?.slug) return v.body;
     throw new Error("New song failed");
   });

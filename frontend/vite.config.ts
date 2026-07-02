@@ -25,12 +25,7 @@ export default defineConfig({
       srcDir: "src",
       filename: "service-worker.ts",
       manifestFilename: "manifest.json",
-      manifest: JSON.parse(
-        fs.readFileSync(
-          new URL("./src/manifest.json", import.meta.url),
-          "utf-8"
-        )
-      ),
+      manifest: JSON.parse(fs.readFileSync(new URL("./src/manifest.json", import.meta.url), "utf-8")),
       injectManifest: {
         maximumFileSizeToCacheInBytes: 1024 * 1024 * 5,
         globPatterns: ["**/*.{js,css,html,woff2,svg,wasm}"],

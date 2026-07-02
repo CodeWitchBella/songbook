@@ -3,25 +3,18 @@ const path = require("path");
 const fetch = require("node-fetch");
 const { spawnSync } = require("child_process");
 if (process.env.LAST_MODIFIED) {
-  patch(path.join("src", "build-data.tsx"), (content) => {
+  patch(path.join("src", "build-data.tsx"), content => {
     return content
       .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
-      .replace(
-        /\$COMMIT_TIME/g,
-        new Date(process.env.LAST_MODIFIED * 1000).toISOString(),
-      );
+      .replace(/\$COMMIT_TIME/g, new Date(process.env.LAST_MODIFIED * 1000).toISOString());
   });
 } else {
-  getDate().then((date) => {
-    patch(path.join("src", "build-data.tsx"), (content) => {
+  getDate().then(date => {
+    patch(path.join("src", "build-data.tsx"), content => {
       if (date) {
-        return content
-          .replace(/\$COMMIT_TIME_FROM_GIT/g, "true")
-          .replace(/\$COMMIT_TIME/g, date);
+        return content.replace(/\$COMMIT_TIME_FROM_GIT/g, "true").replace(/\$COMMIT_TIME/g, date);
       } else {
-        return content
-          .replace(/\$COMMIT_TIME_FROM_GIT/g, "false")
-          .replace(/\$COMMIT_TIME/g, new Date().toISOString());
+        return content.replace(/\$COMMIT_TIME_FROM_GIT/g, "false").replace(/\$COMMIT_TIME/g, new Date().toISOString());
       }
     });
   });
@@ -38,11 +31,11 @@ function getDate() {
     const url = `https://api.github.com/repos/${commitOrg}/${commitRepo}/commits/${commitSha}`;
     console.log(url);
     return fetch(url)
-      .then((d) => d.json())
-      .then((d) => {
+      .then(d => d.json())
+      .then(d => {
         return d.commit.author.date;
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
         return "";
       });

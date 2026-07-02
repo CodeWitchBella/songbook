@@ -19,9 +19,7 @@ export function EverythingProvider({ children }: { children: ReactNode }) {
             <InstallProvider>
               <Suspense
                 fallback={
-                  <div className="flex min-h-screen flex-col items-center justify-center text-3xl">
-                    Načítám...
-                  </div>
+                  <div className="flex min-h-screen flex-col items-center justify-center text-3xl">Načítám...</div>
                 }
               >
                 {children}

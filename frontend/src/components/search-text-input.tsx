@@ -5,13 +5,7 @@ import { StyleSheet, TextInput, View } from "react-native";
 
 import { useBasicStyle } from "./themed";
 
-export function SearchTextInput({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-}) {
+export function SearchTextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const ref = useRef<TextInput>(null);
   const prevValue = useRef(value);
   useEffect(() => {
@@ -46,7 +40,7 @@ export function SearchTextInput({
       <TextInput
         ref={ref}
         value={value}
-        onChange={(event) => {
+        onChange={event => {
           event.stopPropagation();
           onChange(event.nativeEvent.text);
         }}
@@ -73,14 +67,8 @@ function ClearButton({ onClick }: { onClick: () => void }) {
       onClick={onClick}
     >
       <svg viewBox="0 0 47.271 47.271" height="25" width="25">
-        <path
-          fill="currentColor"
-          d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z"
-        />
-        <path
-          fill="currentColor"
-          d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z"
-        />
+        <path fill="currentColor" d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z" />
+        <path fill="currentColor" d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z" />
       </svg>
     </button>
   );

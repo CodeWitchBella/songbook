@@ -81,13 +81,7 @@ const instrument = {
   },
 };
 
-export function ChordHelp({
-  close,
-  chord,
-}: {
-  close: () => void;
-  chord: string;
-}) {
+export function ChordHelp({ close, chord }: { close: () => void; chord: string }) {
   const { def, mapped } = getChordDefinition(chord);
   const [t] = useTranslation();
   if (!def) return null;
@@ -102,9 +96,7 @@ export function ChordHelp({
         <div className="w-80 bg-white dark:invert ">
           <Chord chord={def} instrument={instrument} />
         </div>
-        <TText style={{ fontSize: 13, marginTop: 20 }}>
-          {t("Click on the backdrop to close this")}
-        </TText>
+        <TText style={{ fontSize: 13, marginTop: 20 }}>{t("Click on the backdrop to close this")}</TText>
       </div>
     </DumbModal>
   );

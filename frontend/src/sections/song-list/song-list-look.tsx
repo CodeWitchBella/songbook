@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import { Link } from "react-router";
 
-function translateHeader(
-  t: TFunction,
-  hdr: "title" | "author" | "text" | "other",
-) {
+function translateHeader(t: TFunction, hdr: "title" | "author" | "text" | "other") {
   if (hdr === "title") return t("search.title");
   if (hdr === "author") return t("search.author");
   if (hdr === "text") return t("search.text");
@@ -16,10 +13,7 @@ function translateHeader(
 }
 export type HeaderType = Parameters<typeof translateHeader>[1];
 
-export type SongListItem =
-  | { slug: string; text: string }
-  | { header: HeaderType }
-  | null;
+export type SongListItem = { slug: string; text: string } | { header: HeaderType } | null;
 
 export function SongListLook({ list }: { list: SongListItem[] }) {
   const { t } = useTranslation();
@@ -33,15 +27,8 @@ export function SongListLook({ list }: { list: SongListItem[] }) {
       /* eslint-disable react-hooks/exhaustive-deps */
       try {
         const bigScroll = bigScrollRef.current;
-        if (
-          typeof sessionStorage !== "undefined" &&
-          typeof document !== "undefined" &&
-          bigScroll
-        ) {
-          sessionStorage.setItem(
-            `scroll:${location.key}`,
-            `${bigScroll.scrollTop}`,
-          );
+        if (typeof sessionStorage !== "undefined" && typeof document !== "undefined" && bigScroll) {
+          sessionStorage.setItem(`scroll:${location.key}`, `${bigScroll.scrollTop}`);
         }
       } catch (e) {
         console.error(e);
@@ -49,9 +36,7 @@ export function SongListLook({ list }: { list: SongListItem[] }) {
     };
   }, [location.key]);
 
-  const initialScroll = useRef(
-    Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || "0"),
-  );
+  const initialScroll = useRef(Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || "0"));
   return (
     <div className="max-h-full w-full overflow-y-scroll">
       <div
@@ -59,7 +44,7 @@ export function SongListLook({ list }: { list: SongListItem[] }) {
           columnWidth: 400,
           columnCount: "auto",
         }}
-        ref={(r) => {
+        ref={r => {
           if (r) {
             bigScrollRef.current = r;
             r.scrollTo(0, initialScroll.current);

@@ -7,15 +7,10 @@ import { PrimaryButton } from "./interactive/primary-button";
 type State = { install?: (() => void) | null };
 const Ctx = React.createContext({} as State);
 
-export class InstallProvider extends React.Component<
-  { children: React.ReactNode },
-  State
-> {
+export class InstallProvider extends React.Component<{ children: React.ReactNode }, State> {
   state: State = {};
   render() {
-    return (
-      <Ctx.Provider value={this.state}>{this.props.children}</Ctx.Provider>
-    );
+    return <Ctx.Provider value={this.state}>{this.props.children}</Ctx.Provider>;
   }
 
   componentDidMount() {
@@ -54,9 +49,7 @@ export const InstallButtonLook = ({ children }: PropsWithChildren<{}>) => {
 
   return (
     <>
-      <PrimaryButton onPress={install ?? undefined}>
-        {t("Install as an app")}
-      </PrimaryButton>
+      <PrimaryButton onPress={install ?? undefined}>{t("Install as an app")}</PrimaryButton>
       {children}
     </>
   );

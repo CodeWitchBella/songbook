@@ -5,6 +5,15 @@
   "imports": {
     "#/*": "./src/*"
   },
+  "scripts": {
+    "build": "vite build",
+    "build-ci": "node build-ci.js && vite build",
+    "dev": "vite",
+    "extract": "node extract.js",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
   "dependencies": {
     "@codemirror/commands": "6.10.4",
     "@codemirror/language": "6.10.4",
@@ -57,11 +66,19 @@
     "workbox-window": "^7.1.0",
     "xorshift": "^1.2.0"
   },
-  "scripts": {
-    "build": "vite build",
-    "build-ci": "node build-ci.js && vite build",
-    "dev": "vite",
-    "extract": "node extract.js"
+  "devDependencies": {
+    "@lezer/generator": "^1.7.0",
+    "@vitejs/plugin-react": "^6.0.3",
+    "autoprefixer": "^10.4.19",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3"
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   },
   "browserslist": [
     ">0.2%",
@@ -69,21 +86,6 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
-  "devDependencies": {
-    "@lezer/generator": "^1.7.0",
-    "@vitejs/plugin-react": "^6.0.3",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^9.4.0",
-    "postcss": "^8.4.38",
-    "prettier": "^3.3.1",
-    "prettier-plugin-tailwindcss": "^0.6.1",
-    "tailwindcss": "^3.4.3"
-  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",

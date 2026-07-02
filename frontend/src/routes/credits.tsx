@@ -1,9 +1,6 @@
 import { InlineLink } from "#/components/interactive/inline-link";
 import { PageHeader } from "#/components/page-header";
-import {
-  AddToCollection,
-  QuickSettings,
-} from "#/components/song-look/song-menu-icons";
+import { AddToCollection, QuickSettings } from "#/components/song-look/song-menu-icons";
 import { TText } from "#/components/themed";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
@@ -28,9 +25,7 @@ export default function Credits() {
       <TText style={styles.text}>
         <Trans>
           Icon for quick settings <QuickSettings /> is taken from{" "}
-          <InlineLink to="https://iconic.app/">
-            {{ iconicApp } as any}
-          </InlineLink>
+          <InlineLink to="https://iconic.app/">{{ iconicApp } as any}</InlineLink>
         </Trans>
       </TText>
       <TText style={styles.text}>{t("other-icons")}</TText>

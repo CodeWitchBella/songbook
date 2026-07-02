@@ -15,7 +15,7 @@ const nbsp = (text: string) =>
   text.trim() +
   "\u00A0".repeat(text.length - text.trimRight().length);
 
-const hasChord = (l: Line) => l.content.some((el) => !!el.ch);
+const hasChord = (l: Line) => l.content.some(el => !!el.ch);
 
 const style = StyleSheet.create({
   line: {
@@ -37,12 +37,7 @@ const style = StyleSheet.create({
 
 function DefaultStyleText(props: PropsOf<typeof Text>) {
   const { em, fontSize } = usePDFSettings();
-  return (
-    <Text
-      {...props}
-      style={[{ fontSize: em(fontSize) }, style.defaultStyleText, props.style]}
-    />
-  );
+  return <Text {...props} style={[{ fontSize: em(fontSize) }, style.defaultStyleText, props.style]} />;
 }
 
 function textLine(
@@ -50,7 +45,7 @@ function textLine(
     ch: string;
     text: string;
     bold?: boolean | undefined;
-  }[]
+  }[],
 ) {
   return content
     .map((t, i2) => [
@@ -83,18 +78,11 @@ function ChordLine({ l }: { l: Line }) {
               marginBottom: em(-0.15),
             }}
           >
-            <DefaultStyleText
-              selectable={false}
-              style={[style.transparent, style.line]}
-            >
+            <DefaultStyleText selectable={false} style={[style.transparent, style.line]}>
               {textLine(l.content.slice(0, i))}
             </DefaultStyleText>
             <DefaultStyleText
-              style={[
-                /^_?\^/.test(cur.ch) ? {} : style.bold,
-                style.zIndexTop,
-                { fontFamily: "Oswald" },
-              ]}
+              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop, { fontFamily: "Oswald" }]}
             >
               <Chord>{cur.ch.replace(/^[_^]+/, "")}</Chord>
             </DefaultStyleText>
@@ -106,31 +94,17 @@ function ChordLine({ l }: { l: Line }) {
   );
 }
 
-function LineWrap({
-  children,
-  hasChord,
-}: PropsWithChildren<{ hasChord: boolean }>) {
+function LineWrap({ children, hasChord }: PropsWithChildren<{ hasChord: boolean }>) {
   const { em, fontSize } = usePDFSettings();
-  return (
-    <View
-      style={[
-        style.lineWrap,
-        { height: hasChord ? em(fontSize * 2.2) : undefined },
-      ]}
-    >
-      {children}
-    </View>
-  );
+  return <View style={[style.lineWrap, { height: hasChord ? em(fontSize * 2.2) : undefined }]}>{children}</View>;
 }
 
 function LineC({ l }: { l: Line }) {
-  const hasText = l.content.some((c) => !!c.text.trim());
+  const hasText = l.content.some(c => !!c.text.trim());
   if (!hasText) {
     return (
       <LineWrap hasChord={false}>
-        {l.tag ? (
-          <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText>
-        ) : null}
+        {l.tag ? <DefaultStyleText style={style.bold}>{l.tag}&nbsp;</DefaultStyleText> : null}
         {l.content.map((c, i) => (
           <DefaultStyleText key={i}>
             <Chord>{c.ch}</Chord>
@@ -141,14 +115,10 @@ function LineC({ l }: { l: Line }) {
   }
   return (
     <LineWrap hasChord={hasChord(l)}>
-      {l.tag ? (
-        <DefaultStyleText style={[style.bold]}>{l.tag}&nbsp;</DefaultStyleText>
-      ) : null}
+      {l.tag ? <DefaultStyleText style={[style.bold]}>{l.tag}&nbsp;</DefaultStyleText> : null}
       {hasChord(l) ? <ChordLine l={l} /> : null}
 
-      <DefaultStyleText style={style.line}>
-        {textLine(l.content)}
-      </DefaultStyleText>
+      <DefaultStyleText style={style.line}>{textLine(l.content)}</DefaultStyleText>
     </LineWrap>
   );
 }
@@ -188,15 +158,7 @@ function SongHeader({ title, author }: { title: string; author: string }) {
   );
 }
 
-function SongHeaderWithBack({
-  title,
-  author,
-  back,
-}: {
-  title: string;
-  author: string;
-  back: boolean;
-}) {
+function SongHeaderWithBack({ title, author, back }: { title: string; author: string; back: boolean }) {
   const { em, titleSpace } = usePDFSettings();
   return (
     <View
@@ -288,11 +250,7 @@ export function PDFSongPage({
 }) {
   console.log({ firstPage, slug, title, author });
   return (
-    <PDFPage
-      left={left}
-      bookmark={firstPage ? title + " – " + author : undefined}
-      id={firstPage ? slug : undefined}
-    >
+    <PDFPage left={left} bookmark={firstPage ? title + " – " + author : undefined} id={firstPage ? slug : undefined}>
       <View
         style={{
           position: "relative",

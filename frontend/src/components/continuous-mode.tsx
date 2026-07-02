@@ -21,9 +21,7 @@ function write(val: ContinuousModeSetting) {
 
 export type ContinuousModeSetting = "always" | "never" | "multipage";
 export function useContinuousModeSetting() {
-  const [setting, setSetting] = useState(() =>
-    deserialize(localStorage.getItem(key)),
-  );
+  const [setting, setSetting] = useState(() => deserialize(localStorage.getItem(key)));
   useEffect(() => {
     window.addEventListener("storage", listener);
     return () => {

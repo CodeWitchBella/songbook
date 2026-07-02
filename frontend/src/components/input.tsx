@@ -18,7 +18,7 @@ export default function Input({
         type={type}
         value={value}
         className="border border-current bg-transparent px-2 py-0.5"
-        onChange={(evt) => {
+        onChange={evt => {
           evt.preventDefault();
           onChange(evt.target.value);
         }}
@@ -49,7 +49,7 @@ export function LargeInput({
         className="border border-current bg-transparent px-3 py-2 text-2xl"
         type={type}
         value={value}
-        onChange={(evt) => {
+        onChange={evt => {
           evt.preventDefault();
           onChange(evt.target.value);
         }}

@@ -24,19 +24,16 @@ export default function Login() {
     }
     login
       .login(email, password)
-      .then((result) => {
+      .then(result => {
         setStatus(result || "");
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
         setStatus(t("Something went wrong"));
       });
   };
   return (
-    <form
-      onSubmit={submit}
-      className="mx-auto flex max-w-lg flex-col gap-4 text-xl"
-    >
+    <form onSubmit={submit} className="mx-auto flex max-w-lg flex-col gap-4 text-xl">
       <PageHeader backTo="/about">{t("login-screen-title")}</PageHeader>
       {login.viewer ? (
         <LoginDone viewer={login.viewer} />
@@ -66,8 +63,7 @@ export default function Login() {
           <View style={{ marginTop: 16, alignItems: "flex-end" }}>
             <TText style={{ fontSize: 16 }}>
               <Trans>
-                I don't have account,{" "}
-                <InlineLink to="/register">register</InlineLink>
+                I don't have account, <InlineLink to="/register">register</InlineLink>
               </Trans>
             </TText>
           </View>

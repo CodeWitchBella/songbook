@@ -25,7 +25,7 @@ function ChangelogBody() {
   }
   return (
     <>
-      {changelog.data.map((entry) => (
+      {changelog.data.map(entry => (
         <ChangelogEntry key={entry.cz.tagName} date={entry.cz.tagName.slice(1)}>
           <ChangeBody body={lng === "en" ? entry.en.body : entry.cz.body} />
         </ChangelogEntry>
@@ -65,9 +65,7 @@ function Li({ children }: { children: any }) {
   const depth = useContext(depthCtx);
   return (
     <View style={{ flexDirection: "row" }}>
-      <TText style={{ fontWeight: "bold", marginRight: 4 }}>
-        {depth === 1 ? "-" : "•"}{" "}
-      </TText>
+      <TText style={{ fontWeight: "bold", marginRight: 4 }}>{depth === 1 ? "-" : "•"} </TText>
       <TText>{children}</TText>
     </View>
   );

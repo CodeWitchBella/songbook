@@ -16,15 +16,10 @@ export async function pdfSetup(pdf: typeof import("@react-pdf/renderer")) {
 
   await Promise.all(promises);
   // disable hyphenation
-  pdf.Font.registerHyphenationCallback((w) => [w] as any);
+  pdf.Font.registerHyphenationCallback(w => [w] as any);
   return pdf;
 
-  function font(
-    name: string,
-    regular: string,
-    bold: string,
-    preload?: boolean
-  ) {
+  function font(name: string, regular: string, bold: string, preload?: boolean) {
     pdf.Font.register({
       family: name,
       src: regular,
@@ -52,7 +47,7 @@ export async function pdfSetup(pdf: typeof import("@react-pdf/renderer")) {
           fontFamily: name,
           fontStyle: "normal",
           fontWeight: 700,
-        })
+        }),
       );
     }
   }

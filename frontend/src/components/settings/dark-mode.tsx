@@ -19,18 +19,8 @@ export function DarkModeSettings() {
         maxWidth: "100%",
       }}
     >
-      <Option
-        src={light}
-        text={t("Light")}
-        selected={s.setting === "light"}
-        onSelect={() => s.setSetting("light")}
-      />
-      <Option
-        src={dark}
-        text={t("Dark")}
-        selected={s.setting === "dark"}
-        onSelect={() => s.setSetting("dark")}
-      />
+      <Option src={light} text={t("Light")} selected={s.setting === "light"} onSelect={() => s.setSetting("light")} />
+      <Option src={dark} text={t("Dark")} selected={s.setting === "dark"} onSelect={() => s.setSetting("dark")} />
       <Option
         src={automatic}
         text={t("Automatic")}

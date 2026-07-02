@@ -28,19 +28,12 @@ const darkModeContext = createContext<{
   setting: DarkModeSetting;
   setSetting: (v: DarkModeSetting) => void;
 }>({ value: false, setting: "light", setSetting: () => {} });
-export function DarkModeProvider({
-  children,
-}: {
-  children: JSX.Element | readonly JSX.Element[];
-}) {
+export function DarkModeProvider({ children }: { children: JSX.Element | readonly JSX.Element[] }) {
   const [urlValue] = useState(() => {
-    if (new URLSearchParams(window.location.search).has("light"))
-      return { bool: false, string: "light" as const };
+    if (new URLSearchParams(window.location.search).has("light")) return { bool: false, string: "light" as const };
     return null;
   });
-  const [setting, setSetting] = useState(() =>
-    deserialize(localStorage.getItem(key)),
-  );
+  const [setting, setSetting] = useState(() => deserialize(localStorage.getItem(key)));
   useEffect(() => {
     window.addEventListener("storage", listener);
     return () => void window.removeEventListener("storage", listener);
@@ -53,9 +46,7 @@ export function DarkModeProvider({
     }
   }, [urlValue]);
 
-  const [systemPreference, setSystemPreference] = useState(
-    () => !!window.matchMedia(query).matches,
-  );
+  const [systemPreference, setSystemPreference] = useState(() => !!window.matchMedia(query).matches);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
@@ -69,15 +60,14 @@ export function DarkModeProvider({
     return () => mediaQuery.removeEventListener("change", handler);
   }, [systemPreference, urlValue?.string]);
 
-  const resolvedValue =
-    setting === "automatic" ? systemPreference : setting === "dark";
+  const resolvedValue = setting === "automatic" ? systemPreference : setting === "dark";
   return (
     <darkModeContext.Provider
       value={useMemo(
         () => ({
           value: urlValue?.bool ?? resolvedValue,
           setting,
-          setSetting: (value) => {
+          setSetting: value => {
             setSetting(value);
             apply(value);
             write(value);

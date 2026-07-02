@@ -4,10 +4,7 @@ import * as page from "#/utils/page";
 export function SizerPage({ children }: PropsWithChildren<{}>) {
   return (
     <section className="relative flex h-[100vh] items-center justify-center">
-      <div
-        className="indexcss-sizer-page relative break-after-page overflow-hidden"
-        style={{ padding: "1em" }}
-      >
+      <div className="indexcss-sizer-page relative break-after-page overflow-hidden" style={{ padding: "1em" }}>
         {children}
       </div>
     </section>

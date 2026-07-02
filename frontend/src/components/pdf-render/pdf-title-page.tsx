@@ -24,10 +24,18 @@ export function PDFTitlePage({ title }: { title: string }) {
           {typeof ImageRef === "string" ? (
             <Image
               source={ImageRef}
-              style={{ height: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[0] : 90), width: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[1]:63) }}
+              style={{
+                height: vh(Array.isArray(meta.imageOnly) ? meta.imageOnly[0] : 90),
+                width: vh(Array.isArray(meta.imageOnly) ? meta.imageOnly[1] : 63),
+              }}
             />
           ) : (
-            <ImageRef style={{ height: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[0] :90), width: vh(Array.isArray( meta.imageOnly) ? meta.imageOnly[1] :63) }} />
+            <ImageRef
+              style={{
+                height: vh(Array.isArray(meta.imageOnly) ? meta.imageOnly[0] : 90),
+                width: vh(Array.isArray(meta.imageOnly) ? meta.imageOnly[1] : 63),
+              }}
+            />
           )}
         </View>
       </PDFPage>
@@ -44,14 +52,9 @@ export function PDFTitlePage({ title }: { title: string }) {
         }}
       >
         {typeof ImageRef === "string" ? (
-          <Image
-            source={ImageRef}
-            style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}}
-          />
+          <Image source={ImageRef} style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}} />
         ) : (
-          <ImageRef
-            style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}}
-          />
+          <ImageRef style={meta.imageWidth ? { width: em(meta.imageWidth) } : {}} />
         )}
       </View>
       <View
@@ -62,9 +65,7 @@ export function PDFTitlePage({ title }: { title: string }) {
         }}
       >
         <View style={{ paddingBottom: em(1.5) }}>
-          <Text style={{ fontSize: em(3), fontFamily: "ShantellSans" }}>
-            {meta.title}
-          </Text>
+          <Text style={{ fontSize: em(3), fontFamily: "ShantellSans" }}>{meta.title}</Text>
         </View>
         <View>
           <Text style={{ fontSize: em(2) }}>{meta.subtitle}</Text>

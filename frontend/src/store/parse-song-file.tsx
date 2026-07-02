@@ -11,10 +11,7 @@ export function parseTextSongFile(fname: string, content: string) {
   };
 }
 
-export const parseSongFile = (
-  fname: string,
-  content: string,
-): ReturnType<typeof parseTextSongFile> => {
+export const parseSongFile = (fname: string, content: string): ReturnType<typeof parseTextSongFile> => {
   if (content[0] === "{") {
     const parsed = JSON.parse(content);
     return {

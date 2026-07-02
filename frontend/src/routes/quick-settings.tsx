@@ -54,13 +54,7 @@ export default function QuickSettings() {
   );
 }
 
-function Titled({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Titled({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={style.titled}>
       <TH2>{title}</TH2>
@@ -91,7 +85,7 @@ function TitledSelect<T extends string>({
           background: "transparent",
           color: "inherit",
         }}
-        onChange={(evt) => {
+        onChange={evt => {
           onChange(evt.currentTarget.value as any);
         }}
         value={value}

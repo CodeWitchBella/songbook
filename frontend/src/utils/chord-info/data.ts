@@ -17,19 +17,14 @@ export const variants = {
 
 function parseString(text: string) {
   if (typeof text !== "string" || text.length !== 1)
-    throw new Error(
-      "Expected single character for string got " + JSON.stringify(text),
-    );
+    throw new Error("Expected single character for string got " + JSON.stringify(text));
   if (text === "x") return "x" as const;
   const number = Number.parseInt(text);
-  if (!Number.isInteger(number) || number < 0)
-    throw new Error("Invalid string " + JSON.stringify(text));
+  if (!Number.isInteger(number) || number < 0) throw new Error("Invalid string " + JSON.stringify(text));
   return number;
 }
 type StringName = number | "x";
-function parseGuitarChord(
-  chord: string,
-): [StringName, StringName, StringName, StringName, StringName, StringName] {
+function parseGuitarChord(chord: string): [StringName, StringName, StringName, StringName, StringName, StringName] {
   if (typeof chord !== "string" || chord.length !== 6)
     throw new Error("Not guitar chord. Got " + JSON.stringify(chord));
   return [
@@ -263,12 +258,10 @@ const interData = Object.entries(sourceData).map(([major, definition]) => ({
   })),
 }));
 
-const czechData = interData.map((chord) => ({
+const czechData = interData.map(chord => ({
   ...chord,
   major: chord.major === "B" ? "H" : chord.major === "Bb" ? "B" : chord.major,
-  equivalentWith: chord.equivalentWith.map((name) =>
-    name === "B#" ? "H#" : name,
-  ),
+  equivalentWith: chord.equivalentWith.map(name => (name === "B#" ? "H#" : name)),
 }));
 
 export const data = { czech: czechData, inter: interData };

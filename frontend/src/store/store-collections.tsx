@@ -56,10 +56,8 @@ async function collectionQuery(modifiedAfter?: DateTime): Promise<{
     variables: {
       modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
     },
-  }).then((v) => {
-    const deleted = v.data.collections
-      .filter((c: any) => c.__typename === "Deleted")
-      .map((c: any) => ({ id: c.id }));
+  }).then(v => {
+    const deleted = v.data.collections.filter((c: any) => c.__typename === "Deleted").map((c: any) => ({ id: c.id }));
     const changed = v.data.collections
       .filter((c: any) => c.__typename === "CollectionRecord")
       .map((c: any) => ({
@@ -79,23 +77,23 @@ export function createCollectionStore() {
   return new GenericStore<CollectionType, CollectionRecord<string>>({
     cacheKey: "collections",
     version: 2,
-    serialize: (item) => {
+    serialize: item => {
       return {
         ...item,
         lastModified: item.lastModified.toISO()!, // <- todo fixme
         insertedAt: item.insertedAt.toISO()!, // <- todo fixme
       };
     },
-    deserialize: (item) => {
+    deserialize: item => {
       return {
         ...item,
         lastModified: DateTime.fromISO(item.lastModified),
         insertedAt: DateTime.fromISO(item.insertedAt),
       };
     },
-    loadIncremental: (after) => collectionQuery(after),
+    loadIncremental: after => collectionQuery(after),
     loadInitial: () =>
-      collectionQuery().then((v) => {
+      collectionQuery().then(v => {
         return v.changed;
       }),
   });

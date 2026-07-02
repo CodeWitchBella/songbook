@@ -103,7 +103,7 @@ function useSubmit(submitter: () => Promise<string | false>) {
     setDisabled(true);
 
     submitter()
-      .then((slug) => {
+      .then(slug => {
         console.log("result", slug);
         if (slug) {
           window.location.pathname = `/edit/${slug}`;
@@ -111,7 +111,7 @@ function useSubmit(submitter: () => Promise<string | false>) {
           setDisabled(false);
         }
       })
-      .catch((e) => {
+      .catch(e => {
         setDisabled(false);
         console.error(e);
       });
@@ -126,21 +126,14 @@ function getURLFromSearch(search: string) {
       const match = /https?:[^ \n\t]+/.exec(input);
       if (!match) return "";
       const url = new URL(match[0], "file:///");
-      return url.protocol === "http:" || url.protocol === "https:"
-        ? match[0]
-        : "";
+      return url.protocol === "http:" || url.protocol === "https:" ? match[0] : "";
     } catch {
       return "";
     }
   }
 
   const params = new URLSearchParams(search);
-  return (
-    parse(params.get("url")) ||
-    parse(params.get("text")) ||
-    parse(params.get("title")) ||
-    ""
-  );
+  return parse(params.get("url")) || parse(params.get("text")) || parse(params.get("title")) || "";
 }
 
 const createStyles = StyleSheet.create({
@@ -166,8 +159,7 @@ function CreateSongLink() {
   const [error, setError] = useState("");
 
   const { t } = useTranslation();
-  const [downloadedSong, setDownloadedSong] =
-    useState<IntermediateSongData | null>(null);
+  const [downloadedSong, setDownloadedSong] = useState<IntermediateSongData | null>(null);
   const form = useSubmit(async () => {
     setError("");
     const song = await songDataFromLink(link, t);
@@ -182,20 +174,10 @@ function CreateSongLink() {
   return (
     <div className="mt-12 flex max-w-full justify-center">
       {downloadedSong ? (
-        <SubmitSong
-          cancel={() => setDownloadedSong(null)}
-          songData={downloadedSong}
-        />
+        <SubmitSong cancel={() => setDownloadedSong(null)} songData={downloadedSong} />
       ) : (
-        <form
-          className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
-          onSubmit={form.submit}
-        >
-          <LargeInput
-            label={t("create.Link")}
-            value={link}
-            onChange={setLink}
-          />
+        <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg" onSubmit={form.submit}>
+          <LargeInput label={t("create.Link")} value={link} onChange={setLink} />
           <div className="h-2" />
           <PrimaryButton disabled={form.disabled} onPress={form.submit}>
             {t("create.Download")}
@@ -208,13 +190,7 @@ function CreateSongLink() {
   );
 }
 
-function SubmitSong({
-  songData,
-  cancel,
-}: {
-  songData: IntermediateSongData;
-  cancel: () => void;
-}) {
+function SubmitSong({ songData, cancel }: { songData: IntermediateSongData; cancel: () => void }) {
   const { t } = useTranslation();
   const [error, setError] = useState("");
   const song = useMemo(() => convertToSong(songData), [songData]);
@@ -232,22 +208,16 @@ function SubmitSong({
   });
 
   return (
-    <form
-      className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
-      onSubmit={form.submit}
-    >
+    <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg" onSubmit={form.submit}>
       <TText style={createStyles.error}>{error}</TText>
       <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Song name")}:</TText>{" "}
-        {song.title}
+        <TText style={createStyles.label}>{t("create.Song name")}:</TText> {song.title}
       </TText>
       <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Link")}:</TText>{" "}
-        {songData.link}
+        <TText style={createStyles.label}>{t("create.Link")}:</TText> {songData.link}
       </TText>
       <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Song author")}:</TText>{" "}
-        {song.author}
+        <TText style={createStyles.label}>{t("create.Song author")}:</TText> {song.author}
       </TText>
       <TText style={createStyles.line}>
         <TText style={createStyles.label}>{t("create.Text")}:</TText>{" "}
@@ -258,11 +228,7 @@ function SubmitSong({
         <PrimaryButton onPress={cancel} disabled={form.disabled}>
           {t("create.Cancel")}
         </PrimaryButton>
-        <PrimaryButton
-          disabled={form.disabled}
-          onPress={form.submit}
-          style={{ marginLeft: 8 }}
-        >
+        <PrimaryButton disabled={form.disabled} onPress={form.submit} style={{ marginLeft: 8 }}>
           {t("create.Confirm")}
         </PrimaryButton>
       </View>
@@ -284,20 +250,9 @@ function CreateSongManual() {
 
   return (
     <div className="mt-12 flex max-w-full justify-center">
-      <form
-        className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg"
-        onSubmit={submit}
-      >
-        <LargeInput
-          label={t("create.Song author")}
-          value={author}
-          onChange={setAuthor}
-        />
-        <LargeInput
-          label={t("create.Song name")}
-          value={title}
-          onChange={setTitle}
-        />
+      <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg" onSubmit={submit}>
+        <LargeInput label={t("create.Song author")} value={author} onChange={setAuthor} />
+        <LargeInput label={t("create.Song name")} value={title} onChange={setTitle} />
         <div className="h-2" />
         <PrimaryButton disabled={disabled} onPress={submit}>
           {t("create.Create")}

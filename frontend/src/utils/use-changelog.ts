@@ -16,27 +16,23 @@ const loadChangelog = (() => {
       throw new Error("Failed to load data");
     }
     return res.body.data
-      .map(
-        (
-          item,
-        ): Translated<{ title: string; tagName: string; body: string }> => {
-          const titles = item.name.split("/").map((i) => i.trim());
-          const base = { tagName: item.tagName };
-          return {
-            en: {
-              ...base,
-              title: titles.length > 1 ? titles[0] : item.name,
-              tagName: item.tagName,
-              body: parseBodyLanguage(item.body, "English"),
-            },
-            cz: {
-              ...base,
-              title: titles.length > 1 ? titles[1] : item.name,
-              body: parseBodyLanguage(item.body, "Česky"),
-            },
-          };
-        },
-      )
+      .map((item): Translated<{ title: string; tagName: string; body: string }> => {
+        const titles = item.name.split("/").map(i => i.trim());
+        const base = { tagName: item.tagName };
+        return {
+          en: {
+            ...base,
+            title: titles.length > 1 ? titles[0] : item.name,
+            tagName: item.tagName,
+            body: parseBodyLanguage(item.body, "English"),
+          },
+          cz: {
+            ...base,
+            title: titles.length > 1 ? titles[1] : item.name,
+            body: parseBodyLanguage(item.body, "Česky"),
+          },
+        };
+      })
       .sort((a, b) => b.en.tagName.localeCompare(a.en.tagName));
   }
   let promise: ReturnType<typeof doFetch> | null = null;
@@ -63,11 +59,11 @@ function parseBodyLanguage(body: string, language: string) {
 
 function pfinally<T>(promise: Promise<T>, handler: () => void): Promise<T> {
   return promise.then(
-    (val) => {
+    val => {
       handler();
       return val;
     },
-    (err) => {
+    err => {
       handler();
       throw err;
     },
@@ -85,24 +81,21 @@ export function useChangelog() {
   useEffect(() => {
     let ended = false;
     loadChangelog().then(
-      (val) => {
+      val => {
         storage.setItem("changelog", val);
         if (!ended) setData({ status: "data", data: val });
       },
-      (err) => console.error(err),
+      err => console.error(err),
     );
     storage.getItem("changelog", (err, value: any) => {
       if (value) {
-        setData((prev) => {
+        setData(prev => {
           const s = prev.status;
-          if (s === "initializing" || s === "error" || s === "loading")
-            return { status: "data", data: value };
+          if (s === "initializing" || s === "error" || s === "loading") return { status: "data", data: value };
           return prev;
         });
       } else {
-        setData((d) =>
-          d.status === "initializing" ? { status: "loading" } : d,
-        );
+        setData(d => (d.status === "initializing" ? { status: "loading" } : d));
       }
     });
     return () => {

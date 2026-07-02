@@ -24,10 +24,7 @@ type ButtonPropsLink = ButtonPropsBase<{ to: string; replace?: boolean }>;
 
 export type ButtonProps = ButtonPropsLink | ButtonPropsNonLink;
 
-export function useLinkOnPress(
-  to: string,
-  { replace = false }: { replace?: boolean } = {},
-) {
+export function useLinkOnPress(to: string, { replace = false }: { replace?: boolean } = {}) {
   const navigate = useNavigate();
   return useCallback(
     (event?: { preventDefault?: () => any }) => {
@@ -42,19 +39,14 @@ export function useLinkOnPress(
   );
 }
 
-function BasicButtonBase({
-  children,
-  disabled,
-  style,
-  ...rest
-}: ButtonPropsNonLink & { href?: string }) {
+function BasicButtonBase({ children, disabled, style, ...rest }: ButtonPropsNonLink & { href?: string }) {
   const [hover, setHover] = useState(false);
   const inPressOutside = useInPressOutside();
 
   return (
     <Pressable
       disabled={disabled}
-      onPress={(event) => {
+      onPress={event => {
         event.preventDefault();
         if (disabled) return;
         if (isPressOverriden() && !inPressOutside) return;
@@ -75,9 +67,7 @@ function BasicButtonBase({
         style={[
           { borderColor: useColors().borders },
           style,
-          hover && (!isPressOverriden() || inPressOutside)
-            ? { textDecorationLine: "underline" }
-            : null,
+          hover && (!isPressOverriden() || inPressOutside) ? { textDecorationLine: "underline" } : null,
         ]}
       >
         {children}
@@ -87,13 +77,7 @@ function BasicButtonBase({
 }
 
 function BasicButtonLink({ to, replace, ...rest }: ButtonPropsLink) {
-  return (
-    <BasicButtonBase
-      onPress={useLinkOnPress(to, { replace })}
-      href={to}
-      {...rest}
-    />
-  );
+  return <BasicButtonBase onPress={useLinkOnPress(to, { replace })} href={to} {...rest} />;
 }
 
 export function BasicButton(props: ButtonProps) {

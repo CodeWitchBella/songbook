@@ -23,9 +23,7 @@ export default function SongSection({
 }) {
   const { song } = useSong({ slug });
   const [continuous] = useContinuousModeSetting();
-  const parsed = song
-    ? parser.parseSong("my", song.text, { continuous })
-    : null;
+  const parsed = song ? parser.parseSong("my", song.text, { continuous }) : null;
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -35,10 +33,7 @@ export default function SongSection({
 
   const query = new URLSearchParams(location.search);
   const tr = query.get("transposition");
-  const transposition = Number.parseInt(
-    `${(Array.isArray(tr) ? tr[0] : tr) || 0}`,
-    10,
-  );
+  const transposition = Number.parseInt(`${(Array.isArray(tr) ? tr[0] : tr) || 0}`, 10);
 
   return (
     <React.Fragment>
@@ -55,16 +50,14 @@ export default function SongSection({
         <SongMenu
           song={song}
           transposition={transposition}
-          setTransposition={(v) =>
+          setTransposition={v =>
             navigate(queryJoin(location.pathname, setTransposition(query, v)), {
               replace: true,
             })
           }
         />
       )}
-      {chordHelp ? (
-        <ChordHelp chord={chordHelp} close={() => setChordHelp("")} />
-      ) : null}
+      {chordHelp ? <ChordHelp chord={chordHelp} close={() => setChordHelp("")} /> : null}
     </React.Fragment>
   );
 }

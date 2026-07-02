@@ -17,18 +17,12 @@ import type { SongType } from "#/store/store-song";
 import { updateSong } from "#/store/store-song";
 import * as parser from "#/utils/song-parser/song-parser";
 
-function Textarea({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => any;
-}) {
+function Textarea({ value, onChange }: { value: string; onChange: (v: string) => any }) {
   return (
     <textarea
       className="h-96 min-w-full border border-black bg-slate-100 p-2 text-black dark:border-white dark:bg-slate-900 dark:text-white"
       value={value}
-      onChange={(evt) => {
+      onChange={evt => {
         evt.preventDefault();
         onChange(evt.target.value);
       }}
@@ -36,36 +30,15 @@ function Textarea({
   );
 }
 
-const Columns = ({
-  children,
-  previewActive,
-}: PropsWithChildren<{ previewActive: boolean }>) => (
-  <div
-    className={
-      previewActive
-        ? "indexcss-edit-song-columns--preview"
-        : "indexcss-edit-song-columns"
-    }
-  >
-    {children}
-  </div>
+const Columns = ({ children, previewActive }: PropsWithChildren<{ previewActive: boolean }>) => (
+  <div className={previewActive ? "indexcss-edit-song-columns--preview" : "indexcss-edit-song-columns"}>{children}</div>
 );
 
-function Help({
-  children,
-  title,
-  hiddenTitle,
-}: {
-  title: string;
-  hiddenTitle: string;
-  children: React.ReactNode;
-}) {
+function Help({ children, title, hiddenTitle }: { title: string; hiddenTitle: string; children: React.ReactNode }) {
   const [toggled, setToggled] = useState(false);
   return (
     <div className="mx-auto mt-10 max-w-prose text-lg">
-      <ListButton onPress={() => void setToggled((v) => !v)}>
-        {toggled ? title : hiddenTitle}
-      </ListButton>
+      <ListButton onPress={() => void setToggled(v => !v)}>{toggled ? title : hiddenTitle}</ListButton>
       {toggled && children}
     </div>
   );
@@ -158,13 +131,10 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     continuousMode: false,
   };
   const latestState = useRef<State>(initialState);
-  const [state, setState] = useReducer(
-    (state: State, patch: Partial<State>) => {
-      latestState.current = { ...state, ...patch };
-      return latestState.current;
-    },
-    initialState,
-  );
+  const [state, setState] = useReducer((state: State, patch: Partial<State>) => {
+    latestState.current = { ...state, ...patch };
+    return latestState.current;
+  }, initialState);
 
   const changeCounterRef = useRef(0);
 
@@ -200,7 +170,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           change({});
         }
       })
-      .catch((e) => {
+      .catch(e => {
         console.error(e);
         setState({ saveStatus: "FAILED" });
       });
@@ -249,65 +219,35 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     change({ pretranspose: val });
   };
   const spotifyChange = (val: string) => change({ spotify: val });
-  const extraSearchableChange = (val: string) =>
-    change({ extraSearchable: val });
-  const extraNonSearchableChange = (val: string) =>
-    change({ extraNonSearchable: val });
+  const extraSearchableChange = (val: string) => change({ extraSearchable: val });
+  const extraNonSearchableChange = (val: string) => change({ extraNonSearchable: val });
 
   const advancedChange = (value: boolean) => setState({ advanced: value });
-  const simpleEditorChange = (value: boolean) =>
-    setState({ simpleEditor: value });
+  const simpleEditorChange = (value: boolean) => setState({ simpleEditor: value });
   const previewChange = (value: boolean) => setState({ preview: value });
   const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value });
-  const continuousModeChange = (value: boolean) =>
-    setState({ continuousMode: value });
+  const continuousModeChange = (value: boolean) => setState({ continuousMode: value });
 
-  const editor = (
-    lang: "song" | "none",
-    value: string,
-    onChange: (v: string) => void,
-  ) =>
+  const editor = (lang: "song" | "none", value: string, onChange: (v: string) => void) =>
     state.simpleEditor ? (
       <Textarea value={value} onChange={onChange} />
     ) : (
-      <SongTextEditor
-        initialValue={value}
-        onChange={onChange}
-        language={lang}
-      />
+      <SongTextEditor initialValue={value} onChange={onChange} language={lang} />
     );
 
   return (
     <Columns previewActive={state.preview}>
       <div>
         <form className="mx-auto flex max-w-3xl flex-col" onSubmit={submit}>
-          <PageHeader backTo={"/song/" + props.song.slug}>
-            {t("edit.Edit song")}
-          </PageHeader>
+          <PageHeader backTo={"/song/" + props.song.slug}>{t("edit.Edit song")}</PageHeader>
           <Input label="Autor" value={state.author} onChange={authorChange} />
-          <Input
-            label={t("edit.Song name")}
-            value={state.title}
-            onChange={titleChange}
-          />
-          <Input
-            label={t("edit.Spotify link")}
-            value={state.spotify}
-            onChange={spotifyChange}
-          />
+          <Input label={t("edit.Song name")} value={state.title} onChange={titleChange} />
+          <Input label={t("edit.Spotify link")} value={state.spotify} onChange={spotifyChange} />
           <div className="mb-0.5">
-            <Checkbox
-              label={t("edit.Show preview")}
-              checked={state.preview}
-              onChange={previewChange}
-            />
+            <Checkbox label={t("edit.Show preview")} checked={state.preview} onChange={previewChange} />
             {state.preview ? (
               <>
-                <Checkbox
-                  label={t("edit.PDF preview")}
-                  checked={state.pdfPreview}
-                  onChange={pdfPreviewChange}
-                />
+                <Checkbox label={t("edit.PDF preview")} checked={state.pdfPreview} onChange={pdfPreviewChange} />
                 <Checkbox
                   label={t("edit.Continuous mode")}
                   checked={state.continuousMode}
@@ -321,28 +261,16 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
             checked={state.simpleEditor}
             onChange={simpleEditorChange}
           />
-          <Checkbox
-            label={t("edit.Advanced settings")}
-            checked={state.advanced}
-            onChange={advancedChange}
-          />
+          <Checkbox label={t("edit.Advanced settings")} checked={state.advanced} onChange={advancedChange} />
           {state.advanced && (
             <>
-              <Input
-                label={t("edit.Font size")}
-                value={state.fontSize}
-                onChange={fontSizeChange}
-              />
+              <Input label={t("edit.Font size")} value={state.fontSize} onChange={fontSizeChange} />
               <Input
                 label={t("edit.Space between paragraphs")}
                 value={state.paragraphSpace}
                 onChange={paragraphSpaceChange}
               />
-              <Input
-                label={t("edit.Space below title")}
-                value={state.titleSpace}
-                onChange={titleSpaceChange}
-              />
+              <Input label={t("edit.Space below title")} value={state.titleSpace} onChange={titleSpaceChange} />
               <Input
                 label={t("edit.Predefined transposition")}
                 value={state.pretranspose}
@@ -352,99 +280,63 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           )}
           {editor("song", state.textWithChords, textWithChordsChange)}
 
-          {state.saveStatus === "FAILED" && (
-            <button>{t("edit.Save changes")}</button>
-          )}
+          {state.saveStatus === "FAILED" && <button>{t("edit.Save changes")}</button>}
           <i>{translateStatus(state.saveStatus)}</i>
         </form>
         <Help title={t("edit.Hide help")} hiddenTitle={t("edit.Show help")}>
           <TH2>Jak se tahle věc ovládá?</TH2>
+          <TP>Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na vyplnění údajů o songu.</TP>
           <TP>
-            Myslím, že horní políčka nemusím nikomu vysvětlovat - ty jsou na
-            vyplnění údajů o songu.
+            Pod tím je pole na vyplnění songu. Do něj píšeš text písně a pokud chceš začít psát akord tak ho napiš do
+            hranatých závorek [A].
           </TP>
           <TP>
-            Pod tím je pole na vyplnění songu. Do něj píšeš text písně a pokud
-            chceš začít psát akord tak ho napiš do hranatých závorek [A].
-          </TP>
-          <TP>
-            Změny se automaticky ukládají, nebo je můžeš uložit ručně kliknutím
-            na tlačítko uložit. Současný stav je:{" "}
+            Změny se automaticky ukládají, nebo je můžeš uložit ručně kliknutím na tlačítko uložit. Současný stav je:{" "}
             <i>{translateStatus(state.saveStatus, true)}</i>
           </TP>
           <TP>
-            Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je
-            sloka stejná jako jiná sloka tak stačí napsat <b>S:2</b>. Pro
-            označení refrénu se používá <b>R:</b> nebo alternativně, pokud je
-            refrénů víc <b>R1:</b>, <b>R2:</b> atd
+            Pro označení sloky se používá <b>S:</b> na začátku řádku. Pokud je sloka stejná jako jiná sloka tak stačí
+            napsat <b>S:2</b>. Pro označení refrénu se používá <b>R:</b> nebo alternativně, pokud je refrénů víc{" "}
+            <b>R1:</b>, <b>R2:</b> atd
           </TP>
           <TP>
-            Pokud potřebuješ udělat oddělovač stran tak napiš{" "}
-            <b>---&nbsp;page&nbsp;break&nbsp;---</b>
+            Pokud potřebuješ udělat oddělovač stran tak napiš <b>---&nbsp;page&nbsp;break&nbsp;---</b>
+          </TP>
+          <TP>Tučný text (například pro označení speciálních sekcí) se píše takto: [*tučný text]</TP>
+          <TP>Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]</TP>
+          <TP>Text v akordové řádce, který nemá být tučně se píše takto [^abc]</TP>
+          <TP>Pokud má pro sebe i nechat místo tak funguje toto pořadí [_^abc]</TP>
+          <TP>
+            Editor umí pár chytrých funkcí, které bys nutně nečekal. Například Ctrl+Z. Nejzajímavější funkce je
+            posouvání akordů doleva a doprava pomocí Ctrl+H a Ctrl+L. Další funkce jako mazání akordů ve vybrané sekci
+            jdou zobrazit kliknutím pravého tlačítka myši a nebo zmáčknutím klávesy F1.
           </TP>
           <TP>
-            Tučný text (například pro označení speciálních sekcí) se píše takto:
-            [*tučný text]
+            Dále existuje pár pokročilých příkazů, které jsou zatím implementované tak napůl. Plán je mít možnost
+            přepnout mezi digitálním zobrazením ve kterém budou akordy všude a neboudou se zobrazovat předěly stran a
+            zobrazením pro tisk, které bude vypadat jako doteď.
           </TP>
           <TP>
-            Akord, který pro sebe udělá místo v textu se zapisuje takto [_C]
+            Příkaz musí být ve vlastní "sloce", tj. musí před ním i po něm být volný řádek. Všechny v současnosti
+            implementované příkazy umožňují změnit zobrazení mezi stránkovaným (pro tisk) a plynulým zobrazením. V
+            plynulém zobrazení chceme akordy zobrazit všude, ale ve stránkovaném zobrazení máme omezený prostor, což
+            znamená, že akordy chceme zobrazovat pouze tam kde je potřeba. To samé někdy platí pro např. slova refrénů.
           </TP>
           <TP>
-            Text v akordové řádce, který nemá být tučně se píše takto [^abc]
-          </TP>
-          <TP>
-            Pokud má pro sebe i nechat místo tak funguje toto pořadí [_^abc]
-          </TP>
-          <TP>
-            Editor umí pár chytrých funkcí, které bys nutně nečekal. Například
-            Ctrl+Z. Nejzajímavější funkce je posouvání akordů doleva a doprava
-            pomocí Ctrl+H a Ctrl+L. Další funkce jako mazání akordů ve vybrané
-            sekci jdou zobrazit kliknutím pravého tlačítka myši a nebo
-            zmáčknutím klávesy F1.
-          </TP>
-          <TP>
-            Dále existuje pár pokročilých příkazů, které jsou zatím
-            implementované tak napůl. Plán je mít možnost přepnout mezi
-            digitálním zobrazením ve kterém budou akordy všude a neboudou se
-            zobrazovat předěly stran a zobrazením pro tisk, které bude vypadat
-            jako doteď.
-          </TP>
-          <TP>
-            Příkaz musí být ve vlastní "sloce", tj. musí před ním i po něm být
-            volný řádek. Všechny v současnosti implementované příkazy umožňují
-            změnit zobrazení mezi stránkovaným (pro tisk) a plynulým zobrazením.
-            V plynulém zobrazení chceme akordy zobrazit všude, ale ve
-            stránkovaném zobrazení máme omezený prostor, což znamená, že akordy
-            chceme zobrazovat pouze tam kde je potřeba. To samé někdy platí pro
-            např. slova refrénů.
-          </TP>
-          <TP>
-            Konkrétně jde o příkazy <b>{"[>chords"}&nbsp;off]</b> a{" "}
-            <b>{"[>chords"}&nbsp;on]</b>, které zapínají a vypínají zobrazování
-            akordů ve stránkované verzi. Druhá sada příkazů je{" "}
-            <b>{"[>variant"}&nbsp;long]</b>, <b>{"[>variant"}&nbsp;paged]</b> a{" "}
-            <b>{"[>variant"}&nbsp;both]</b>, které přepínají mezi stránkovanou
+            Konkrétně jde o příkazy <b>{"[>chords"}&nbsp;off]</b> a <b>{"[>chords"}&nbsp;on]</b>, které zapínají a
+            vypínají zobrazování akordů ve stránkované verzi. Druhá sada příkazů je <b>{"[>variant"}&nbsp;long]</b>,{" "}
+            <b>{"[>variant"}&nbsp;paged]</b> a <b>{"[>variant"}&nbsp;both]</b>, které přepínají mezi stránkovanou
             variantou a variantou pro "plynulé" zobrazení.
           </TP>
           <TP>Hodně štěstí a díky za pomoc</TP>
         </Help>
-        <Help
-          title={t("edit.Hide extra information")}
-          hiddenTitle={t("edit.Show extra information")}
-        >
+        <Help title={t("edit.Hide extra information")} hiddenTitle={t("edit.Show extra information")}>
           <TH3>{t("edit.Searchable")}</TH3>
-          <TText>
-            Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také
-            dalo použít při vyhledávání
-          </TText>
+          <TText>Např: pro "Mám doma kočku" sem napíšu kočka aby se to slovo také dalo použít při vyhledávání</TText>
           {editor("none", state.extraSearchable || "", extraSearchableChange)}
           <TH3>{t("edit.Non-searchable")}</TH3>
           <TText>Např: odkaz na ultimate guitar</TText>
-          {editor(
-            "none",
-            state.extraNonSearchable || "",
-            extraNonSearchableChange,
-          )}
+          {editor("none", state.extraNonSearchable || "", extraNonSearchableChange)}
         </Help>
       </div>
       {state.preview && (

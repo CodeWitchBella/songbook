@@ -17,10 +17,7 @@ import { FilteredList } from "./filtered-list";
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   return (
     <div className="border-b">
-      <div
-        className="relative mx-auto max-w-md"
-        style={{ width: "calc(100% - 22px)" }}
-      >
+      <div className="relative mx-auto max-w-md" style={{ width: "calc(100% - 22px)" }}>
         {children}
       </div>
     </div>
@@ -68,11 +65,7 @@ function compareSongs(sortByAuthor: boolean) {
 }
 
 function Loader() {
-  return (
-    <div className="flex h-full w-full items-center justify-center text-lg">
-      Načítám seznam písní...
-    </div>
-  );
+  return <div className="flex h-full w-full items-center justify-center text-lg">Načítám seznam písní...</div>;
 }
 
 export default function SongList({
@@ -96,8 +89,8 @@ export default function SongList({
   const songs = useMemo(
     () =>
       source
-        .map((s) => s.item)
-        .filter((song) => {
+        .map(s => s.item)
+        .filter(song => {
           if (filter) return filter(song.id);
           return true;
         })
@@ -118,7 +111,7 @@ export default function SongList({
     <>
       <Search
         text={search || ""}
-        onChange={(v) => {
+        onChange={v => {
           if (clearOnBackRef.current) {
             if (v) {
               setSearch(v, { push: false });
@@ -169,12 +162,7 @@ export default function SongList({
       </Search>
       <div className="min-h-0 grow">
         {songs.length !== 0 ? (
-          <FilteredList
-            songs={songs}
-            search={search || ""}
-            sortByAuthor={sortByAuthor}
-            getSongById={getSongById}
-          />
+          <FilteredList songs={songs} search={search || ""} sortByAuthor={sortByAuthor} getSongById={getSongById} />
         ) : initing || loading ? (
           <Loader />
         ) : null}

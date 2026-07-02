@@ -7,8 +7,7 @@ import getFilteredSongList from "./alg";
 import type { SongListItem } from "./song-list-look";
 import { SongListLook } from "./song-list-look";
 
-const SearchWorker = () =>
-  new Worker(new URL("./worker", import.meta.url), { type: "module" });
+const SearchWorker = () => new Worker(new URL("./worker", import.meta.url), { type: "module" });
 
 const getWorker = (() => {
   let worker: null | ReturnType<typeof SearchWorker> = null;
@@ -26,23 +25,15 @@ const filteredToComponents = (
   songItem: (id: string) => { text: string; slug: string } | null,
 ): SongListItem[] => {
   return [
-    showTitles && filtered.byTitle.length > 0
-      ? { header: "title" as const }
-      : null,
+    showTitles && filtered.byTitle.length > 0 ? { header: "title" as const } : null,
     ...filtered.byTitle.map(songItem),
 
-    showTitles && filtered.byAuthor.length > 0
-      ? { header: "author" as const }
-      : null,
+    showTitles && filtered.byAuthor.length > 0 ? { header: "author" as const } : null,
     ...filtered.byAuthor.map(songItem),
 
-    showTitles && filtered.byText.length > 0
-      ? { header: "text" as const }
-      : null,
+    showTitles && filtered.byText.length > 0 ? { header: "text" as const } : null,
     ...filtered.byText.map(songItem),
-    showTitles && filtered.byExtra.length > 0
-      ? { header: "other" as const }
-      : null,
+    showTitles && filtered.byExtra.length > 0 ? { header: "other" as const } : null,
     ...filtered.byExtra.map(songItem),
   ].filter(notNull);
 };
@@ -72,19 +63,12 @@ export function FilteredList({
     };
   }
   const [list, setList] = useReducer(
-    (
-      _prevState: any,
-      { showTitles, ids }: { showTitles: boolean; ids: FilteredSongs },
-    ) => {
+    (_prevState: any, { showTitles, ids }: { showTitles: boolean; ids: FilteredSongs }) => {
       return filteredToComponents(showTitles, ids, songItem);
     },
     null,
     () => {
-      return filteredToComponents(
-        !!search,
-        getFilteredSongList(songs, search),
-        songItem,
-      );
+      return filteredToComponents(!!search, getFilteredSongList(songs, search), songItem);
     },
   );
 
@@ -94,10 +78,7 @@ export function FilteredList({
       const handler = (msg: MessageEvent) => {
         const { type, value } = msg.data;
         if (type === "setList") {
-          if (
-            value.search === search &&
-            value.sourceListLength === songs.length
-          ) {
+          if (value.search === search && value.sourceListLength === songs.length) {
             setList({ showTitles: !!search, ids: value.list });
           }
         } else {
@@ -114,7 +95,7 @@ export function FilteredList({
     if (worker) {
       worker.postMessage({
         type: "setSongs",
-        value: songs.map<SearchableSong>((song) => ({
+        value: songs.map<SearchableSong>(song => ({
           text: song.text,
           author: song.author,
           id: song.id,
@@ -131,7 +112,7 @@ export function FilteredList({
       setList({
         showTitles: false,
         ids: {
-          byTitle: songs.map((s) => s.id),
+          byTitle: songs.map(s => s.id),
           byAuthor: [],
           byText: [],
           byExtra: [],

@@ -13,26 +13,16 @@ export default function CollectionList() {
   const { t } = useTranslation();
   const { list: unsortedList, refresh } = useCollectionList();
   useEffect(() => {
-    if (
-      !lastRefreshThisRefresh ||
-      lastRefreshThisRefresh.plus({ hours: 1 }) < DateTime.utc()
-    ) {
+    if (!lastRefreshThisRefresh || lastRefreshThisRefresh.plus({ hours: 1 }) < DateTime.utc()) {
       lastRefreshThisRefresh = DateTime.utc();
       refresh();
     }
   }, [refresh]);
-  const sortedList = useMemo(
-    () => [...unsortedList].sort(collectionCompare),
-    [unsortedList],
-  );
+  const sortedList = useMemo(() => [...unsortedList].sort(collectionCompare), [unsortedList]);
   return (
     <div className="mx-auto flex w-full max-w-max flex-col gap-4 px-4 pb-4">
       <PageHeader>{t("Collections")}</PageHeader>
-      <Link
-        state={{ canGoBack: true }}
-        to="/all-songs"
-        className="hover:underline"
-      >
+      <Link state={{ canGoBack: true }} to="/all-songs" className="hover:underline">
         {t("All songs")}
       </Link>
       {sortedList.map(({ item: collection }) => (
