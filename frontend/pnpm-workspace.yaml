@@ -1,0 +1,5 @@
+allowBuilds:
+  "@swc/core": true
+  canvas: true
+  esbuild: true
+minimumReleaseAge: 10080 # 7 days in minutes
