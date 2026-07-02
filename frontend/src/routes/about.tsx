@@ -9,8 +9,7 @@ import { Version } from "#/components/version";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 
-const googleDoc =
-  "https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing";
+const googleDoc = "https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing";
 
 export default function About() {
   const { t } = useTranslation();
@@ -33,10 +32,9 @@ export default function About() {
       <View>
         <TText style={style.infoText}>
           <Trans>
-            Created by{" "}
-            <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
+            Created by <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
           </Trans>
-          {` 2016${endash}2022`}
+          {` 2016${endash}2026`}
         </TText>
       </View>
       <Gap />
