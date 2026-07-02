@@ -239,10 +239,13 @@ importers:
         version: 16.6.1
       drizzle-kit:
         specifier: ^0.22.6
-        version: 0.22.8
+        version: 0.22.8(supports-color@5.5.0)
       drizzle-orm:
         specifier: ^0.31.2
         version: 0.31.4(@planetscale/database@1.20.1)(@types/pg@8.20.0)(mysql2@3.22.5(@types/node@22.20.0))(pg@8.22.0)(postgres@3.4.9)
+      graphql:
+        specifier: ^16.10.0
+        version: 16.14.2
       latinize:
         specifier: ^2.0.0
         version: 2.0.0
@@ -280,9 +283,6 @@ importers:
       '@types/pg':
         specifier: ^8.11.10
         version: 8.20.0
-      graphql:
-        specifier: ^16.10.0
-        version: 16.14.2
       nodemon:
         specifier: ^3.1.9
         version: 3.1.14
@@ -2459,11 +2459,11 @@ snapshots:
 
   dotenv@16.6.1: {}
 
-  drizzle-kit@0.22.8:
+  drizzle-kit@0.22.8(supports-color@5.5.0):
     dependencies:
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.19.12
-      esbuild-register: 3.6.0(esbuild@0.19.12)
+      esbuild-register: 3.6.0(esbuild@0.19.12)(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -2510,7 +2510,7 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.4
 
-  esbuild-register@3.6.0(esbuild@0.19.12):
+  esbuild-register@3.6.0(esbuild@0.19.12)(supports-color@5.5.0):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       esbuild: 0.19.12

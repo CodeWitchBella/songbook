@@ -18,7 +18,6 @@
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.10.5",
     "@types/pg": "^8.11.10",
-    "graphql": "^16.10.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
@@ -27,6 +26,7 @@
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "@codewitchbella/ts-utils": "^0.2.0",
+    "graphql": "^16.10.0",
     "@isbl/bcryptjs": "^3.0.0-beta.3",
     "@planetscale/database": "^1.19.0",
     "@sagi.io/workers-jwt": "^0.0.26",
