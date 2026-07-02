@@ -1,0 +1,40 @@
+{
+  "languages": {
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "frontend/node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath={buffer_path}"]
+        }
+      },
+      "language_servers": ["!vtsls", "!eslint", "!biome", "oxc", "..."]
+    },
+    "TypeScript": {
+      "formatter": {
+        "external": {
+          "command": "frontend/node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath={buffer_path}"]
+        }
+      },
+      "language_servers": ["!eslint", "!biome", "oxc", "..."]
+    },
+    "TSX": {
+      "formatter": {
+        "external": {
+          "command": "frontend/node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath={buffer_path}"]
+        }
+      },
+      "language_servers": ["!eslint", "!biome", "oxc", "..."]
+    },
+    "JSX": {
+      "formatter": {
+        "external": {
+          "command": "frontend/node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath={buffer_path}"]
+        }
+      },
+      "language_servers": ["!eslint", "!biome", "oxc", "..."]
+    }
+  }
+}
