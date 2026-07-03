@@ -118,6 +118,14 @@
                 working_dir = "frontend";
                 depends_on.frontend-install.condition = "process_completed_successfully";
               };
+              storybook = {
+                # --ci keeps Storybook from opening a browser tab on start.
+                command = ''
+                  ${pkgs.pnpm}/bin/pnpm run storybook --ci
+                '';
+                working_dir = "frontend";
+                depends_on.frontend-gen-api.condition = "process_completed_successfully";
+              };
             };
           };
         };
