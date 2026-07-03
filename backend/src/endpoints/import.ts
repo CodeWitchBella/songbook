@@ -1,4 +1,4 @@
-import { HTMLRewriter } from "htmlrewriter";
+import { type HTMLElement, type Node, NodeType, parse } from "node-html-parser";
 
 import { badRequestResponse, jsonResponse } from "#/lib/response.ts";
 
@@ -143,42 +143,23 @@ const handlers: readonly {
         });
       }
 
-      let text = "";
-      let title = "";
-      let author = "";
+      const root = parse(await r.text());
 
+      let text = "";
       let chord: "no" | "started" | "handled" = "no";
       let firstInSection = false;
 
-      const converted = new HTMLRewriter()
-        .on("#snippet--sheetContent div, #snippet--sheetContent span", {
-          element(element) {
-            const cls = element.getAttribute("class");
-            if (cls === "scs-section") {
-              firstInSection = true;
-              const type = element.getAttribute("data-type");
-              if (text) {
-                text = text.trimEnd() + "\n\n";
-              }
-              if (!type) return;
-              const res =
-                (
-                  {
-                    chorus: "R: ",
-                    verse: "S: ",
-                  } as { [key: string]: string }
-                )[type] || `[*${capitalize(type)}] `;
-              if (!res) return;
-              text += res;
-            } else if (cls === "scs-chord") {
-              text += "[";
-              chord = "started";
-            } else if (cls?.startsWith("scs-ch")) {
-              chord = "started";
-            }
-          },
-          text(node) {
-            if (node.text.trim()) {
+      const sheetContent = root.querySelector("#snippet--sheetContent");
+      if (sheetContent) {
+        // Walk the sheet content in document order, mirroring the streaming
+        // parser: `div`/`span` elements drive section/chord state, and text
+        // nodes are appended (closing chords on the first non-blank text).
+        const walk = (node: Node, inSection: boolean, inDivOrSpan: boolean) => {
+          if (node.nodeType === NodeType.TEXT_NODE) {
+            // The streaming parser only matched `div`/`span`, so text that is
+            // not inside one (e.g. whitespace between elements) is ignored.
+            if (!inDivOrSpan) return;
+            if (node.rawText.trim()) {
               if (chord === "handled") {
                 text = text.trimEnd() + "]";
                 chord = "no";
@@ -186,30 +167,65 @@ const handlers: readonly {
                 chord = "handled";
               }
             }
-            text += node.text;
-          },
-        })
-        .on("#snippet--sheetContent .scs-section > div", {
-          element() {
+            text += node.rawText;
+            return;
+          }
+          if (node.nodeType !== NodeType.ELEMENT_NODE) return;
+
+          const element = node as HTMLElement;
+          const tag = element.tagName?.toLowerCase();
+          const isDivOrSpan = tag === "div" || tag === "span";
+          const cls = element.getAttribute("class");
+
+          if (isDivOrSpan) {
+            if (cls === "scs-section") {
+              firstInSection = true;
+              const type = element.getAttribute("data-type");
+              if (text) {
+                text = text.trimEnd() + "\n\n";
+              }
+              if (type) {
+                const res =
+                  (
+                    {
+                      chorus: "R: ",
+                      verse: "S: ",
+                    } as { [key: string]: string }
+                  )[type] || `[*${capitalize(type)}] `;
+                text += res;
+              }
+            } else if (cls === "scs-chord") {
+              text += "[";
+              chord = "started";
+            } else if (cls?.startsWith("scs-ch")) {
+              chord = "started";
+            }
+          }
+
+          // A direct `div` child of a section starts a new line, except the
+          // first one which sits on the section header line.
+          if (inSection && tag === "div") {
             if (firstInSection) {
               firstInSection = false;
             } else {
               text += "\n";
             }
-          },
-        })
-        .on(".sheet-title", {
-          text(text) {
-            title += text.text;
-          },
-        })
-        .on(".sheet-author", {
-          text(text) {
-            author += text.text;
-          },
-        })
-        .transform(r);
-      await converted.text();
+          }
+
+          const childInSection = cls === "scs-section";
+          for (const child of element.childNodes) {
+            walk(child, childInSection, isDivOrSpan);
+          }
+        };
+        // The selector matched descendants of the container, not the
+        // container itself, so start from its children.
+        for (const child of sheetContent.childNodes) {
+          walk(child, false, false);
+        }
+      }
+
+      const title = root.querySelector(".sheet-title")?.textContent ?? "";
+      const author = root.querySelector(".sheet-author")?.textContent ?? "";
 
       return {
         text: text.replaceAll("&nbsp;", " "),
