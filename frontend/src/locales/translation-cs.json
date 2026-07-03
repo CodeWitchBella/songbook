@@ -47,7 +47,7 @@
     "Using link": "Z odkazu"
   },
   "Create account": "Vytvořit účet",
-  "Created by <2>Isabella Skořepová</2>": "Vytvořila <2>Isabella Skořepová</2>",
+  "Created by <1>Isabella Skořepová</1>": "Vytvořila <1>Isabella Skořepová</1>",
   "credits-blurp <1>author</1>": "Většinu funkcionality zpěvníku, export do PDF, editace písní a podobně vytvořila <1>Isabella Skořepová</1>",
   "Current version": "Aktuální verze",
   "Dark": "Tmavý",
@@ -77,8 +77,8 @@
   "Email must not be empty": "Email nesmí být prázdný",
   "Go back": "Vrátit se zpět",
   "Go to home screen": "Přejít na domovskou obrazovku",
-  "I already have account, <2>log in</2>": "Už mám účet, <2>přihlásit se</2>",
-  "I don't have account, <2>register</2>": "Nemám účet, <2>vytvořit nový</2>",
+  "I already have account, <1>log in</1>": "Už mám účet, <1>přihlásit se</1>",
+  "I don't have account, <1>register</1>": "Nemám účet, <1>vytvořit nový</1>",
   "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>": "Ikonku přidání do kolekce <1></1> jsem převzala od <4>Smashicons</4>",
   "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>": "Ikonu rychlých nastavení <1></1> jsem převzala z <4>{{iconicApp}}</4>",
   "info": {
