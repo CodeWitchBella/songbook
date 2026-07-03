@@ -41,6 +41,7 @@
           packages = [
             psql
             pkgs.pnpm
+            pkgs.nodejs_26
           ];
           inputsFrom = [
             config.flake-root.devShell
