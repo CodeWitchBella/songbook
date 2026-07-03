@@ -14,7 +14,7 @@ function enqueue<T>(run: () => Promise<T>): Promise<T> {
 }
 
 /**
- * Run a `/rest/*` GraphQL-proxy call: serialize it through {@link enqueue},
+ * Run a GraphQL-proxy call: serialize it through {@link enqueue},
  * reject on transport or GraphQL errors, and return the `data` payload.
  */
 function call<D>(
@@ -39,31 +39,31 @@ export function restSongs(variables: {
   deletedAfter: string;
   skipDeleted: boolean;
 }) {
-  return call(() => client.POST("/rest/songs", { body: variables }));
+  return call(() => client.POST("/songs", { body: variables }));
 }
 
 export function restUpdateSong(id: string, input: Record<string, unknown>) {
-  return call(() => client.POST("/rest/update-song", { body: { id, input } }));
+  return call(() => client.POST("/update-song", { body: { id, input } }));
 }
 
 export function restCollections(variables: { modifiedAfter: string | null }) {
-  return call(() => client.POST("/rest/collections", { body: variables }));
+  return call(() => client.POST("/collections", { body: variables }));
 }
 
 export function restAddToCollection(collection: string, song: string) {
-  return call(() => client.POST("/rest/add-to-collection", { body: { collection, song } }));
+  return call(() => client.POST("/add-to-collection", { body: { collection, song } }));
 }
 
 export function restRemoveFromCollection(collection: string, song: string) {
-  return call(() => client.POST("/rest/remove-from-collection", { body: { collection, song } }));
+  return call(() => client.POST("/remove-from-collection", { body: { collection, song } }));
 }
 
 export function restCreateCollection(name: string) {
-  return call(() => client.POST("/rest/create-collection", { body: { name } }));
+  return call(() => client.POST("/create-collection", { body: { name } }));
 }
 
 export function restRegister(input: { email: string; password: string; name: string }) {
-  return call(() => client.POST("/rest/register", { body: { input } }));
+  return call(() => client.POST("/register", { body: { input } }));
 }
 
 export type User = {

@@ -1,6 +1,6 @@
 /**
  * REST endpoints are thin wrappers over GraphQL: each operation below is
- * exposed at `/api/rest/<name>`, takes the GraphQL variables as its JSON body,
+ * exposed at `/api/<name>`, takes the GraphQL variables as its JSON body,
  * and is executed against the same GraphQL schema. This keeps a single source
  * of truth for the queries while letting the frontend hit plain REST paths.
  */

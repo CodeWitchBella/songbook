@@ -5,7 +5,7 @@ import type { MyContext } from "#/lib/context.ts";
 import { restOperations } from "#/lib/rest-operations.ts";
 
 /**
- * Handle `/api/rest/<operation>`. The request body is the GraphQL variables
+ * Handle `/api/<operation>`. The request body is the GraphQL variables
  * object; the matching query is looked up server-side and executed against the
  * GraphQL schema. The response is the standard GraphQL `{ data, errors }` JSON.
  */

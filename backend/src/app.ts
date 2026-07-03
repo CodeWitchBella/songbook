@@ -184,7 +184,7 @@ api.openapi(
 );
 
 // ---------------------------------------------------------------------------
-// /rest/{operation} — thin GraphQL proxies, one fully-typed route each so the
+// /{operation} — thin GraphQL proxies, one fully-typed route each so the
 // OpenAPI document describes every call's variables and response. Bodies are
 // GraphQL variables; responses are the `{ data, errors }` envelope. See
 // `#/lib/rest-operations.ts` for the queries.
@@ -261,7 +261,7 @@ function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
   api.openapi(
     createRoute({
       method: "post",
-      path: `/rest/${operation}`,
+      path: `/${operation}`,
       summary: opts.summary,
       request: { body: json(opts.body) },
       responses: {
