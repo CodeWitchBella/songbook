@@ -7,14 +7,14 @@
     "declaration": true,
     "moduleResolution": "bundler",
     "target": "esnext",
-    "lib": ["esnext", "webworker", "DOM.Iterable"],
+    "lib": ["esnext", "DOM.Iterable"],
     "skipLibCheck": true,
     "alwaysStrict": true,
     "strict": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "types": ["node", "@cloudflare/workers-types"],
+    "types": ["node"],
     "paths": {
       "#/*": ["./src/*"]
     }

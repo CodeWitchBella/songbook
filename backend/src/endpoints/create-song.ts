@@ -6,7 +6,7 @@ import { validateJsonBody } from "#/lib/request.ts";
 import { badRequestResponse, jsonResponse, methodNotAllowedResponse } from "#/lib/response.ts";
 import { randomID, slugify } from "#/lib/utils.ts";
 
-export async function handleCreateSong(request: Request, context: MyContext) {
+export async function handleCreateSong(request: Request, context: MyContext): Promise<Response> {
   const { viewer } = await getViewerCheck(context);
   if (request.method !== "POST") return methodNotAllowedResponse();
   const input = await validateJsonBody(request, {

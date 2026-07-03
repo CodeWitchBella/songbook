@@ -1,12 +1,12 @@
 {
-  "name": "songbook-workers",
+  "name": "songbook-backend",
   "version": "0.0.0",
   "private": true,
-  "description": "New songbook backend using cloudflare workers",
+  "description": "Songbook backend (Hono Node server)",
   "license": "UNLICENSED",
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "type": "module",
-  "main": "dist/worker.js",
+  "main": "dist/index.js",
   "imports": {
     "#/*": "./src/*"
   },
@@ -24,7 +24,6 @@
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.4.0",
     "@planetscale/database": "^1.19.0",
-    "@sagi.io/workers-jwt": "^0.0.26",
     "bcryptjs": "^3.0.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.1",
@@ -33,6 +32,7 @@
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
     "hono": "^4.12.27",
+    "htmlrewriter": "^0.0.13",
     "latinize": "^2.0.0",
     "luxon": "^3.5.0",
     "mysql2": "^3.12.0",
@@ -42,7 +42,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260702.1",
     "@types/latinize": "^0.2.18",
     "@types/luxon": "^3.4.2",
     "@types/node": "^26.1.0",

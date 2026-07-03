@@ -21,7 +21,7 @@ type GithubResponse = {
   body: string; // "## English\r\n\r\n- ...\r\n\r\n## Česky\r\n\r\n- ...\r\n";
 };
 
-export async function handleReleases(request: Request) {
+export async function handleReleases(request: Request): Promise<Response> {
   if (request.method !== "GET") return methodNotAllowedResponse();
 
   let response;
@@ -29,7 +29,7 @@ export async function handleReleases(request: Request) {
     const fetched = await fetch("https://api.github.com/repos/CodeWitchBella/songbook/releases?per_page=100", {
       headers: {
         accept: "application/vnd.github.v3+json",
-        "User-Agent": "codewitchbella-songbook-workers",
+        "User-Agent": "codewitchbella-songbook-backend",
       },
     });
     if (fetched.status !== 200) {
@@ -45,7 +45,7 @@ export async function handleReleases(request: Request) {
         },
       );
     } else {
-      const json: GithubResponse[] = await fetched.json();
+      const json = (await fetched.json()) as GithubResponse[];
       response = new Response(
         JSON.stringify({
           data: json

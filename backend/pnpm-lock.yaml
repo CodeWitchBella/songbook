@@ -219,9 +219,6 @@ importers:
       '@planetscale/database':
         specifier: ^1.19.0
         version: 1.20.1
-      '@sagi.io/workers-jwt':
-        specifier: ^0.0.26
-        version: 0.0.26
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -246,6 +243,9 @@ importers:
       hono:
         specifier: ^4.12.27
         version: 4.12.27
+      htmlrewriter:
+        specifier: ^0.0.13
+        version: 0.0.13
       latinize:
         specifier: ^2.0.0
         version: 2.0.0
@@ -268,9 +268,6 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@cloudflare/workers-types':
-        specifier: ^4.20260702.1
-        version: 4.20260702.1
       '@types/latinize':
         specifier: ^0.2.18
         version: 0.2.18
@@ -894,12 +891,6 @@ packages:
     resolution: {integrity: sha512-DeMEVtQXwyYQDEztj3iuwJ7IdIqYgd68m26gsXpkRJ7rJd0V9Q0cSzQQ32ziwK04nFXuOfu1/RKAXwq6arIZZA==}
     engines: {node: '>=16'}
 
-  '@sagi.io/globalthis@0.0.2':
-    resolution: {integrity: sha512-sazB1BcX8IK5UxDgEEd0J1bPB0rwH0k725nYva6ofBhvNX8lMytuRf3mlkTkytNHKTi4EGxBOY+YAD3PkeEtlA==}
-
-  '@sagi.io/workers-jwt@0.0.26':
-    resolution: {integrity: sha512-4qZq5mln4TEMrOhhh9emajVImrflfI/2C1UN1CTgl1R3sReYimQl7dc7/gmVfSHvoCQE529qMohBUMTNnxS5AA==}
-
   '@tsconfig/node10@1.0.12':
     resolution: {integrity: sha512-UCYBaeFvM11aU2y3YPZ//O5Rhj+xKyzy7mvcIoAjASbigy8mHMryP5cK7dgjlz2hWxh1g5pLw084E0a/wlUSFQ==}
 
@@ -1290,6 +1281,9 @@ packages:
     resolution: {integrity: sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==}
     engines: {node: '>=16.9.0'}
 
+  htmlrewriter@0.0.13:
+    resolution: {integrity: sha512-HPxT+y/i9RzNeKrJ6MBFXwB+FeTfHPfcBzoKHVnk3oiKn2s6x13tLoxjggI+0/yOSBG1n8SV//PGDBJYT/4XQw==}
+
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
@@ -1335,9 +1329,6 @@ packages:
 
   isarray@2.0.5:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
-
-  js-base64@3.8.0:
-    resolution: {integrity: sha512-65kvbemyZhj+ExQt1PEFyBEjL5vAHysu1lJdW1AwhhChkO8ZBPizYk/m9GVrpbS2Je1hF+UYZ+6KywqtZV8mHw==}
 
   latinize@2.0.0:
     resolution: {integrity: sha512-bMWAnS0C6s9rNqahOEzBEIb9RWECgD1sfmDPws/YoFGAVbC3cjNGCS3Y1THhaQ5wtTJfrq1RO69IM2dGA0DuEg==}
@@ -1662,7 +1653,8 @@ snapshots:
       openapi3-ts: 4.6.0
       zod: 4.4.3
 
-  '@cloudflare/workers-types@4.20260702.1': {}
+  '@cloudflare/workers-types@4.20260702.1':
+    optional: true
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -1969,13 +1961,6 @@ snapshots:
     optional: true
 
   '@planetscale/database@1.20.1': {}
-
-  '@sagi.io/globalthis@0.0.2': {}
-
-  '@sagi.io/workers-jwt@0.0.26':
-    dependencies:
-      '@sagi.io/globalthis': 0.0.2
-      js-base64: 3.8.0
 
   '@tsconfig/node10@1.0.12': {}
 
@@ -2389,6 +2374,8 @@ snapshots:
 
   hono@4.12.27: {}
 
+  htmlrewriter@0.0.13: {}
+
   iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
@@ -2422,8 +2409,6 @@ snapshots:
   isarray@1.0.0: {}
 
   isarray@2.0.5: {}
-
-  js-base64@3.8.0: {}
 
   latinize@2.0.0: {}
 
