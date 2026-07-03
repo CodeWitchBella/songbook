@@ -184,28 +184,164 @@ api.openapi(
 );
 
 // ---------------------------------------------------------------------------
-// /rest/{operation} — thin GraphQL proxy
+// /rest/{operation} — thin GraphQL proxies
+//
+// Each operation is exposed as its own fully-typed route (rather than a single
+// catch-all) so the OpenAPI document — and therefore the generated frontend
+// client — describes the exact variables and response shape of every call.
+// The request body is the GraphQL variables object; the response is the usual
+// GraphQL `{ data, errors }` envelope. See `#/lib/rest-operations.ts` for the
+// queries these correspond to.
 // ---------------------------------------------------------------------------
 
-api.openapi(
-  createRoute({
-    method: "post",
-    path: "/rest/{operation}",
-    summary: "Execute a named GraphQL operation with the request body as variables",
-    request: {
-      params: z.object({ operation: z.string() }),
-      body: json(z.object({}).passthrough().openapi("GraphQLVariables")),
-    },
-    responses: {
-      200: {
-        description: "GraphQL response",
-        ...json(z.object({ data: z.any().optional(), errors: z.any().optional() })),
+const PictureSchema = z
+  .object({ url: z.string(), width: z.number(), height: z.number() })
+  .openapi("Picture");
+
+const RestUserSchema = z
+  .object({
+    name: z.string().nullable(),
+    admin: z.boolean(),
+    handle: z.string().nullable(),
+    picture: PictureSchema.nullable(),
+  })
+  .openapi("RestUser");
+
+const SongDataSchema = z
+  .object({
+    slug: z.string(),
+    author: z.string(),
+    title: z.string(),
+    text: z.string().nullable(),
+    fontSize: z.number().nullable(),
+    paragraphSpace: z.number().nullable(),
+    titleSpace: z.number().nullable(),
+    spotify: z.string().nullable(),
+    pretranspose: z.number().nullable(),
+    extraSearchable: z.string().nullable(),
+    extraNonSearchable: z.string().nullable(),
+    editor: RestUserSchema.nullable(),
+    insertedAt: z.string().nullable(),
+  })
+  .openapi("SongData");
+
+const SongRecordSchema = z
+  .object({ id: z.string(), lastModified: z.string().nullable(), data: SongDataSchema })
+  .openapi("SongRecord");
+
+const CollectionDataSchema = z
+  .object({
+    slug: z.string(),
+    name: z.string(),
+    owner: RestUserSchema.nullable(),
+    songList: z.array(z.object({ id: z.string() })),
+    insertedAt: z.string().nullable(),
+    locked: z.boolean().nullable(),
+  })
+  .openapi("CollectionData");
+
+const CollectionRecordSchema = z
+  .object({
+    __typename: z.string(),
+    id: z.string(),
+    lastModified: z.string().nullable().optional(),
+    data: CollectionDataSchema.optional(),
+  })
+  .openapi("CollectionRecord");
+
+const GraphQLErrorSchema = z
+  .object({ message: z.string() })
+  .passthrough()
+  .openapi("GraphQLError");
+
+/** GraphQL `{ data, errors }` envelope with a typed `data` payload. */
+function restResponse<T extends z.ZodTypeAny>(data: T) {
+  return z.object({ data: data.optional(), errors: z.array(GraphQLErrorSchema).optional() });
+}
+
+/** Register a fully-typed `POST /rest/<operation>` proxy route. */
+function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
+  operation: string,
+  opts: { summary: string; body: B; data: D },
+) {
+  api.openapi(
+    createRoute({
+      method: "post",
+      path: `/rest/${operation}`,
+      summary: opts.summary,
+      request: { body: json(opts.body) },
+      responses: {
+        200: { description: "GraphQL response", ...json(restResponse(opts.data)) },
+        404: { description: "Unknown operation", content: { "text/plain": { schema: z.string() } } },
       },
-      404: { description: "Unknown operation", content: { "text/plain": { schema: z.string() } } },
-    },
+    }),
+    (async c => handleRest(operation, c.req.raw, await c.var.makeContext())) as any,
+  );
+}
+
+restRoute("register", {
+  summary: "Register a new user",
+  body: z
+    .object({
+      input: z.object({ email: z.string(), password: z.string(), name: z.string() }),
+    })
+    .openapi("RegisterVariables"),
+  data: z.object({
+    register: z.object({
+      __typename: z.string(),
+      message: z.string().optional(),
+      user: RestUserSchema.optional(),
+    }),
   }),
-  (async c => handleRest(c.req.param("operation"), c.req.raw, await c.var.makeContext())) as any,
-);
+});
+
+restRoute("songs", {
+  summary: "List songs modified after a given timestamp",
+  body: z
+    .object({
+      modifiedAfter: z.string().nullable().optional(),
+      deletedAfter: z.string(),
+      skipDeleted: z.boolean(),
+    })
+    .openapi("SongsVariables"),
+  data: z.object({
+    songs: z.array(SongRecordSchema),
+    viewer: RestUserSchema.nullable(),
+    deletedSongs: z.array(z.string()).optional(),
+  }),
+});
+
+restRoute("update-song", {
+  summary: "Update a song",
+  body: z
+    .object({ id: z.string(), input: z.object({}).passthrough() })
+    .openapi("UpdateSongVariables"),
+  data: z.object({ updateSong: z.object({ id: z.string() }) }),
+});
+
+restRoute("collections", {
+  summary: "List collections modified after a given timestamp",
+  body: z.object({ modifiedAfter: z.string().nullable().optional() }).openapi("CollectionsVariables"),
+  data: z.object({ collections: z.array(CollectionRecordSchema) }),
+});
+
+restRoute("add-to-collection", {
+  summary: "Add a song to a collection",
+  body: z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables"),
+  data: z.object({ addToCollection: z.string().nullable() }),
+});
+
+restRoute("remove-from-collection", {
+  summary: "Remove a song from a collection",
+  body: z.object({ collection: z.string(), song: z.string() }).openapi("RemoveFromCollectionVariables"),
+  data: z.object({ removeFromCollection: z.string().nullable() }),
+});
+
+restRoute("create-collection", {
+  summary: "Create a new collection",
+  body: z.object({ name: z.string() }).openapi("CreateCollectionVariables"),
+  data: z.object({ createCollection: z.object({ id: z.string() }) }),
+});
 
 // ---------------------------------------------------------------------------
 // /beacon.min.js — Cloudflare analytics passthrough
