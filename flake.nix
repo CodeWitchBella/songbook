@@ -61,6 +61,73 @@
           name = "playwright";
           text = "exec ${playwrightPodman "-it --init"}";
         };
+
+        # Custom pre-commit hook: format the staged files with treefmt and abort
+        # the commit if anything was reformatted, so the fix has to be re-staged.
+        treefmt-pre-commit = pkgs.writeShellApplication {
+          name = "treefmt-pre-commit";
+          runtimeInputs = [config.treefmt.build.wrapper pkgs.git];
+          text = ''
+            files=$(git diff --cached --name-only --diff-filter=ACMR)
+            [ -z "$files" ] && exit 0
+            # shellcheck disable=SC2086
+            treefmt --fail-on-change --no-cache $files
+          '';
+        };
+
+        # A pre-commit check that runs a pnpm-provided tool inside a workspace.
+        # `scoped` tools (oxfmt/oxlint) only see the staged JS/TS files; others
+        # (tsc) run project-wide but only when the workspace was touched.
+        mkWorkspaceHook = workspace: {
+          tool,
+          args ? "",
+          scoped ? false,
+        }:
+          pkgs.writeShellApplication {
+            name = "pre-commit-${workspace}-${tool}";
+            runtimeInputs = [pkgs.git pkgs.pnpm pkgs.nodejs_26];
+            text =
+              if scoped
+              then ''
+                cd "$(git rev-parse --show-toplevel)/${workspace}"
+                files=$(git diff --cached --name-only --diff-filter=ACMR --relative -- . | grep -E '\.(m|c)?[jt]sx?$' || true)
+                [ -z "$files" ] && exit 0
+                # shellcheck disable=SC2086
+                exec pnpm exec ${tool} ${args} $files
+              ''
+              else ''
+                root=$(git rev-parse --show-toplevel)
+                [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- ${workspace}/)" ] && exit 0
+                cd "$root/${workspace}"
+                exec pnpm exec ${tool} ${args}
+              '';
+          };
+
+        # All config-based Git pre-commit hooks, as name -> command path. The
+        # per-workspace lint/format/typecheck hooks are generated so frontend
+        # and backend share one definition each.
+        workspaceTools = [
+          {
+            tool = "oxfmt";
+            args = "--check";
+            scoped = true;
+          }
+          {
+            tool = "oxlint";
+            scoped = true;
+          }
+          {
+            tool = "tsc";
+            args = "--noEmit";
+          }
+        ];
+        preCommitHooks =
+          {treefmt = lib.getExe treefmt-pre-commit;}
+          // lib.listToAttrs (lib.concatMap (workspace:
+            map (t:
+              lib.nameValuePair "${workspace}-${t.tool}"
+              (lib.getExe (mkWorkspaceHook workspace t)))
+            workspaceTools) ["frontend" "backend"]);
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
@@ -74,6 +141,7 @@
         make-shells.default = {
           packages = [
             psql
+            pkgs.git # >= 2.54, for config-based hooks (hook.<name>.event/command)
             pkgs.pnpm
             pkgs.nodejs_26
             playwright
@@ -84,6 +152,12 @@
             config.flake-root.devShell
           ];
           shellHook = ''
+            # Register the checks as Git 2.54 config-based hooks (scoped to this
+            # repo's local config). Multiple hooks run for the pre-commit event.
+            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: command: ''
+              ${pkgs.git}/bin/git config --local hook.${name}.event pre-commit
+              ${pkgs.git}/bin/git config --local hook.${name}.command "${command}"'')
+            preCommitHooks)}
             export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
             export PGDATABASE="songbook"
             export POSTGRESQL_URL="postgresql://localhost/songbook?host=$PGHOST"
