@@ -13,7 +13,8 @@ export default defineConfig({
   server: {
     port: 5513,
     proxy: {
-      "/api": { target: "https://zpevnik.skorepova.info", changeOrigin: true },
+      // "/api": { target: "https://zpevnik.skorepova.info", changeOrigin: true },
+      "/api": { target: "http://127.0.0.1:5512", changeOrigin: true },
     },
   },
   plugins: [
