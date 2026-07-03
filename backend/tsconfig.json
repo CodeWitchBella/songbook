@@ -14,7 +14,10 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "types": []
+    "types": [],
+    "paths": {
+      "#/*": ["./src/*"]
+    }
   },
   "include": ["./src/*.ts", "./src/**/*.ts", "./*.ts"],
   "exclude": ["node_modules/", "dist/"],

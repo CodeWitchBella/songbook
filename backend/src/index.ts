@@ -2,15 +2,15 @@ import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 
-import { handleCreateSong } from "./endpoints/create-song.ts";
-import { handleGraphql } from "./endpoints/graphql.ts";
-import { handleImport } from "./endpoints/import.ts";
-import { handleLogin } from "./endpoints/login.ts";
-import { handleLogout } from "./endpoints/logout.ts";
-import { handleReleases } from "./endpoints/releases.ts";
-import { forward } from "./forward.ts";
-import type { MyContext } from "./lib/context.ts";
-import { contextPair } from "./lib/context.ts";
+import { handleCreateSong } from "#/endpoints/create-song.ts";
+import { handleGraphql } from "#/endpoints/graphql.ts";
+import { handleImport } from "#/endpoints/import.ts";
+import { handleLogin } from "#/endpoints/login.ts";
+import { handleLogout } from "#/endpoints/logout.ts";
+import { handleReleases } from "#/endpoints/releases.ts";
+import { forward } from "#/forward.ts";
+import type { MyContext } from "#/lib/context.ts";
+import { contextPair } from "#/lib/context.ts";
 
 const publicDir = resolve(process.env.PUBLIC_DIR ?? join(import.meta.dirname, "../public"));
 

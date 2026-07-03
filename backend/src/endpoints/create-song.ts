@@ -1,10 +1,10 @@
-import { checkCode } from "../db/drizzle.ts";
-import { song } from "../db/schema.ts";
-import type { MyContext } from "../lib/context.ts";
-import { getViewerCheck } from "../lib/graphql-server-config.ts";
-import { validateJsonBody } from "../lib/request.ts";
-import { badRequestResponse, jsonResponse, methodNotAllowedResponse } from "../lib/response.ts";
-import { randomID, slugify } from "../lib/utils.ts";
+import { checkCode } from "#/db/drizzle.ts";
+import { song } from "#/db/schema.ts";
+import type { MyContext } from "#/lib/context.ts";
+import { getViewerCheck } from "#/lib/graphql-server-config.ts";
+import { validateJsonBody } from "#/lib/request.ts";
+import { badRequestResponse, jsonResponse, methodNotAllowedResponse } from "#/lib/response.ts";
+import { randomID, slugify } from "#/lib/utils.ts";
 
 export async function handleCreateSong(request: Request, context: MyContext) {
   const { viewer } = await getViewerCheck(context);

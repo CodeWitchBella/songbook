@@ -7,6 +7,9 @@
   "author": "Isabella Skořepová <isabella@skorepova.info>",
   "type": "module",
   "main": "dist/worker.js",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
     "build": "webpack",
     "dev": "node --watch src/index.ts",

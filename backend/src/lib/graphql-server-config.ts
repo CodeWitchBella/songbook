@@ -2,11 +2,11 @@ import * as bcrypt from "@isbl/bcryptjs";
 import { and, eq, gt, gte, or, sql } from "drizzle-orm";
 import { DateTime, Duration } from "luxon";
 
-import { affectedRows, checkCode, schema } from "../db/drizzle.ts";
-import type { MyContext } from "./context.ts";
-import { randomID, slugify } from "./utils.ts";
+import { affectedRows, checkCode, schema } from "#/db/drizzle.ts";
+import type { MyContext } from "#/lib/context.ts";
+import { randomID, slugify } from "#/lib/utils.ts";
 import { GraphQLError } from "graphql";
-import { getViewer, maxSessionDurationDays } from "./session.ts";
+import { getViewer, maxSessionDurationDays } from "#/lib/session.ts";
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = `

@@ -1,4 +1,4 @@
-import { methodNotAllowedResponse } from "../lib/response.ts";
+import { methodNotAllowedResponse } from "#/lib/response.ts";
 
 type GithubResponse = {
   url: string;

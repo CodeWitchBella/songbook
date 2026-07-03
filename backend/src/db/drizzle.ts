@@ -2,9 +2,9 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { drizzle as pgDrizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import { schema } from "./drizzle.ts";
+import { schema } from "#/db/drizzle.ts";
 
-export type DB = PostgresJsDatabase<typeof import("./schema.ts")>;
+export type DB = PostgresJsDatabase<typeof import("#/db/schema.ts")>;
 
 let db: DB;
 export function drizzle() {

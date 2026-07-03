@@ -1,7 +1,7 @@
-import { schema } from "../db/drizzle.ts";
+import { schema } from "#/db/drizzle.ts";
 import { and, eq, gt, sql } from "drizzle-orm";
 import { DateTime } from "luxon";
-import type { MyContext } from "./context.ts";
+import type { MyContext } from "#/lib/context.ts";
 
 export const maxSessionDurationDays = 60;
 

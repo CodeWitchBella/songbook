@@ -1,7 +1,7 @@
 import type { Duration } from "luxon";
 
-import { type DB, drizzle } from "../db/drizzle.ts";
-import { createSetSessionCookieHeader, parseSessionCookie } from "./cookie.ts";
+import { type DB, drizzle } from "#/db/drizzle.ts";
+import { createSetSessionCookieHeader, parseSessionCookie } from "#/lib/cookie.ts";
 
 export type MyContext = {
   sessionCookie?: string;

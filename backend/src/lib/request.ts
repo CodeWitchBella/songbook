@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { badRequestResponse } from "./response.ts";
+import { badRequestResponse } from "#/lib/response.ts";
 
 export async function parseJsonBody(request: Request) {
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
