@@ -39,7 +39,6 @@ export default mergeConfig(
               }),
               instances: [{ browser: "chromium" }],
             },
-            setupFiles: [`${dirname}.storybook/vitest.setup.ts`],
           },
         },
       ],
