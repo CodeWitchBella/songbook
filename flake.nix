@@ -49,6 +49,7 @@
           shellHook = ''
             export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
             export PGDATABASE="songbook"
+            export POSTGRESQL_URL="postgresql://localhost/songbook?host=$PGHOST"
             menu
           '';
         };

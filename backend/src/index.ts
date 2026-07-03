@@ -1,16 +1,9 @@
-import { createServer } from "node:http";
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
 import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 
-import { handleCreateSong } from "#/endpoints/create-song.ts";
-import { handleImport } from "#/endpoints/import.ts";
-import { handleLogin } from "#/endpoints/login.ts";
-import { handleLogout } from "#/endpoints/logout.ts";
-import { handleReleases } from "#/endpoints/releases.ts";
-import { handleRest } from "#/endpoints/rest.ts";
-import { forward } from "#/forward.ts";
-import type { MyContext } from "#/lib/context.ts";
-import { contextPair } from "#/lib/context.ts";
+import { api } from "#/app.ts";
 
 const publicDir = resolve(process.env.PUBLIC_DIR ?? join(import.meta.dirname, "../public"));
 
@@ -50,85 +43,33 @@ async function serveStatic(pathname: string): Promise<Response | null> {
   return new Response(body, { headers: { "content-type": contentType } });
 }
 
-async function handleRequest(request: Request, createContext: () => Promise<MyContext>): Promise<Response> {
-  try {
-    const url = new URL(request.url);
-    const isApi = url.pathname.startsWith("/api");
-    if (isApi) url.pathname = url.pathname.slice(4);
-    if (url.pathname === "/hello") return new Response("World");
-    if (request.method === "POST" && url.pathname.startsWith("/rest/"))
-      return await handleRest(url.pathname.slice("/rest/".length), request, await createContext());
-    if (request.method === "POST") {
-      if (url.pathname === "/login") return await handleLogin(request, await createContext());
-      if (url.pathname === "/logout") return await handleLogout(await createContext());
-      if (url.pathname === "/song") return await handleCreateSong(request, await createContext());
-    }
-    if (url.pathname === "/ultimate-guitar" || url.pathname === "/import") return await handleImport(request);
-    if (url.pathname === "/releases") return await handleReleases(request);
-    if (url.pathname === "/beacon.min.js")
-      return await forward(request, "https://static.cloudflareinsights.com/beacon.min.js");
-    if (!isApi && (request.method === "GET" || request.method === "HEAD")) {
-      const staticResponse = await serveStatic(url.pathname);
-      if (staticResponse) return staticResponse;
-    }
-    return new Response("Not found", {
-      status: 404,
-      headers: { "content-type": "text/plain; charset=utf-8" },
-    });
-  } catch (err: any) {
-    if (err instanceof Response) return err;
-    console.error(err.stack);
-    return new Response(err.stack, {
-      status: 500,
-      headers: { "content-type": "text/plain; charset=utf-8" },
-    });
-  }
-}
+const app = new Hono();
+
+// The REST/OpenAPI surface lives under /api.
+app.route("/api", api);
+
+// Everything else falls back to the built static frontend (SPA).
+app.get("*", async c => {
+  const staticResponse = await serveStatic(new URL(c.req.url).pathname);
+  if (staticResponse) return staticResponse;
+  return c.text("Not found", 404);
+});
+
+app.onError((err, c) => {
+  if (err instanceof Response) return err;
+  console.error(err.stack);
+  return c.text(err.stack ?? String(err), 500);
+});
 
 const port = 5512;
 
-const server = createServer(async (req, res) => {
-  const headers = new Headers();
-  for (const [key, value] of Object.entries(req.headers)) {
-    if (value === undefined) continue;
-    if (Array.isArray(value)) {
-      for (const v of value) headers.append(key, v);
-    } else {
-      headers.append(key, value);
-    }
-  }
-  const hasBody = req.method !== "GET" && req.method !== "HEAD";
-  const request = new Request(`http://${req.headers.host}${req.url}`, {
-    method: req.method,
-    headers,
-    ...(hasBody ? { body: req as any, duplex: "half" } : {}),
-  });
+// In Docker bind the IPv6 wildcard (dual-stack, all interfaces). Locally bind
+// only the loopback addresses on both stacks so the server is reachable via
+// 127.0.0.1 (e.g. Vite's proxy) and ::1, but not from other hosts.
+const hostnames = process.env.DOCKER ? ["::"] : ["127.0.0.1", "::1"];
 
-  const { createContext, finishContext } = contextPair(request);
-  const response = await handleRequest(request, createContext);
-  finishContext(response);
-
-  res.statusCode = response.status;
-  for (const [key, value] of response.headers) res.setHeader(key, value);
-  if (response.body) {
-    const reader = response.body.getReader();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      res.write(value);
-    }
-  }
-  res.end();
-});
-
-const host = process.env.DOCKER ? "::" : "localhost";
-
-server.listen(port, host, () => {
-  console.log(`listening on http://${host === "::" ? "[::]" : host}:${port}`);
-});
-
-for (const signal of ["SIGINT", "SIGTERM"] as const) {
-  process.on(signal, () => {
-    server.close(() => process.exit(0));
+for (const hostname of hostnames) {
+  serve({ fetch: app.fetch, port, hostname }, info => {
+    console.log(`listening on http://${hostname.includes(":") ? `[${hostname}]` : hostname}:${info.port}`);
   });
 }
