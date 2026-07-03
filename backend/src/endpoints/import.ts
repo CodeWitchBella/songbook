@@ -1,4 +1,7 @@
-import { type HTMLElement, type Node, NodeType, parse } from "node-html-parser";
+import { type DefaultTreeAdapterMap, parse } from "parse5";
+
+type Node = DefaultTreeAdapterMap["node"];
+type Element = DefaultTreeAdapterMap["element"];
 
 import { badRequestResponse, jsonResponse } from "#/lib/response.ts";
 
@@ -149,17 +152,17 @@ const handlers: readonly {
       let chord: "no" | "started" | "handled" = "no";
       let firstInSection = false;
 
-      const sheetContent = root.querySelector("#snippet--sheetContent");
+      const sheetContent = findElement(root, el => getAttr(el, "id") === "snippet--sheetContent");
       if (sheetContent) {
         // Walk the sheet content in document order, mirroring the streaming
         // parser: `div`/`span` elements drive section/chord state, and text
         // nodes are appended (closing chords on the first non-blank text).
         const walk = (node: Node, inSection: boolean, inDivOrSpan: boolean) => {
-          if (node.nodeType === NodeType.TEXT_NODE) {
+          if (isText(node)) {
             // The streaming parser only matched `div`/`span`, so text that is
             // not inside one (e.g. whitespace between elements) is ignored.
             if (!inDivOrSpan) return;
-            if (node.rawText.trim()) {
+            if (node.value.trim()) {
               if (chord === "handled") {
                 text = text.trimEnd() + "]";
                 chord = "no";
@@ -167,20 +170,20 @@ const handlers: readonly {
                 chord = "handled";
               }
             }
-            text += node.rawText;
+            text += node.value;
             return;
           }
-          if (node.nodeType !== NodeType.ELEMENT_NODE) return;
+          if (!isElement(node)) return;
 
-          const element = node as HTMLElement;
-          const tag = element.tagName?.toLowerCase();
+          const element = node;
+          const tag = element.tagName.toLowerCase();
           const isDivOrSpan = tag === "div" || tag === "span";
-          const cls = element.getAttribute("class");
+          const cls = getAttr(element, "class");
 
           if (isDivOrSpan) {
             if (cls === "scs-section") {
               firstInSection = true;
-              const type = element.getAttribute("data-type");
+              const type = getAttr(element, "data-type");
               if (text) {
                 text = text.trimEnd() + "\n\n";
               }
@@ -224,17 +227,56 @@ const handlers: readonly {
         }
       }
 
-      const title = root.querySelector(".sheet-title")?.textContent ?? "";
-      const author = root.querySelector(".sheet-author")?.textContent ?? "";
+      const titleEl = findElement(root, el => hasClass(el, "sheet-title"));
+      const authorEl = findElement(root, el => hasClass(el, "sheet-author"));
+      const title = titleEl ? textContent(titleEl) : "";
+      const author = authorEl ? textContent(authorEl) : "";
 
       return {
-        text: text.replaceAll("&nbsp;", " "),
+        // parse5 decodes entities, so `&nbsp;` arrives as a U+00A0 non-breaking space.
+        text: text.replaceAll("\u00a0", " "),
         author: author.trim(),
         title: title.trim(),
       };
     },
   },
 ];
+
+function isElement(node: Node): node is Element {
+  return "tagName" in node;
+}
+
+function isText(node: Node): node is DefaultTreeAdapterMap["textNode"] {
+  return node.nodeName === "#text";
+}
+
+function childrenOf(node: Node): Node[] {
+  return "childNodes" in node ? node.childNodes : [];
+}
+
+function getAttr(element: Element, name: string): string | undefined {
+  return element.attrs.find(a => a.name === name)?.value;
+}
+
+function hasClass(element: Element, className: string): boolean {
+  return getAttr(element, "class")?.split(/\s+/).includes(className) ?? false;
+}
+
+function findElement(node: Node, predicate: (el: Element) => boolean): Element | undefined {
+  if (isElement(node) && predicate(node)) return node;
+  for (const child of childrenOf(node)) {
+    const found = findElement(child, predicate);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function textContent(node: Node): string {
+  if (isText(node)) return node.value;
+  let out = "";
+  for (const child of childrenOf(node)) out += textContent(child);
+  return out;
+}
 
 function extractSimpleTagTextContent(html: string, tag: string) {
   return before(after(after(html, `<${tag}`), ">"), `</${tag}>`).replace(/<[^>]+>/g, "");
