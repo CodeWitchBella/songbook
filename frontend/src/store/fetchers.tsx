@@ -1,7 +1,7 @@
-import { getGraphqlUrl } from "./graphql";
+import { getApiUrl } from "./api";
 
 async function jsonPost(path: string, json: any) {
-  const res = await fetch(new URL(path, getGraphqlUrl()).toString(), {
+  const res = await fetch(new URL(path, getApiUrl()).toString(), {
     body: JSON.stringify(json),
     method: "post",
     headers: { "content-type": "application/json" },
@@ -11,7 +11,7 @@ async function jsonPost(path: string, json: any) {
 }
 
 export async function jsonGet<SuccessBody = unknown>(path: string) {
-  const res = await fetch(new URL(path, getGraphqlUrl()).toString(), {
+  const res = await fetch(new URL(path, getApiUrl()).toString(), {
     method: "get",
     credentials: "include",
   });

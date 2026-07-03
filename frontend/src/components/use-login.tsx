@@ -1,5 +1,5 @@
 import { logout } from "#/store/fetchers";
-import { login, register } from "#/store/graphql";
+import { login, register } from "#/store/api";
 import { useViewer } from "#/store/store";
 
 export function useLogin() {

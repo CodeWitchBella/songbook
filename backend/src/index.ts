@@ -3,11 +3,11 @@ import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 
 import { handleCreateSong } from "#/endpoints/create-song.ts";
-import { handleGraphql } from "#/endpoints/graphql.ts";
 import { handleImport } from "#/endpoints/import.ts";
 import { handleLogin } from "#/endpoints/login.ts";
 import { handleLogout } from "#/endpoints/logout.ts";
 import { handleReleases } from "#/endpoints/releases.ts";
+import { handleRest } from "#/endpoints/rest.ts";
 import { forward } from "#/forward.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { contextPair } from "#/lib/context.ts";
@@ -56,7 +56,8 @@ async function handleRequest(request: Request, createContext: () => Promise<MyCo
     const isApi = url.pathname.startsWith("/api");
     if (isApi) url.pathname = url.pathname.slice(4);
     if (url.pathname === "/hello") return new Response("World");
-    if (url.pathname === "/graphql") return await handleGraphql(request, await createContext());
+    if (request.method === "POST" && url.pathname.startsWith("/rest/"))
+      return await handleRest(url.pathname.slice("/rest/".length), request, await createContext());
     if (request.method === "POST") {
       if (url.pathname === "/login") return await handleLogin(request, await createContext());
       if (url.pathname === "/logout") return await handleLogout(await createContext());

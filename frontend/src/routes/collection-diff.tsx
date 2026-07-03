@@ -2,7 +2,7 @@ import { PageHeader } from "#/components/page-header";
 import { useQueryParam } from "#/components/use-router";
 import React, { useMemo } from "react";
 import type { WithMethods } from "#/store/generic-store";
-import { graphqlFetch } from "#/store/graphql";
+import { restFetch } from "#/store/api";
 import { useCollection, useCollectionList, usePagesNum, useSongList } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
@@ -233,17 +233,11 @@ function SongList({
 }
 
 function addToCollection(song: string, collection: string) {
-  return graphqlFetch({
-    query: `mutation($collection: String! $song: String!) { addToCollection(collection: $collection song: $song) }`,
-    variables: { collection, song },
-  });
+  return restFetch("add-to-collection", { collection, song });
 }
 
 function removeFromCollection(song: string, collection: string) {
-  return graphqlFetch({
-    query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
-    variables: { collection, song },
-  });
+  return restFetch("remove-from-collection", { collection, song });
 }
 
 function compareSongs({ item: a }: { item: SongType }, { item: b }: { item: SongType }) {

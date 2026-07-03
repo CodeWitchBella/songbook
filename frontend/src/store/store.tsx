@@ -6,7 +6,7 @@ import xorshift from "xorshift";
 
 import { newSong } from "./fetchers";
 import type { GenericStore, MinItem } from "./generic-store";
-import type { User } from "./graphql";
+import type { User } from "./api";
 import { createCollectionStore } from "./store-collections";
 import { createSongStore } from "./store-song";
 

@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import type { WithMethods } from "#/store/generic-store";
-import { graphqlFetch } from "#/store/graphql";
+import { restFetch } from "#/store/api";
 import { useCollectionList, useSong, useViewer } from "#/store/store";
 import type { CollectionType } from "#/store/store-collections";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
@@ -207,24 +207,15 @@ function CollectionList({
   );
 }
 function addToCollection(song: string, collection: string) {
-  return graphqlFetch({
-    query: `mutation($collection: String! $song: String!) { addToCollection(collection: $collection song: $song) }`,
-    variables: { collection, song },
-  });
+  return restFetch("add-to-collection", { collection, song });
 }
 
 function removeFromCollection(song: string, collection: string) {
-  return graphqlFetch({
-    query: `mutation($collection: String! $song: String!) { removeFromCollection(collection: $collection song: $song) }`,
-    variables: { collection, song },
-  });
+  return restFetch("remove-from-collection", { collection, song });
 }
 
 function createCollection(name: string): Promise<string> {
-  return graphqlFetch({
-    query: `mutation($name: String!) { createCollection(name: $name) { id } }`,
-    variables: { name },
-  }).then(v => {
+  return restFetch("create-collection", { name }).then(v => {
     const id = v.data.createCollection.id;
     if (!id) {
       console.log(v);

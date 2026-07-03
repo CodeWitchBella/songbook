@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { getGraphqlUrl } from "#/store/graphql";
+import { getApiUrl } from "#/store/api";
 
 export async function songDataFromLink(link: string, t: TFunction<"translation">) {
   const ug = link.startsWith("https://tabs.ultimate-guitar.com/tab/");
@@ -20,7 +20,7 @@ export async function songDataFromLink(link: string, t: TFunction<"translation">
       replace: { services },
     });
   }
-  const url = new URL("import", getGraphqlUrl());
+  const url = new URL("import", getApiUrl());
   url.searchParams.set("url", link);
   const res = await fetch(url.toString());
   const json = await res.json();

@@ -1,28 +1,8 @@
 import { DateTime } from "luxon";
 
 import { GenericStore } from "./generic-store";
-import type { User } from "./graphql";
-import { graphqlFetch, userFragment } from "./graphql";
-
-const collectionRecordFragment = `
-  fragment collectionRecord on CollectionRecord {
-    id
-    lastModified
-    data {
-      slug
-      name
-      owner {
-        ...user
-      }
-      songList {
-        id
-      }
-      insertedAt
-      locked
-    }
-  }
-  ${userFragment}
-`;
+import type { User } from "./api";
+import { restFetch } from "./api";
 
 type CollectionRecord<DT = DateTime> = {
   id: string;
@@ -40,22 +20,8 @@ async function collectionQuery(modifiedAfter?: DateTime): Promise<{
   changed: CollectionRecord[];
   deleted: { id: string }[];
 }> {
-  return graphqlFetch({
-    query: `
-      query($modifiedAfter: String) {
-        collections(modifiedAfter: $modifiedAfter) {
-          __typename
-          ...collectionRecord
-          ... on Deleted {
-            id
-          }
-        }
-      }
-      ${collectionRecordFragment}
-    `,
-    variables: {
-      modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
-    },
+  return restFetch("collections", {
+    modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
   }).then(v => {
     const deleted = v.data.collections.filter((c: any) => c.__typename === "Deleted").map((c: any) => ({ id: c.id }));
     const changed = v.data.collections

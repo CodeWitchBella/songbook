@@ -3,7 +3,7 @@ import { ApolloServer, HeaderMap } from "@apollo/server";
 import type { MyContext } from "#/lib/context.ts";
 import serverConfig from "#/lib/graphql-server-config.ts";
 
-const getServer = (() => {
+export const getServer = (() => {
   let cache: ApolloServer<MyContext>;
   return () => {
     if (!cache) {
@@ -14,15 +14,17 @@ const getServer = (() => {
   };
 })();
 
-export async function handleGraphql(request: Request, context: MyContext): Promise<Response> {
+/**
+ * Execute a GraphQL operation and return the raw HTTP response. Shared by the
+ * `/graphql` endpoint and the REST wrappers in `rest.ts`.
+ */
+export async function executeGraphql(
+  { method, body, headers, search }: { method: string; body: unknown; headers: HeaderMap; search: string },
+  context: MyContext,
+): Promise<Response> {
   const server = getServer();
   const response = await server.executeHTTPGraphQLRequest({
-    httpGraphQLRequest: {
-      method: request.method,
-      body: request.method !== "GET" && request.method !== "HEAD" ? await request.json() : null,
-      headers: new HeaderMap(request.headers.entries()),
-      search: new URL(request.url).search,
-    },
+    httpGraphQLRequest: { method, body, headers, search },
     context: () => context as any,
   });
   return new Response(response.body.kind === "complete" ? response.body.string : null, {

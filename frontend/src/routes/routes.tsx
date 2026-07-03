@@ -49,13 +49,6 @@ const QuickSettings = React.lazy(imports.QuickSettings);
 const Chords = React.lazy(imports.Chords);
 const CollectionDiff = React.lazy(imports.CollectionDiff);
 
-function AbsoluteRedirect({ to }: { to: string }) {
-  useEffect(() => {
-    window.location.assign(to);
-  });
-  return null;
-}
-
 const router = createBrowserRouter(
   [
     {
@@ -81,7 +74,6 @@ const router = createBrowserRouter(
           <Route path="edit/:slug" element={<EditSong />} />
           <Route path="changelog" element={<Changelog />} />
           <Route path="chords" element={<Chords />} />
-          <Route path="graphql" element={<AbsoluteRedirect to="/api/graphql" />} />
           <Route path="diff" element={<CollectionDiff />} />
 
           <Route path="*" element={<NotFound />} />
