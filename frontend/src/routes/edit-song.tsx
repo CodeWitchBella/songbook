@@ -358,10 +358,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   );
 }
 export default function EditSongRoute() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const { song, methods } = useSong({ slug: slug || "" });
   if (!slug) return <NotFound />;
-  if (!song || !methods) return <div>Píseň nenalezena</div>;
+  if (!song || !methods) return <div>{t("Song not found")}</div>;
 
   return <EditSong song={song} refetch={methods.refresh} />;
 }

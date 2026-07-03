@@ -28,7 +28,7 @@ export default function AddToCollection() {
   }, [refresh]);
 
   if (!song) {
-    return <ErrorPage text="Píseň nenalezena." />;
+    return <ErrorPage text={t("Song not found")} />;
   }
 
   const addable: typeof list = [];
