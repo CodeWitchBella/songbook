@@ -3,6 +3,7 @@ import { useColors } from "#/components/themed";
 import { Fragment } from "react";
 import { Pressable } from "react-native";
 
+import { FONT_ATKINSON } from "./pdf-setup";
 import { usePDFSettings } from "./pdf-settings";
 import { Text } from "./primitives";
 
@@ -43,7 +44,7 @@ export function Chord({ children, spacer = false }: { children: string; spacer?:
     <Text
       style={[
         spacer ? { opacity: 0 } : { position: "absolute", zIndex: 1 },
-        { fontWeight: normal ? "normal" : "bold", fontFamily: "AtkinsonHyperlegible", fontStyle: "normal" },
+        { fontWeight: normal ? "normal" : "bold", fontFamily: FONT_ATKINSON, fontStyle: "normal" },
         { marginBottom: -20 },
       ]}
     >

@@ -37,7 +37,7 @@ export default defineConfig({
     extensions: [".web.js", ".mjs", ".js", ".ts", ".jsx", ".tsx", ".json"],
     alias: [
       {
-        find: /^(utils|store|routes|containers|sections|webfonts|components)\//,
+        find: /^(utils|store|routes|containers|sections|components)\//,
         replacement: "/src/$1/",
       },
       { find: "react-native", replacement: "react-native-web" },

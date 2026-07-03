@@ -6,6 +6,7 @@ import type { Line, Paragraph } from "#/utils/song-parser/song-parser";
 
 import { Chord } from "./chord";
 import { PDFPage } from "./pdf-page";
+import { FONT_ATKINSON, FONT_CANTARELL, FONT_OSWALD, FONT_SHANTELL_SANS } from "./pdf-setup";
 import { usePDFSettings } from "./pdf-settings";
 import type { PropsOf } from "./primitives";
 import { Text, View } from "./primitives";
@@ -29,10 +30,10 @@ const style = StyleSheet.create({
     height: "auto",
   },
   bold: { fontWeight: "bold" },
-  reset: { fontWeight: "normal", fontFamily: "Cantarell" },
+  reset: { fontWeight: "normal", fontFamily: FONT_CANTARELL },
   transparent: { opacity: 0 },
   zIndexTop: { zIndex: 2 },
-  defaultStyleText: { fontFamily: "Cantarell" },
+  defaultStyleText: { fontFamily: FONT_CANTARELL },
 });
 
 function DefaultStyleText(props: PropsOf<typeof Text>) {
@@ -82,7 +83,7 @@ function ChordLine({ l }: { l: Line }) {
               {textLine(l.content.slice(0, i))}
             </DefaultStyleText>
             <DefaultStyleText
-              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop, { fontFamily: "Oswald" }]}
+              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop, { fontFamily: FONT_OSWALD }]}
             >
               <Chord>{cur.ch.replace(/^[_^]+/, "")}</Chord>
             </DefaultStyleText>
@@ -138,7 +139,7 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em } = usePDFSettings();
   const textStyle = {
-    fontFamily: "AtkinsonHyperlegible",
+    fontFamily: FONT_ATKINSON,
     fontWeight: "bold",
     fontSize: em(1.2),
   } as const;
@@ -216,7 +217,7 @@ export function PDFSongContent({
               textAlign: "center",
               fontSize: em(1),
               marginLeft: -em(10),
-              fontFamily: "ShantellSans",
+              fontFamily: FONT_SHANTELL_SANS,
             }}
           >
             {footer}

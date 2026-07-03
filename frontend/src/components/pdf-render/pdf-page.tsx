@@ -3,6 +3,7 @@ import { SizerPage } from "#/components/sizer-page";
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useContext } from "react";
 
+import { FONT_CANTARELL } from "./pdf-setup";
 import { usePDFSettings } from "./pdf-settings";
 import { PDFPage as PrimitivePDFPage, useIsInPDF, View } from "./primitives";
 
@@ -52,7 +53,7 @@ export function PDFPage({
         style={[
           style as any,
           {
-            fontFamily: "Cantarell",
+            fontFamily: FONT_CANTARELL,
             fontWeight: "normal",
             height: web ? "100%" : vh(100),
             width: web ? "100%" : vw(100),

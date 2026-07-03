@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 
 import img from "./triquetra.png";
 import { PDFPage } from "./pdf-page";
+import { FONT_SHANTELL_SANS } from "./pdf-setup";
 import { usePDFSettings } from "./pdf-settings";
 import { Image, Text, View } from "./primitives";
 import { getSongbookMeta } from "./songbook-meta";
@@ -65,7 +66,7 @@ export function PDFTitlePage({ title }: { title: string }) {
         }}
       >
         <View style={{ paddingBottom: em(1.5) }}>
-          <Text style={{ fontSize: em(3), fontFamily: "ShantellSans" }}>{meta.title}</Text>
+          <Text style={{ fontSize: em(3), fontFamily: FONT_SHANTELL_SANS }}>{meta.title}</Text>
         </View>
         <View>
           <Text style={{ fontSize: em(2) }}>{meta.subtitle}</Text>
