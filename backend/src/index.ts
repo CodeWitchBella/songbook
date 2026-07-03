@@ -61,7 +61,7 @@ app.onError((err, c) => {
   return c.text(err.stack ?? String(err), 500);
 });
 
-const port = 5512;
+const port = process.env.PORT ? Number(process.env.PORT) : 5512;
 
 // In Docker bind the IPv6 wildcard (dual-stack, all interfaces). Locally bind
 // only the loopback addresses on both stacks so the server is reachable via
