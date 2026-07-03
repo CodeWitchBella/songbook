@@ -54,7 +54,7 @@ function Stats({ set, songCount }: { set: Set<string> | undefined; songCount: nu
   const { t } = useTranslation();
   return (
     <div className="mb-1 mt-4 flex flex-row items-center px-5">
-      <span className="text-lg text-black dark:text-white">{t("count-pages-songs", { pagesNum, songCount })}</span>
+      <span className="text-lg text-black dark:text-white">{t("count-pages-songs", { pagesNum: pagesNum ?? 0, songCount })}</span>
     </div>
   );
 }

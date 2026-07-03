@@ -11,13 +11,11 @@ export async function songDataFromLink(link: string, t: TFunction<"translation">
     !link.startsWith("https://pisnicky-akordy.cz/")
   ) {
     const services = t("create.{{a}}, or {{b}}", {
-      replace: {
-        a: "pisnicky-akordy.cz, ultimate guitar, supermusic",
-        b: "akordy.kytary.cz",
-      },
+      a: "pisnicky-akordy.cz, ultimate guitar, supermusic",
+      b: "akordy.kytary.cz",
     });
     return t("create.Links other than {{services}} are not supported", {
-      replace: { services },
+      services,
     });
   }
   const { data, error } = await client.GET("/import", {
