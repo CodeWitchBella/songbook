@@ -19,7 +19,7 @@ type Variables = {
  * The API app. Everything is mounted under `/api` by the top-level server, so
  * routes here are defined without that prefix. Uses `@hono/zod-openapi` so the
  * OpenAPI 3.1 document is generated for free from the zod route schemas and
- * served at `/api/doc` (with Swagger UI at `/api/ui`).
+ * served at `/api/openapi.json` (with Swagger UI at `/api/docs`).
  */
 export const api = new OpenAPIHono<{ Variables: Variables }>();
 
