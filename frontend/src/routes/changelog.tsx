@@ -101,7 +101,7 @@ function Head() {
         <BackArrow />
       </BackButton>
       <div className="text-3xl font-bold">{t("Changelog")}</div>
-      <div className="flex-grow" />
+      <div className="grow" />
       <LanguageSettings compact={true} />
     </div>
   );
