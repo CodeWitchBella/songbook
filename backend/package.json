@@ -13,7 +13,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "node --watch src/index.ts",
-    "db-push": "yarn drizzle-kit push:pg --config=drizzle.config.ts",
+    "db-push": "pnpm drizzle-kit push:pg --config=drizzle.config.ts",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check"
