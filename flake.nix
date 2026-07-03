@@ -72,12 +72,18 @@
                 cd backend
                 ${pkgs.pnpm}/bin/pnpm node postgresql.mjs run
               '';
-              backend = {
+              backend-install = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
+                '';
+                working_dir = "backend";
+              };
+              backend = {
+                command = ''
                   ${pkgs.pnpm}/bin/pnpm node --watch src/index.ts
                 '';
                 working_dir = "backend";
+                depends_on.backend-install.condition = "process_completed_successfully";
               };
               frontend-install = {
                 command = ''
@@ -85,12 +91,25 @@
                 '';
                 working_dir = "frontend";
               };
+              # Generate the typed API client from the backend OpenAPI spec. The
+              # spec and derived types are gitignored, so a fresh checkout needs
+              # this before the dev server can resolve them.
+              frontend-gen-api = {
+                command = ''
+                  ${pkgs.pnpm}/bin/pnpm run gen:api
+                '';
+                working_dir = "frontend";
+                depends_on = {
+                  frontend-install.condition = "process_completed_successfully";
+                  backend-install.condition = "process_completed_successfully";
+                };
+              };
               frontend = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm run dev
                 '';
                 working_dir = "frontend";
-                depends_on.frontend-install.condition = "process_completed_successfully";
+                depends_on.frontend-gen-api.condition = "process_completed_successfully";
               };
               frontend-types = {
                 command = ''

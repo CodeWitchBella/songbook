@@ -1,0 +1,13 @@
+{
+  "name": "openapi-codegen",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generates the frontend's typed API client from the backend OpenAPI spec. Isolated so openapi-typescript can use a classic TypeScript instead of the app's TS 7 RC.",
+  "scripts": {
+    "gen": "openapi-typescript ../../src/store/openapi.json -o ../../src/store/api-schema.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^7.13.0",
+    "typescript": "5.9.2"
+  }
+}

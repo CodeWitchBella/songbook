@@ -13,6 +13,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "node --watch src/index.ts",
+    "gen:openapi": "node src/gen-openapi.ts",
     "db-push": "pnpm drizzle-kit push:pg --config=drizzle.config.ts",
     "lint": "oxlint",
     "format": "oxfmt",

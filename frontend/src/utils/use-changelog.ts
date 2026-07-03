@@ -1,6 +1,6 @@
 import localForage from "localforage";
 import { useEffect, useState } from "react";
-import { jsonGet } from "#/store/fetchers";
+import { client } from "#/store/client";
 
 const storage = localForage.createInstance({ name: "changelog" });
 
@@ -8,14 +8,12 @@ type Translated<T> = { cz: T; en: T };
 
 const loadChangelog = (() => {
   async function doFetch() {
-    const res = await jsonGet<{
-      data: { name: string; tagName: string; body: string }[];
-    }>("/api/releases");
-    if (!res.success) {
-      console.log(res);
+    const { data, error } = await client.GET("/releases");
+    if (error || !data) {
+      console.log(error);
       throw new Error("Failed to load data");
     }
-    return res.body.data
+    return data.data
       .map((item): Translated<{ title: string; tagName: string; body: string }> => {
         const titles = item.name.split("/").map(i => i.trim());
         const base = { tagName: item.tagName };

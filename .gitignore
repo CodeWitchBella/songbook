@@ -23,6 +23,10 @@ npm-token
 frontend/bundle
 /frontend/schema.json
 /frontend/src/queries-types.ts
+# Generated from the backend OpenAPI spec via `pnpm gen:api`
+/frontend/src/store/openapi.json
+/frontend/src/store/api-schema.d.ts
+/backend/openapi.json
 /frontend/src/types/resources.d.ts
 /backend/src/songs/*.automerge
 *.cache

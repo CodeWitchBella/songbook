@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { getApiUrl } from "#/store/api";
+import { client } from "#/store/client";
 
 export async function songDataFromLink(link: string, t: TFunction<"translation">) {
   const ug = link.startsWith("https://tabs.ultimate-guitar.com/tab/");
@@ -20,15 +20,14 @@ export async function songDataFromLink(link: string, t: TFunction<"translation">
       replace: { services },
     });
   }
-  const url = new URL("import", getApiUrl());
-  url.searchParams.set("url", link);
-  const res = await fetch(url.toString());
-  const json = await res.json();
-  const { title, author, text } = json;
-  if (!text) {
-    console.warn(json);
+  const { data, error } = await client.GET("/import", {
+    params: { query: { url: link } },
+  });
+  if (error || !data?.text) {
+    console.warn(error ?? data);
     return "Něco se pokazilo";
   }
+  const { title, author, text } = data;
   return {
     ug,
     author,

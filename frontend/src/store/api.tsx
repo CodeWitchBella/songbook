@@ -1,3 +1,5 @@
+import { client } from "./client";
+
 export function getApiUrl() {
   if (typeof window === "undefined") throw new Error("This is only available in browser");
   return new URL("/api/", window.location.toString()).toString();
@@ -46,14 +48,11 @@ export async function login(
   email: string,
   password: string,
 ): Promise<{ type: "success"; user: User } | { type: "error"; message: string }> {
-  const res = await fetch("/api/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-    headers: { "content-type": "application/json" },
+  const { data, error } = await client.POST("/login", {
+    body: { email, password },
   });
-  const data = await res.json();
-  if (!res.ok) return { type: "error", message: data.message };
-  return { type: "success", user: data.user };
+  if (error) return { type: "error", message: error.message };
+  return { type: "success", user: data.user as User };
 }
 
 export async function register(
