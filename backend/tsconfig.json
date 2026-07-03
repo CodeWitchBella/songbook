@@ -14,7 +14,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "esModuleInterop": true,
-    "types": [],
+    "types": ["node"],
     "paths": {
       "#/*": ["./src/*"]
     }

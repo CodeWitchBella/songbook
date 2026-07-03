@@ -1,4 +1,4 @@
-import * as bcrypt from "@isbl/bcryptjs";
+import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
 import { Duration } from "luxon";
 
