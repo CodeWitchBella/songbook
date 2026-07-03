@@ -98,6 +98,18 @@ function viewStyleForPDF(st: MergedViewStyle): ReactPDFTypes.Style | ReactPDFTyp
 // just allow it to be recursive
 type MergedTextStyle = StyleProp<ReactPDFTypes.Style & TextStyle>;
 
+// react-pdf accepts `fontFamily` as an array (latin + latin-ext) for per-glyph
+// fallback, but react-native-web expects a plain string. Collapse any array
+// `fontFamily` into a CSS font stack so browser rendering doesn't drop it and
+// fall back to the default serif.
+function textStyleForRN(st: MergedTextStyle): MergedTextStyle {
+  if (!st) return st;
+  if (Array.isArray(st)) return st.map(textStyleForRN);
+  if (Array.isArray((st as TextStyle).fontFamily))
+    return { ...st, fontFamily: ((st as any).fontFamily as string[]).join(", ") };
+  return st;
+}
+
 function textStyleForPDF(st: MergedTextStyle): ReactPDFTypes.Style | ReactPDFTypes.Style[] | undefined {
   if (!st) return;
   if (Array.isArray(st))
@@ -128,7 +140,7 @@ export function Text({
   const pdf = useContext(InPdfCtx);
   const colors = useColors();
   if (!pdf) {
-    return <RNText {...rest} style={[{ color: colors.text }, style]} />;
+    return <RNText {...rest} style={[{ color: colors.text }, textStyleForRN(style)]} />;
   }
   return <pdf.default.Text {...rest} style={textStyleForPDF(style)} />;
 }
