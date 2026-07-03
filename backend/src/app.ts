@@ -184,10 +184,10 @@ api.openapi(
 );
 
 // ---------------------------------------------------------------------------
-// /{operation} — thin GraphQL proxies, one fully-typed route each so the
-// OpenAPI document describes every call's variables and response. Bodies are
-// GraphQL variables; responses are the `{ data, errors }` envelope. See
-// `#/lib/rest-operations.ts` for the queries.
+// /{operation} — one fully-typed route each so the OpenAPI document describes
+// every call's variables and response. Bodies are the operation's arguments;
+// responses are the GraphQL-style `{ data, errors }` envelope. The handlers talk
+// to the database directly — see `#/endpoints/rest.ts`.
 // ---------------------------------------------------------------------------
 
 const PictureSchema = z
