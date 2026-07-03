@@ -1,6 +1,6 @@
 import type ReactPDFTypes from "@react-pdf/types";
 import { SizerPage } from "#/components/sizer-page";
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import React, { useContext } from "react";
 
 import { usePDFSettings } from "./pdf-settings";
@@ -74,9 +74,9 @@ function NoopPage({ children }: PropsWithChildren<{}>) {
   return <View style={{ width: vw(100), height: vh(100) }}>{children}</View>;
 }
 
-export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
+export function PDFBookletQuad({ pages }: { pages: ReactNode[] }) {
   const pagesCp = [...pages];
-  const physicalPages: (readonly [readonly [JSX.Element, JSX.Element], readonly [JSX.Element, JSX.Element]])[] = [];
+  const physicalPages: (readonly [readonly [ReactNode, ReactNode], readonly [ReactNode, ReactNode]])[] = [];
   let keygen = 0;
   while (pagesCp.length > 0) {
     const a = [
@@ -129,9 +129,9 @@ export function PDFBookletQuad({ pages }: { pages: JSX.Element[] }) {
   );
 }
 
-export function PDFBookletDouble({ pages }: { pages: JSX.Element[] }) {
+export function PDFBookletDouble({ pages }: { pages: ReactNode[] }) {
   const pagesCp = [...pages];
-  const physicalPages: (readonly [JSX.Element, JSX.Element])[] = [];
+  const physicalPages: (readonly [ReactNode, ReactNode])[] = [];
   let keygen = 0;
   while (pagesCp.length > 0) {
     physicalPages.push([

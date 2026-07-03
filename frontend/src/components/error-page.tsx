@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 import { BackButton } from "#/components/back-button";
 import { useTranslation } from "react-i18next";
 
 import { TText } from "./themed";
 
-export function ErrorPage({ text, children }: { text: string; children?: JSX.Element }) {
+export function ErrorPage({ text, children }: { text: string; children?: ReactNode }) {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center">

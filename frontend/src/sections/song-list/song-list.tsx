@@ -4,7 +4,7 @@ import { DownloadPDF } from "#/components/pdf";
 import { SearchTextInput } from "#/components/search-text-input";
 import TopMenu from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, ReactNode } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
@@ -31,7 +31,7 @@ function Search({
 }: PropsWithChildren<{
   text: string;
   onChange: (v: string) => void;
-  topMenu: JSX.Element;
+  topMenu: ReactNode;
 }>) {
   return (
     <>
@@ -75,10 +75,10 @@ export default function SongList({
   menu,
 }: {
   filter?: (id: string) => boolean;
-  header?: string | JSX.Element;
+  header?: ReactNode;
   slug: string | null;
   title: string | null;
-  menu?: JSX.Element;
+  menu?: ReactNode;
 }) {
   const { t } = useTranslation();
   const { songs: source, initing, loading, getSongById } = useSongList();

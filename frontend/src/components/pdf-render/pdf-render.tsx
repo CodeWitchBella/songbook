@@ -237,7 +237,7 @@ function Download({
   onDone: () => void;
 }) {
   const [instance] = usePDF({ document });
-  const blob = useRef<Blob | null>();
+  const blob = useRef<Blob | null>(null);
 
   useEffect(() => {
     if (blob.current !== instance.blob) {

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,7 +21,7 @@ export function DownloadPDF({
   children,
   ...props
 }: PDFRenderMultipleSongsProps & {
-  children: (status: string, onClick: () => void) => JSX.Element;
+  children: (status: string, onClick: () => void) => ReactNode;
 }) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<"idle" | "generating" | "generated" | "error">("idle");

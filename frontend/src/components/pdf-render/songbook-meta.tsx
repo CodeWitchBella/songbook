@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { DateTime } from "luxon";
 
 import deti21 from "./deti21.png";
@@ -20,7 +21,7 @@ const titleMap: {
     imageViewPaddingTop: number;
     imageWidth?: number;
     imageOnly: boolean | [number, number];
-    image?: string | ((props: any) => JSX.Element);
+    image?: string | ((props: any) => ReactNode);
   };
 } = {
   "Kačlehy 2020 Děti": {

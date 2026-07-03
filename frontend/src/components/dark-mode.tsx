@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const key = "dark-mode-setting";
@@ -32,7 +33,7 @@ const darkModeContext = createContext<{
   setting: DarkModeSetting;
   setSetting: (v: DarkModeSetting) => void;
 }>({ value: false, setting: "light", setSetting: () => {} });
-export function DarkModeProvider({ children }: { children: JSX.Element | readonly JSX.Element[] }) {
+export function DarkModeProvider({ children }: { children: ReactNode }) {
   const [urlValue] = useState(() => {
     if (new URLSearchParams(window.location.search).has("light")) return { bool: false, string: "light" as const };
     return null;

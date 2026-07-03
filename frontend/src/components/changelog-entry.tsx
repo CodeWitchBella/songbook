@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "#/utils/format-date";
 
@@ -8,7 +9,7 @@ export function ChangelogEntry({
   children,
 }: {
   date: string;
-  children: null | JSX.Element | readonly JSX.Element[];
+  children: ReactNode;
 }) {
   const [lng] = useLanguage();
   const { t } = useTranslation();

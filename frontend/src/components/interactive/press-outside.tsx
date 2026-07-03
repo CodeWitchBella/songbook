@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createContext, useCallback, useContext, useEffect, useRef } from "react";
 
 const clickOutsideContext = createContext(false);
@@ -18,7 +19,7 @@ export function OnPressOutside({
   children,
 }: {
   onPressOutside: (() => void) | null;
-  children: (ref: (el: HTMLElement | null) => void) => null | JSX.Element | readonly JSX.Element[];
+  children: (ref: (el: HTMLElement | null) => void) => ReactNode;
 }) {
   const handlerRef = useRef(onPressOutside);
   useEffect(() => {

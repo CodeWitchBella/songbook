@@ -4,6 +4,7 @@ import { BasicButton } from "#/components/interactive/basic-button";
 import { ListButton } from "#/components/interactive/list-button";
 import { PrimaryButton } from "#/components/interactive/primary-button";
 import { useLogin } from "#/components/use-login";
+import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router";
@@ -11,7 +12,7 @@ import { useNewSong } from "#/store/store";
 import type { IntermediateSongData } from "#/utils/song-from-link";
 import { convertToSong, songDataFromLink } from "#/utils/song-from-link";
 
-const types: { [type: string]: JSX.Element } = {
+const types: { [type: string]: ReactNode } = {
   link: <CreateSongLink />,
   manual: <CreateSongManual />,
   switch: <></>,

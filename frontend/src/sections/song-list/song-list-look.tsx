@@ -18,7 +18,7 @@ export type SongListItem = { slug: string; text: string } | { header: HeaderType
 export function SongListLook({ list }: { list: SongListItem[] }) {
   const { t } = useTranslation();
 
-  const bigScrollRef = useRef<HTMLDivElement>();
+  const bigScrollRef = useRef<HTMLDivElement>(null);
 
   const location = useLocation();
 

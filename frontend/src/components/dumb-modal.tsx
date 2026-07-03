@@ -1,4 +1,6 @@
-export function DumbModal({ close, children }: { close: () => void; children: JSX.Element | readonly JSX.Element[] }) {
+import type { ReactNode } from "react";
+
+export function DumbModal({ close, children }: { close: () => void; children: ReactNode }) {
   return (
     <dialog
       onClose={close}
