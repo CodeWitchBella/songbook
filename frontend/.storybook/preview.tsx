@@ -15,6 +15,9 @@ import { MemoryRouter, Route, Routes } from "react-router";
 
 const preview: Preview = {
   parameters: {
+    // Remove the default padding around the story root so our ThemeFrame
+    // background fills the canvas edge-to-edge.
+    layout: "fullscreen",
     controls: { matchers: { color: /(background|color)$/i, date: /Date$/i } },
     // We drive the background ourselves from the app palette (see ThemeFrame),
     // so disable Storybook's built-in white/black background swatches.
@@ -89,6 +92,11 @@ function ThemeFrame({ dark, children }: { dark: boolean; children: ReactNode }) 
     root.classList.toggle("dark", dark);
     root.style.colorScheme = dark ? "dark" : "light";
     localStorage.setItem("dark-mode-setting", dark ? "dark" : "light");
+    // Paint the document background too, so overscroll/rubber-banding past the
+    // content shows the app background rather than the browser's white.
+    const bg = getColors(dark).background;
+    root.style.background = bg;
+    document.body.style.background = bg;
   }, [dark]);
 
   const colors = getColors(dark);
