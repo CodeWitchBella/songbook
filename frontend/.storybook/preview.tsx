@@ -115,7 +115,11 @@ function LocaleSync({ locale }: { locale: "cs" | "en" }) {
     if (locale === "cs") localStorage.removeItem("language");
     else localStorage.setItem("language", locale);
     (window as any).setLng?.(locale);
-    void i18n.changeLanguage(locale);
+    // This decorator sits in a sibling subtree that mounts before
+    // LanguageProvider, so on first render i18n hasn't been initialized yet;
+    // calling changeLanguage then throws ("this.store is undefined").
+    // LanguageProvider sets the initial language itself, so skip until ready.
+    if (i18n.isInitialized) void i18n.changeLanguage(locale);
   }, [locale]);
   return null;
 }

@@ -7,6 +7,15 @@ packages:
   # app builds against the TypeScript 7 RC (native port) which lacks the Node JS
   # API `exports` the generator imports. A nested package keeps its own TS.
   - "tools/*"
+catalog:
+  react: "^19.2.7"
+  react-dom: "^19.2.7"
+overrides:
+  # react-chords declares react/react-dom as hard deps (^16), which makes pnpm
+  # install a second React and triggers the "multiple React versions" error when
+  # rendering a chord. It's a pure SVG component, so pin it to the workspace React.
+  "@tombatossals/react-chords>react": "catalog:"
+  "@tombatossals/react-chords>react-dom": "catalog:"
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - "@isbl/ts-utils"
