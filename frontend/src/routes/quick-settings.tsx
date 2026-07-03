@@ -6,7 +6,6 @@ import { PageHeader } from "#/components/page-header";
 import { TH2, TText } from "#/components/themed";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
 
 export default function QuickSettings() {
   const { t } = useTranslation();
@@ -56,10 +55,10 @@ export default function QuickSettings() {
 
 function Titled({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <View style={style.titled}>
+    <div className="flex flex-row items-end justify-between">
       <TH2>{title}</TH2>
-      <View style={style.titledRight}>{children}</View>
-    </View>
+      <div className="flex flex-col py-4">{children}</div>
+    </div>
   );
 }
 
@@ -99,14 +98,3 @@ function TitledSelect<T extends string>({
     </Titled>
   );
 }
-
-const style = StyleSheet.create({
-  titled: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-  },
-  titledRight: {
-    paddingVertical: 16,
-  },
-});

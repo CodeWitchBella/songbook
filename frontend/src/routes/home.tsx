@@ -6,7 +6,6 @@ import { useColors } from "#/components/themed";
 import { useLogin } from "#/components/use-login";
 import { Version } from "#/components/version";
 import { useTranslation } from "react-i18next";
-import { Image, View } from "react-native";
 
 export default function Home() {
   const login = useLogin();
@@ -20,23 +19,12 @@ export default function Home() {
           backgroundColor: colors.background,
         }}
       >
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "stretch",
-            maxWidth: 300,
-            paddingTop: 20,
-            paddingBottom: 40,
-          }}
-        >
-          <Image
-            source={{ uri: "/static/full.svg" }}
-            style={{
-              width: "100%",
-              aspectRatio: 1,
-              paddingBottom: "100%",
-              marginBottom: "16px",
-            }}
+        <div className="flex max-w-[300px] flex-col items-stretch pb-10 pt-5">
+          <img
+            src="/static/full.svg"
+            alt=""
+            className="aspect-square w-full"
+            style={{ marginBottom: "16px" }}
           />
           <PrimaryButton to="/all-songs">{t("All songs")}</PrimaryButton>
           <Gap height={8} />
@@ -54,15 +42,15 @@ export default function Home() {
 
           <ListButton to="/about">{t("Settings and about")}</ListButton>
           <Gap />
-        </View>
-        <View style={{ maxWidth: 400 }}>
+        </div>
+        <div className="flex max-w-[400px] flex-col">
           <InstallButtonLook>
             <Gap height={30} />
           </InstallButtonLook>
-        </View>
-        <View style={{ position: "absolute", right: 16, bottom: 8 }}>
+        </div>
+        <div className="absolute bottom-2 right-4 flex flex-col">
           <Version />
-        </View>
+        </div>
       </div>
       <div className="flex flex-col items-center p-4">
         <div className="flex max-w-prose flex-col gap-4">
@@ -90,5 +78,5 @@ export default function Home() {
 }
 
 function Gap({ height = 10 }: { height?: number }) {
-  return <View style={{ height }} />;
+  return <div style={{ height }} />;
 }

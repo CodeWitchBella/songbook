@@ -1,10 +1,9 @@
-import { View } from "react-native";
 import SongList from "#/sections/song-list/song-list";
 
 export default function AllSongs() {
   return (
-    <View style={{ height: "100%" }}>
+    <div className="flex h-full flex-col">
       <SongList slug={null} title={null} />
-    </View>
+    </div>
   );
 }

@@ -3,11 +3,10 @@ import { ListButton } from "#/components/interactive/list-button";
 import { PageHeader } from "#/components/page-header";
 import { DarkModeSettings } from "#/components/settings/dark-mode";
 import { LanguageSettings } from "#/components/settings/language-settings";
-import { TH2, TText } from "#/components/themed";
+import { TH2 } from "#/components/themed";
 import { useLogin } from "#/components/use-login";
 import { Version } from "#/components/version";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
 
 const googleDoc = "https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing";
 
@@ -29,14 +28,14 @@ export default function About() {
       <TH2>{t("Language")}</TH2>
       <LanguageSettings />
       <TH2>{t("About the app")}</TH2>
-      <View>
-        <TText style={style.infoText}>
+      <div className="flex flex-col">
+        <span className="h-[18px] text-black dark:text-white">
           <Trans>
             Created by <InlineLink to="https://isbl.cz">Isabella Skořepová</InlineLink>
           </Trans>
           {` 2016${endash}2026`}
-        </TText>
-      </View>
+        </span>
+      </div>
       <Gap />
       <Version />
     </div>
@@ -48,14 +47,7 @@ function User() {
   const [t] = useTranslation();
   return login.viewer ? (
     <>
-      <TText
-        style={{
-          justifyContent: "center",
-          fontSize: 16,
-        }}
-      >
-        {login.viewer.name}
-      </TText>
+      <span className="text-base text-black dark:text-white">{login.viewer.name}</span>
       <Gap />
       <ListButton onPress={login.logout}>{t("Log out")}</ListButton>
     </>
@@ -68,14 +60,8 @@ function User() {
   );
 }
 
-const style = StyleSheet.create({
-  infoText: {
-    height: 18,
-  },
-});
-
 function Gap({ height = 10 }: { height?: number }) {
-  return <View style={{ height }} />;
+  return <div style={{ height }} />;
 }
 
 const endash = "–";

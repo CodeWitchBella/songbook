@@ -1,8 +1,6 @@
 import { getChordDefinition } from "#/components/chord-help";
 import { PageHeader } from "#/components/page-header";
-import { TText } from "#/components/themed";
 import { useMemo } from "react";
-import { View } from "react-native";
 import { Link } from "react-router";
 import { useSongList } from "#/store/store";
 import * as parser from "#/utils/song-parser/song-parser";
@@ -45,16 +43,16 @@ export default function Chords() {
     <div className="mx-auto flex w-full max-w-lg flex-col px-1 py-2">
       <PageHeader>Unknown chords</PageHeader>
       {unknownChords.map(({ chord, slugs }) => (
-        <TText key={chord}>
+        <div key={chord} className="flex flex-row text-black dark:text-white">
           {JSON.stringify(chord)}{" "}
-          <View>
+          <div className="flex flex-col">
             {slugs.map(slug => (
-              <Link state={{ canGoBack: true }} to={"/song/" + slug}>
+              <Link key={slug} state={{ canGoBack: true }} to={"/song/" + slug}>
                 {slug}
               </Link>
             ))}
-          </View>
-        </TText>
+          </div>
+        </div>
       ))}
     </div>
   );

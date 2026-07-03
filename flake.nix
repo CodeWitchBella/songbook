@@ -46,7 +46,11 @@
           inputsFrom = [
             config.flake-root.devShell
           ];
-          shellHook = "menu";
+          shellHook = ''
+            export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
+            export PGDATABASE="songbook"
+            menu
+          '';
         };
 
         packages.backend = backend.packages.default;

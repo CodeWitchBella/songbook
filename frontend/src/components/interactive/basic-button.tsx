@@ -1,10 +1,7 @@
 import type { TStyleProp } from "#/components/themed";
-import { TText, useColors } from "#/components/themed";
-import type { PropsWithChildren } from "react";
-import { useState } from "react";
+import { TText } from "#/components/themed";
+import type { CSSProperties, MouseEvent, PropsWithChildren } from "react";
 import { useCallback } from "react";
-import type { GestureResponderEvent, TextStyle } from "react-native";
-import { Pressable } from "react-native";
 import { useNavigate } from "react-router";
 
 import { isPressOverriden, useInPressOutside } from "./press-outside";
@@ -12,12 +9,13 @@ import { isPressOverriden, useInPressOutside } from "./press-outside";
 type ButtonPropsBase<T> = PropsWithChildren<
   {
     disabled?: boolean;
-    style?: TStyleProp<TextStyle>;
+    style?: TStyleProp<CSSProperties>;
+    className?: string;
   } & T
 >;
 
 type ButtonPropsNonLink = ButtonPropsBase<{
-  onPress?: (event: GestureResponderEvent) => void;
+  onPress?: (event: { preventDefault(): void }) => void;
 }>;
 
 type ButtonPropsLink = ButtonPropsBase<{ to: string; replace?: boolean }>;
@@ -39,40 +37,35 @@ export function useLinkOnPress(to: string, { replace = false }: { replace?: bool
   );
 }
 
-function BasicButtonBase({ children, disabled, style, ...rest }: ButtonPropsNonLink & { href?: string }) {
-  const [hover, setHover] = useState(false);
+function BasicButtonBase({ children, disabled, style, className, ...rest }: ButtonPropsNonLink & { href?: string }) {
   const inPressOutside = useInPressOutside();
 
+  const handleClick = (event: MouseEvent) => {
+    event.preventDefault();
+    if (disabled) return;
+    if (isPressOverriden() && !inPressOutside) return;
+    rest.onPress?.(event);
+  };
+
+  const containerClass = "flex flex-col items-stretch justify-center";
+  const inner = (
+    <TText className={"hover:underline" + (className ? " " + className : "")} style={style}>
+      {children}
+    </TText>
+  );
+
+  if (rest.href) {
+    return (
+      // eslint-disable-next-line jsx-a11y/anchor-is-valid
+      <a href={rest.href} className={containerClass} onClick={handleClick}>
+        {inner}
+      </a>
+    );
+  }
   return (
-    <Pressable
-      disabled={disabled}
-      onPress={event => {
-        event.preventDefault();
-        if (disabled) return;
-        if (isPressOverriden() && !inPressOutside) return;
-        rest.onPress?.(event);
-      }}
-      style={{
-        alignItems: "stretch",
-        flexDirection: "column",
-        justifyContent: "center",
-        display: "flex",
-      }}
-      // @ts-expect-error
-      href={rest.href}
-      onHoverIn={() => setHover(true)}
-      onHoverOut={() => setHover(false)}
-    >
-      <TText
-        style={[
-          { borderColor: useColors().borders },
-          style,
-          hover && (!isPressOverriden() || inPressOutside) ? { textDecorationLine: "underline" } : null,
-        ]}
-      >
-        {children}
-      </TText>
-    </Pressable>
+    <button type="button" disabled={disabled} className={containerClass} onClick={handleClick}>
+      {inner}
+    </button>
   );
 }
 

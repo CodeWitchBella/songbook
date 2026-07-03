@@ -1,9 +1,7 @@
 import { DumbModal } from "#/components/dumb-modal";
 import { useLanguage } from "#/components/localisation";
-import { TText } from "#/components/themed";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet } from "react-native";
 import type { LinkProps } from "react-router";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useGetRandomSong } from "#/store/store";
@@ -52,11 +50,6 @@ function MenuLink(props: LinkProps) {
   );
 }
 
-const style = StyleSheet.create({
-  modalText: { fontSize: 22 },
-  modalCloseInfo: { fontSize: 13, marginTop: 20 },
-});
-
 function Info({ close, song }: { close: () => void; song: SongType }) {
   const { t } = useTranslation();
   const [lng] = useLanguage();
@@ -64,23 +57,23 @@ function Info({ close, song }: { close: () => void; song: SongType }) {
   const unknownDate = t("info.inserted-before-2019-05-20");
   return (
     <DumbModal close={close}>
-      <div className="flex flex-col">
-        <TText style={style.modalText}>
+      <div className="flex flex-col text-[22px] text-black dark:text-white">
+        <span>
           {t("info.Inserted by: {{editor}}", {
             editor: song.editor?.name || unknownEditor,
           })}
-        </TText>
-        <TText style={style.modalText}>
+        </span>
+        <span>
           {t("info.Inserted: {{date}}", {
             date: song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate,
           })}
-        </TText>
-        <TText style={style.modalText}>
+        </span>
+        <span>
           {t("info.Last edit: {{date}}", {
             date: formatDate(lng, t, song.lastModified.toISO()),
           })}
-        </TText>
-        <TText style={[style.modalText, style.modalCloseInfo]}>{t("Click on the backdrop to close this")}</TText>
+        </span>
+        <span className="mt-5 text-[13px]">{t("Click on the backdrop to close this")}</span>
       </div>
     </DumbModal>
   );

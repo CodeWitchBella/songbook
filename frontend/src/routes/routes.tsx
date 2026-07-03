@@ -10,8 +10,8 @@ import {
   RouterProvider,
   useLocation,
   useNavigate,
+  createBrowserRouter,
 } from "react-router";
-import { createBrowserRouter } from "react-router";
 
 const imports = {
   CollectionList: once(() => import("./collection-list")),
@@ -89,12 +89,7 @@ const router = createBrowserRouter(
       ),
     },
   ],
-  {
-    future: {
-      v7_fetcherPersist: true,
-      v7_normalizeFormMethod: true,
-    },
-  },
+  { future: {} },
 );
 
 export function Routes() {

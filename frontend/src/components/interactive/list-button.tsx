@@ -1,22 +1,14 @@
-import { useBasicStyle } from "../themed";
 import type { ButtonProps } from "./basic-button";
 import { BasicButton } from "./basic-button";
 
-export function ListButton({ style, children, ...rest }: ButtonProps) {
+export function ListButton({ style, className, children, ...rest }: ButtonProps) {
   return (
     <BasicButton
-      style={[
-        useBasicStyle(),
-        {
-          borderWidth: 1,
-          borderStyle: "solid",
-          padding: 10,
-          fontSize: 15,
-
-          textAlign: "center",
-        },
-        style,
-      ]}
+      className={
+        "border border-solid border-black bg-white p-2.5 text-center text-[15px] dark:border-white dark:bg-neutral-950" +
+        (className ? " " + className : "")
+      }
+      style={style}
       {...rest}
     >
       {children}

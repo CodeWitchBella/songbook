@@ -1,10 +1,5 @@
+import type { CSSProperties, HTMLAttributes } from "react";
 import { forwardRef } from "react";
-import type { TextProps, TextStyle } from "react-native";
-import {
-  // eslint-disable-next-line no-restricted-imports
-  Text as RNText,
-  View,
-} from "react-native";
 
 import { useDarkModeSetting } from "./dark-mode";
 
@@ -34,107 +29,80 @@ export function useColors() {
   return getColors(useDarkModeSetting().value);
 }
 
-export type TStyleProp<T> = undefined | null | T | TStyleProp<T>[];
-export type TTextProps = Omit<TextProps, "style"> & {
-  style?: TStyleProp<TextStyle & { fontSize?: string | number }>;
+export type TStyleProp<T> = undefined | null | false | T | TStyleProp<T>[];
+type TCSS = CSSProperties & {
+  // React Native style shorthands that used to be passed in; translated to CSS
+  // by flattenStyle below.
+  marginVertical?: string | number;
+  marginHorizontal?: string | number;
+  paddingVertical?: string | number;
+  paddingHorizontal?: string | number;
+};
+export type TTextProps = Omit<HTMLAttributes<HTMLSpanElement>, "style"> & {
+  style?: TStyleProp<TCSS>;
+  href?: string;
   children?: React.ReactNode;
 };
 
-// performs deep array mapping and makes sure there is no extra allocation if
-// mapping function does not change anything
-// anys are inevitable in this case because there is no way to actually type this
-// if this were a professional software I would write tests for this but :meh:
-function mapStyle<In, Out>(style: TStyleProp<In>, mapper: (v: In) => Out): TStyleProp<Out> {
-  if (!Array.isArray(style)) return mapper(style as any);
-
-  let result: any | undefined = undefined;
-  let i = 0;
-  for (const item of style as any) {
-    ++i;
-    const out = mapper(item);
-    if (!result && out !== item) result = style.slice(0, i);
-    if (result) result.push(out);
+// Flattens a (possibly nested) style array into a single CSSProperties object,
+// translating the few React Native style shorthands that were still in use.
+function flattenStyle(style: TStyleProp<TCSS>, out: Record<string, unknown> = {}): CSSProperties {
+  if (!style) return out as CSSProperties;
+  if (Array.isArray(style)) {
+    for (const item of style) flattenStyle(item, out);
+    return out as CSSProperties;
   }
-  return result || style;
+  for (const [key, value] of Object.entries(style)) {
+    switch (key) {
+      case "marginVertical":
+        out.marginBlock = value;
+        break;
+      case "marginHorizontal":
+        out.marginInline = value;
+        break;
+      case "paddingVertical":
+        out.paddingBlock = value;
+        break;
+      case "paddingHorizontal":
+        out.paddingInline = value;
+        break;
+      default:
+        out[key] = value;
+    }
+  }
+  return out as CSSProperties;
 }
 
-export type TextRef = RNText;
-export const TText = forwardRef<TextRef, TTextProps>(({ style, ...rest }, ref) => {
-  const colors = useColors();
-  const fixedStyle = mapStyle(
-    style,
-    (v): TextStyle => (typeof v === "object" && v?.fontSize ? { ...v, fontSize: +v.fontSize } : v),
-  );
+export const TText = forwardRef<HTMLSpanElement, TTextProps>(({ style, className, ...rest }, ref) => {
   return (
-    <RNText
-      ref={ref}
-      style={[
-        {
-          color: colors.text,
-          fontFamily: "inherit",
-          fontWeight: "400" as any,
-        },
-        fixedStyle,
-      ]}
-      {...rest}
-    />
+    <span ref={ref} className={"text-black dark:text-white" + (className ? " " + className : "")} style={flattenStyle(style)} {...rest} />
   );
 });
 
-export function TH2({ style, ...rest }: TTextProps) {
+export function TH2({ style, className, ...rest }: TTextProps) {
   return (
     <TText
-      style={[
-        {
-          fontSize: 20,
-          flexDirection: "row",
-          display: "flex",
-          marginBottom: 16,
-          marginTop: 32,
-        },
-        style,
-      ]}
+      className={"mb-4 mt-8 flex flex-row text-xl" + (className ? " " + className : "")}
+      style={style}
       {...rest}
     />
   );
 }
 
-export function TH3({ style, ...rest }: TTextProps) {
+export function TH3({ style, className, ...rest }: TTextProps) {
   return (
     <TText
-      style={[
-        {
-          display: "flex",
-          fontSize: 16,
-          marginBottom: 8,
-          marginTop: 16,
-          fontWeight: "bold",
-        },
-        style,
-      ]}
+      className={"mb-2 mt-4 flex flex-row font-bold text-base" + (className ? " " + className : "")}
+      style={style}
       {...rest}
     />
   );
 }
 
-export function TP({ children, ...rest }: TTextProps) {
+export function TP({ children, className, style, ...rest }: TTextProps) {
   return (
-    <View style={{ marginTop: 8 }}>
-      <TText {...rest}>
-        <TText>
-          <View style={{ width: 8 }} />
-        </TText>
-        {children}
-      </TText>
-    </View>
+    <p className={"mt-2 indent-2" + (className ? " " + className : "")} style={flattenStyle(style)} {...rest}>
+      {children}
+    </p>
   );
-}
-
-export function useBasicStyle() {
-  const colors = useColors();
-  return {
-    borderColor: colors.borders,
-    backgroundColor: colors.background,
-    color: colors.text,
-  };
 }

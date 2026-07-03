@@ -1,12 +1,9 @@
 import { useRef } from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, TextInput, View } from "react-native";
-
-import { useBasicStyle } from "./themed";
 
 export function SearchTextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  const ref = useRef<TextInput>(null);
+  const ref = useRef<HTMLInputElement>(null);
   const prevValue = useRef(value);
   useEffect(() => {
     prevValue.current = value;
@@ -22,7 +19,7 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
       // ignore shortcuts
       if (event.metaKey || event.ctrlKey || event.altKey) return;
       if (event.key.trim().length !== 1) return;
-      const focused = ref.current?.isFocused();
+      const focused = document.activeElement === ref.current;
       if (event.key.length === 1) {
         onChange(prevValue.current + event.key);
         setTimeout(() => {
@@ -36,24 +33,24 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
   }, [onChange, value]);
   const { t } = useTranslation();
   return (
-    <View style={{ position: "relative", flexGrow: 1 }}>
-      <TextInput
+    <div className="relative flex grow flex-col">
+      <input
         ref={ref}
+        type="search"
         value={value}
         onChange={event => {
           event.stopPropagation();
-          onChange(event.nativeEvent.text);
+          onChange(event.target.value);
         }}
         placeholder={t("Type to search")}
-        onSubmitEditing={() => {
-          ref.current?.blur();
+        onKeyDown={event => {
+          if (event.key === "Enter") ref.current?.blur();
         }}
-        returnKeyType="search"
-        accessibilityLabel="Vyhledávání"
-        style={[styles.input, useBasicStyle()]}
+        aria-label="Vyhledávání"
+        className="h-10 w-[calc(100%-4px)] border border-solid border-black bg-white pl-2.5 text-black dark:border-white dark:bg-neutral-950 dark:text-white"
       />
       <ClearButton onClick={() => onChange("")} />
-    </View>
+    </div>
   );
 }
 
@@ -73,13 +70,3 @@ function ClearButton({ onClick }: { onClick: () => void }) {
     </button>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    padding: 0,
-    paddingLeft: 10,
-    border: "1px solid #222",
-    width: "calc(100% - 4px)",
-  },
-});

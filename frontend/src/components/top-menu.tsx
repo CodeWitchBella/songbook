@@ -1,10 +1,8 @@
 import type { PropsWithChildren } from "react";
 import { useReducer } from "react";
-import { View } from "react-native";
 
 import { OnPressOutside } from "./interactive/press-outside";
 import { Burger } from "./song-look/song-menu-icons";
-import { useColors } from "./themed";
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -40,30 +38,16 @@ function MenuContent({
   visible: boolean;
   onClose: () => void;
 }>) {
-  const colors = useColors();
   return (
     <OnPressOutside onPressOutside={visible ? onClose : null}>
       {ref => (
-        <View
+        <div
           ref={ref}
-          style={{
-            position: "absolute",
-            right: 4,
-            marginTop: 2,
-
-            backgroundColor: colors.background,
-            borderWidth: 1,
-            borderColor: colors.borders,
-            borderStyle: "solid",
-
-            padding: 10,
-
-            display: visible ? "flex" : "none",
-            flexDirection: "column",
-          }}
+          className="absolute right-1 mt-0.5 flex-col border border-solid border-black bg-white p-2.5 dark:border-white dark:bg-neutral-950"
+          style={{ display: visible ? "flex" : "none" }}
         >
           {children}
-        </View>
+        </div>
       )}
     </OnPressOutside>
   );

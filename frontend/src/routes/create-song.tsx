@@ -3,11 +3,9 @@ import { LargeInput } from "#/components/input";
 import { BasicButton } from "#/components/interactive/basic-button";
 import { ListButton } from "#/components/interactive/list-button";
 import { PrimaryButton } from "#/components/interactive/primary-button";
-import { TText } from "#/components/themed";
 import { useLogin } from "#/components/use-login";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View } from "react-native";
 import { useLocation, useParams } from "react-router";
 import { useNewSong } from "#/store/store";
 import type { IntermediateSongData } from "#/utils/song-from-link";
@@ -19,32 +17,6 @@ const types: { [type: string]: JSX.Element } = {
   switch: <></>,
 };
 
-const styles = StyleSheet.create({
-  button: {
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    margin: 8,
-    fontSize: 16,
-  },
-  active: {
-    fontWeight: "bold",
-  },
-  switch: { flexDirection: "row" },
-  wrap: {
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100%",
-    paddingVertical: 20,
-  },
-  wrap2: {
-    flexDirection: "column",
-    alignItems: "center",
-    minHeight: 350,
-    maxWidth: "100%",
-  },
-});
-
 export default function CreateSong() {
   const params = useParams<{ type?: string }>();
   const { t } = useTranslation();
@@ -53,11 +25,11 @@ export default function CreateSong() {
   if (!login.viewer) {
     return (
       <ErrorPage text={t("You have to be logged in to add a song")}>
-        <View style={{ flexDirection: "row", marginTop: 8, marginBottom: 4 }}>
+        <div className="mb-1 mt-2 flex flex-row">
           <ListButton to="/login">{t("Log in")}</ListButton>
-          <View style={{ width: 16 }} />
+          <div className="w-4" />
           <ListButton to="/register">{t("Register")}</ListButton>
-        </View>
+        </div>
       </ErrorPage>
     );
   }
@@ -74,7 +46,7 @@ function SwitchButton({ type, children }: { type: string; children: string }) {
   const activeType = params.type ?? "switch";
   return (
     <BasicButton
-      style={[styles.button, activeType === type ? styles.active : undefined]}
+      className={"m-2 border border-solid px-4 py-2 text-base" + (activeType === type ? " font-bold" : "")}
       to={"/new/" + type}
       replace={true}
     >
@@ -86,10 +58,10 @@ function SwitchButton({ type, children }: { type: string; children: string }) {
 function CreateSongSwitch() {
   const { t } = useTranslation();
   return (
-    <View style={styles.switch}>
+    <div className="flex flex-row">
       <SwitchButton type="link">{t("create.Using link")}</SwitchButton>
       <SwitchButton type="manual">{t("create.Manually")}</SwitchButton>
-    </View>
+    </div>
   );
 }
 
@@ -136,23 +108,6 @@ function getURLFromSearch(search: string) {
   return parse(params.get("url")) || parse(params.get("text")) || parse(params.get("title")) || "";
 }
 
-const createStyles = StyleSheet.create({
-  label: {
-    fontWeight: "bold",
-  },
-  line: {
-    fontSize: 16,
-  },
-  text: {
-    fontSize: 16,
-  },
-  error: {
-    color: "red",
-    paddingVertical: 16,
-    fontSize: 16,
-  },
-});
-
 function CreateSongLink() {
   const location = useLocation();
   const [link, setLink] = useState(getURLFromSearch(location.search));
@@ -183,7 +138,7 @@ function CreateSongLink() {
             {t("create.Download")}
           </PrimaryButton>
           <button disabled={form.disabled} className="hidden" />
-          <TText style={createStyles.error}>{error}</TText>
+          <span className="py-4 text-base text-red-600">{error}</span>
         </form>
       )}
     </div>
@@ -208,30 +163,30 @@ function SubmitSong({ songData, cancel }: { songData: IntermediateSongData; canc
   });
 
   return (
-    <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg" onSubmit={form.submit}>
-      <TText style={createStyles.error}>{error}</TText>
-      <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Song name")}:</TText> {song.title}
-      </TText>
-      <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Link")}:</TText> {songData.link}
-      </TText>
-      <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Song author")}:</TText> {song.author}
-      </TText>
-      <TText style={createStyles.line}>
-        <TText style={createStyles.label}>{t("create.Text")}:</TText>{" "}
-      </TText>
-      <TText style={createStyles.text}>{song.text}</TText>
+    <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg text-black dark:text-white" onSubmit={form.submit}>
+      <span className="py-4 text-base text-red-600">{error}</span>
+      <span className="text-base">
+        <span className="font-bold">{t("create.Song name")}:</span> {song.title}
+      </span>
+      <span className="text-base">
+        <span className="font-bold">{t("create.Link")}:</span> {songData.link}
+      </span>
+      <span className="text-base">
+        <span className="font-bold">{t("create.Song author")}:</span> {song.author}
+      </span>
+      <span className="text-base">
+        <span className="font-bold">{t("create.Text")}:</span>{" "}
+      </span>
+      <span className="text-base">{song.text}</span>
       <button disabled={form.disabled} className="hidden" />
-      <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+      <div className="flex flex-row justify-end">
         <PrimaryButton onPress={cancel} disabled={form.disabled}>
           {t("create.Cancel")}
         </PrimaryButton>
         <PrimaryButton disabled={form.disabled} onPress={form.submit} style={{ marginLeft: 8 }}>
           {t("create.Confirm")}
         </PrimaryButton>
-      </View>
+      </div>
     </form>
   );
 }

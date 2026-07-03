@@ -3,11 +3,9 @@ import { InlineLink } from "#/components/interactive/inline-link";
 import { PrimaryButton } from "#/components/interactive/primary-button";
 import { LoginDone } from "#/components/login-done";
 import { PageHeader } from "#/components/page-header";
-import { TText } from "#/components/themed";
 import { useLogin } from "#/components/use-login";
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { View } from "react-native";
 
 export default function Login() {
   const { t } = useTranslation();
@@ -60,13 +58,13 @@ export default function Login() {
             {t("Log in")}
           </PrimaryButton>
           <button style={{ display: "none" }} />
-          <View style={{ marginTop: 16, alignItems: "flex-end" }}>
-            <TText style={{ fontSize: 16 }}>
+          <div className="mt-4 flex flex-col items-end">
+            <span className="text-base text-black dark:text-white">
               <Trans>
                 I don't have account, <InlineLink to="/register">register</InlineLink>
               </Trans>
-            </TText>
-          </View>
+            </span>
+          </div>
         </>
       )}
     </form>

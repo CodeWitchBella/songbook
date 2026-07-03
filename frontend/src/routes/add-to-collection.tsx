@@ -3,11 +3,9 @@ import { ErrorPage } from "#/components/error-page";
 import { LargeInput } from "#/components/input";
 import { BasicButton } from "#/components/interactive/basic-button";
 import { ListButton } from "#/components/interactive/list-button";
-import { TText } from "#/components/themed";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
 import { useParams } from "react-router";
 import type { WithMethods } from "#/store/generic-store";
 import { graphqlFetch } from "#/store/graphql";
@@ -54,9 +52,9 @@ export default function AddToCollection() {
     return (
       <div className="mx-auto max-w-xl">
         <Title text="Pro přidání písně do kolekce musíš mít účet." first={true} />
-        <View style={{ paddingTop: 16 }} />
+        <div className="pt-4" />
         <ListButton to="/login">Přihlásit se</ListButton>
-        <View style={{ paddingTop: 8 }} />
+        <div className="pt-2" />
         <ListButton to="/register">Vytvořit účet</ListButton>
         {locked.length > 0 ? <Title text="Píseň je v kolekcích" first={false} /> : null}
         <CollectionList list={locked.sort(collectionCompare)} />
@@ -133,9 +131,9 @@ function Title({ first, text, error }: { first: boolean; text: string; error?: s
             <BackArrow />
           </BackButton>
         ) : null}
-        <TText style={{ fontSize: 24 }}>{text}</TText>
+        <span className="text-2xl text-black dark:text-white">{text}</span>
       </div>
-      {error && first ? <TText style={{ color: "red", fontSize: 16, marginTop: 8 }}>{error}</TText> : null}
+      {error && first ? <span className="mt-2 text-base text-red-600">{error}</span> : null}
     </>
   );
 }
@@ -167,17 +165,12 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
       <LargeInput label={t("collection.Collection name")} value={name} onChange={setName} />
       <BasicButton
         disabled={disabled}
-        style={{
-          borderWidth: 1,
-          paddingBottom: 6,
-          paddingTop: 8,
-          paddingHorizontal: 8,
-        }}
+        className="border border-solid pb-1.5 pl-2 pr-2 pt-2 text-black dark:text-white"
         onPress={submit}
       >
         {t("collection.Create collection and add song to it")}
       </BasicButton>
-      {error ? <TText style={{ color: "red", fontSize: 16 }}>{error}</TText> : null}
+      {error ? <span className="text-base text-red-600">{error}</span> : null}
       <button className="hidden" disabled={disabled} />
     </form>
   );
@@ -202,13 +195,13 @@ function CollectionList({
               }}
               style={{ marginTop: 8 }}
             >
-              <TText>{collectionFullName(item.item)}</TText>
+              <span>{collectionFullName(item.item)}</span>
             </ListButton>
           ))
         : list.map(item => (
-            <TText key={item.item.id} style={{ marginTop: 8 }}>
+            <span key={item.item.id} className="mt-2 text-black dark:text-white">
               {collectionFullName(item.item)}
-            </TText>
+            </span>
           ))}
     </>
   );

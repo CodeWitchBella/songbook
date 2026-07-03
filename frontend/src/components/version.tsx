@@ -1,7 +1,6 @@
 import { buildData } from "#/build-data";
 import { DateTime } from "luxon";
 import { useTranslation } from "react-i18next";
-import { Linking, Pressable } from "react-native";
 
 import { TText } from "./themed";
 
@@ -11,13 +10,9 @@ export function Version() {
     <TText>
       {t("Current version")}
       {": "}
-      <Pressable
-        onPress={() => {
-          Linking.openURL("https://github.com/CodeWitchBella/songbook");
-        }}
-      >
+      <a href="https://github.com/CodeWitchBella/songbook" target="_blank" rel="noopener noreferrer">
         <TText style={buildData.fallback ? { fontStyle: "italic" } : {}}>{format(buildData.commitTime)}</TText>
-      </Pressable>
+      </a>
     </TText>
   );
 }

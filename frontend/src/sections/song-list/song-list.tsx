@@ -7,7 +7,6 @@ import { useQueryParam } from "#/components/use-router";
 import type { PropsWithChildren } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
 import { useLocation, useNavigate } from "react-router";
 import { useSongList } from "#/store/store";
 import type { SongType } from "#/store/store-song";
@@ -172,5 +171,5 @@ export default function SongList({
 }
 
 function Gap() {
-  return <View style={{ height: 8 }} />;
+  return <div className="h-2" />;
 }

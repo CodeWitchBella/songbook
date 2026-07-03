@@ -8,7 +8,6 @@ import { createContext } from "react";
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
-import { View } from "react-native";
 import remarkGfm from "remark-gfm";
 import { useChangelog } from "#/utils/use-changelog";
 
@@ -43,7 +42,7 @@ function ChangelogBody() {
           }
         />
       </ChangelogEntry>
-      <View style={{ height: 16 }} />
+      <div className="h-4" />
     </>
   );
 }
@@ -57,23 +56,23 @@ const depthCtx = createContext(0);
 function Ul({ children, depth }: { children: any; depth: number }) {
   return (
     <depthCtx.Provider value={depth}>
-      <View>{children.filter((child: any) => typeof child !== "string")}</View>
+      <div className="flex flex-col">{children.filter((child: any) => typeof child !== "string")}</div>
     </depthCtx.Provider>
   );
 }
 function Li({ children }: { children: any }) {
   const depth = useContext(depthCtx);
   return (
-    <View style={{ flexDirection: "row" }}>
-      <TText style={{ fontWeight: "bold", marginRight: 4 }}>{depth === 1 ? "-" : "•"} </TText>
+    <div className="flex flex-row">
+      <TText className="mr-1 font-bold">{depth === 1 ? "-" : "•"} </TText>
       <TText>{children}</TText>
-    </View>
+    </div>
   );
 }
 
 function ChangeBody({ body }: { body: string }) {
   return (
-    <View style={{ marginLeft: 8, marginTop: 4 }}>
+    <div className="ml-2 mt-1 flex flex-col">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         // slight typing mismatches are almost inevitable
@@ -81,7 +80,7 @@ function ChangeBody({ body }: { body: string }) {
       >
         {body}
       </ReactMarkdown>
-    </View>
+    </div>
   );
 }
 export default function Changelog() {
