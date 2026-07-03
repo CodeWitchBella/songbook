@@ -1,8 +1,19 @@
+import { z } from "@hono/zod-openapi";
 import { eq, or, sql } from "drizzle-orm";
 
 import { checkCode, schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { RestError, getViewerCheck } from "#/lib/auth.ts";
+import { restRoute, type Api } from "#/lib/openapi.ts";
+
+export function registerAddToCollection(api: Api) {
+  restRoute(api, "add-to-collection", {
+    summary: "Add a song to a collection",
+    body: z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables"),
+    data: z.object({ addToCollection: z.string().nullable() }),
+    handler: addToCollection,
+  });
+}
 
 export async function addToCollection(vars: any, context: MyContext) {
   const { song, collection } = vars as { song: string; collection: string };

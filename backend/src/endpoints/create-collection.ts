@@ -1,9 +1,20 @@
+import { z } from "@hono/zod-openapi";
 import { eq, sql } from "drizzle-orm";
 
 import { schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { RestError, getViewerCheck } from "#/lib/auth.ts";
 import { randomID, slugify } from "#/lib/utils.ts";
+import { restRoute, type Api } from "#/lib/openapi.ts";
+
+export function registerCreateCollection(api: Api) {
+  restRoute(api, "create-collection", {
+    summary: "Create a new collection",
+    body: z.object({ name: z.string() }).openapi("CreateCollectionVariables"),
+    data: z.object({ createCollection: z.object({ id: z.string() }) }),
+    handler: createCollection,
+  });
+}
 
 export async function createCollection(vars: any, context: MyContext) {
   const { name: requestedName } = vars as { name: string };

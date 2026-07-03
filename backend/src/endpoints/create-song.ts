@@ -1,9 +1,38 @@
+import { createRoute, z } from "@hono/zod-openapi";
 import { checkCode } from "#/db/drizzle.ts";
 import { song } from "#/db/schema.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { getViewerCheck } from "#/lib/auth.ts";
 import { badRequestResponse, jsonResponse } from "#/lib/response.ts";
 import { randomID, slugify } from "#/lib/utils.ts";
+import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
+
+export function registerCreateSong(api: Api) {
+  api.openapi(
+    createRoute({
+      method: "post",
+      path: "/song",
+      summary: "Create a new song",
+      request: {
+        body: json(
+          z
+            .object({
+              title: z.string(),
+              author: z.string(),
+              text: z.string().optional(),
+              extraNonSearchable: z.string().optional(),
+            })
+            .openapi("CreateSongInput"),
+        ),
+      },
+      responses: {
+        200: { description: "Created", ...json(z.object({ slug: z.string() })) },
+        400: { description: "Bad request", ...json(ErrorSchema) },
+      },
+    }),
+    (async (c: any) => handleCreateSong(c.req.valid("json"), await c.var.makeContext())) as any,
+  );
+}
 
 interface CreateSongInput {
   title: string;

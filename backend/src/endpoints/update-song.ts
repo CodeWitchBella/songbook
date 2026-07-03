@@ -1,9 +1,20 @@
+import { z } from "@hono/zod-openapi";
 import { eq, sql } from "drizzle-orm";
 
 import { affectedRows, schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { RestError } from "#/lib/auth.ts";
 import { slugify } from "#/lib/utils.ts";
+import { restRoute, type Api } from "#/lib/openapi.ts";
+
+export function registerUpdateSong(api: Api) {
+  restRoute(api, "update-song", {
+    summary: "Update a song",
+    body: z.object({ id: z.string(), input: z.object({}).passthrough() }).openapi("UpdateSongVariables"),
+    data: z.object({ updateSong: z.object({ id: z.string() }) }),
+    handler: updateSong,
+  });
+}
 
 export async function updateSong(vars: any, context: MyContext) {
   const { id, input } = vars as { id: string; input: any };

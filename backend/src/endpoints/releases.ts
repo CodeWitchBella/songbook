@@ -1,4 +1,27 @@
+import { createRoute, z } from "@hono/zod-openapi";
 import { methodNotAllowedResponse } from "#/lib/response.ts";
+import { json, type Api } from "#/lib/openapi.ts";
+
+export function registerReleases(api: Api) {
+  api.openapi(
+    createRoute({
+      method: "get",
+      path: "/releases",
+      summary: "List published GitHub releases (changelog)",
+      responses: {
+        200: {
+          description: "Releases",
+          ...json(
+            z.object({
+              data: z.array(z.object({ name: z.string(), tagName: z.string(), body: z.string() })),
+            }),
+          ),
+        },
+      },
+    }),
+    (async (c: any) => handleReleases(c.req.raw)) as any,
+  );
+}
 
 type GithubResponse = {
   url: string;

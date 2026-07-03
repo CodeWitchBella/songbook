@@ -1,8 +1,19 @@
+import { z } from "@hono/zod-openapi";
 import { and, eq, or, sql } from "drizzle-orm";
 
 import { affectedRows, schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { RestError, getViewerCheck } from "#/lib/auth.ts";
+import { restRoute, type Api } from "#/lib/openapi.ts";
+
+export function registerRemoveFromCollection(api: Api) {
+  restRoute(api, "remove-from-collection", {
+    summary: "Remove a song from a collection",
+    body: z.object({ collection: z.string(), song: z.string() }).openapi("RemoveFromCollectionVariables"),
+    data: z.object({ removeFromCollection: z.string().nullable() }),
+    handler: removeFromCollection,
+  });
+}
 
 export async function removeFromCollection(vars: any, context: MyContext) {
   const { song, collection } = vars as { song: string; collection: string };

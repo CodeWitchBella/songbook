@@ -1,9 +1,35 @@
+import { createRoute, z } from "@hono/zod-openapi";
 import { type DefaultTreeAdapterMap, parse } from "parse5";
 
 type Node = DefaultTreeAdapterMap["node"];
 type Element = DefaultTreeAdapterMap["element"];
 
 import { badRequestResponse, jsonResponse } from "#/lib/response.ts";
+import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
+
+export function registerImport(api: Api) {
+  const importRoute = createRoute({
+    method: "get",
+    path: "/import",
+    summary: "Import a song from an external site (supermusic, ultimate-guitar, …)",
+    request: {
+      query: z.object({
+        url: z.string().url().openapi({ description: "Source URL to import from" }),
+      }),
+    },
+    responses: {
+      200: {
+        description: "Imported song",
+        ...json(z.object({ text: z.string(), author: z.string(), title: z.string() })),
+      },
+      400: { description: "Bad request", ...json(ErrorSchema) },
+    },
+  });
+
+  api.openapi(importRoute, (async (c: any) => handleImport(c.req.raw)) as any);
+  // Legacy alias
+  api.get("/ultimate-guitar", c => handleImport(c.req.raw));
+}
 
 export async function handleImport(request: Request): Promise<Response> {
   const url = new URL(request.url);

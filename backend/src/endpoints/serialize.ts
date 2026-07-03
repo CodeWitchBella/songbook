@@ -64,9 +64,7 @@ export async function serializeSongRecord(src: any, context: MyContext) {
 export async function serializeCollectionRecord(src: any, context: MyContext) {
   if (src.deleted) return { __typename: "Deleted", id: src.id };
 
-  const owner = src.owner
-    ? await context.db.query.user.findFirst({ where: eq(schema.user.id, src.owner) })
-    : null;
+  const owner = src.owner ? await context.db.query.user.findFirst({ where: eq(schema.user.id, src.owner) }) : null;
   const list = await context.db
     .select()
     .from(schema.collectionSong)
