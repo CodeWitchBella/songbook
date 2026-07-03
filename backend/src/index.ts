@@ -40,7 +40,7 @@ async function serveStatic(pathname: string): Promise<Response | null> {
   const body = (await readIfInside(join(publicDir, pathname))) ?? (await readIfInside(join(publicDir, "index.html")));
   if (!body) return null;
   const contentType = mimeTypes[extname(pathname)] ?? "text/html; charset=utf-8";
-  return new Response(body, { headers: { "content-type": contentType } });
+  return new Response(new Uint8Array(body), { headers: { "content-type": contentType } });
 }
 
 const app = new Hono();

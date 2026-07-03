@@ -89,7 +89,7 @@ api.openapi(
       401: { description: "Invalid credentials", ...json(ErrorMessageSchema) },
     },
   }),
-  (async c => handleLogin(c.req.raw, await c.var.makeContext())) as any,
+  (async (c: any) => handleLogin(c.req.raw, await c.var.makeContext())) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ api.openapi(
       200: { description: "Logged out", ...json(z.object({ ok: z.boolean() })) },
     },
   }),
-  (async c => handleLogout(await c.var.makeContext())) as any,
+  (async (c: any) => handleLogout(await c.var.makeContext())) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ api.openapi(
       400: { description: "Bad request", ...json(ErrorSchema) },
     },
   }),
-  (async c => handleCreateSong(c.req.raw, await c.var.makeContext())) as any,
+  (async (c: any) => handleCreateSong(c.req.raw, await c.var.makeContext())) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ const importRoute = createRoute({
   },
 });
 
-api.openapi(importRoute, (async c => handleImport(c.req.raw)) as any);
+api.openapi(importRoute, (async (c: any) => handleImport(c.req.raw)) as any);
 api.get("/ultimate-guitar", c => handleImport(c.req.raw));
 
 // ---------------------------------------------------------------------------
@@ -180,7 +180,7 @@ api.openapi(
       },
     },
   }),
-  (async c => handleReleases(c.req.raw)) as any,
+  (async (c: any) => handleReleases(c.req.raw)) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -269,7 +269,7 @@ function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
         404: { description: "Unknown operation", content: { "text/plain": { schema: z.string() } } },
       },
     }),
-    (async c => handleRest(operation, c.req.raw, await c.var.makeContext())) as any,
+    (async (c: any) => handleRest(operation, c.req.raw, await c.var.makeContext())) as any,
   );
 }
 
