@@ -11,12 +11,7 @@ export async function getViewer(context: MyContext) {
   const sessions = await context.db
     .select()
     .from(schema.session)
-    .where(
-      and(
-        gt(schema.session.expires, sql`CURRENT_TIMESTAMP`),
-        eq(schema.session.token, token),
-      ),
-    )
+    .where(and(gt(schema.session.expires, sql`CURRENT_TIMESTAMP`), eq(schema.session.token, token)))
     .innerJoin(schema.user, eq(schema.user.id, schema.session.user))
     .limit(1);
   if (sessions.length < 1) return null;

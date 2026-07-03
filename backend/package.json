@@ -1,32 +1,23 @@
 {
-  "private": true,
   "name": "songbook-workers",
   "version": "0.0.0",
+  "private": true,
   "description": "New songbook backend using cloudflare workers",
-  "main": "dist/worker.js",
+  "license": "UNLICENSED",
+  "author": "Isabella Skořepová <isabella@skorepova.info>",
   "type": "module",
+  "main": "dist/worker.js",
   "scripts": {
     "build": "webpack",
     "dev": "node --watch src/index.ts",
-    "db-push": "yarn drizzle-kit push:pg --config=drizzle.config.ts"
-  },
-  "author": "Isabella Skořepová <isabella@skorepova.info>",
-  "license": "UNLICENSED",
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/latinize": "^0.2.18",
-    "@types/luxon": "^3.4.2",
-    "@types/node": "^22.10.5",
-    "@types/pg": "^8.11.10",
-    "nodemon": "^3.1.9",
-    "prettier": "^3.4.2",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "db-push": "yarn drizzle-kit push:pg --config=drizzle.config.ts",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
     "@codewitchbella/ts-utils": "^0.2.0",
-    "graphql": "^16.10.0",
     "@isbl/bcryptjs": "^3.0.0-beta.3",
     "@planetscale/database": "^1.19.0",
     "@sagi.io/workers-jwt": "^0.0.26",
@@ -37,6 +28,7 @@
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.22.6",
     "drizzle-orm": "^0.31.2",
+    "graphql": "^16.10.0",
     "latinize": "^2.0.0",
     "luxon": "^3.5.0",
     "mysql2": "^3.12.0",
@@ -44,6 +36,18 @@
     "postgres": "^3.4.5",
     "setimmediate": "^1.0.5",
     "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/latinize": "^0.2.18",
+    "@types/luxon": "^3.4.2",
+    "@types/node": "^22.10.5",
+    "@types/pg": "^8.11.10",
+    "nodemon": "^3.1.9",
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.72.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   },
   "devEngines": {
     "packageManager": {

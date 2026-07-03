@@ -11,19 +11,13 @@ const sch = z.object({
   password: z.string(),
 });
 
-export async function handleLogin(
-  request: Request,
-  ctx: MyContext,
-): Promise<Response> {
+export async function handleLogin(request: Request, ctx: MyContext): Promise<Response> {
   const json = await validateZodJsonBody(request, sch);
   const user = await ctx.db.query.user.findFirst({
     where: eq(schema.user.email, json.email),
   });
   if (!user) {
-    return Response.json(
-      { message: "Uživatel s daným emailem nenalezen" },
-      { status: 401 },
-    );
+    return Response.json({ message: "Uživatel s daným emailem nenalezen" }, { status: 401 });
   }
 
   const passwordHash = user.passwordHash;

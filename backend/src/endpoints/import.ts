@@ -16,15 +16,11 @@ export async function handleImport(request: Request): Promise<Response> {
 
 const handlers: readonly {
   test: (url: string) => boolean;
-  handle: (
-    target: string,
-  ) => Promise<{ text: string; author: string; title: string }>;
+  handle: (target: string) => Promise<{ text: string; author: string; title: string }>;
 }[] = [
   {
-    test: (url) =>
-      url.startsWith("https://supermusic.cz") ||
-      url.startsWith("https://supermusic.sk"),
-    handle: async (link) => {
+    test: url => url.startsWith("https://supermusic.cz") || url.startsWith("https://supermusic.sk"),
+    handle: async link => {
       const id = new URL(link).searchParams.get("idpiesne");
       if (!id) throw jsonResponse({ error: "Unknown supermusic url" }, 400);
 
@@ -38,8 +34,7 @@ const handlers: readonly {
         const url = new URL("https://supermusic.cz/skupina.php?action=piesen");
         url.searchParams.set("idpiesne", id);
         const r = await fetch(url.toString());
-        if (r.status !== 200)
-          throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
+        if (r.status !== 200) throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
         const text = await r.text();
         const title = before(after(text, "<title").slice(1), "</title>");
 
@@ -49,28 +44,22 @@ const handlers: readonly {
         };
       }
       async function getBody(id: string) {
-        const target = new URL(
-          "https://supermusic.cz/export.php?typ=TXT&stiahni=1",
-        );
+        const target = new URL("https://supermusic.cz/export.php?typ=TXT&stiahni=1");
         target.searchParams.set("idpiesne", id);
         const r = await fetch(target.toString());
-        if (r.status !== 200)
-          throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
+        if (r.status !== 200) throw jsonResponse({ error: "Cannot load from supermusic" }, 424);
         const text = await r.text();
         return after(text, "\n").trim();
       }
     },
   },
   {
-    test: (url) => {
+    test: url => {
       const begin = "https://tabs.ultimate-guitar.com/tab/";
       // https://tabs.ultimate-guitar.com/tab/3485234 is valid
-      return (
-        url.startsWith(begin) &&
-        !!url.substring(begin.length).match(/^[a-z0-9-]+(\/[a-z0-9-]+)?$/i)
-      );
+      return url.startsWith(begin) && !!url.substring(begin.length).match(/^[a-z0-9-]+(\/[a-z0-9-]+)?$/i);
     },
-    handle: async (target) => {
+    handle: async target => {
       const r = await fetch(target);
       if (r.status !== 200) {
         throw new Response(JSON.stringify({ error: "Cannot load from UG" }), {
@@ -82,7 +71,7 @@ const handlers: readonly {
 
       const json = before(after(html, 'class="js-store" data-content="'), '"')
         .replace(/&quot;/g, '"')
-        .replace(/&#([0-9]+);/g, (v) => ({ "&#039;": "'" })[v] || v);
+        .replace(/&#([0-9]+);/g, v => ({ "&#039;": "'" })[v] || v);
 
       const data = JSON.parse(json);
       const pageData = data["store"]["page"]["data"];
@@ -96,23 +85,17 @@ const handlers: readonly {
     },
   },
   {
-    test: (url) => {
+    test: url => {
       const begin = "https://pisnicky-akordy.cz/";
-      return (
-        url.startsWith(begin) &&
-        !!url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i)
-      );
+      return url.startsWith(begin) && !!url.substring(begin.length).match(/^[a-z0-9-]+\/[a-z0-9-]+$/i);
     },
-    handle: async (target) => {
+    handle: async target => {
       const r = await fetch(target + "?tmpl=component&print=1&layout=default");
       if (r.status !== 200) {
-        throw new Response(
-          JSON.stringify({ error: "Cannot load from pisnicky-akordy" }),
-          {
-            status: 424,
-            headers: { "content-type": "application/json" },
-          },
-        );
+        throw new Response(JSON.stringify({ error: "Cannot load from pisnicky-akordy" }), {
+          status: 424,
+          headers: { "content-type": "application/json" },
+        });
       }
       const html = await r.text();
 
@@ -145,23 +128,17 @@ const handlers: readonly {
     },
   },
   {
-    test: (url) => {
+    test: url => {
       const begin = "https://akordy.kytary.cz/song/";
-      return (
-        url.startsWith(begin) &&
-        !!url.substring(begin.length).match(/^[a-z0-9-]+$/i)
-      );
+      return url.startsWith(begin) && !!url.substring(begin.length).match(/^[a-z0-9-]+$/i);
     },
-    handle: async (target) => {
+    handle: async target => {
       const r = await fetch(target);
       if (r.status !== 200) {
-        throw new Response(
-          JSON.stringify({ error: "Cannot load from akordy.kytary" }),
-          {
-            status: 424,
-            headers: { "content-type": "application/json" },
-          },
-        );
+        throw new Response(JSON.stringify({ error: "Cannot load from akordy.kytary" }), {
+          status: 424,
+          headers: { "content-type": "application/json" },
+        });
       }
 
       let text = "";
@@ -242,18 +219,14 @@ const handlers: readonly {
 ];
 
 function extractSimpleTagTextContent(html: string, tag: string) {
-  return before(after(after(html, `<${tag}`), ">"), `</${tag}>`).replace(
-    /<[^>]+>/g,
-    "",
-  );
+  return before(after(after(html, `<${tag}`), ">"), `</${tag}>`).replace(/<[^>]+>/g, "");
 }
 
 function mergeChordsInto(chordsText: string, text: string) {
   const chords: { index: number; chord: string }[] = [];
   for (let i = 0; i < chordsText.length; i++) {
     if (chordsText[i] === " ") continue;
-    if (chords.length === 0 || chordsText[i - 1] === " ")
-      chords.push({ index: i, chord: chordsText[i] });
+    if (chords.length === 0 || chordsText[i - 1] === " ") chords.push({ index: i, chord: chordsText[i] });
     else chords[chords.length - 1].chord += chordsText[i];
   }
   chords.reverse();

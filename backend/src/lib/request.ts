@@ -1,11 +1,8 @@
-import { z } from "zod";
+import type { z } from "zod";
 import { badRequestResponse } from "./response.ts";
 
 export async function parseJsonBody(request: Request) {
-  if (
-    request.headers.get("content-type")?.split(";")[0].trim() !==
-    "application/json"
-  ) {
+  if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
     throw badRequestResponse("content-type must be application/json");
   }
   return await request.json();
@@ -79,10 +76,7 @@ export async function validateJsonBody<
   return json;
 }
 
-export async function validateZodJsonBody<T>(
-  request: Request,
-  schema: z.Schema<T>,
-): Promise<T> {
+export async function validateZodJsonBody<T>(request: Request, schema: z.Schema<T>): Promise<T> {
   const json: any = await parseJsonBody(request);
   const res = schema.safeParse(json);
   if (res.error) {

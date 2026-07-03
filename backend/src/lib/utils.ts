@@ -1,5 +1,5 @@
 import latinize from "latinize";
-import crypto from "node:crypto"
+import crypto from "node:crypto";
 
 export function slugify(part: string) {
   return latinize(part)
@@ -9,15 +9,9 @@ export function slugify(part: string) {
     .toLowerCase();
 }
 export async function randomID(length: number) {
-  const bytes = crypto.getRandomValues(
-    new Uint8Array(Math.ceil((length / 3) * 2) + 1 + 3),
-  );
+  const bytes = crypto.getRandomValues(new Uint8Array(Math.ceil((length / 3) * 2) + 1 + 3));
   if (!bytes) throw new Error("Could not generate random bytes");
-  let ret = bufferToBase64(bytes)
-    .replace(/\+/g, "")
-    .replace(/\//g, "")
-    .slice(0, length)
-    .replace(/=/g, "");
+  let ret = bufferToBase64(bytes).replace(/\+/g, "").replace(/\//g, "").slice(0, length).replace(/=/g, "");
   while (ret.length < length) {
     ret += await randomID(length - ret.length);
   }

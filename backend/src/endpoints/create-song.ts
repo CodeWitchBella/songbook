@@ -3,11 +3,7 @@ import { song } from "../db/schema.ts";
 import type { MyContext } from "../lib/context.ts";
 import { getViewerCheck } from "../lib/graphql-server-config.ts";
 import { validateJsonBody } from "../lib/request.ts";
-import {
-  badRequestResponse,
-  jsonResponse,
-  methodNotAllowedResponse,
-} from "../lib/response.ts";
+import { badRequestResponse, jsonResponse, methodNotAllowedResponse } from "../lib/response.ts";
 import { randomID, slugify } from "../lib/utils.ts";
 
 export async function handleCreateSong(request: Request, context: MyContext) {
@@ -30,8 +26,7 @@ export async function handleCreateSong(request: Request, context: MyContext) {
       title: input.title,
     });
   } catch (e) {
-    if (checkCode(e, "ER_DUP_ENTRY"))
-      return badRequestResponse("Song already exists");
+    if (checkCode(e, "ER_DUP_ENTRY")) return badRequestResponse("Song already exists");
     throw e;
   }
 

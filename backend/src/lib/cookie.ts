@@ -5,15 +5,9 @@ export function createSetSessionCookieHeader(
   duration: Duration,
 ): readonly ["Set-Cookie", string] {
   if (!cookie) {
-    return [
-      "Set-Cookie",
-      `__session=${cookie}; expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Path=/`,
-    ];
+    return ["Set-Cookie", `__session=${cookie}; expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Path=/`];
   }
-  return [
-    "Set-Cookie",
-    `__session=${cookie}; Max-Age=${duration.as("seconds")}; HttpOnly; Path=/`,
-  ];
+  return ["Set-Cookie", `__session=${cookie}; Max-Age=${duration.as("seconds")}; HttpOnly; Path=/`];
 }
 
 export function parseSessionCookie(cookies?: string | null) {

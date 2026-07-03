@@ -26,15 +26,12 @@ export async function handleReleases(request: Request) {
 
   let response;
   if (!response) {
-    const fetched = await fetch(
-      "https://api.github.com/repos/CodeWitchBella/songbook/releases?per_page=100",
-      {
-        headers: {
-          accept: "application/vnd.github.v3+json",
-          "User-Agent": "codewitchbella-songbook-workers",
-        },
+    const fetched = await fetch("https://api.github.com/repos/CodeWitchBella/songbook/releases?per_page=100", {
+      headers: {
+        accept: "application/vnd.github.v3+json",
+        "User-Agent": "codewitchbella-songbook-workers",
       },
-    );
+    });
     if (fetched.status !== 200) {
       response = new Response(
         JSON.stringify({
@@ -52,8 +49,8 @@ export async function handleReleases(request: Request) {
       response = new Response(
         JSON.stringify({
           data: json
-            .filter((entry) => !entry.prerelease && !entry.draft)
-            .map((entry) => ({
+            .filter(entry => !entry.prerelease && !entry.draft)
+            .map(entry => ({
               name: entry.name,
               tagName: entry.tag_name,
               body: entry.body.replaceAll("\r\n", "\n"),
@@ -61,10 +58,7 @@ export async function handleReleases(request: Request) {
         }),
         { status: 200 },
       );
-      response.headers.set(
-        "cache-control",
-        "s-maxage=60,s-stale-while-revalidate=1200",
-      );
+      response.headers.set("cache-control", "s-maxage=60,s-stale-while-revalidate=1200");
     }
     response.headers.set("content-type", "application/json; charset=utf-8");
   }

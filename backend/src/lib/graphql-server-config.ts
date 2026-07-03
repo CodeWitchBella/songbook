@@ -137,10 +137,7 @@ export async function getViewerCheck(context: MyContext) {
   return viewer;
 }
 
-export const comparePassword = (
-  password: string,
-  hash: string,
-): Promise<boolean> => {
+export const comparePassword = (password: string, hash: string): Promise<boolean> => {
   return bcrypt.compare(password, hash);
 };
 
@@ -151,34 +148,21 @@ export const hashPassword = (password: string): Promise<string> => {
 // A map of functions which return data for the schema.
 const resolvers = {
   Query: {
-    hello: (_: unknown, _2: unknown, context: MyContext) =>
-      "world " + context.url,
-    songs: async (
-      _: {},
-      { modifiedAfter }: { modifiedAfter: string | null },
-      context: MyContext,
-    ) => {
+    hello: (_: unknown, _2: unknown, context: MyContext) => "world " + context.url,
+    songs: async (_: {}, { modifiedAfter }: { modifiedAfter: string | null }, context: MyContext) => {
       if (!modifiedAfter) return await context.db.query.song.findMany();
       const docs = await context.db.query.song.findMany({
         where: (song, { gte }) => gte(song.lastModified, modifiedAfter),
       });
       return docs;
     },
-    deletedSongs: async (
-      _: {},
-      { deletedAfter }: { deletedAfter: string },
-      context: MyContext,
-    ) => {
+    deletedSongs: async (_: {}, { deletedAfter }: { deletedAfter: string }, context: MyContext) => {
       const docs = await context.db.query.deletedSong.findMany({
         where: (record, { gte }) => gte(record.deletedAt, deletedAfter),
       });
-      return docs.map((d) => d.songIdString);
+      return docs.map(d => d.songIdString);
     },
-    collections: async (
-      _: {},
-      { modifiedAfter }: { modifiedAfter: string | null },
-      context: MyContext,
-    ) => {
+    collections: async (_: {}, { modifiedAfter }: { modifiedAfter: string | null }, context: MyContext) => {
       if (!modifiedAfter) {
         return await context.db.query.collection.findMany();
       }
@@ -189,37 +173,21 @@ const resolvers = {
       const deletedDocs = await context.db.query.deletedCollection.findMany({
         where: gte(schema.collection.lastModified, modifiedAfter),
       });
-      return docs.concat(
-        deletedDocs.map(
-          (d) => ({ id: d.collectionIdString, deleted: true }) as any,
-        ),
-      );
+      return docs.concat(deletedDocs.map(d => ({ id: d.collectionIdString, deleted: true }) as any));
     },
-    songsByIds: async (
-      _: {},
-      { ids }: { ids: string[] },
-      context: MyContext,
-    ) => {
+    songsByIds: async (_: {}, { ids }: { ids: string[] }, context: MyContext) => {
       const list = await context.db.query.song.findMany({
         where: (record, { inArray }) => inArray(record.idString, ids),
       });
       return list;
     },
-    collectionsByIds: async (
-      _: {},
-      { ids }: { ids: string[] },
-      context: MyContext,
-    ) => {
+    collectionsByIds: async (_: {}, { ids }: { ids: string[] }, context: MyContext) => {
       const list = await context.db.query.collection.findMany({
         where: (record, { inArray }) => inArray(record.idString, ids),
       });
       return list;
     },
-    songsBySlugs: async (
-      _: {},
-      { slugs }: { slugs: string[] },
-      context: MyContext,
-    ) => {
+    songsBySlugs: async (_: {}, { slugs }: { slugs: string[] }, context: MyContext) => {
       const list = await context.db.query.song.findMany({
         where: (record, { inArray }) => inArray(record.slug, slugs),
       });
@@ -272,7 +240,7 @@ const resolvers = {
         .from(schema.collectionSong)
         .where(eq(schema.collectionSong.collection, src.id))
         .innerJoin(schema.song, eq(schema.collectionSong.song, schema.song.id));
-      return list.map((l) => l.song);
+      return list.map(l => l.song);
     },
     locked: (src: any) => !!src.locked,
   },
@@ -286,24 +254,15 @@ const resolvers = {
     admin: (self: any) => !!self.admin,
   },
   Mutation: {
-    setHandle: async (
-      _: {},
-      { handle }: { handle: string },
-      context: MyContext,
-    ) => {
+    setHandle: async (_: {}, { handle }: { handle: string }, context: MyContext) => {
       const { viewer } = await getViewerCheck(context);
 
-      await context.db
-        .update(schema.user)
-        .set({ handle })
-        .where(eq(schema.user.id, viewer.id));
+      await context.db.update(schema.user).set({ handle }).where(eq(schema.user.id, viewer.id));
 
       await context.db
         .update(schema.collection)
         .set({
-          slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${
-            schema.collection.slug
-          }, "/", -1)`,
+          slug: sql`${slugify(handle)} || SUBSTRING_INDEX(${schema.collection.slug}, "/", -1)`,
           lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.collection.owner, viewer.id));
@@ -311,26 +270,19 @@ const resolvers = {
     },
     createCollection: async (
       _: {},
-      {
-        name: requestedName,
-        global = false,
-      }: { name: string; global: boolean },
+      { name: requestedName, global = false }: { name: string; global: boolean },
       context: MyContext,
     ) => {
       const { viewer } = await getViewerCheck(context);
-      if (global && !viewer.admin)
-        throw new GraphQLError("Only admin can create global songbooks");
+      if (global && !viewer.admin) throw new GraphQLError("Only admin can create global songbooks");
 
-      const slug =
-        (global ? "" : slugify(viewer?.handle || viewer?.name) + "/") +
-        slugify(requestedName);
+      const slug = (global ? "" : slugify(viewer?.handle || viewer?.name) + "/") + slugify(requestedName);
       const existing = await context.db
         .select({ count: sql<number>`count(*)` })
         .from(schema.collection)
         .where(eq(schema.collection.slug, slug));
       // const existing = await queryFieldEquals('collections', 'slug', slug)
-      if (existing[0].count > 0)
-        throw new Error("Collection with given name already exists");
+      if (existing[0].count > 0) throw new Error("Collection with given name already exists");
 
       const idString = await randomID(20);
       await context.db.insert(schema.collection).values({
@@ -343,25 +295,13 @@ const resolvers = {
         where: eq(schema.collection.idString, idString),
       });
     },
-    addToCollection: async (
-      _: {},
-      { song, collection }: { song: string; collection: string },
-      context: MyContext,
-    ) => {
+    addToCollection: async (_: {}, { song, collection }: { song: string; collection: string }, context: MyContext) => {
       const { viewer } = await getViewerCheck(context);
       const collectionSnap = await context.db.query.collection.findFirst({
-        where: or(
-          eq(schema.collection.idString, collection),
-          eq(schema.collection.slug, collection),
-        ),
+        where: or(eq(schema.collection.idString, collection), eq(schema.collection.slug, collection)),
       });
       if (!collectionSnap) throw new GraphQLError("Collection does not exist");
-      if (
-        !(
-          collectionSnap.owner === viewer.id ||
-          (!collectionSnap.owner && viewer.admin)
-        )
-      )
+      if (!(collectionSnap.owner === viewer.id || (!collectionSnap.owner && viewer.admin)))
         throw new GraphQLError("Not your collection");
       if (collectionSnap.locked) throw new GraphQLError("Collection is locked");
 
@@ -386,21 +326,15 @@ const resolvers = {
 
       return "Success!";
     },
-    lockCollection: async (
-      _: {},
-      { collection }: { collection: string },
-      context: MyContext,
-    ) => {
+    lockCollection: async (_: {}, { collection }: { collection: string }, context: MyContext) => {
       const { viewer } = await getViewerCheck(context);
-      if (!viewer?.admin)
-        throw new GraphQLError("Only admin can lock collections");
+      if (!viewer?.admin) throw new GraphQLError("Only admin can lock collections");
 
       const res = await context.db
         .update(schema.collection)
         .set({ locked: true, lastModified: sql`CURRENT_TIMESTAMP` })
         .where(eq(schema.collection.idString, collection));
-      if (!affectedRows(res))
-        throw new GraphQLError("Collection does not exist");
+      if (!affectedRows(res)) throw new GraphQLError("Collection does not exist");
 
       return "Success!";
     },
@@ -411,18 +345,10 @@ const resolvers = {
     ) => {
       const { viewer } = await getViewerCheck(context);
       const collectionSnap = await context.db.query.collection.findFirst({
-        where: or(
-          eq(schema.collection.idString, collection),
-          eq(schema.collection.slug, collection),
-        ),
+        where: or(eq(schema.collection.idString, collection), eq(schema.collection.slug, collection)),
       });
       if (!collectionSnap) throw new GraphQLError("Collection does not exist");
-      if (
-        !(
-          collectionSnap.owner === viewer.id ||
-          (!collectionSnap.owner && viewer.admin)
-        )
-      )
+      if (!(collectionSnap.owner === viewer.id || (!collectionSnap.owner && viewer.admin)))
         throw new GraphQLError("Not your collection");
       if (collectionSnap.locked) throw new GraphQLError("Collection is locked");
 
@@ -434,10 +360,7 @@ const resolvers = {
       const items = await context.db
         .delete(schema.collectionSong)
         .where(
-          and(
-            eq(schema.collectionSong.collection, collectionSnap.id),
-            eq(schema.collectionSong.song, songSnap.id),
-          ),
+          and(eq(schema.collectionSong.collection, collectionSnap.id), eq(schema.collectionSong.song, songSnap.id)),
         );
       if (affectedRows(items) < 1) return "Already removed.";
       await context.db
@@ -447,11 +370,7 @@ const resolvers = {
 
       return "Success!";
     },
-    updateSong: async (
-      _: {},
-      { id, input }: { input: any; id: string },
-      context: MyContext,
-    ) => {
+    updateSong: async (_: {}, { id, input }: { input: any; id: string }, context: MyContext) => {
       const res = await context.db
         .update(schema.song)
         .set({
@@ -465,10 +384,7 @@ const resolvers = {
           pretranspose: input.pretranspose ?? undefined,
           extraSearchable: input.extraSearchable ?? undefined,
           extraNonSearchable: input.extraNonSearchable ?? undefined,
-          slug:
-            input.author && input.title
-              ? slugify(`${input.title}-${input.author}`)
-              : undefined,
+          slug: input.author && input.title ? slugify(`${input.title}-${input.author}`) : undefined,
           lastModified: sql`CURRENT_TIMESTAMP`,
         })
         .where(eq(schema.song.idString, id));
@@ -479,11 +395,7 @@ const resolvers = {
       if (!value) throw new GraphQLError("Song does not exist");
       return value;
     },
-    async login(
-      _: {},
-      { email, password }: { email: string; password: string },
-      context: MyContext,
-    ) {
+    async login(_: {}, { email, password }: { email: string; password: string }, context: MyContext) {
       const user = await context.db.query.user.findFirst({
         where: eq(schema.user.email, email),
       });
@@ -507,11 +419,7 @@ const resolvers = {
         user,
       };
     },
-    async register(
-      _: {},
-      { input }: { input: { name: string; email: string; password: string } },
-      context: MyContext,
-    ) {
+    async register(_: {}, { input }: { input: { name: string; email: string; password: string } }, context: MyContext) {
       if (!input.name || !input.email || !input.password) {
         return {
           __typename: "RegisterError",
@@ -522,8 +430,7 @@ const resolvers = {
         where: eq(schema.user.email, input.email),
         columns: { id: true },
       });
-      if (existing)
-        return { __typename: "RegisterError", message: "Email je již použit" };
+      if (existing) return { __typename: "RegisterError", message: "Email je již použit" };
 
       await context.db.insert(schema.user).values({
         name: input.name,
@@ -547,9 +454,7 @@ const resolvers = {
       // make it expire
       context.setSessionCookie("", Duration.fromObject({ second: 1 }));
       if (data) {
-        await context.db
-          .delete(schema.session)
-          .where(eq(schema.session.id, data.session.id));
+        await context.db.delete(schema.session).where(eq(schema.session.id, data.session.id));
       }
       return "Success!";
     },
@@ -586,8 +491,7 @@ function coerceNumber(val: any, arg1: number) {
   if (typeof val === "number") return val;
   if (typeof val === "string") {
     const parsed = +val;
-    if (parsed.toFixed(0) === val && Number.isSafeInteger(parsed))
-      return parsed;
+    if (parsed.toFixed(0) === val && Number.isSafeInteger(parsed)) return parsed;
   }
   return arg1;
 }

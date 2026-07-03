@@ -44,41 +44,28 @@ async function readIfInside(filePath: string): Promise<Buffer | null> {
 }
 
 async function serveStatic(pathname: string): Promise<Response | null> {
-  const body =
-    (await readIfInside(join(publicDir, pathname))) ??
-    (await readIfInside(join(publicDir, "index.html")));
+  const body = (await readIfInside(join(publicDir, pathname))) ?? (await readIfInside(join(publicDir, "index.html")));
   if (!body) return null;
   const contentType = mimeTypes[extname(pathname)] ?? "text/html; charset=utf-8";
   return new Response(body, { headers: { "content-type": contentType } });
 }
 
-async function handleRequest(
-  request: Request,
-  createContext: () => Promise<MyContext>,
-): Promise<Response> {
+async function handleRequest(request: Request, createContext: () => Promise<MyContext>): Promise<Response> {
   try {
     const url = new URL(request.url);
     const isApi = url.pathname.startsWith("/api");
     if (isApi) url.pathname = url.pathname.slice(4);
     if (url.pathname === "/hello") return new Response("World");
-    if (url.pathname === "/graphql")
-      return await handleGraphql(request, await createContext());
+    if (url.pathname === "/graphql") return await handleGraphql(request, await createContext());
     if (request.method === "POST") {
-      if (url.pathname === "/login")
-        return await handleLogin(request, await createContext());
-      if (url.pathname === "/logout")
-        return await handleLogout(await createContext());
-      if (url.pathname === "/song")
-        return await handleCreateSong(request, await createContext());
+      if (url.pathname === "/login") return await handleLogin(request, await createContext());
+      if (url.pathname === "/logout") return await handleLogout(await createContext());
+      if (url.pathname === "/song") return await handleCreateSong(request, await createContext());
     }
-    if (url.pathname === "/ultimate-guitar" || url.pathname === "/import")
-      return await handleImport(request);
+    if (url.pathname === "/ultimate-guitar" || url.pathname === "/import") return await handleImport(request);
     if (url.pathname === "/releases") return await handleReleases(request);
     if (url.pathname === "/beacon.min.js")
-      return await forward(
-        request,
-        "https://static.cloudflareinsights.com/beacon.min.js",
-      );
+      return await forward(request, "https://static.cloudflareinsights.com/beacon.min.js");
     if (!isApi && (request.method === "GET" || request.method === "HEAD")) {
       const staticResponse = await serveStatic(url.pathname);
       if (staticResponse) return staticResponse;

@@ -8,9 +8,7 @@ import { getViewer } from "../lib/session.ts";
 export async function handleLogout(context: MyContext): Promise<Response> {
   const data = await getViewer(context);
   if (data) {
-    await context.db
-      .delete(schema.session)
-      .where(eq(schema.session.id, data.session.id));
+    await context.db.delete(schema.session).where(eq(schema.session.id, data.session.id));
   }
   // make it expire
   const ckie = createSetSessionCookieHeader("", Duration.fromMillis(0));
