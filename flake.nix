@@ -27,6 +27,40 @@
         psql = pkgs.postgresql_18;
 
         backend = import ./backend/backend.nix {inherit inputs pkgs;};
+
+        # Run the Playwright server inside podman, pinned to the version declared
+        # in frontend/package.json so the client library and server always match.
+        playwrightVersion = (lib.importJSON ./frontend/package.json).devDependencies.playwright;
+        # The Playwright server listens here; the Vitest storybook project reads
+        # this via PLAYWRIGHT_WS_ENDPOINT to connect instead of launching a local
+        # browser (see frontend/vitest.config.ts).
+        playwrightWsEndpoint = "ws://localhost:3000/";
+        # Run the pinned Playwright server image via podman; `extraArgs` tune how
+        # the container is run (e.g. `-d` to detach, `--rm` for the foreground).
+        playwrightPodman = extraArgs: ''
+          podman run --rm --replace --name playwright-server --network host ${extraArgs} \
+            mcr.microsoft.com/playwright:v${playwrightVersion}-noble \
+            /bin/sh -c "npx -y playwright@${playwrightVersion} run-server --port 3000 --host 0.0.0.0"
+        '';
+        playwright-start = pkgs.writeShellApplication {
+          name = "playwright-start";
+          text = ''
+            ${playwrightPodman "-d"}
+            echo "Playwright server (v${playwrightVersion}) listening on ${playwrightWsEndpoint}"
+          '';
+        };
+
+        playwright-stop = pkgs.writeShellApplication {
+          name = "playwright-stop";
+          text = ''
+            podman rm -f playwright-server
+          '';
+        };
+
+        playwright = pkgs.writeShellApplication {
+          name = "playwright";
+          text = "exec ${playwrightPodman "-it --init"}";
+        };
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
@@ -42,6 +76,9 @@
             psql
             pkgs.pnpm
             pkgs.nodejs_26
+            playwright
+            playwright-start
+            playwright-stop
           ];
           inputsFrom = [
             config.flake-root.devShell
@@ -50,6 +87,9 @@
             export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
             export PGDATABASE="songbook"
             export POSTGRESQL_URL="postgresql://localhost/songbook?host=$PGHOST"
+            # Point the Storybook Vitest project at the podman Playwright server
+            # (`playwright-start`); run tests with `pnpm run test-storybook`.
+            export PLAYWRIGHT_WS_ENDPOINT="${playwrightWsEndpoint}"
             menu
           '';
         };
@@ -66,6 +106,7 @@
           settings = {
             environment = {
               POSTGRESQL_URL = "postgresql://localhost/songbook";
+              PLAYWRIGHT_WS_ENDPOINT = playwrightWsEndpoint;
             };
             processes = {
               postgres.command = ''
@@ -124,6 +165,22 @@
                   ${pkgs.pnpm}/bin/pnpm run storybook --ci
                 '';
                 working_dir = "frontend";
+                depends_on.frontend-gen-api.condition = "process_completed_successfully";
+              };
+              # Runs the Storybook stories as Vitest browser tests against the
+              # podman Playwright server. Disabled by default (it's a one-shot
+              # check, not a long-running service); start it on demand from the
+              # process-compose TUI or with
+              # `process-compose run storybook-test`.
+              storybook-test = {
+                disabled = true;
+                command = ''
+                  ${playwrightPodman "-d"}
+                  trap '${pkgs.podman}/bin/podman rm -f playwright-server' EXIT
+                  ${pkgs.pnpm}/bin/pnpm run test-storybook
+                '';
+                working_dir = "frontend";
+                availability.restart = "no";
                 depends_on.frontend-gen-api.condition = "process_completed_successfully";
               };
             };
