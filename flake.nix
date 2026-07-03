@@ -74,13 +74,25 @@
                 '';
                 working_dir = "backend";
               };
-              frontend = {
+              frontend-install = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
-                  ${pkgs.pnpm}/bin/pnpm run types
+                '';
+                working_dir = "frontend";
+              };
+              frontend = {
+                command = ''
                   ${pkgs.pnpm}/bin/pnpm run dev
                 '';
                 working_dir = "frontend";
+                depends_on.frontend-install.condition = "process_completed_successfully";
+              };
+              frontend-types = {
+                command = ''
+                  ${pkgs.pnpm}/bin/pnpm run types --watch
+                '';
+                working_dir = "frontend";
+                depends_on.frontend-install.condition = "process_completed_successfully";
               };
             };
           };
