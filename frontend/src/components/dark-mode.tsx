@@ -20,6 +20,10 @@ function apply(setting?: DarkModeSetting, prefersDark?: boolean) {
 
   if (dark) document.documentElement.classList.add("dark");
   else document.documentElement.classList.remove("dark");
+
+  // Drive the native color-scheme so scrollbars, form controls and other
+  // built-in UI render in the matching theme (and light-dark() resolves).
+  document.documentElement.style.colorScheme = setting === "automatic" ? "light dark" : setting;
 }
 
 type DarkModeSetting = "automatic" | "light" | "dark";

@@ -36,11 +36,10 @@
     <script>
       (function () {
         var mode = localStorage.getItem("dark-mode-setting");
-        const isDark =
-          mode === "dark" || mode === "light"
-            ? mode === "dark"
-            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var manual = mode === "dark" || mode === "light";
+        const isDark = manual ? mode === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
         if (isDark) document.documentElement.classList.add("dark");
+        document.documentElement.style.colorScheme = manual ? mode : "light dark";
       })();
     </script>
   </head>
