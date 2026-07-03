@@ -77,6 +77,7 @@
               frontend = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
+                  ${pkgs.pnpm}/bin/pnpm run types
                   ${pkgs.pnpm}/bin/pnpm run dev
                 '';
                 working_dir = "frontend";

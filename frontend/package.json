@@ -10,6 +10,7 @@
     "build-ci": "node build-ci.js && vite build",
     "dev": "vite",
     "extract": "node extract.js",
+    "types": "i18next-cli types",
     "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check"

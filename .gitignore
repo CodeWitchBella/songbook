@@ -22,6 +22,7 @@ npm-token
 frontend/bundle
 /frontend/schema.json
 /frontend/src/queries-types.ts
+/frontend/src/types/resources.d.ts
 /backend/src/songs/*.automerge
 *.cache
 .now

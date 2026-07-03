@@ -4,7 +4,7 @@ export default defineConfig({
   locales: ["en", "cs"],
   extract: {
     input: ["src/**/*.{ts,tsx}"],
-    output: "src/locales/{{namespace}}-{{language}}.json",
+    output: "src/locales/{{language}}/{{namespace}}.json",
     defaultNS: "translation",
     nsSeparator: "~",
     sort: true,
@@ -16,5 +16,8 @@ export default defineConfig({
       const parts = key.split(".");
       return parts[parts.length - 1];
     },
+  },
+  types: {
+    output: "src/types/i18next.d.ts",
   },
 });

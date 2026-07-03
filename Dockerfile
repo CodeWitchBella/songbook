@@ -6,6 +6,7 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY frontend/. .
+RUN pnpm run types
 RUN pnpm build
 
 FROM base AS backend-build

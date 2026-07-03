@@ -5,8 +5,8 @@ import { useEffect } from "react";
 import { useReducer } from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
-import cs from "../locales/translation-cs.json";
-import en from "../locales/translation-en.json";
+import cs from "../locales/cs/translation.json";
+import en from "../locales/en/translation.json";
 
 export type Language = "cs" | "en";
 const context = createContext<readonly [Language, (lng: Language) => void]>(["cs", () => {}]);
