@@ -6,8 +6,15 @@ import { handleImport } from "#/endpoints/import.ts";
 import { handleLogin } from "#/endpoints/login.ts";
 import { handleLogout } from "#/endpoints/logout.ts";
 import { handleReleases } from "#/endpoints/releases.ts";
-import { handleRest } from "#/endpoints/rest.ts";
+import { addToCollection } from "#/endpoints/add-to-collection.ts";
+import { collections } from "#/endpoints/collections.ts";
+import { createCollection } from "#/endpoints/create-collection.ts";
+import { register } from "#/endpoints/register.ts";
+import { removeFromCollection } from "#/endpoints/remove-from-collection.ts";
+import { songs } from "#/endpoints/songs.ts";
+import { updateSong } from "#/endpoints/update-song.ts";
 import { forward } from "#/forward.ts";
+import { RestError } from "#/lib/auth.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { contextPair } from "#/lib/context.ts";
 
@@ -186,8 +193,9 @@ api.openapi(
 // ---------------------------------------------------------------------------
 // /{operation} — one fully-typed route each so the OpenAPI document describes
 // every call's variables and response. Bodies are the operation's arguments;
-// responses are the GraphQL-style `{ data, errors }` envelope. The handlers talk
-// to the database directly — see `#/endpoints/rest.ts`.
+// responses are the GraphQL-style `{ data, errors }` envelope. Each handler
+// lives in its own `#/endpoints/<operation>.ts` file and talks to the database
+// directly.
 // ---------------------------------------------------------------------------
 
 const PictureSchema = z
@@ -254,9 +262,14 @@ function restResponse<T extends z.ZodTypeAny>(data: T) {
   return z.object({ data: data.optional(), errors: z.array(GraphQLErrorSchema).optional() });
 }
 
+/**
+ * Register a `/api/<operation>` endpoint. The request body is the operation's
+ * arguments; the result is the GraphQL-style `{ data }` envelope, or
+ * `{ errors: [{ message }] }` when the handler throws a {@link RestError}.
+ */
 function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
   operation: string,
-  opts: { summary: string; body: B; data: D },
+  opts: { summary: string; body: B; data: D; handler: (vars: any, context: MyContext) => Promise<unknown> },
 ) {
   api.openapi(
     createRoute({
@@ -266,10 +279,18 @@ function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
       request: { body: json(opts.body) },
       responses: {
         200: { description: "GraphQL response", ...json(restResponse(opts.data)) },
-        404: { description: "Unknown operation", content: { "text/plain": { schema: z.string() } } },
       },
     }),
-    (async (c: any) => handleRest(operation, c.req.valid("json"), await c.var.makeContext())) as any,
+    (async (c: any) => {
+      const context = await c.var.makeContext();
+      try {
+        const data = await opts.handler(c.req.valid("json"), context);
+        return Response.json({ data });
+      } catch (e) {
+        if (e instanceof RestError) return Response.json({ errors: [{ message: e.message }] });
+        throw e;
+      }
+    }) as any,
   );
 }
 
@@ -287,6 +308,7 @@ restRoute("register", {
       user: RestUserSchema.optional(),
     }),
   }),
+  handler: register,
 });
 
 restRoute("songs", {
@@ -303,6 +325,7 @@ restRoute("songs", {
     viewer: RestUserSchema.nullable(),
     deletedSongs: z.array(z.string()).optional(),
   }),
+  handler: songs,
 });
 
 restRoute("update-song", {
@@ -311,30 +334,35 @@ restRoute("update-song", {
     .object({ id: z.string(), input: z.object({}).passthrough() })
     .openapi("UpdateSongVariables"),
   data: z.object({ updateSong: z.object({ id: z.string() }) }),
+  handler: updateSong,
 });
 
 restRoute("collections", {
   summary: "List collections modified after a given timestamp",
   body: z.object({ modifiedAfter: z.string().nullable().optional() }).openapi("CollectionsVariables"),
   data: z.object({ collections: z.array(CollectionRecordSchema) }),
+  handler: collections,
 });
 
 restRoute("add-to-collection", {
   summary: "Add a song to a collection",
   body: z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables"),
   data: z.object({ addToCollection: z.string().nullable() }),
+  handler: addToCollection,
 });
 
 restRoute("remove-from-collection", {
   summary: "Remove a song from a collection",
   body: z.object({ collection: z.string(), song: z.string() }).openapi("RemoveFromCollectionVariables"),
   data: z.object({ removeFromCollection: z.string().nullable() }),
+  handler: removeFromCollection,
 });
 
 restRoute("create-collection", {
   summary: "Create a new collection",
   body: z.object({ name: z.string() }).openapi("CreateCollectionVariables"),
   data: z.object({ createCollection: z.object({ id: z.string() }) }),
+  handler: createCollection,
 });
 
 // ---------------------------------------------------------------------------

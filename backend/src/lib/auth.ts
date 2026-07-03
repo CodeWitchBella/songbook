@@ -10,7 +10,7 @@ import { randomID } from "#/lib/utils.ts";
 /**
  * An error whose message is safe to return to the client. Thrown by the REST
  * handlers (and shared auth helpers) and translated into a `{ errors: [...] }`
- * envelope by `#/endpoints/rest.ts`.
+ * envelope by the `restRoute` wrapper in `#/app.ts`.
  */
 export class RestError extends Error {}
 
