@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import type { WithMethods } from "#/store/generic-store";
-import { restFetch } from "#/store/api";
+import { restAddToCollection, restCreateCollection, restRemoveFromCollection } from "#/store/api";
 import { useCollectionList, useSong, useViewer } from "#/store/store";
 import type { CollectionType } from "#/store/store-collections";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
@@ -207,16 +207,16 @@ function CollectionList({
   );
 }
 function addToCollection(song: string, collection: string) {
-  return restFetch("add-to-collection", { collection, song });
+  return restAddToCollection(collection, song);
 }
 
 function removeFromCollection(song: string, collection: string) {
-  return restFetch("remove-from-collection", { collection, song });
+  return restRemoveFromCollection(collection, song);
 }
 
 function createCollection(name: string): Promise<string> {
-  return restFetch("create-collection", { name }).then(v => {
-    const id = v.data.createCollection.id;
+  return restCreateCollection(name).then(v => {
+    const id = v.createCollection.id;
     if (!id) {
       console.log(v);
       throw new Error("Failed to create collection");

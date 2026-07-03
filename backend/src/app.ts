@@ -184,14 +184,10 @@ api.openapi(
 );
 
 // ---------------------------------------------------------------------------
-// /rest/{operation} — thin GraphQL proxies
-//
-// Each operation is exposed as its own fully-typed route (rather than a single
-// catch-all) so the OpenAPI document — and therefore the generated frontend
-// client — describes the exact variables and response shape of every call.
-// The request body is the GraphQL variables object; the response is the usual
-// GraphQL `{ data, errors }` envelope. See `#/lib/rest-operations.ts` for the
-// queries these correspond to.
+// /rest/{operation} — thin GraphQL proxies, one fully-typed route each so the
+// OpenAPI document describes every call's variables and response. Bodies are
+// GraphQL variables; responses are the `{ data, errors }` envelope. See
+// `#/lib/rest-operations.ts` for the queries.
 // ---------------------------------------------------------------------------
 
 const PictureSchema = z
@@ -254,12 +250,10 @@ const GraphQLErrorSchema = z
   .passthrough()
   .openapi("GraphQLError");
 
-/** GraphQL `{ data, errors }` envelope with a typed `data` payload. */
 function restResponse<T extends z.ZodTypeAny>(data: T) {
   return z.object({ data: data.optional(), errors: z.array(GraphQLErrorSchema).optional() });
 }
 
-/** Register a fully-typed `POST /rest/<operation>` proxy route. */
 function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
   operation: string,
   opts: { summary: string; body: B; data: D },

@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 import { GenericStore } from "./generic-store";
 import type { User } from "./api";
-import { restFetch } from "./api";
+import { restCollections } from "./api";
 
 type CollectionRecord<DT = DateTime> = {
   id: string;
@@ -20,11 +20,11 @@ async function collectionQuery(modifiedAfter?: DateTime): Promise<{
   changed: CollectionRecord[];
   deleted: { id: string }[];
 }> {
-  return restFetch("collections", {
+  return restCollections({
     modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
   }).then(v => {
-    const deleted = v.data.collections.filter((c: any) => c.__typename === "Deleted").map((c: any) => ({ id: c.id }));
-    const changed = v.data.collections
+    const deleted = v.collections.filter((c: any) => c.__typename === "Deleted").map((c: any) => ({ id: c.id }));
+    const changed = v.collections
       .filter((c: any) => c.__typename === "CollectionRecord")
       .map((c: any) => ({
         ...c.data,

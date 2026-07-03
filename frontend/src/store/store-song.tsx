@@ -2,7 +2,7 @@ import { DateTime } from "luxon";
 
 import { GenericStore } from "./generic-store";
 import type { User } from "./api";
-import { restFetch } from "./api";
+import { restSongs, restUpdateSong } from "./api";
 
 type SongRecord = {
   id: string;
@@ -28,19 +28,19 @@ export async function onLoadQuery(modifiedAfter?: DateTime): Promise<{
   viewer: User | null;
   deletedSongs: { id: string }[];
 }> {
-  return restFetch("songs", {
+  return restSongs({
     modifiedAfter: modifiedAfter ? modifiedAfter.toISO() : null,
-    deletedAfter: modifiedAfter ? modifiedAfter.toISO() : DateTime.utc().toISO(),
+    deletedAfter: (modifiedAfter ? modifiedAfter.toISO() : DateTime.utc().toISO()) ?? "",
     skipDeleted: !modifiedAfter,
   }).then(v => ({
-    songs: v.data.songs.map((s: any) => ({
+    songs: v.songs.map((s: any) => ({
       ...s.data,
       id: s.id,
       lastModified: DateTime.fromISO(s.lastModified),
       insertedAt: s.data.insertedAt ? DateTime.fromISO(s.data.insertedAt) : null,
     })),
-    viewer: v.data.viewer,
-    deletedSongs: (v.data.deletedSongs || []).map((id: string) => ({ id })),
+    viewer: v.viewer as User | null,
+    deletedSongs: (v.deletedSongs || []).map((id: string) => ({ id })),
   }));
 }
 
@@ -60,8 +60,8 @@ export async function updateSong(
     pretranspose?: number;
   },
 ) {
-  return restFetch("update-song", { id, input }).then(v => {
-    if (!v.data.updateSong) throw new Error("updateSong failed");
+  return restUpdateSong(id, input).then(v => {
+    if (!v.updateSong) throw new Error("updateSong failed");
   });
 }
 
