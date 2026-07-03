@@ -89,7 +89,7 @@ api.openapi(
       401: { description: "Invalid credentials", ...json(ErrorMessageSchema) },
     },
   }),
-  (async (c: any) => handleLogin(c.req.raw, await c.var.makeContext())) as any,
+  (async (c: any) => handleLogin(c.req.valid("json"), await c.var.makeContext())) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ api.openapi(
       400: { description: "Bad request", ...json(ErrorSchema) },
     },
   }),
-  (async (c: any) => handleCreateSong(c.req.raw, await c.var.makeContext())) as any,
+  (async (c: any) => handleCreateSong(c.req.valid("json"), await c.var.makeContext())) as any,
 );
 
 // ---------------------------------------------------------------------------
@@ -269,7 +269,7 @@ function restRoute<B extends z.ZodTypeAny, D extends z.ZodTypeAny>(
         404: { description: "Unknown operation", content: { "text/plain": { schema: z.string() } } },
       },
     }),
-    (async (c: any) => handleRest(operation, c.req.raw, await c.var.makeContext())) as any,
+    (async (c: any) => handleRest(operation, c.req.valid("json"), await c.var.makeContext())) as any,
   );
 }
 

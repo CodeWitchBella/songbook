@@ -1,18 +1,10 @@
 import { eq } from "drizzle-orm";
 import { schema } from "#/db/drizzle.ts";
-import { z } from "zod";
-import { validateZodJsonBody } from "#/lib/request.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { comparePassword, createSession } from "#/lib/auth.ts";
 import { createSetSessionCookieHeader } from "#/lib/cookie.ts";
 
-const sch = z.object({
-  email: z.string(),
-  password: z.string(),
-});
-
-export async function handleLogin(request: Request, ctx: MyContext): Promise<Response> {
-  const json = await validateZodJsonBody(request, sch);
+export async function handleLogin(json: { email: string; password: string }, ctx: MyContext): Promise<Response> {
   const user = await ctx.db.query.user.findFirst({
     where: eq(schema.user.email, json.email),
   });

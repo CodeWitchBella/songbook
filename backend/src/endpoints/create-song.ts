@@ -2,17 +2,18 @@ import { checkCode } from "#/db/drizzle.ts";
 import { song } from "#/db/schema.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { getViewerCheck } from "#/lib/auth.ts";
-import { validateJsonBody } from "#/lib/request.ts";
-import { badRequestResponse, jsonResponse, methodNotAllowedResponse } from "#/lib/response.ts";
+import { badRequestResponse, jsonResponse } from "#/lib/response.ts";
 import { randomID, slugify } from "#/lib/utils.ts";
 
-export async function handleCreateSong(request: Request, context: MyContext): Promise<Response> {
+interface CreateSongInput {
+  title: string;
+  author: string;
+  text?: string;
+  extraNonSearchable?: string;
+}
+
+export async function handleCreateSong(input: CreateSongInput, context: MyContext): Promise<Response> {
   const { viewer } = await getViewerCheck(context);
-  if (request.method !== "POST") return methodNotAllowedResponse();
-  const input = await validateJsonBody(request, {
-    required: ["title", "author"],
-    optional: ["text", "extraNonSearchable"],
-  });
 
   const slug = slugify(`${input.title}-${input.author}`);
   const idString = await randomID(20);

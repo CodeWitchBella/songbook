@@ -295,13 +295,12 @@ const operations: Record<string, (vars: any, context: MyContext) => Promise<unkn
  * result is the GraphQL-style `{ data }` envelope, or `{ errors: [{ message }] }`
  * when the operation throws a {@link RestError}.
  */
-export async function handleRest(operation: string, request: Request, context: MyContext): Promise<Response> {
+export async function handleRest(operation: string, variables: unknown, context: MyContext): Promise<Response> {
   const op = operations[operation];
   if (!op) {
     return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
   }
 
-  const variables = await request.json();
   try {
     const data = await op(variables, context);
     return Response.json({ data });
