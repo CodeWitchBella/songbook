@@ -60,8 +60,6 @@
           text = "exec ${playwrightPodman "-it --init"}";
         };
 
-        # Custom pre-commit hook: format the staged files with treefmt and abort
-        # the commit if anything was reformatted, so the fix has to be re-staged.
         treefmt-pre-commit = pkgs.writeShellApplication {
           name = "treefmt-pre-commit";
           runtimeInputs = [config.treefmt.build.wrapper pkgs.git];
@@ -73,9 +71,6 @@
           '';
         };
 
-        # A pre-commit check that runs a pnpm-provided tool inside a workspace.
-        # `scoped` tools (oxfmt/oxlint) only see the staged JS/TS files; others
-        # (tsc) run project-wide but only when the workspace was touched.
         mkWorkspaceHook = workspace: {
           tool,
           args ? "",
@@ -91,8 +86,15 @@
                 cd "$(git rev-parse --show-toplevel)/${workspace}"
                 files=$(git diff --cached --name-only --diff-filter=ACMR --relative -- . | grep -E '\.(m|c)?[jt]sx?$' || true)
                 [ -z "$files" ] && exit 0
+                status=0
                 # shellcheck disable=SC2086
-                exec pnpm exec ${tool} ${args} $files
+                pnpm exec ${tool} ${args} $files || status=$?
+                # shellcheck disable=SC2086
+                if ! git diff --quiet -- $files; then
+                  echo "${tool} applied fixes (left unstaged); review and re-stage them." >&2
+                  status=1
+                fi
+                exit $status
               ''
               else ''
                 root=$(git rev-parse --show-toplevel)
@@ -109,11 +111,11 @@
         workspaceTools = workspace: [
           {
             tool = "oxfmt";
-            args = "--check";
             scoped = true;
           }
           {
             tool = "oxlint";
+            args = "--fix";
             scoped = true;
           }
           {
