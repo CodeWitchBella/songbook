@@ -2,6 +2,11 @@
 
 https://zpevnik.skorepova.info/
 
+> [!NOTE]
+> The canonical repository lives at [forgejo.isbl.cz](https://forgejo.isbl.cz/isabella/songbook). If you're viewing this anywhere else, it's a mirror.
+>
+> I accept pull requests from both [code.nolog.cz](https://code.nolog.cz/isbl/songbook) and GitHub. You can also just email me a patch — that's fun.
+
 ## Developing
 
 Two setups are available. Fullstack also works for frontend-only work, but is more involved to set up — in particular, Nix doesn't work on Windows outside of WSL. You can start with the frontend-only setup and move to fullstack later. However, since I use fullstack setup for developing, it's generally more polished.
