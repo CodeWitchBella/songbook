@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { etag } from "hono/etag";
 import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 
@@ -84,7 +85,7 @@ const app = new Hono();
 app.route("/api", api);
 
 // Everything else falls back to the built static frontend (SPA).
-app.get("*", async c => {
+app.get("*", etag(), async c => {
   const staticResponse = await serveStatic(new URL(c.req.url).pathname);
   if (staticResponse) return staticResponse;
   return c.text("Not found", 404);
