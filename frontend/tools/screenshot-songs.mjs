@@ -99,10 +99,7 @@ async function main() {
     );
 
     // Leave a small manifest alongside the images.
-    await writeFile(
-      `${outDir}/index.json`,
-      JSON.stringify({ baseUrl, count: slugs.length, slugs, generatedAt: new Date().toISOString() }, null, 2),
-    );
+    await writeFile(`${outDir}/index.json`, JSON.stringify({ baseUrl, count: slugs.length, slugs }, null, 2));
 
     console.log(`Done. Screenshots saved to ${outDir}/`);
   } finally {
