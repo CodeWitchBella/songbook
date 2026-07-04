@@ -3,3 +3,7 @@
 .direnv
 .tmp
 .git
+frontend/src/store/api-schema.d.ts
+frontend/src/store/openapi.json
+frontend/src/types/resources.d.ts
+frontend/tools/openapi-codegen/dist
