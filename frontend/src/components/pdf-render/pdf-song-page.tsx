@@ -78,7 +78,7 @@ function ChordLine({ l }: { l: Line }) {
               {textLine(l.content.slice(0, i))}
             </DefaultStyleText>
             <DefaultStyleText
-              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop, { fontFamily: FONT_OSWALD }]}
+              style={[/^_?\^/.test(cur.ch) ? {} : style.bold, style.zIndexTop, { fontFamily: FONT_ATKINSON }]}
             >
               <Chord>{cur.ch.replace(/^[_^]+/, "")}</Chord>
             </DefaultStyleText>
@@ -134,9 +134,10 @@ const ParagraphC = ({ p }: { p: Paragraph }) => {
 function SongHeader({ title, author }: { title: string; author: string }) {
   const { em } = usePDFSettings();
   const textStyle = {
-    fontFamily: FONT_ATKINSON,
+    fontFamily: FONT_CANTARELL,
     fontWeight: "bold",
     fontSize: em(1.2),
+    letterSpacing: em(-0.04),
   } as const;
   return (
     <View
