@@ -3,6 +3,7 @@ import { PDFSongContent, PDFSongPage } from "#/components/pdf-render/pdf-song-pa
 import { ContinuousPage } from "#/components/sizer-page";
 import type { SongType } from "#/store/store-song";
 import type * as parser from "#/utils/song-parser/song-parser";
+import { useEffect } from "react";
 
 function SongPage({
   song,
@@ -12,6 +13,7 @@ function SongPage({
   transposition = 0,
   onChordPress = null,
   firstPage,
+  continuous,
 }: {
   song: SongType;
   pageData: parser.Paragraph[];
@@ -20,6 +22,7 @@ function SongPage({
   noBack?: boolean;
   onChordPress?: null | ((chord: string) => void);
   firstPage: boolean;
+  continuous?: boolean;
 }) {
   const pretranspose = typeof song.pretranspose === "number" ? song.pretranspose : 0;
   return (
@@ -41,6 +44,7 @@ function SongPage({
         back={!noBack}
         firstPage={firstPage}
         slug={song.slug}
+        continuous={continuous}
       />
     </PDFSettingsProvider>
   );
@@ -88,6 +92,16 @@ export function SongLook({
   transposition?: number;
   onChordPress?: (chord: string) => void;
 }) {
+  const snapPages = !parsed.continuous && parsed.pages.length > 1;
+  useEffect(() => {
+    if (!snapPages) return undefined;
+    const html = document.documentElement;
+    html.classList.add("indexcss-snap-pages");
+    return () => {
+      html.classList.remove("indexcss-snap-pages");
+    };
+  }, [snapPages]);
+
   if (parsed.continuous) {
     return (
       <SongContinuousPage
@@ -112,6 +126,7 @@ export function SongLook({
           transposition={transposition}
           onChordPress={onChordPress}
           firstPage={i === 0}
+          continuous={parsed.continuous}
         />
       ))}
     </>

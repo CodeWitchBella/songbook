@@ -233,6 +233,7 @@ export function PDFSongPage({
   back = false,
   firstPage,
   slug,
+  continuous,
 }: {
   page: Line[][];
   left: boolean;
@@ -243,10 +244,15 @@ export function PDFSongPage({
   back?: boolean;
   firstPage: boolean;
   slug: string;
+  continuous?: boolean;
 }) {
-  console.log({ firstPage, slug, title, author });
   return (
-    <PDFPage left={left} bookmark={firstPage ? title + " – " + author : undefined} id={firstPage ? slug : undefined}>
+    <PDFPage
+      left={left}
+      continuous={continuous}
+      bookmark={firstPage ? title + " – " + author : undefined}
+      id={firstPage ? slug : undefined}
+    >
       <View
         style={{
           position: "relative",

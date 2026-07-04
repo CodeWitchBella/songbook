@@ -41,6 +41,16 @@ body,
   }
 }
 
+/* When a multi-page song is displayed with continuous mode off, snap scrolling
+   to each page so pages line up with the viewport. The class is toggled onto
+   <html> by the song view; the pages themselves opt in as snap targets via the
+   `snap-start` utility (see SizerPage / SnapPagesProvider). */
+@media not print {
+  html.indexcss-snap-pages {
+    scroll-snap-type: y mandatory;
+  }
+}
+
 .indexcss-pdf-render .react-pdf__Page__svg,
 .indexcss-pdf-render .set-size {
   height: var(--a-fit-height, 100vh) !important;

@@ -14,10 +14,14 @@ const margin = {
   inner: (18.8 / 105) * 100,
 };
 
-function DefaultPage({ children, ...rest }: PropsWithChildren<{ bookmark?: string; id?: string }>) {
+function DefaultPage({
+  children,
+  continuous,
+  ...rest
+}: PropsWithChildren<{ bookmark?: string; id?: string; continuous?: boolean }>) {
   const isInPDF = useIsInPDF();
   const pdfSettings = usePDFSettings();
-  if (!isInPDF) return <SizerPage>{children}</SizerPage>;
+  if (!isInPDF) return <SizerPage continuous={continuous}>{children}</SizerPage>;
   return (
     <PrimitivePDFPage wrap={false} size={`A${pdfSettings.pageSize}` as $FixMe} {...rest}>
       {children}
@@ -34,6 +38,7 @@ export function PDFPage({
   left,
   style,
   skipPadding = false,
+  continuous,
   ...rest
 }: PropsWithChildren<{
   left: boolean;
@@ -41,6 +46,7 @@ export function PDFPage({
   bookmark?: string;
   id?: string;
   skipPadding?: boolean;
+  continuous?: boolean;
 }>) {
   const { vw, vh, web } = usePDFSettings();
   const { Page } = useContext(pageContext);
@@ -48,7 +54,7 @@ export function PDFPage({
   const nopad = web || skipPadding;
 
   return (
-    <Page {...rest}>
+    <Page {...rest} continuous={continuous}>
       <View
         style={[
           style as any,

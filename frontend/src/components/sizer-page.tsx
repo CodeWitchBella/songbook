@@ -1,9 +1,13 @@
 import type { PropsWithChildren, ReactNode } from "react";
 import * as page from "#/utils/page";
 
-export function SizerPage({ children }: PropsWithChildren<{}>) {
+/** Paginated (non-continuous) pages become scroll-snap targets; snapping itself is
+    only active when the song view flags multiple pages on <html>. */
+export function SizerPage({ children, continuous = true }: PropsWithChildren<{ continuous?: boolean }>) {
   return (
-    <section className="relative flex h-screen items-center justify-center">
+    <section
+      className={`indexcss-song-page relative flex h-screen items-center justify-center${continuous ? "" : " snap-start"}`}
+    >
       <div className="indexcss-sizer-page relative break-after-page overflow-hidden" style={{ padding: "1em" }}>
         {children}
       </div>
