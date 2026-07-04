@@ -4,6 +4,7 @@ when:
 steps:
   - name: backend checks
     image: ghcr.io/pnpm/pnpm:11
+    depends_on: []
     commands:
       - pnpm runtime set node 26 -g
       - cd backend
@@ -14,6 +15,7 @@ steps:
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11
+    depends_on: []
     commands:
       - pnpm runtime set node 26 -g
       - cd frontend
@@ -26,12 +28,31 @@ steps:
 
   - name: build and push
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
+    depends_on: []
+    settings:
+      registry: forgejo.isbl.cz
+      repo: forgejo.isbl.cz/isabella/songbook
+      tags:
+        - sha-${CI_COMMIT_SHA:0:8}
+      platforms: linux/arm64
+      cache_images:
+        - cache.isbl.cz/songbook:cache
+      username:
+        from_secret: docker_registry_username
+      password:
+        from_secret: docker_registry_password
+
+  - name: push latest tag
+    image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
+    depends_on:
+      - backend checks
+      - frontend checks
+      - build and push
     settings:
       registry: forgejo.isbl.cz
       repo: forgejo.isbl.cz/isabella/songbook
       tags:
         - latest
-        - sha-${CI_COMMIT_SHA:0:8}
       platforms: linux/arm64
       cache_images:
         - cache.isbl.cz/songbook:cache
