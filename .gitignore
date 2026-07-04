@@ -1,5 +1,7 @@
 *.sql
 *.log
+/.commit-time
+/.commit-sha
 /data/*
 build
 builds/*

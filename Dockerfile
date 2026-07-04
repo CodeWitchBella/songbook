@@ -6,6 +6,9 @@ WORKDIR /app/backend
 COPY backend/package.json backend/pnpm-lock.yaml backend/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 COPY backend/. .
+# Commit metadata written by CI (bracket globs keep the COPY optional for local
+# builds without them); the server logs these at startup as its version.
+COPY .commit-tim[e] .commit-sh[a] ./
 # Emit the OpenAPI spec the frontend generates its typed client from. Only needs
 # the (prod) deps and no database, so it runs here in the backend stage.
 RUN pnpm run gen:openapi openapi.json
@@ -22,6 +25,7 @@ COPY frontend/. .
 COPY --from=backend-build /app/backend/openapi.json ./src/store/openapi.json
 RUN pnpm --filter openapi-codegen run gen
 RUN pnpm run types
+COPY .commit-tim[e] .commit-sh[a] ./
 RUN LAST_MODIFIED="$(cat .commit-time 2>/dev/null || true)" COMMIT_SHA="$(cat .commit-sha 2>/dev/null || true)" pnpm run build-ci
 
 FROM base

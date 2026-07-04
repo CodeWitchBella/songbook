@@ -6,6 +6,21 @@ import { extname, join, resolve } from "node:path";
 import { api } from "#/app.ts";
 import { migrate } from "#/db/migrate.ts";
 
+async function readCommitFile(name: string): Promise<string> {
+  try {
+    return (await readFile(join(import.meta.dirname, "..", name), "utf8")).trim();
+  } catch {
+    return "";
+  }
+}
+const commitSha = await readCommitFile(".commit-sha");
+const commitTime = await readCommitFile(".commit-time");
+const version =
+  [commitTime ? new Date(Number(commitTime) * 1000).toISOString() : "", commitSha ? commitSha.slice(0, 8) : ""]
+    .filter(Boolean)
+    .join(" ") || "dev";
+console.log(`songbook backend ${version}`);
+
 const publicDir = resolve(process.env.PUBLIC_DIR ?? join(import.meta.dirname, "../public"));
 
 const mimeTypes: Record<string, string> = {
