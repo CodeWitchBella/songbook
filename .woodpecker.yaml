@@ -42,7 +42,6 @@ steps:
       repo: forgejo.isbl.cz/isabella/songbook
       tags:
         - latest
-        - sha-${CI_COMMIT_SHA:0:8}
       platforms: linux/arm64
       cache_images:
         - cache.isbl.cz/songbook:cache
