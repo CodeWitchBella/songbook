@@ -69,3 +69,21 @@ steps:
         from_secret: docker_registry_username
       password:
         from_secret: docker_registry_password
+
+  - name: deploy
+    image: alpine
+    depends_on:
+      - push
+    environment:
+      WOODPECKER_TOKEN:
+        from_secret: woodpecker_token
+    commands:
+      - apk add --no-cache curl jq
+      - export TAG=sha-${CI_COMMIT_SHA:0:8}
+      - export REPO_ID=$(curl -sSf -H "Authorization:Bearer $WOODPECKER_TOKEN" "$CI_SYSTEM_URL/api/repos/lookup/isabella/hetzner" | jq -r .id)
+      - |
+        curl -sSf -X POST \
+          -H "Authorization:Bearer $WOODPECKER_TOKEN" \
+          -H "Content-Type:application/json" \
+          "$CI_SYSTEM_URL/api/repos/$REPO_ID/pipelines" \
+          -d "{\"branch\":\"main\",\"variables\":{\"DEPLOY_APP\":\"songbook\",\"DEPLOY_TAG\":\"$TAG\"}}"
