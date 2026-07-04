@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
 
 import { api } from "#/app.ts";
+import { migrate } from "#/db/migrate.ts";
 
 const publicDir = resolve(process.env.PUBLIC_DIR ?? join(import.meta.dirname, "../public"));
 
@@ -60,6 +61,8 @@ app.onError((err, c) => {
   console.error(err.stack);
   return c.text(err.stack ?? String(err), 500);
 });
+
+migrate();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5512;
 
