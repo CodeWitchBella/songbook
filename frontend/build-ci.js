@@ -5,9 +5,13 @@ const commitTime = process.env.LAST_MODIFIED
   ? new Date(process.env.LAST_MODIFIED * 1000).toISOString()
   : new Date().toISOString();
 const fromGit = process.env.LAST_MODIFIED ? "true" : "false";
+const commitSha = process.env.COMMIT_SHA || "";
 
 patch(path.join("src", "build-data.tsx"), content =>
-  content.replace(/\$COMMIT_TIME_FROM_GIT/g, fromGit).replace(/\$COMMIT_TIME/g, commitTime),
+  content
+    .replace(/\$COMMIT_TIME_FROM_GIT/g, fromGit)
+    .replace(/\$COMMIT_TIME/g, commitTime)
+    .replace(/\$COMMIT_SHA/g, commitSha),
 );
 
 function patch(file, patcher) {

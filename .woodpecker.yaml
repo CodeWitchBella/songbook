@@ -7,6 +7,7 @@ steps:
     depends_on: []
     commands:
       - git log -1 --format=%ct > frontend/.commit-time
+      - git log -1 --format=%H > frontend/.commit-sha
 
   - name: backend checks
     image: ghcr.io/pnpm/pnpm:11

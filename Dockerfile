@@ -22,7 +22,7 @@ COPY frontend/. .
 COPY --from=backend-build /app/backend/openapi.json ./src/store/openapi.json
 RUN pnpm --filter openapi-codegen run gen
 RUN pnpm run types
-RUN LAST_MODIFIED="$(cat .commit-time 2>/dev/null || true)" pnpm run build-ci
+RUN LAST_MODIFIED="$(cat .commit-time 2>/dev/null || true)" COMMIT_SHA="$(cat .commit-sha 2>/dev/null || true)" pnpm run build-ci
 
 FROM base
 WORKDIR /app
