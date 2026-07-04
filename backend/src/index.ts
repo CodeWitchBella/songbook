@@ -52,11 +52,30 @@ async function readIfInside(filePath: string): Promise<Buffer | null> {
   }
 }
 
+const UPDATE_GATED = "public, max-age=0, s-maxage=5, must-revalidate";
+
+function cacheControl(pathname: string): string {
+  if (pathname?.startsWith("/assets/")) return "public, max-age=31536000, immutable";
+  return UPDATE_GATED;
+}
+
 async function serveStatic(pathname: string): Promise<Response | null> {
-  const body = (await readIfInside(join(publicDir, pathname))) ?? (await readIfInside(join(publicDir, "index.html")));
-  if (!body) return null;
-  const contentType = mimeTypes[extname(pathname)] ?? "text/html; charset=utf-8";
-  return new Response(new Uint8Array(body), { headers: { "content-type": contentType } });
+  const exact = await readIfInside(join(publicDir, pathname));
+  if (exact) {
+    const contentType = mimeTypes[extname(pathname)] ?? "text/html; charset=utf-8";
+    return new Response(new Uint8Array(exact), {
+      headers: { "content-type": contentType, "cache-control": cacheControl(pathname) },
+    });
+  }
+
+  if (pathname.startsWith("/assets/")) return null;
+  if (pathname.includes(".")) return null;
+
+  const shell = await readIfInside(join(publicDir, "index.html"));
+  if (!shell) return null;
+  return new Response(new Uint8Array(shell), {
+    headers: { "content-type": "text/html; charset=utf-8", "cache-control": UPDATE_GATED },
+  });
 }
 
 const app = new Hono();
