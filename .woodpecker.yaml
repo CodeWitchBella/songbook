@@ -33,28 +33,9 @@ steps:
       - pnpm run lint
       - pnpm exec tsc --noEmit
 
-  - name: build
+  - name: build and push
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
     depends_on:
-      - commit time
-    settings:
-      dry_run: true
-      registry: forgejo.isbl.cz
-      repo: forgejo.isbl.cz/isabella/songbook
-      platforms: linux/arm64
-      cache_images:
-        - cache.isbl.cz/songbook:cache
-      username:
-        from_secret: docker_registry_username
-      password:
-        from_secret: docker_registry_password
-
-  - name: push
-    image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
-    depends_on:
-      - backend checks
-      - frontend checks
-      - build
       - commit time
     settings:
       registry: forgejo.isbl.cz
@@ -73,7 +54,9 @@ steps:
   - name: deploy
     image: alpine
     depends_on:
-      - push
+      - backend checks
+      - frontend checks
+      - build and push
     environment:
       WOODPECKER_TOKEN:
         from_secret: woodpecker_token
