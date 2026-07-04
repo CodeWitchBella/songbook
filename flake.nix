@@ -170,6 +170,7 @@
             export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
             export PGDATABASE="songbook"
             export POSTGRESQL_URL="postgresql://localhost/songbook?host=$PGHOST"
+            export API_PROXY_TARGET="http://127.0.0.1:5512"
             # Point the Storybook Vitest project at the podman Playwright server
             # (`playwright-start`); run tests with `pnpm run test-storybook`.
             export PLAYWRIGHT_WS_ENDPOINT="${playwrightWsEndpoint}"
@@ -187,6 +188,7 @@
             environment = {
               POSTGRESQL_URL = "postgresql://localhost/songbook";
               PLAYWRIGHT_WS_ENDPOINT = playwrightWsEndpoint;
+              API_PROXY_TARGET = "http://127.0.0.1:5512";
             };
             processes = {
               postgres.command = ''
