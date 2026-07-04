@@ -26,8 +26,6 @@
       }: let
         psql = pkgs.postgresql_18;
 
-        backend = import ./backend/backend.nix {inherit inputs pkgs;};
-
         # Run the Playwright server inside podman, pinned to the version declared
         # in frontend/package.json so the client library and server always match.
         playwrightVersion = (lib.importJSON ./frontend/package.json).devDependencies.playwright;
@@ -178,9 +176,6 @@
             menu
           '';
         };
-
-        packages.backend = backend.packages.default;
-        packages.docker = backend.packages.docker;
 
         process-compose.default = {
           cli.options.keep-project = true;
