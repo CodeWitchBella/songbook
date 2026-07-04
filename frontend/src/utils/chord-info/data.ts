@@ -1,4 +1,4 @@
-// source: guitar-chord-chart.png which is in this folder
+// source: guitar-chord-chart-lfs.png, removed from the working tree; check out commit 236468e to retrieve it
 // got it from: https://truefire.com/guitar-chord-charts/
 
 export const variants = {
