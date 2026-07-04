@@ -82,6 +82,7 @@
           tool,
           args ? "",
           scoped ? false,
+          pre ? "",
         }:
           pkgs.writeShellApplication {
             name = "pre-commit-${workspace}-${tool}";
@@ -99,6 +100,7 @@
                 root=$(git rev-parse --show-toplevel)
                 [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- ${workspace}/)" ] && exit 0
                 cd "$root/${workspace}"
+                ${pre}
                 exec pnpm exec ${tool} ${args}
               '';
           };
@@ -106,7 +108,7 @@
         # All config-based Git pre-commit hooks, as name -> command path. The
         # per-workspace lint/format/typecheck hooks are generated so frontend
         # and backend share one definition each.
-        workspaceTools = [
+        workspaceTools = workspace: [
           {
             tool = "oxfmt";
             args = "--check";
@@ -119,6 +121,14 @@
           {
             tool = "tsc";
             args = "--noEmit";
+            # api-schema.d.ts and resources.d.ts are gitignored generated
+            # files that the frontend types depend on; regenerate them before
+            # typechecking so tsc doesn't fail on a fresh checkout or after
+            # the backend schema/translations changed.
+            pre =
+              if workspace == "frontend"
+              then "pnpm run gen:api && pnpm run types"
+              else "";
           }
         ];
         preCommitHooks =
@@ -127,7 +137,8 @@
             map (t:
               lib.nameValuePair "${workspace}-${t.tool}"
               (lib.getExe (mkWorkspaceHook workspace t)))
-            workspaceTools) ["frontend" "backend"]);
+            (workspaceTools workspace))
+          ["frontend" "backend"]);
       in {
         treefmt.config = {
           projectRootFile = "flake.nix";
