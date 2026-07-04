@@ -11,11 +11,6 @@ import { usePDFSettings } from "./pdf-settings";
 import type { PropsOf } from "./primitives";
 import { Text, View } from "./primitives";
 
-const nbsp = (text: string) =>
-  "\u00A0".repeat(text.length - text.trimLeft().length) +
-  text.trim() +
-  "\u00A0".repeat(text.length - text.trimRight().length);
-
 const hasChord = (l: Line) => l.content.some(el => !!el.ch);
 
 const style = StyleSheet.create({

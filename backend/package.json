@@ -16,8 +16,8 @@
     "gen:openapi": "node src/gen-openapi.ts",
     "db-push": "pnpm drizzle-kit push:pg --config=drizzle.config.ts",
     "lint": "oxlint",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check"
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.8",

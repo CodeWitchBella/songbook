@@ -3,7 +3,7 @@ import type ReactPDF from "@react-pdf/renderer";
 import type ReactPDFTypes from "@react-pdf/types/style";
 import { useColors } from "#/components/themed";
 import type { ComponentProps, PropsWithChildren } from "react";
-import React, { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import type { TextStyle, ViewStyle } from "react-native";
 import {
   Image as RNImage,
@@ -197,7 +197,7 @@ export function usePDF(...[opt]: Parameters<typeof ReactPDF.usePDF>) {
     ...opt,
     document: useMemo(
       () => (opt?.document ? <InPdfCtx.Provider value={pdf}>{opt?.document}</InPdfCtx.Provider> : opt?.document),
-      [opt?.document],
+      [opt?.document, pdf],
     ),
   });
 }

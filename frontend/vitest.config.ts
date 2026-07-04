@@ -21,9 +21,7 @@ export default mergeConfig(
       projects: [
         {
           extends: true,
-          plugins: [
-            storybookTest({ configDir: `${dirname}.storybook`, storybookScript: "pnpm run storybook --ci" }),
-          ],
+          plugins: [storybookTest({ configDir: `${dirname}.storybook`, storybookScript: "pnpm run storybook --ci" })],
           test: {
             name: "storybook",
             browser: {

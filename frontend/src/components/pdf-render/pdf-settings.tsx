@@ -45,7 +45,7 @@ export function PDFSettingsProvider(props: PropsWithChildren<{ value: Partial<Ct
     web = null,
     transpose = 0,
   } = {
-    ...(useContext(settingsCtx) || {}),
+    ...useContext(settingsCtx),
     ...props.value,
   };
   const em = 7.2 * Math.sqrt(2) ** (6 - pageSize);

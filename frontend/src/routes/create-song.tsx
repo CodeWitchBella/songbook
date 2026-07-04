@@ -164,7 +164,10 @@ function SubmitSong({ songData, cancel }: { songData: IntermediateSongData; canc
   });
 
   return (
-    <form className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg text-black dark:text-white" onSubmit={form.submit}>
+    <form
+      className="flex w-full max-w-prose flex-col gap-2 p-2 text-lg text-black dark:text-white"
+      onSubmit={form.submit}
+    >
       <span className="py-4 text-base text-red-600">{error}</span>
       <span className="text-base">
         <span className="font-bold">{t("create.Song name")}:</span> {song.title}

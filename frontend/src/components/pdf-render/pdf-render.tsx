@@ -1,8 +1,7 @@
 import { saveAs } from "file-saver";
 import { DateTime } from "luxon";
-import type { PropsWithChildren } from "react";
-import { useEffect, useRef, useState } from "react";
-import React from "react";
+import type { PropsWithChildren, ReactElement } from "react";
+import { lazy, useEffect, useRef, useState } from "react";
 //import 'react-pdf/dist/Page/AnnotationLayer.css'
 import type { SongType } from "#/store/store-song";
 import type { Line } from "#/utils/song-parser/song-parser";
@@ -19,13 +18,12 @@ import { PDFToc } from "./pdf-toc";
 import { PDFBlobProvider, PDFDocument, PDFProvider, usePDF } from "./primitives";
 import { getSongbookMeta } from "./songbook-meta";
 
-const ReactPDF = React.lazy(
+const ReactPDF = lazy(
   once(() =>
     import("react-pdf").then(rpdf => {
       rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`;
       return {
-        default: ({ children }: { children: (rpdf: typeof import("react-pdf")) => React.ReactElement }) =>
-          children(rpdf),
+        default: ({ children }: { children: (rpdf: typeof import("react-pdf")) => ReactElement }) => children(rpdf),
       };
     }),
   ),

@@ -4,13 +4,7 @@ import { formatDate } from "#/utils/format-date";
 
 import { useLanguage } from "./localisation";
 
-export function ChangelogEntry({
-  date,
-  children,
-}: {
-  date: string;
-  children: ReactNode;
-}) {
+export function ChangelogEntry({ date, children }: { date: string; children: ReactNode }) {
   const [lng] = useLanguage();
   const { t } = useTranslation();
   return (

@@ -75,17 +75,18 @@ function flattenStyle(style: TStyleProp<TCSS>, out: Record<string, unknown> = {}
 
 export const TText = forwardRef<HTMLSpanElement, TTextProps>(({ style, className, ...rest }, ref) => {
   return (
-    <span ref={ref} className={"text-black dark:text-white" + (className ? " " + className : "")} style={flattenStyle(style)} {...rest} />
+    <span
+      ref={ref}
+      className={"text-black dark:text-white" + (className ? " " + className : "")}
+      style={flattenStyle(style)}
+      {...rest}
+    />
   );
 });
 
 export function TH2({ style, className, ...rest }: TTextProps) {
   return (
-    <TText
-      className={"mb-4 mt-8 flex flex-row text-xl" + (className ? " " + className : "")}
-      style={style}
-      {...rest}
-    />
+    <TText className={"mb-4 mt-8 flex flex-row text-xl" + (className ? " " + className : "")} style={style} {...rest} />
   );
 }
 

@@ -1,7 +1,6 @@
 import { NotFound } from "#/components/error-page";
 import { useEffect } from "react";
-import { useParams } from "react-router";
-import { useSearchParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import Song from "#/sections/song/song";
 
 function SongRoute() {
@@ -23,8 +22,7 @@ function useWakeLock() {
       // e.g. a headless/unfocused tab or a blocking permissions policy. Swallow
       // that so it doesn't bubble up as an unhandled rejection; the lock is a
       // nice-to-have, not essential.
-      const requestWakeLock = (): Promise<any> =>
-        (navigator as any).wakeLock.request("screen").catch(() => null);
+      const requestWakeLock = (): Promise<any> => (navigator as any).wakeLock.request("screen").catch(() => null);
       let wakeLock: Promise<any> | null = requestWakeLock();
       const handleVisibilityChange = () => {
         if (wakeLock !== null && document.visibilityState === "visible") {

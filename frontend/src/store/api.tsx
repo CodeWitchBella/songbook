@@ -17,9 +17,7 @@ function enqueue<T>(run: () => Promise<T>): Promise<T> {
  * Run a GraphQL-proxy call: serialize it through {@link enqueue},
  * reject on transport or GraphQL errors, and return the `data` payload.
  */
-function call<D>(
-  run: () => Promise<{ data?: { data?: D; errors?: unknown }; error?: unknown }>,
-): Promise<D> {
+function call<D>(run: () => Promise<{ data?: { data?: D; errors?: unknown }; error?: unknown }>): Promise<D> {
   const tmpe = new Error();
   return enqueue(async () => {
     const { data, error } = await run();
@@ -34,11 +32,7 @@ function call<D>(
   });
 }
 
-export function restSongs(variables: {
-  modifiedAfter: string | null;
-  deletedAfter: string;
-  skipDeleted: boolean;
-}) {
+export function restSongs(variables: { modifiedAfter: string | null; deletedAfter: string; skipDeleted: boolean }) {
   return call(() => client.POST("/songs", { body: variables }));
 }
 

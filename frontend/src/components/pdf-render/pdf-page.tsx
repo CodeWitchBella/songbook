@@ -1,4 +1,4 @@
-import type ReactPDFTypes from "@react-pdf/types";
+import type * as ReactPDFTypes from "@react-pdf/types";
 import { SizerPage } from "#/components/sizer-page";
 import type { PropsWithChildren, ReactNode } from "react";
 import React, { useContext } from "react";
@@ -85,7 +85,7 @@ export function PDFBookletQuad({ pages }: { pages: ReactNode[] }) {
       pagesCp.splice(0, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ] as const;
     const b = [
-      pagesCp.splice(0, 1)[0] || <PDFPage left={true} />,
+      pagesCp.splice(0, 1)[0] || <PDFPage left={true} key={`booklet-${keygen++}`} />,
       pagesCp.splice(pagesCp.length - 1, 1)[0] || <PDFPage left={false} key={`booklet-${keygen++}`} />,
     ] as const;
     physicalPages.push([a, b]);

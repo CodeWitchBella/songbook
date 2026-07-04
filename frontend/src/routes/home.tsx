@@ -1,5 +1,5 @@
 import { InstallButtonLook } from "#/components/install";
-import { ExternalInlineLink, InlineLink } from "#/components/interactive/inline-link";
+import { ExternalInlineLink } from "#/components/interactive/inline-link";
 import { ListButton } from "#/components/interactive/list-button";
 import { PrimaryButton } from "#/components/interactive/primary-button";
 import { useColors } from "#/components/themed";
@@ -20,12 +20,7 @@ export default function Home() {
         }}
       >
         <div className="flex max-w-[300px] flex-col items-stretch pb-10 pt-5">
-          <img
-            src="/static/full.svg"
-            alt=""
-            className="aspect-square w-full"
-            style={{ marginBottom: "16px" }}
-          />
+          <img src="/static/full.svg" alt="" className="aspect-square w-full" style={{ marginBottom: "16px" }} />
           <PrimaryButton to="/all-songs">{t("All songs")}</PrimaryButton>
           <Gap height={8} />
           {login.viewer ? null : (

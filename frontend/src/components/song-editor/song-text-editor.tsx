@@ -1,9 +1,9 @@
-import { cursorSyntaxLeft, deleteCharBackward, selectSyntaxRight, simplifySelection } from "@codemirror/commands";
+import { cursorSyntaxLeft, selectSyntaxRight } from "@codemirror/commands";
 import { LanguageSupport, LRLanguage } from "@codemirror/language";
 import { styleTags, Tag } from "@lezer/highlight";
 import { createTheme } from "@uiw/codemirror-themes";
 import type { EditorView, Extension } from "@uiw/react-codemirror";
-import CodeMirror, { EditorSelection, keymap, Transaction } from "@uiw/react-codemirror";
+import CodeMirror, { keymap } from "@uiw/react-codemirror";
 import { useColors } from "#/components/themed";
 import { useMemo } from "react";
 

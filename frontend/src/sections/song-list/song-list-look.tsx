@@ -1,8 +1,7 @@
 import type { TFunction } from "i18next";
 import { useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 function translateHeader(t: TFunction, hdr: "title" | "author" | "text" | "other") {
   if (hdr === "title") return t("search.title");

@@ -100,11 +100,7 @@ function ThemeFrame({ dark, children }: { dark: boolean; children: ReactNode }) 
   }, [dark]);
 
   const colors = getColors(dark);
-  return (
-    <div style={{ background: colors.background, color: colors.text, minHeight: "100vh" }}>
-      {children}
-    </div>
-  );
+  return <div style={{ background: colors.background, color: colors.text, minHeight: "100vh" }}>{children}</div>;
 }
 
 // Drives the app language from the toolbar. LanguageProvider only reacts to

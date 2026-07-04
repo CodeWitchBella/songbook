@@ -1,8 +1,6 @@
 import i18n from "i18next";
 import type { PropsWithChildren } from "react";
-import { createContext, useContext } from "react";
-import { useEffect } from "react";
-import { useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
 import cs from "../locales/cs/translation.json";

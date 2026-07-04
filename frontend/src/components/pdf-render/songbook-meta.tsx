@@ -154,6 +154,7 @@ const titleMap: {
   },
 };
 
+// oxlint-disable-next-line no-unused-vars
 function Brehoni() {
   return (
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
