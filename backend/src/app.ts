@@ -89,6 +89,7 @@ api.get("/beacon.min.js", c => forward(c.req.raw, "https://static.cloudflareinsi
 api.doc("/openapi.json", {
   openapi: "3.1.0",
   info: { title: "Songbook API", version: "1.0.0" },
+  servers: [{ url: "/api" }],
 });
 
 api.get("/docs", swaggerUI({ url: "/api/openapi.json" }));
