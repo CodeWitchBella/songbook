@@ -251,6 +251,7 @@ export async function prepareStore() {
     }
   };
   prefetchAll();
+  // TODO: drive this from changes instead so that we don't have to do O(n2) search
   index.subscribe(prefetchAll);
 
   return {
