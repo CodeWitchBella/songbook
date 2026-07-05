@@ -227,7 +227,7 @@ async function prepareStore() {
 
   const requestQ = new Map<string, PQueue>();
   function requestSong(id: string) {
-    const queue = requestQ.getOrInsertComputed(id, () => {
+    const queue = getOrInsertComputed(requestQ, id, () => {
       const q = new PQueue({ concurrency: 1, interval: 1000, intervalCap: 1 });
       q.on("idle", () => {
         if (requestQ.get(id) === q && q.size === 0 && q.pending === 0) requestQ.delete(id);
@@ -246,6 +246,18 @@ async function prepareStore() {
   };
 }
 export const store = prepareStore();
+
+/**
+ * Ponyfill for Map.prototype.getOrInsertComputed (TC39 upsert proposal), which
+ * our browserslist targets do not all support yet. Once they do, delete this
+ * and change the call site back to map.getOrInsertComputed(key, compute).
+ */
+function getOrInsertComputed<K, V>(map: Map<K, V>, key: K, compute: (key: K) => V): V {
+  if (map.has(key)) return map.get(key)!;
+  const value = compute(key);
+  map.set(key, value);
+  return value;
+}
 
 function catcher(e: unknown) {
   console.error(e);
