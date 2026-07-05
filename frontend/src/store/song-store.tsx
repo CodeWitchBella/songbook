@@ -53,7 +53,7 @@ function fetchIndex(): Promise<SongIndex[]> {
 type InfoModified = { id: string; modifiedAt: string; slug?: string; title?: string; author?: string };
 
 type InfoChanges = {
-  deleted: readonly string[];
+  deleted: readonly { id: string; modifiedAt: string }[];
   modified: readonly InfoModified[];
   new: readonly SongIndex[];
 };
@@ -107,7 +107,7 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
     setIndex: v => set({ index: v, newestModifiedAt: newestModifiedAt(v) }),
     appendIndex: v =>
       set(prev => {
-        const deleted = new Set(v.deleted);
+        const deleted = new Set(v.deleted.map(d => d.id));
         const modified = new Map<string, InfoModified>(v.modified.map(v => [v.id, v]));
         return {
           index: prev.index
@@ -124,7 +124,10 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
               };
             })
             .concat(v.new),
-          newestModifiedAt: newestModifiedAt(v.new, newestModifiedAt(v.modified, prev.newestModifiedAt)),
+          newestModifiedAt: newestModifiedAt(
+            v.new,
+            newestModifiedAt(v.modified, newestModifiedAt(v.deleted, prev.newestModifiedAt)),
+          ),
         };
       }),
   }));
@@ -166,9 +169,9 @@ async function prepareStore() {
     latestRefresh = refreshQ.add(async () => {
       const indexVal = index.getState();
       const changes = await fetchChangedSongsSince(indexVal.newestModifiedAt);
-      songs.getState().delete(changes.deleted);
+      songs.getState().delete(changes.deleted.map(d => d.id));
       for (const deleted of changes.deleted) {
-        songStorage.removeItem(deleted).catch(catcher);
+        songStorage.removeItem(deleted.id).catch(catcher);
       }
       index.getState().appendIndex(changes);
     });
