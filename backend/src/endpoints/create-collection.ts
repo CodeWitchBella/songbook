@@ -10,7 +10,15 @@ import { restRoute, type Api } from "#/lib/openapi.ts";
 export function registerCreateCollection(api: Api) {
   restRoute(api, "create-collection", {
     summary: "Create a new collection",
-    body: z.object({ name: z.string(), global: z.boolean().default(() => false) }).openapi("CreateCollectionVariables"),
+    body: z
+      .object({
+        name: z.string(),
+        global: z
+          .boolean()
+          .optional()
+          .default(() => false),
+      })
+      .openapi("CreateCollectionVariables"),
     data: z.object({ createCollection: z.object({ id: z.string() }) }),
     handler: createCollection,
   });
