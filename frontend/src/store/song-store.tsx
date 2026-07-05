@@ -151,7 +151,7 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   return store;
 }
 
-async function prepareStore() {
+export async function prepareStore() {
   const index = await prepareIndexStore();
   const songs = createStore<SongStore>(set => ({
     songs: {},
@@ -226,7 +226,7 @@ async function prepareStore() {
   }
 
   const requestQ = new Map<string, PQueue>();
-  function requestSong(id: string) {
+  function enqueueSong(id: string) {
     const queue = getOrInsertComputed(requestQ, id, () => {
       const q = new PQueue({ concurrency: 1, interval: 1000, intervalCap: 1 });
       q.on("idle", () => {
@@ -235,8 +235,23 @@ async function prepareStore() {
       return q;
     });
     if (queue.size > 0) return;
-    queue.add(() => requestSongInner(id)).catch(catcher);
+    return queue.add(() => requestSongInner(id)).catch(catcher);
   }
+  const requestSong = (id: string) => void enqueueSong(id);
+
+  const prefetchQ = new PQueue({ concurrency: 4 });
+  const prefetchAll = () => {
+    for (const song of index.getState().index.toSorted((a, b) => a.modifiedAt.localeCompare(b.modifiedAt))) {
+      const q = requestQ.get(song.id);
+      if (q && q.size > 0) continue; // already queued for revalidate
+      prefetchQ.add(() => Promise.resolve().then(() => enqueueSong(song.id)), {
+        // run the non-pending stuff first
+        priority: q?.isRateLimited || q?.pending ? -1 : 0,
+      });
+    }
+  };
+  prefetchAll();
+  index.subscribe(prefetchAll);
 
   return {
     index,
@@ -245,7 +260,6 @@ async function prepareStore() {
     requestSong,
   };
 }
-export const store = prepareStore();
 
 /**
  * Ponyfill for Map.prototype.getOrInsertComputed (TC39 upsert proposal), which
