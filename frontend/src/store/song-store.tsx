@@ -212,10 +212,13 @@ async function prepareStore() {
 
   const requestQ = new Map<string, PQueue>();
   function requestSong(id: string) {
-    const queue = requestQ.getOrInsertComputed(
-      id,
-      () => new PQueue({ concurrency: 1, interval: 1000, intervalCap: 1 }),
-    );
+    const queue = requestQ.getOrInsertComputed(id, () => {
+      const q = new PQueue({ concurrency: 1, interval: 1000, intervalCap: 1 });
+      q.on("idle", () => {
+        if (requestQ.get(id) === q && q.size === 0 && q.pending === 0) requestQ.delete(id);
+      });
+      return q;
+    });
     if (queue.size > 0) return;
     queue.add(() => requestSongInner(id)).catch(catcher);
   }
