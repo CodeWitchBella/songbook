@@ -1,6 +1,5 @@
 import localForage from "localforage";
 import { createStore, type StoreApi } from "zustand";
-import { persist, type StorageValue } from "zustand/middleware";
 import { retryingNetworkLoad } from "./promise-queues";
 import { captureException } from "@sentry/react";
 import PQueue from "p-queue";
@@ -85,6 +84,11 @@ type SongStore = {
   setLoading: (id: string, loading: boolean) => void;
 };
 
+function newestModifiedAt(items: readonly { modifiedAt: string }[]): string {
+  if (items.length < 1) throw new Error("This store doesn't know how to be empty");
+  return items.reduce((acc, item) => (item.modifiedAt > acc ? item.modifiedAt : acc), items[0].modifiedAt);
+}
+
 async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   const indexStorage = localForage.createInstance({ name: "songs", storeName: "info", version: 1 });
   let index = await indexStorage.getItem<SongIndex[]>("index");
@@ -94,9 +98,9 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   }
   const store = createStore<IndexStore>(set => ({
     index,
-    newestModifiedAt: index.reduce((a, b) => (a.modifiedAt > b.modifiedAt ? a : b)).modifiedAt,
+    newestModifiedAt: newestModifiedAt(index),
 
-    setIndex: v => set({ index: v }),
+    setIndex: v => set({ index: v, newestModifiedAt: newestModifiedAt(v) }),
     appendIndex: v =>
       set(prev => {
         const deleted = new Set(v.deleted);
@@ -116,6 +120,7 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
               };
             })
             .concat(v.new),
+          newestModifiedAt: newestModifiedAt([...v.modified, ...v.new]),
         };
       }),
   }));
