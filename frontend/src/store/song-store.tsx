@@ -1,0 +1,217 @@
+import localForage from "localforage";
+import { createStore, type StoreApi } from "zustand";
+import { persist, type StorageValue } from "zustand/middleware";
+import { retryingNetworkLoad } from "./promise-queues";
+import { captureException } from "@sentry/react";
+import PQueue from "p-queue";
+
+// ------------ SONG FETCHING -----------------
+
+/**
+ * Absolute minimum info about songs to:
+ * - render song list
+ * - for the store to work
+ */
+type SongIndex = {
+  id: string;
+  modifiedAt: string;
+
+  slug: string;
+  title: string;
+  author: string;
+};
+
+type SongDetails = {
+  id: string;
+  modifiedAt: string;
+
+  slug: string;
+  title: string;
+  author: string;
+
+  text: string;
+  fontSize: number;
+  paragraphSpace: number;
+  titleSpace: number;
+  pretranspose: number;
+  spotify: string | null;
+  extraSearchable: string | null;
+  extraNonSearchable: string | null;
+};
+
+function todo(): never {
+  throw new Error("To be implemented");
+}
+
+function fetchSongById(id: string): Promise<SongDetails> {
+  todo();
+}
+
+function fetchInfo(): Promise<SongIndex[]> {
+  todo();
+}
+
+type InfoModified = { id: string; modifiedAt: string; slug?: string; title?: string; author?: string };
+
+type InfoChanges = {
+  deleted: readonly string[];
+  modified: readonly InfoModified[];
+  new: readonly SongIndex[];
+};
+
+function fetchChangedSongsSince(since: string): Promise<InfoChanges> {
+  todo();
+}
+
+// ------------ THE STORE ---------------
+
+// type Store = {
+//   details: Record<string, SongDetails> /* id -> Song */;
+//   unslug: Record<string, string> /* slug -> id */;
+// };
+
+type IndexStore = {
+  index: readonly SongIndex[];
+  newestModifiedAt: string;
+  setIndex: (v: readonly SongIndex[]) => void;
+  appendIndex: (changes: InfoChanges) => void;
+};
+
+type SongStore = {
+  songs: { [id: string]: SongDetails | undefined };
+  loading: { [id: string]: boolean };
+  add: (song: SongDetails) => void;
+  delete: (ids: readonly string[]) => void;
+  setLoading: (id: string, loading: boolean) => void;
+};
+
+async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
+  const indexStorage = localForage.createInstance({ name: "songs", storeName: "info", version: 1 });
+  let index = await indexStorage.getItem<SongIndex[]>("info");
+  if (!index) {
+    index = await retryingNetworkLoad(fetchInfo);
+    await indexStorage.setItem<SongIndex[]>("info", index);
+  }
+  const store = createStore<IndexStore>(set => ({
+    index,
+    newestModifiedAt: index.reduce((a, b) => (a.modifiedAt > b.modifiedAt ? a : b)).modifiedAt,
+
+    setIndex: v => set({ index: v }),
+    appendIndex: v =>
+      set(prev => {
+        const deleted = new Set(v.deleted);
+        const modified = new Map<string, InfoModified>(v.modified.map(v => [v.id, v]));
+        return {
+          index: prev.index
+            .filter(song => !deleted.has(song.id))
+            .map(song => {
+              const modification = modified.get(song.id);
+              if (!modification) return song;
+              return {
+                ...song,
+                slug: modification.slug ?? song.slug,
+                title: modification.title ?? song.title,
+                author: modification.author ?? song.author,
+                modifiedAt: modification.modifiedAt,
+              };
+            })
+            .concat(v.new),
+        };
+      }),
+  }));
+  const savingQueue = new PQueue({ concurrency: 1 });
+  store.subscribe(snapshot => {
+    savingQueue
+      .add(() => indexStorage.setItem<readonly SongIndex[]>("index", snapshot.index))
+      .catch(err => {
+        console.error(err);
+        captureException(err);
+      });
+  });
+  return store;
+}
+
+async function prepareStore() {
+  const index = await prepareIndexStore();
+  const songs = createStore<SongStore>(set => ({
+    songs: {},
+    loading: {},
+    add: song => set(prev => ({ songs: { ...prev.songs, [song.id]: song } })),
+    delete: ids =>
+      set(prev => {
+        const nextSongs = { ...prev.songs };
+        for (const id of ids) delete nextSongs[id];
+        return { songs: nextSongs };
+      }),
+    setLoading: (id, value) => set(prev => ({ loading: { ...prev.loading, [id]: value } })),
+  }));
+
+  const refreshQ = new PQueue({ concurrency: 1, intervalCap: 1, interval: 1000 });
+  let latestRefresh = Promise.resolve();
+  const refreshIndex = () => {
+    if (refreshQ.size) return latestRefresh;
+    latestRefresh = refreshQ.add(async () => {
+      const indexVal = index.getState();
+      const changes = await fetchChangedSongsSince(indexVal.newestModifiedAt);
+      songs.getState().delete(changes.deleted);
+      for (const deleted of changes.deleted) {
+        songStorage.removeItem(deleted).catch(catcher);
+      }
+      index.getState().appendIndex(changes);
+    });
+    latestRefresh.catch(catcher);
+    return latestRefresh;
+  };
+
+  const songStorage = localForage.createInstance({ name: "songs", storeName: "song", version: 1 });
+  async function requestSongInner(id: string) {
+    const state = songs.getState();
+    let song = state.songs[id] ?? null;
+    let songIndex = index.getState().index.find(s => s.id === id);
+    if (!songIndex) throw new Error(`Unknown song id ${id}`);
+    if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
+
+    // load from local store
+    try {
+      if (!song) {
+        song = await songStorage.getItem(id);
+        if (song) state.add(song);
+      }
+    } catch (e) {
+      catcher(e);
+    }
+    songIndex = index.getState().index.find(s => s.id === id);
+    if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+    if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
+
+    // refresh from network
+    song = await fetchSongById(id);
+    songIndex = index.getState().index.find(s => s.id === id);
+    if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+    if (song) state.add(song);
+    return song;
+  }
+
+  const requestQ = new Map<string, PQueue>();
+  function requestSong(id: string) {
+    const queue = requestQ.getOrInsertComputed(
+      id,
+      () => new PQueue({ concurrency: 1, interval: 1000, intervalCap: 1 }),
+    );
+    if (queue.size > 0) return;
+    queue.add(() => requestSongInner(id)).catch(catcher);
+  }
+
+  return {
+    index,
+    refreshIndex,
+    songs,
+    requestSong,
+  };
+}
+const store = prepareStore();
+
+function catcher(e: unknown) {
+  console.error(e);
+  captureException(e);
+}

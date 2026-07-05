@@ -47,6 +47,7 @@
     "localforage": "^1.10.0",
     "luxon": "^3.4.4",
     "openapi-fetch": "^0.17.0",
+    "p-queue": "^9.3.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-i18next": "^17.0.8",
@@ -62,7 +63,8 @@
     "workbox-routing": "^7.4.1",
     "workbox-strategies": "^7.4.1",
     "workbox-window": "^7.1.0",
-    "xorshift": "^1.2.0"
+    "xorshift": "^1.2.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@lezer/generator": "^1.7.0",
