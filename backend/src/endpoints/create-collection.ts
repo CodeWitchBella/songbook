@@ -13,10 +13,7 @@ export function registerCreateCollection(api: Api) {
     body: z
       .object({
         name: z.string(),
-        global: z
-          .boolean()
-          .optional()
-          .default(() => false),
+        global: z.boolean().optional(),
       })
       .openapi("CreateCollectionVariables"),
     data: z.object({ createCollection: z.object({ id: z.string() }) }),
@@ -25,7 +22,7 @@ export function registerCreateCollection(api: Api) {
 }
 
 export async function createCollection(vars: any, context: MyContext) {
-  const { name: requestedName, global } = vars as { name: string; global: boolean };
+  const { name: requestedName, global = false } = vars as { name: string; global: boolean };
   const { viewer } = await getViewerCheck(context);
   if (global && !viewer.admin) throw new RestError("Only admins can add global collections");
 
