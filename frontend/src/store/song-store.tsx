@@ -84,9 +84,8 @@ type SongStore = {
   setLoading: (id: string, loading: boolean) => void;
 };
 
-function newestModifiedAt(items: readonly { modifiedAt: string }[]): string {
-  if (items.length < 1) throw new Error("This store doesn't know how to be empty");
-  return items.reduce((acc, item) => (item.modifiedAt > acc ? item.modifiedAt : acc), items[0].modifiedAt);
+function newestModifiedAt(items: readonly { modifiedAt: string }[], start = ""): string {
+  return items.reduce((acc, item) => (item.modifiedAt > acc ? item.modifiedAt : acc), start);
 }
 
 async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
@@ -120,7 +119,7 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
               };
             })
             .concat(v.new),
-          newestModifiedAt: newestModifiedAt([...v.modified, ...v.new]),
+          newestModifiedAt: newestModifiedAt(v.new, newestModifiedAt(v.modified, prev.newestModifiedAt)),
         };
       }),
   }));
