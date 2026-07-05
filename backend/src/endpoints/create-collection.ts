@@ -38,7 +38,7 @@ export async function createCollection(vars: any, context: MyContext) {
   const { viewer } = await getViewerCheck(context);
   if (global && !viewer.admin) throw new RestError("Only admins can add global collections", 403);
 
-  const slug = slugify(viewer?.handle || viewer?.name) + "/" + slugify(requestedName);
+  const slug = (global ? slugify(viewer?.handle || viewer?.name) + "/" : "") + slugify(requestedName);
   const existing = await context.db
     .select({ count: sql<number>`count(*)` })
     .from(schema.collection)
