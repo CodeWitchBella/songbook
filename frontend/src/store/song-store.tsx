@@ -109,21 +109,29 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
       set(prev => {
         const deleted = new Set(v.deleted.map(d => d.id));
         const modified = new Map<string, InfoModified>(v.modified.map(v => [v.id, v]));
+        const added = new Map(v.new.filter(song => !deleted.has(song.id)).map(song => [song.id, song]));
         return {
           index: prev.index
             .filter(song => !deleted.has(song.id))
             .map(song => {
               const modification = modified.get(song.id);
-              if (!modification) return song;
-              return {
-                ...song,
-                slug: modification.slug ?? song.slug,
-                title: modification.title ?? song.title,
-                author: modification.author ?? song.author,
-                modifiedAt: modification.modifiedAt,
-              };
+              if (modification) {
+                song = {
+                  ...song,
+                  slug: modification.slug ?? song.slug,
+                  title: modification.title ?? song.title,
+                  author: modification.author ?? song.author,
+                  modifiedAt: modification.modifiedAt,
+                };
+              }
+              const addition = added.get(song.id);
+              if (addition) {
+                added.delete(song.id);
+                if (addition.modifiedAt > song.modifiedAt) return addition;
+              }
+              return song;
             })
-            .concat(v.new),
+            .concat([...added.values()]),
           newestModifiedAt: newestModifiedAt(
             v.new,
             newestModifiedAt(v.modified, newestModifiedAt(v.deleted, prev.newestModifiedAt)),
