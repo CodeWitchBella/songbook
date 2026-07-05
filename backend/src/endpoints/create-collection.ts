@@ -10,15 +10,16 @@ import { restRoute, type Api } from "#/lib/openapi.ts";
 export function registerCreateCollection(api: Api) {
   restRoute(api, "create-collection", {
     summary: "Create a new collection",
-    body: z.object({ name: z.string() }).openapi("CreateCollectionVariables"),
+    body: z.object({ name: z.string(), global: z.boolean().default(() => false) }).openapi("CreateCollectionVariables"),
     data: z.object({ createCollection: z.object({ id: z.string() }) }),
     handler: createCollection,
   });
 }
 
 export async function createCollection(vars: any, context: MyContext) {
-  const { name: requestedName } = vars as { name: string };
+  const { name: requestedName, global } = vars as { name: string; global: boolean };
   const { viewer } = await getViewerCheck(context);
+  if (global && !viewer.admin) throw new RestError("Only admins can add global collections");
 
   const slug = slugify(viewer?.handle || viewer?.name) + "/" + slugify(requestedName);
   const existing = await context.db
@@ -32,7 +33,7 @@ export async function createCollection(vars: any, context: MyContext) {
     idString,
     slug,
     name: requestedName,
-    owner: viewer.id,
+    owner: global ? null : viewer.id,
   });
   const created = await context.db.query.collection.findFirst({
     where: eq(schema.collection.idString, idString),
