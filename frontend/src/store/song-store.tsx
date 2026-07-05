@@ -209,7 +209,7 @@ async function prepareStore() {
     requestSong,
   };
 }
-const store = prepareStore();
+export const store = prepareStore();
 
 function catcher(e: unknown) {
   console.error(e);
