@@ -47,7 +47,7 @@ function fetchSongById(id: string): Promise<SongDetails> {
   todo();
 }
 
-function fetchInfo(): Promise<SongIndex[]> {
+function fetchIndex(): Promise<SongIndex[]> {
   todo();
 }
 
@@ -87,10 +87,10 @@ type SongStore = {
 
 async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   const indexStorage = localForage.createInstance({ name: "songs", storeName: "info", version: 1 });
-  let index = await indexStorage.getItem<SongIndex[]>("info");
+  let index = await indexStorage.getItem<SongIndex[]>("index");
   if (!index) {
-    index = await retryingNetworkLoad(fetchInfo);
-    await indexStorage.setItem<SongIndex[]>("info", index);
+    index = await retryingNetworkLoad(fetchIndex);
+    await indexStorage.setItem<SongIndex[]>("index", index);
   }
   const store = createStore<IndexStore>(set => ({
     index,
