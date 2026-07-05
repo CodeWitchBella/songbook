@@ -90,10 +90,15 @@ function newestModifiedAt(items: readonly { modifiedAt: string }[], start = ""):
 
 async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   const indexStorage = localForage.createInstance({ name: "songs", storeName: "info", version: 1 });
-  let index = await indexStorage.getItem<SongIndex[]>("index");
+  let index: SongIndex[] | null = null;
+  try {
+    index = await indexStorage.getItem<SongIndex[]>("index");
+  } catch (e) {
+    catcher(e);
+  }
   if (!index) {
     index = await retryingNetworkLoad(fetchIndex);
-    await indexStorage.setItem<SongIndex[]>("index", index);
+    await indexStorage.setItem<SongIndex[]>("index", index).catch(catcher);
   }
   const store = createStore<IndexStore>(set => ({
     index,
@@ -234,4 +239,5 @@ export const store = prepareStore();
 function catcher(e: unknown) {
   console.error(e);
   captureException(e);
+  return null;
 }
