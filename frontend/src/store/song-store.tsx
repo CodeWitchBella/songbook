@@ -193,7 +193,10 @@ async function prepareStore() {
     song = await fetchSongById(id);
     songIndex = index.getState().index.find(s => s.id === id);
     if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
-    if (song) state.add(song);
+    if (song) {
+      state.add(song);
+      songStorage.setItem(id, song).catch(catcher);
+    }
     return song;
   }
 
