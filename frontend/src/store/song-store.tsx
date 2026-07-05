@@ -145,7 +145,7 @@ async function prepareStore() {
   const songs = createStore<SongStore>(set => ({
     songs: {},
     loading: {},
-    add: song => set(prev => ({ songs: { ...prev.songs, [song.id]: song } })),
+    add: song => set(prev => (prev.songs[song.id] === song ? {} : { songs: { ...prev.songs, [song.id]: song } })),
     delete: ids =>
       set(prev => {
         const nextSongs = { ...prev.songs };
