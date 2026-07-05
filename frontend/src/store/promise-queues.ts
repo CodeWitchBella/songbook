@@ -5,7 +5,9 @@ export async function retryingNetworkLoad<T>(load: () => Promise<T>): Promise<T>
   while (true) {
     try {
       return await load();
-    } catch {
+    } catch (e) {
+      console.error(e);
+      captureException(e);
       let handle;
       let resetTimeout: () => void = () => {};
       const connection = (navigator as any).connection;

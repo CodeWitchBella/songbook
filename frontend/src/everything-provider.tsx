@@ -8,6 +8,7 @@ import { StoreProvider } from "#/store/store";
 import OutlineHandler from "#/utils/outline-handler";
 
 import * as serviceWorker from "./serviceWorker";
+import { SongStoreProvider } from "./store/song-store";
 
 export function EverythingProvider({ children }: { children: ReactNode }) {
   return (
@@ -15,17 +16,19 @@ export function EverythingProvider({ children }: { children: ReactNode }) {
       <DarkModeProvider>
         <LanguageProvider>
           <OutlineHandler />
-          <StoreProvider>
-            <InstallProvider>
-              <Suspense
-                fallback={
-                  <div className="flex min-h-screen flex-col items-center justify-center text-3xl">Načítám...</div>
-                }
-              >
-                {children}
-              </Suspense>
-            </InstallProvider>
-          </StoreProvider>
+          <SongStoreProvider>
+            <StoreProvider>
+              <InstallProvider>
+                <Suspense
+                  fallback={
+                    <div className="flex min-h-screen flex-col items-center justify-center text-3xl">Načítám...</div>
+                  }
+                >
+                  {children}
+                </Suspense>
+              </InstallProvider>
+            </StoreProvider>
+          </SongStoreProvider>
         </LanguageProvider>
       </DarkModeProvider>
     </ServiceWorkerStatusProvider>

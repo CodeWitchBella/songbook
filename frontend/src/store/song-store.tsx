@@ -3,6 +3,8 @@ import { createStore, type StoreApi } from "zustand";
 import { retryingNetworkLoad } from "./promise-queues";
 import { captureException } from "@sentry/react";
 import PQueue from "p-queue";
+import { useState, type ReactNode, createContext, use } from "react";
+import { client } from "./client";
 
 // ------------ SONG FETCHING -----------------
 
@@ -46,8 +48,14 @@ function fetchSongById(id: string): Promise<SongDetails> {
   todo();
 }
 
-function fetchIndex(): Promise<SongIndex[]> {
-  todo();
+async function fetchIndex(): Promise<SongIndex[]> {
+  const { data, error } = await client.GET("/song", { params: {} });
+  if (error) {
+    console.error(error);
+    throw new Error("Failed to fetch index");
+  }
+  if (!data) throw new Error("This should never happen");
+  return data.index;
 }
 
 type InfoModified = { id: string; modifiedAt: string; slug?: string; title?: string; author?: string };
@@ -151,7 +159,7 @@ async function prepareIndexStore(): Promise<StoreApi<IndexStore>> {
   return store;
 }
 
-export async function prepareStore() {
+async function prepareStore() {
   const index = await prepareIndexStore();
   const songs = createStore<SongStore>(set => ({
     songs: {},
@@ -173,8 +181,10 @@ export async function prepareStore() {
   const refreshQ = new PQueue({ concurrency: 1, intervalCap: 1, interval: 1000 });
   let latestRefresh = Promise.resolve();
   const refreshIndex = () => {
+    console.log("refreshIndex");
     if (refreshQ.size) return latestRefresh;
     latestRefresh = refreshQ.add(async () => {
+      console.log("refresh");
       const indexVal = index.getState();
       const changes = await fetchChangedSongsSince(indexVal.newestModifiedAt);
       index.getState().appendIndex(changes);
@@ -250,6 +260,7 @@ export async function prepareStore() {
       });
     }
   };
+  refreshIndex();
   prefetchAll();
   // TODO: drive this from changes instead so that we don't have to do O(n2) search
   index.subscribe(prefetchAll);
@@ -260,6 +271,18 @@ export async function prepareStore() {
     songs,
     requestSong,
   };
+}
+
+const Context = createContext<ReturnType<typeof prepareStore> | null>(null);
+export function SongStoreProvider({ children }: { children: ReactNode }) {
+  const [store] = useState(() => prepareStore());
+  return <Context.Provider value={store}>{children}</Context.Provider>;
+}
+
+export function useSongStore() {
+  const store = use(Context);
+  if (!store) throw new Error("Missing SongStoreProvider");
+  return use(store);
 }
 
 /**
