@@ -169,11 +169,11 @@ async function prepareStore() {
     latestRefresh = refreshQ.add(async () => {
       const indexVal = index.getState();
       const changes = await fetchChangedSongsSince(indexVal.newestModifiedAt);
+      index.getState().appendIndex(changes);
       songs.getState().delete(changes.deleted.map(d => d.id));
       for (const deleted of changes.deleted) {
         songStorage.removeItem(deleted.id).catch(catcher);
       }
-      index.getState().appendIndex(changes);
     });
     latestRefresh.catch(catcher);
     return latestRefresh;
