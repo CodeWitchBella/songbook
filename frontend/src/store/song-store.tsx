@@ -190,20 +190,20 @@ async function prepareStore() {
     try {
       if (!song) {
         song = await songStorage.getItem(id);
-        if (song) state.add(song);
       }
     } catch (e) {
       catcher(e);
     }
     try {
       songIndex = index.getState().index.find(s => s.id === id);
-      if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+      if (!songIndex) throw new Error(`Unknown song id ${id}`); // deleted in the meantime
+      if (song) state.add(song);
       if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
 
       // refresh from network
       song = await fetchSongById(id);
       songIndex = index.getState().index.find(s => s.id === id);
-      if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+      if (!songIndex) throw new Error(`Unknown song id ${id}`); // deleted in the meantime
       if (song) {
         state.add(song);
         songStorage.setItem(id, song).catch(catcher);
