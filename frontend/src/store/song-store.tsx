@@ -145,8 +145,12 @@ async function prepareStore() {
     delete: ids =>
       set(prev => {
         const nextSongs = { ...prev.songs };
-        for (const id of ids) delete nextSongs[id];
-        return { songs: nextSongs };
+        const nextLoading = { ...prev.loading };
+        for (const id of ids) {
+          delete nextSongs[id];
+          delete nextLoading[id];
+        }
+        return { songs: nextSongs, loading: nextLoading };
       }),
     setLoading: (id, value) => set(prev => ({ loading: { ...prev.loading, [id]: value } })),
   }));
@@ -176,6 +180,8 @@ async function prepareStore() {
     if (!songIndex) throw new Error(`Unknown song id ${id}`);
     if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
 
+    state.setLoading(id, true);
+
     // load from local store
     try {
       if (!song) {
@@ -185,19 +191,23 @@ async function prepareStore() {
     } catch (e) {
       catcher(e);
     }
-    songIndex = index.getState().index.find(s => s.id === id);
-    if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
-    if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
+    try {
+      songIndex = index.getState().index.find(s => s.id === id);
+      if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+      if (song && song.modifiedAt >= songIndex.modifiedAt) return song; // already at latest (or newer)
 
-    // refresh from network
-    song = await fetchSongById(id);
-    songIndex = index.getState().index.find(s => s.id === id);
-    if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
-    if (song) {
-      state.add(song);
-      songStorage.setItem(id, song).catch(catcher);
+      // refresh from network
+      song = await fetchSongById(id);
+      songIndex = index.getState().index.find(s => s.id === id);
+      if (!songIndex) throw new Error(`Unknown song id ${id}`); // validate meantime deletion
+      if (song) {
+        state.add(song);
+        songStorage.setItem(id, song).catch(catcher);
+      }
+      return song;
+    } finally {
+      state.setLoading(id, false);
     }
-    return song;
   }
 
   const requestQ = new Map<string, PQueue>();
