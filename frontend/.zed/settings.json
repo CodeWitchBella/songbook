@@ -1,6 +1,19 @@
 {
+  "auto_install_extensions": {
+    "tsgo": true
+  },
+  "lsp": {
+    "tsgo": {
+      "binary": {
+        "ignore_system_version": true,
+        "path": "frontend/node_modules/.bin/tsc",
+        "arguments": ["--lsp", "-stdio"]
+      }
+    }
+  },
   "languages": {
     "JavaScript": {
+      "language_servers": ["tsgo", "!vtsls", "!typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "node_modules/.bin/oxfmt",
@@ -9,6 +22,7 @@
       }
     },
     "TypeScript": {
+      "language_servers": ["tsgo", "!vtsls", "!typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "node_modules/.bin/oxfmt",
@@ -17,6 +31,7 @@
       }
     },
     "TSX": {
+      "language_servers": ["tsgo", "!vtsls", "!typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "node_modules/.bin/oxfmt",
@@ -25,6 +40,7 @@
       }
     },
     "JSX": {
+      "language_servers": ["tsgo", "!vtsls", "!typescript-language-server", "..."],
       "formatter": {
         "external": {
           "command": "node_modules/.bin/oxfmt",
