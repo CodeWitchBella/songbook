@@ -22,12 +22,12 @@ export async function retryingNetworkLoad<T>(load: () => Promise<T>): Promise<T>
         // idea to retry now
         window.addEventListener("online", resetTimeout);
         document.addEventListener("visibilitychange", resetTimeout);
-        connection.addEventListener("change", resetTimeout);
+        connection?.addEventListener("change", resetTimeout);
       });
       clearTimeout(handle);
       window.removeEventListener("online", resetTimeout);
       document.removeEventListener("visibilitychange", resetTimeout);
-      connection.removeEventListener("change", resetTimeout);
+      connection?.removeEventListener("change", resetTimeout);
     }
   }
 }
