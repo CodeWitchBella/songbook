@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { etag } from "hono/etag";
 import { readFile } from "node:fs/promises";
 import { extname, join, resolve } from "node:path";
+import { setTimeout } from "node:timers/promises";
 
 import { api } from "#/app.ts";
 import { migrate } from "#/db/migrate.ts";
@@ -106,8 +107,22 @@ const port = process.env.PORT ? Number(process.env.PORT) : 5512;
 // 127.0.0.1 (e.g. Vite's proxy) and ::1, but not from other hosts.
 const hostnames = process.env.DOCKER ? ["::"] : ["127.0.0.1", "::1"];
 
-for (const hostname of hostnames) {
+const servers = hostnames.map(hostname =>
   serve({ fetch: app.fetch, port, hostname }, info => {
     console.log(`listening on http://${hostname.includes(":") ? `[${hostname}]` : hostname}:${info.port}`);
+  }),
+);
+
+// As PID 1 in the container node has no default signal dispositions, so
+// without a handler SIGTERM is ignored and podman escalates to SIGKILL.
+for (const signal of ["SIGTERM", "SIGINT"] as const) {
+  process.once(signal, async () => {
+    console.log(`received ${signal}, shutting down`);
+    const closed = Promise.all(servers.map(server => new Promise(resolve => server.close(resolve))));
+    for (const server of servers) if ("closeIdleConnections" in server) server.closeIdleConnections();
+    await Promise.race([closed, setTimeout(3000)]);
+    for (const server of servers) if ("closeAllConnections" in server) server.closeAllConnections();
+    await Promise.race([closed, setTimeout(2000)]);
+    process.exit(0);
   });
 }
