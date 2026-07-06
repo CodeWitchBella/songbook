@@ -3,28 +3,25 @@ use songbook_grammar::Line;
 
 use crate::data::{Item, ItemType, Layout};
 
-/// Base em, in screenspace pixels. The reference frontend derives every size
-/// from an `em` unit (`pdf-settings.tsx`); here we anchor that em to a fixed
-/// pixel value and let the viewport scaling take care of fitting the page.
+/// Base em, in screenspace pixels. Every size is derived from this em unit;
+/// the viewport scaling takes care of fitting the page.
 const EM: f32 = 16.0;
-/// Header text is `em(1.2)` in the reference, independent of the song font
-/// size.
+/// Header text size as a multiple of [`EM`], independent of the song font size.
 const HEADER_EM: f32 = 1.2;
-/// Space below the header is `em(titleSpace * 1.75)` in the reference.
+/// Space below the header, as a multiple of `titleSpace` em.
 const TITLE_SPACE_FACTOR: f32 = 1.75;
-/// A line that carries chords is `em(fontSize * 2.2)` tall in the reference.
+/// Height of a line that carries chords, as a multiple of `fontSize` em.
 const CHORD_LINE_FACTOR: f32 = 2.2;
-/// Small top margin above the header (`marginTop: em(0.75)`).
+/// Small top margin above the header, in em.
 const HEADER_TOP_MARGIN: f32 = 0.75;
 
-/// Lay out the song, mirroring the geometry decisions of the `../songbook`
-/// frontend (`components/pdf-render`).
+/// Lay out the song.
 ///
 /// The per-song `fontSize`, `paragraphSpace` and `titleSpace` frontmatter
-/// values are interpreted as multiples of [`EM`], exactly like the reference's
-/// `em()` helper. The header sets the title on the left and the author on the
-/// right, both bold. Lines that carry chords reserve `fontSize * 2.2` em of
-/// height with the chords sitting one em above the lyric baseline.
+/// values are interpreted as multiples of [`EM`]. The header sets the title on
+/// the left and the author on the right, both bold. Lines that carry chords
+/// reserve `fontSize * 2.2` em of height with the chords sitting one em above
+/// the lyric baseline.
 ///
 /// `viewport` is the size of the page's usable content area, used to
 /// right-align the author and to shrink the body (but not the header) to fit.
@@ -38,8 +35,7 @@ pub fn layout_song(
     let font_px = fm.map(|fm| fm.font_size as f32).unwrap_or(1.0) * EM;
     let para_space = fm.map(|fm| fm.paragraph_space as f32).unwrap_or(1.0) * EM;
     let title_space = fm.map(|fm| fm.title_space as f32).unwrap_or(1.0) * TITLE_SPACE_FACTOR * EM;
-    // Chords are transposed by the song's `pretranspose`, mirroring the
-    // reference's `transpose + pretranspose` (no interactive transpose here).
+    // Chords are transposed by the song's `pretranspose`.
     let transpose = fm.map(|fm| fm.pretranspose.round() as i32).unwrap_or(0);
 
     let mut layout: Layout = Layout {
@@ -82,7 +78,7 @@ pub fn layout_song(
     let mut body_items: Vec<Item> = vec![];
     let mut y = 0.0f32;
     // Running verse counter, threaded across the whole song so that `S:` tags
-    // render as `1.`, `2.`, … like the reference's `pCounter`.
+    // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
     for portion in &song.portions {
         match portion {
@@ -103,7 +99,7 @@ pub fn layout_song(
             }
             songbook_grammar::FilePortion::PageBreak => {}
         }
-        // The reference emits `em(paragraphSpace)` after every paragraph.
+        // `em(paragraphSpace)` after every paragraph.
         y += para_space;
     }
 
@@ -188,9 +184,9 @@ pub fn measure_text_width(text: &str, font_size: f32, font_cx: &mut parley::Font
     measure(text, font_size, false, font_cx)
 }
 
-/// A chord/command parsed from a line, with the reference's prefix conventions
-/// resolved: `_` marks a spacer that widens the lyric flow, `^` (optionally
-/// after `_`) marks a chord drawn in the normal weight rather than bold.
+/// A chord/command parsed from a line, with its prefix conventions resolved:
+/// `_` marks a spacer that widens the lyric flow, `^` (optionally after `_`)
+/// marks a chord drawn in the normal weight rather than bold.
 struct Chord {
     /// Byte offset into the lyric text at which the chord is anchored.
     index: usize,
@@ -342,7 +338,7 @@ fn layout_line(
 }
 
 /// Note names in sharp and flat spelling, indexed by semitone (Czech `H` = B
-/// natural). Mirrors the two `notes` lists in the reference `chord.tsx`.
+/// natural).
 const SHARP_NOTES: [&str; 12] = [
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "H",
 ];
@@ -355,9 +351,8 @@ fn remainder(num: i32, div: i32) -> i32 {
 }
 
 /// Transpose a single chord token by `t` semitones, replacing its root note.
-/// Follows the reference `transposeChord`: match the longest note prefix in the
-/// sharp list first, then the flat list, and replace it with the transposed
-/// note from the same spelling.
+/// Match the longest note prefix in the sharp list first, then the flat list,
+/// and replace it with the transposed note from the same spelling.
 fn transpose_chord(chord: &str, t: i32) -> String {
     for list in [&SHARP_NOTES, &FLAT_NOTES] {
         // Indices sorted so multi-character notes (C#, Db, …) match first.
@@ -385,9 +380,9 @@ fn transpose_chord_line(chords: &str, t: i32) -> String {
         .join(" ")
 }
 
-/// Rewrite a raw line label into its displayed tag, mirroring the reference
-/// parser (`my-format.ts`): `S:` verses become the running verse number
-/// (`1.`, `2.`, …), and `R`/`R1:` choruses become `R.` / `R1.`.
+/// Rewrite a raw line label into its displayed tag: `S:` verses become the
+/// running verse number (`1.`, `2.`, …), and `R`/`R1:` choruses become
+/// `R.` / `R1.`.
 fn transform_tag(label: &str, verse_counter: &mut u32) -> Option<String> {
     let label = label.trim();
     if label.is_empty() {
