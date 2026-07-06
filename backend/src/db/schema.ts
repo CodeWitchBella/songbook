@@ -1,5 +1,16 @@
 import { sql } from "drizzle-orm";
-import { boolean, char, integer, pgTable, real, serial, text, timestamp, unique, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  char,
+  integer,
+  pgTable,
+  real,
+  serial,
+  text,
+  timestamp,
+  uniqueIndex,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 const id = serial("id").primaryKey();
 const timestampCfg = { mode: "string", withTimezone: true } as const;
@@ -81,7 +92,7 @@ export const collectionSong = pgTable(
     song: integer("song_id").notNull(), //.references(() => song.id),
   },
   t => ({
-    unique_pair: unique().on(t.collection, t.song),
+    unique_pair: uniqueIndex("collection_song_collection_id_song_id_unique").on(t.collection, t.song),
   }),
 );
 
