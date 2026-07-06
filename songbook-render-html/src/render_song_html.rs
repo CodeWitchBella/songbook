@@ -8,7 +8,7 @@ use songbook_layout::Layout;
 
 pub fn draw(song: &Layout) -> anyhow::Result<String> {
     let mut out: String = Default::default();
-    out.push_str(r#"<div style="width:100%;height:100%;position:relative;font-family:Cantarell">"#);
+    out.push_str(r#"<div style="width:100%;max-width:65ch;height:100%;position:relative;font-family:Cantarell">"#);
     out.push_str(r#"<template shadowrootmode="open">"#);
     out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset}</style>"#);
     for item in song.items.iter() {
