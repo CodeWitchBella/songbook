@@ -17,10 +17,10 @@ import { parseSong } from "../song-parse.ts";
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
 
-const grammar = await readFile(resolve(root, "song.grammar"), "utf8");
-const parser = buildParser(grammar);
+let parser;
 
-async function convert(path) {
+export async function convert(path) {
+  parser ??= buildParser(await readFile(resolve(root, "song.grammar"), "utf8"));
   const song = await readFile(path, "utf8");
   const json = parseSong(parser, song);
   const out = path.replace(/\.song$/, "") + ".json";
@@ -28,10 +28,12 @@ async function convert(path) {
   console.log(`${path} -> ${out}`);
 }
 
-let files = process.argv.slice(2);
-if (files.length === 0) {
-  files = [];
-  for await (const f of glob(resolve(root, "songs/*.song"))) files.push(f);
-}
+if (import.meta.url === `file://${process.argv[1]}`) {
+  let files = process.argv.slice(2);
+  if (files.length === 0) {
+    files = [];
+    for await (const f of glob(resolve(root, "songs/*.song"))) files.push(f);
+  }
 
-for (const f of files) await convert(f);
+  for (const f of files) await convert(f);
+}

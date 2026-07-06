@@ -5,6 +5,7 @@
 // Frontmatter type in song-parse.ts); the chordpro body after the fence is
 // left untouched, since it may have been hand-edited (e.g. S:/R: line
 // labels) and diverges from the server's plain text.
+// Each updated file is then reconverted to .json via song-to-json.mjs.
 //
 // Usage:
 //   node scripts/update-songs.mjs [file.song ...]   # defaults to all songs/*.song
@@ -14,6 +15,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve, basename } from "node:path";
 import { glob } from "node:fs/promises";
 import { extractFrontmatter } from "../song-parse.ts";
+import { convert } from "./song-to-json.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "..");
@@ -44,6 +46,7 @@ async function update(path) {
   const out = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n${body}`;
   await writeFile(path, out);
   console.log(`${path} <- ${slug}`);
+  await convert(path);
 }
 
 let files = process.argv.slice(2);
