@@ -118,11 +118,22 @@ const servers = hostnames.map(hostname =>
 for (const signal of ["SIGTERM", "SIGINT"] as const) {
   process.once(signal, async () => {
     console.log(`received ${signal}, shutting down`);
-    const closed = Promise.all(servers.map(server => new Promise(resolve => server.close(resolve))));
+    const closed = Promise.all(
+      servers.map(server => new Promise<Error | undefined>(resolve => server.close(resolve))),
+    ).then(errors => errors.filter(Boolean) as Error[]);
+
+    function exit(errors: Error[]): never {
+      for (const error of errors) console.error("server close failed:", error);
+      process.exit(errors.length > 0 ? 1 : 0);
+    }
     for (const server of servers) if ("closeIdleConnections" in server) server.closeIdleConnections();
-    await Promise.race([closed, setTimeout(3000)]);
+    const graceful = await Promise.race([closed, setTimeout(3000).then(() => null)]);
+    if (graceful) return exit(graceful);
+
     for (const server of servers) if ("closeAllConnections" in server) server.closeAllConnections();
-    await Promise.race([closed, setTimeout(2000)]);
-    process.exit(0);
+    const forced = await Promise.race([closed, setTimeout(2000).then(() => null)]);
+    if (forced === null) console.error("shutdown timed out waiting for servers to close");
+    else for (const error of forced) console.error("server close failed:", error);
+    process.exit(1);
   });
 }
