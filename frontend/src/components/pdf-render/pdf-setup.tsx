@@ -33,29 +33,22 @@ export const FONT_ATKINSON = ATKINSON as unknown as string;
 
 export async function pdfSetup(pdf: typeof import("@react-pdf/renderer")) {
   const promises: Promise<unknown>[] = [];
-  font(CANTARELL, CantarellLatin, CantarellLatinBold, CantarellExt, CantarellExtBold, true);
+  font(CANTARELL, CantarellLatin, CantarellLatinBold, CantarellExt, CantarellExtBold);
   font(OSWALD, OswaldLatin, OswaldLatinBold, OswaldExt, OswaldExtBold);
-  font(SHANTELL_SANS, ShantellSansLatin, ShantellSansLatinBold, ShantellSansExt, ShantellSansExtBold, true);
-  font(ATKINSON, AtkinsonLatin, AtkinsonLatinBold, AtkinsonExt, AtkinsonExtBold, true);
+  font(SHANTELL_SANS, ShantellSansLatin, ShantellSansLatinBold, ShantellSansExt, ShantellSansExtBold);
+  font(ATKINSON, AtkinsonLatin, AtkinsonLatinBold, AtkinsonExt, AtkinsonExtBold);
 
   await Promise.all(promises);
   // disable hyphenation
   pdf.Font.registerHyphenationCallback(w => [w] as any);
   return pdf;
 
-  function font(
-    [latinName, extName]: string[],
-    regular: string,
-    bold: string,
-    regularExt: string,
-    boldExt: string,
-    preload?: boolean,
-  ) {
-    register(latinName, regular, bold, preload);
-    register(extName, regularExt, boldExt, preload);
+  function font([latinName, extName]: string[], regular: string, bold: string, regularExt: string, boldExt: string) {
+    register(latinName, regular, bold);
+    register(extName, regularExt, boldExt);
   }
 
-  function register(name: string, regular: string, bold: string, preload?: boolean) {
+  function register(name: string, regular: string, bold: string) {
     pdf.Font.register({
       family: name,
       src: regular,
@@ -72,19 +65,15 @@ export async function pdfSetup(pdf: typeof import("@react-pdf/renderer")) {
         },
       ],
     });
-    if (preload) {
-      promises.push(
-        pdf.Font.load({
-          fontFamily: name,
-          fontStyle: "normal",
-          fontWeight: 400,
-        }),
-        pdf.Font.load({
-          fontFamily: name,
-          fontStyle: "normal",
-          fontWeight: 700,
-        }),
-      );
-    }
+    promises.push(loadAndRename(name, 400), loadAndRename(name, 700));
+  }
+
+  async function loadAndRename(fontFamily: string, fontWeight: number) {
+    const descriptor = { fontFamily, fontStyle: "normal" as const, fontWeight };
+    await pdf.Font.load(descriptor);
+    const source = pdf.Font.getFont(descriptor);
+    Object.defineProperty(source.data, "postscriptName", {
+      value: `${fontFamily.replaceAll(" ", "")}-${fontWeight}`,
+    });
   }
 }
