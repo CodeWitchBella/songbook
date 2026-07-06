@@ -273,7 +273,52 @@ fn layout_line(
     hide_chords: bool,
     font_cx: &mut parley::FontContext,
 ) -> (Vec<Item>, f32) {
-    let complete_text = collect_text(line);
+    // Build the lyric flow text and collect chords in a single pass. `[*…]`
+    // commands are bold inline lyric text (not chords), so they join the flow
+    // and survive `chords off`; `_`/`^` leads mark spacers and normal-weight
+    // chords. Chord byte offsets index into the flow text built here.
+    let mut complete_text = String::new();
+    let mut bold_ranges: Vec<std::ops::Range<usize>> = vec![];
+    let mut chords: Vec<Chord> = vec![];
+    for item in &line.content {
+        match item {
+            songbook_grammar::LineContent::Text(part) => complete_text.push_str(part),
+            songbook_grammar::LineContent::Command { lead, content } => {
+                let lead = lead.as_deref().unwrap_or("");
+                // `[*X]` renders X as bold lyric text (frontend `parseLine`).
+                if lead.is_empty() && content.starts_with('*') {
+                    let start = complete_text.len();
+                    complete_text.push_str(&content[1..]);
+                    bold_ranges.push(start..complete_text.len());
+                    continue;
+                }
+                if hide_chords {
+                    continue;
+                }
+                // The grammar captures the `_` (spacer) and `^` (normal weight)
+                // markers in the command's lead, e.g. `[_^Emi]`.
+                let spacer = lead.contains('_');
+                let normal_weight = lead.contains('^');
+                let text = transpose_chord_line(content, transpose);
+                let width = if text.is_empty() {
+                    0.0
+                } else if spacer {
+                    // Spacers push following lyrics right by their (often
+                    // all-whitespace) advance, so keep trailing space.
+                    measure_trailing(&text, font_px, !normal_weight, font_cx)
+                } else {
+                    measure(&text, font_px, !normal_weight, font_cx)
+                };
+                chords.push(Chord {
+                    index: complete_text.len(),
+                    text,
+                    width,
+                    spacer,
+                    normal_weight,
+                });
+            }
+        }
+    }
 
     // Optional tag (návěští, e.g. "R." / "1.") rendered bold at the start of
     // the line; it shifts everything after it to the right.
@@ -283,42 +328,6 @@ fn layout_line(
         .as_deref()
         .map(|t| measure_trailing(t, font_px, true, font_cx))
         .unwrap_or(0.0);
-
-    // Collect the chords in order, resolving their prefixes and measuring the
-    // visible text at the appropriate weight.
-    let mut chords: Vec<Chord> = vec![];
-    if !hide_chords {
-        let mut index = 0usize;
-        for item in &line.content {
-            match item {
-                songbook_grammar::LineContent::Text(part) => index += part.len(),
-                songbook_grammar::LineContent::Command { lead, content } => {
-                    // The grammar captures the `_` (spacer) and `^` (normal
-                    // weight) markers in the command's lead, e.g. `[_^Emi]`.
-                    let lead = lead.as_deref().unwrap_or("");
-                    let spacer = lead.contains('_');
-                    let normal_weight = lead.contains('^');
-                    let text = transpose_chord_line(content, transpose);
-                    let width = if text.is_empty() {
-                        0.0
-                    } else if spacer {
-                        // Spacers push following lyrics right by their (often
-                        // all-whitespace) advance, so keep trailing space.
-                        measure_trailing(&text, font_px, !normal_weight, font_cx)
-                    } else {
-                        measure(&text, font_px, !normal_weight, font_cx)
-                    };
-                    chords.push(Chord {
-                        index,
-                        text,
-                        width,
-                        spacer,
-                        normal_weight,
-                    });
-                }
-            }
-        }
-    }
 
     let has_chord = chords.iter().any(|c| !c.text.is_empty());
 
@@ -344,6 +353,12 @@ fn layout_line(
     // boxes so parley reports the x anchor of each chord.
     let mut layout_cx = parley::LayoutContext::new();
     let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, font_px, 1.0);
+    for range in &bold_ranges {
+        builder.push(
+            StyleProperty::FontWeight(parley::FontWeight::new(700.0)),
+            range.clone(),
+        );
+    }
     for (i, chord) in chords.iter().enumerate() {
         builder.push_inline_box(parley::InlineBox {
             id: i as u64,
@@ -362,12 +377,21 @@ fn layout_line(
         for item in pline.items() {
             match item {
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
+                    let range = glyph_run.run().text_range();
+                    // A run is bold if it lies within a `[*…]` bold range.
+                    let bold = bold_ranges
+                        .iter()
+                        .any(|r| r.start <= range.start && range.end <= r.end);
                     out.push(Item {
-                        item_type: ItemType::Text,
+                        item_type: if bold {
+                            ItemType::BoldText
+                        } else {
+                            ItemType::Text
+                        },
                         font_size: font_px,
                         width: glyph_run.advance(),
                         pos: (glyph_run.offset() + tag_width, text_baseline),
-                        text: complete_text[glyph_run.run().text_range()].to_owned(),
+                        text: complete_text[range].to_owned(),
                     });
                 }
                 parley::PositionedLayoutItem::InlineBox(inline_box) => {

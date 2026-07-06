@@ -6,6 +6,8 @@ use serde::Serialize;
 pub enum ItemType {
     /// Lyric text, drawn in the normal weight.
     Text,
+    /// `*`-prefixed inline lyric text, drawn bold (frontend `[*…]`).
+    BoldText,
     /// A chord, drawn bold and interactive.
     Chord,
     /// A `^`-prefixed chord, interactive but drawn in the normal weight.
@@ -19,7 +21,10 @@ pub enum ItemType {
 impl ItemType {
     /// Whether items of this kind are drawn in a bold weight.
     pub fn is_bold(&self) -> bool {
-        matches!(self, ItemType::Chord | ItemType::Header | ItemType::Tag)
+        matches!(
+            self,
+            ItemType::Chord | ItemType::Header | ItemType::Tag | ItemType::BoldText
+        )
     }
 }
 
