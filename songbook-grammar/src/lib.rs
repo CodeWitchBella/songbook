@@ -28,26 +28,23 @@ impl Song {
 
 #[derive(Debug)]
 pub enum FilePortion {
-    Section ( Vec<Line>),
+    Section(Vec<Line>),
     PageBreak,
 }
 
 impl FilePortion {
     pub(self) fn from_src(portion: grammar_src::FilePortion) -> Result<Self> {
         match portion {
-            grammar_src::FilePortion::Section(contents) => {
-                Ok(Self::Section (contents
-                        .into_iter()
-                        .filter_map(|item| -> Option<Result<Line>> {
-                            match item {
-                                grammar_src::SectionPortion::Line(line) => {
-                                    Some(Line::from_src(line))
-                                }
-                            }
-                        })
-                        .collect::<Result<Vec<Line>>>()?,
-                ))
-            }
+            grammar_src::FilePortion::Section(contents) => Ok(Self::Section(
+                contents
+                    .into_iter()
+                    .filter_map(|item| -> Option<Result<Line>> {
+                        match item {
+                            grammar_src::SectionPortion::Line(line) => Some(Line::from_src(line)),
+                        }
+                    })
+                    .collect::<Result<Vec<Line>>>()?,
+            )),
             grammar_src::FilePortion::PageBreak(_) => Ok(Self::PageBreak),
         }
     }
@@ -63,25 +60,26 @@ impl Line {
             _ => None,
         };
 
-        Ok(Self{
+        Ok(Self {
             label,
-            content:
-            items
+            content: items
                 .into_iter()
-                .filter_map(|item| -> Option<Result<LineContent>> { match LineContent::from_src(item) {
-                    Ok(val) => match val {
-                        Some(val) => Some(Ok(val)),
-                        None => None,
-                    },
-                    Err(err) => Some(Err(err)),
-                } })
+                .filter_map(|item| -> Option<Result<LineContent>> {
+                    match LineContent::from_src(item) {
+                        Ok(val) => match val {
+                            Some(val) => Some(Ok(val)),
+                            None => None,
+                        },
+                        Err(err) => Some(Err(err)),
+                    }
+                })
                 .collect::<Result<Vec<LineContent>>>()?,
-    })
+        })
     }
 }
 
 #[derive(Debug)]
-pub struct Line{
+pub struct Line {
     pub label: Option<String>,
     pub content: Vec<LineContent>,
 }
@@ -100,37 +98,37 @@ impl LineContent {
         Ok(match content {
             grammar_src::LineContent::Text(text) => Some(Self::Text(text)),
             grammar_src::LineContent::Command(items) => {
-                        if items.len() == 0 {
-                            return Ok(Some(Self::Command {
-                                lead: None,
-                                content: "".to_owned(),
-                            }));
+                if items.len() == 0 {
+                    return Ok(Some(Self::Command {
+                        lead: None,
+                        content: "".to_owned(),
+                    }));
+                }
+                let lead = match &items[0] {
+                    grammar_src::Command::CommandLead(data) => data.clone(),
+                    grammar_src::Command::CommandContent(content) => {
+                        return Ok(Some(Self::Command {
+                            lead: None,
+                            content: content.clone(),
+                        }));
+                    }
+                };
+                if items.len() == 1 {
+                    return Ok(Some(Self::Command {
+                        lead: Some(lead),
+                        content: "".to_owned(),
+                    }));
+                }
+                Some(Self::Command {
+                    lead: Some(lead),
+                    content: match &items[1] {
+                        grammar_src::Command::CommandLead(_) => {
+                            return Err(anyhow!("Invalid command:: multiple leads"));
                         }
-                        let lead = match &items[0] {
-                            grammar_src::Command::CommandLead(data) => data.clone(),
-                            grammar_src::Command::CommandContent(content) => {
-                                return Ok(Some(Self::Command {
-                                    lead: None,
-                                    content: content.clone(),
-                                }));
-                            }
-                        };
-                        if items.len() == 1 {
-                            return Ok(Some(Self::Command {
-                                lead: Some(lead),
-                                content: "".to_owned(),
-                            }));
-                        }
-                        Some(Self::Command {
-                            lead: Some(lead),
-                            content: match &items[1] {
-                                grammar_src::Command::CommandLead(_) => {
-                                    return Err(anyhow!("Invalid command:: multiple leads"));
-                                }
-                                grammar_src::Command::CommandContent(content) => content.clone(),
-                            },
-                        })
+                        grammar_src::Command::CommandContent(content) => content.clone(),
                     },
+                })
+            }
             grammar_src::LineContent::LineLabel(_) => None,
         })
     }

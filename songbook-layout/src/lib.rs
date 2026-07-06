@@ -1,7 +1,7 @@
 #![allow(unused)]
 
-mod layout_song;
 mod data;
+mod layout_song;
 
 pub use data::{Item, Layout};
 use std::io::Read;
@@ -13,7 +13,6 @@ use parley::fontique::FontInfoOverride;
 use woff2_patched::decode::{convert_woff2_to_ttf, is_woff2};
 
 use songbook_grammar::Song;
-
 
 pub struct LayoutEngine {
     pub(crate) font_cx: parley::FontContext,
@@ -30,7 +29,6 @@ impl LayoutEngine {
         let layout = layout_song::layout_song(&parsed, &mut self.font_cx);
         layout
     }
-
 
     pub fn register_fonts(self: &mut Self, data: Vec<u8>, name: &str) {
         let info_override = FontInfoOverride {

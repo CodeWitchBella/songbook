@@ -5,7 +5,7 @@ mod render_song_html;
 use anyhow::Context;
 use songbook_grammar::Song;
 use songbook_layout::LayoutEngine;
-use wasm_bindgen::{prelude::wasm_bindgen, JsValue};
+use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
 #[wasm_bindgen]
 pub fn hook() {
@@ -33,17 +33,19 @@ impl Renderer {
     }
 
     #[wasm_bindgen]
-    pub fn jsonify(self: &mut Self, song: &str)-> JsValue {
+    pub fn jsonify(self: &mut Self, song: &str) -> JsValue {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
         let layout = self.layout_engine.run(&parsed);
         serde_wasm_bindgen::to_value(&layout).unwrap()
     }
 
     #[wasm_bindgen]
-    pub fn htmlify(self: &mut Self, song: &str)-> String {
+    pub fn htmlify(self: &mut Self, song: &str) -> String {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
         let layout = self.layout_engine.run(&parsed);
-        let html = render_song_html::draw(&layout).context("render_song_html::draw failed").unwrap();
+        let html = render_song_html::draw(&layout)
+            .context("render_song_html::draw failed")
+            .unwrap();
         html
     }
 

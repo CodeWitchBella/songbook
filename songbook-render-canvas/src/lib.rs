@@ -17,7 +17,6 @@ use web_sys::{HtmlCanvasElement, window};
 
 use songbook_grammar::Song;
 
-
 #[wasm_bindgen]
 pub fn hook() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -49,7 +48,6 @@ impl Renderer {
         let layout = self.layout_engine.run(&parsed);
         Ok(run_anyhow(song, self, &layout).unwrap())
     }
-
 
     #[wasm_bindgen]
     pub fn register_fonts(self: &mut Self, data: &js_sys::Uint8Array, name: &str) {

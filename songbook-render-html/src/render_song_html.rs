@@ -5,7 +5,6 @@ use anyhow::anyhow;
 use songbook_grammar::Song;
 use songbook_layout::Layout;
 
-
 pub fn draw(song: &Layout) -> anyhow::Result<String> {
     let mut out: String = Default::default();
     out.push_str(r#"<div style="width:100%;max-width:65ch;height:100%;position:relative;font-family:Cantarell">"#);
@@ -17,7 +16,10 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
         } else {
             out.push_str(r#"<div style=""#);
         }
-        out.push_str(&format!(r#"position:absolute;left:{}px;top:{}px;">"#, item.pos.0,item.pos.1));
+        out.push_str(&format!(
+            r#"position:absolute;left:{}px;top:{}px;">"#,
+            item.pos.0, item.pos.1
+        ));
         out.push_str(&item.text);
         if item.bold {
             out.push_str(r#"</button>"#);
