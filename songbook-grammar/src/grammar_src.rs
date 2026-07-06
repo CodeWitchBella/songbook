@@ -5,6 +5,14 @@ use serde::Deserialize;
 use std::string::String;
 use std::vec::Vec;
 
+/// Top-level wrapper produced by `parseSong` in `song-parse.ts`: the optional
+/// JSON frontmatter alongside the grammar-parsed file tree.
+#[derive(Deserialize)]
+pub(super) struct ParsedSong {
+    pub(super) frontmatter: Option<super::Frontmatter>,
+    pub(super) file: File,
+}
+
 #[derive(Deserialize)]
 pub(super) enum File {
     File(Vec<FilePortion>),

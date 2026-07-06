@@ -1,22 +1,47 @@
 use anyhow::{Result, anyhow, bail};
+use serde::Deserialize;
 use std::string::String;
 use std::vec::Vec;
 
 mod grammar_src;
 
+/// Typed shape of the optional JSON frontmatter. Mirrors the `Song<DT>` record
+/// with dates deserialized as strings (ISO). The `editor` field is omitted.
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Frontmatter {
+    pub slug: String,
+    pub id: String,
+    pub last_modified: String,
+    pub text: String,
+    pub font_size: f64,
+    pub paragraph_space: f64,
+    pub title_space: f64,
+    pub spotify: Option<String>,
+    pub pretranspose: f64,
+    pub inserted_at: Option<String>,
+    pub author: String,
+    pub title: String,
+    pub extra_searchable: Option<String>,
+    pub extra_non_searchable: Option<String>,
+}
+
 #[derive(Debug)]
 pub struct Song {
+    /// Optional JSON frontmatter extracted from the top of the `.song` file.
+    pub frontmatter: Option<Frontmatter>,
     pub portions: Vec<FilePortion>,
 }
 
 impl Song {
     pub fn parse(src: &str) -> Result<Self> {
-        let file = match serde_json::from_str::<grammar_src::File>(&src) {
+        let parsed = match serde_json::from_str::<grammar_src::ParsedSong>(&src) {
             Ok(val) => val,
             Err(err) => bail!("{err}"),
         };
         Ok(Self {
-            portions: match file {
+            frontmatter: parsed.frontmatter,
+            portions: match parsed.file {
                 grammar_src::File::File(items) => items
                     .into_iter()
                     .map(|item| Ok(FilePortion::from_src(item)?))
