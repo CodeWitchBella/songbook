@@ -3,20 +3,20 @@ import { InstallProvider } from "#/components/install";
 import { LanguageProvider } from "#/components/localisation";
 import { ServiceWorkerStatusProvider } from "#/components/service-worker-status";
 import type { ReactNode } from "react";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { StoreProvider } from "#/store/store";
 import OutlineHandler from "#/utils/outline-handler";
 
 import * as serviceWorker from "./serviceWorker";
-import { SongStoreProvider } from "./store/song-store";
 
 export function EverythingProvider({ children }: { children: ReactNode }) {
+  const P = Fragment;
   return (
     <ServiceWorkerStatusProvider register={serviceWorker.register}>
       <DarkModeProvider>
         <LanguageProvider>
           <OutlineHandler />
-          <SongStoreProvider>
+          <P>
             <StoreProvider>
               <InstallProvider>
                 <Suspense
@@ -28,7 +28,7 @@ export function EverythingProvider({ children }: { children: ReactNode }) {
                 </Suspense>
               </InstallProvider>
             </StoreProvider>
-          </SongStoreProvider>
+          </P>
         </LanguageProvider>
       </DarkModeProvider>
     </ServiceWorkerStatusProvider>
