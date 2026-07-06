@@ -3,14 +3,16 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
+pub enum ItemType {
+    Text,
+    Chord,
+    Header,
+}
+
+#[derive(Debug, Serialize)]
 pub struct Item {
     pub text: String,
-    pub bold: bool,
-
-    /// True for the title/author drawn at the top of the page. Renderers use
-    /// this to style the header distinctly from bold chord text.
-    #[serde(default)]
-    pub is_header: bool,
+    pub item_type: ItemType,
 
     /// Font size this item was laid out at, in the same units as
     /// [`Layout::font_size`]. The header is set in a different size than the
@@ -34,8 +36,8 @@ pub struct Item {
     ///
     /// X marks the spot
     /// ```plain
-    ///  _          _ _       
-    ///  | |__   ___| | | ___  
+    ///  _          _ _
+    ///  | |__   ___| | | ___
     ///  | '_ \ / _ \ | |/ _ \
     ///  | | | |  __/ | | (_) |
     /// \/_| |_|\___|_|_|\___/
@@ -65,24 +67,21 @@ impl Layout {
             items: vec![
                 Item {
                     text: "When the gays".to_owned(),
-                    bold: false,
-                    is_header: false,
+                    item_type: ItemType::Text,
                     font_size: 16.,
                     width: 0.,
                     pos: (0., 32.0),
                 },
                 Item {
                     text: "Gmi".to_owned(),
-                    bold: true,
-                    is_header: false,
+                    item_type: ItemType::Chord,
                     font_size: 16.,
                     width: 0.,
                     pos: (6., 16.0),
                 },
                 Item {
                     text: "are old".to_owned(),
-                    bold: false,
-                    is_header: false,
+                    item_type: ItemType::Text,
                     font_size: 16.,
                     width: 0.,
                     pos: (16., 48.0),

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use anyhow::anyhow;
 
 use songbook_grammar::Song;
-use songbook_layout::Layout;
+use songbook_layout::{ItemType, Layout};
 
 pub fn draw(song: &Layout) -> anyhow::Result<String> {
     let mut out: String = Default::default();
@@ -11,7 +11,8 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
     out.push_str(r#"<template shadowrootmode="open">"#);
     out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset}</style>"#);
     for item in song.items.iter() {
-        if item.bold {
+        let bold = matches!(item.item_type, ItemType::Chord | ItemType::Header);
+        if bold {
             out.push_str(r#"<button style=""#);
         } else {
             out.push_str(r#"<div style=""#);
@@ -21,7 +22,7 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
             item.pos.0, item.pos.1
         ));
         out.push_str(&item.text);
-        if item.bold {
+        if bold {
             out.push_str(r#"</button>"#);
         } else {
             out.push_str(r#"</div>"#);

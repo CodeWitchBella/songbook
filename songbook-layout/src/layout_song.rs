@@ -3,7 +3,7 @@ use std::any::Any;
 use parley::{FontContext, LayoutContext, RangedBuilder, StyleProperty, layout};
 use songbook_grammar::{Line, Song};
 
-use crate::data::{Item, Layout};
+use crate::data::{Item, ItemType, Layout};
 
 const FONT_SIZE: f64 = 16.;
 const SECTION_SPACE: f64 = 24.;
@@ -45,16 +45,14 @@ pub fn layout_song(
     };
     layout.items.push(Item {
         text: title.to_owned(),
-        bold: true,
-        is_header: true,
+        item_type: ItemType::Header,
         font_size: HEADER_FONT_SIZE as f32,
         width: title_width,
         pos: (0., HEADER_FONT_SIZE as f32),
     });
     layout.items.push(Item {
         text: author.to_owned(),
-        bold: false,
-        is_header: true,
+        item_type: ItemType::Text,
         font_size: HEADER_FONT_SIZE as f32,
         width: author_width,
         pos: (author_x, HEADER_FONT_SIZE as f32),
@@ -205,8 +203,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
             }
             songbook_grammar::LineContent::Command { lead, content } => {
                 out_vec.push(Item {
-                    bold: true,
-                    is_header: false,
+                    item_type: ItemType::Chord,
                     font_size: FONT_SIZE as f32,
                     pos: (0., 0.),
                     width: chord_widths.next().unwrap_or(0.0),
@@ -241,8 +238,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
             match item {
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
                     let item = Item {
-                        bold: false,
-                        is_header: false,
+                        item_type: ItemType::Text,
                         font_size: FONT_SIZE as f32,
                         width: glyph_run.advance(),
                         pos: (glyph_run.offset(), glyph_run.baseline()),

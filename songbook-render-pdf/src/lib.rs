@@ -6,7 +6,7 @@ use krilla::paint::{Fill, Paint};
 use krilla::text::{Font, TextDirection};
 
 use songbook_grammar::Song;
-use songbook_layout::{Layout, LayoutEngine};
+use songbook_layout::{ItemType, Layout, LayoutEngine};
 
 pub struct Fonts {
     regular: Font,
@@ -70,12 +70,10 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
             page_top += content_height;
         }
 
-        let (font, fill) = if item.bold && !item.is_header {
-            (fonts.bold.clone(), chord_fill())
-        } else if item.bold {
-            (fonts.bold.clone(), Fill::default())
-        } else {
-            (fonts.regular.clone(), Fill::default())
+        let (font, fill) = match item.item_type {
+            ItemType::Chord => (fonts.bold.clone(), chord_fill()),
+            ItemType::Header => (fonts.bold.clone(), Fill::default()),
+            ItemType::Text => (fonts.regular.clone(), Fill::default()),
         };
 
         surface.set_fill(Some(fill));

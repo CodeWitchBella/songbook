@@ -10,6 +10,7 @@ use piet::{
     TextLayout, TextLayoutBuilder, kurbo::Line,
 };
 use songbook_grammar::Song;
+use songbook_layout::ItemType;
 
 const RED_ALPHA: Color = Color::rgba8(0x80, 0x00, 0x00, 0xC0);
 
@@ -26,11 +27,13 @@ pub fn draw(rc: &mut impl RenderContext, song: &songbook_layout::Layout) -> anyh
             .text()
             .new_text_layout(item.text.clone())
             .font(font.clone(), item.font_size as f64)
-            .default_attribute(TextAttribute::Weight(piet::FontWeight::new(if item.bold {
-                600
-            } else {
-                400
-            })))
+            .default_attribute(TextAttribute::Weight(piet::FontWeight::new(
+                if matches!(item.item_type, ItemType::Chord | ItemType::Header) {
+                    600
+                } else {
+                    400
+                },
+            )))
             // .default_attribute(TextAttribute::TextColor(RED_ALPHA))
             .build()
             .map_err(|err| anyhow!(format!("{err:?}")))?;
