@@ -7,6 +7,10 @@ pub struct Item {
     pub text: String,
     pub bold: bool,
 
+    /// Advance width of the rendered text, in the same (screenspace) units as
+    /// [`Item::pos`]. Used to know the item's right extent.
+    pub width: f32,
+
     /// Signifies the position of the text on the page.
     ///
     /// The coordinate system is in screenspace - topleft is (0,0)
@@ -52,16 +56,19 @@ impl Layout {
                 Item {
                     text: "When the gays".to_owned(),
                     bold: false,
+                    width: 0.,
                     pos: (0., 32.0),
                 },
                 Item {
                     text: "Gmi".to_owned(),
                     bold: true,
+                    width: 0.,
                     pos: (6., 16.0),
                 },
                 Item {
                     text: "are old".to_owned(),
                     bold: false,
+                    width: 0.,
                     pos: (16., 48.0),
                 },
             ],

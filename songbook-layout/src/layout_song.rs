@@ -69,6 +69,15 @@ fn prepare_builder<'a>(
     builder
 }
 
+/// Measure the advance width of a bit of (bold) chord text.
+fn measure_width(text: &str, font_cx: &mut parley::FontContext) -> f32 {
+    let mut layout_cx = parley::LayoutContext::new();
+    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, 1.0);
+    let mut layout: parley::Layout<()> = builder.build(text);
+    layout.break_all_lines(None);
+    layout.width()
+}
+
 fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<Item>, f64) {
     let mut out_vec: Vec<Item> = vec![];
     let mut layout_cx = parley::LayoutContext::new();
@@ -84,6 +93,19 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
     let nobox_first_line = layout_no_box.lines().nth(0).unwrap(); // TODO: graceful
     let nobox_metrics = nobox_first_line.metrics();
 
+    // Pre-measure chord widths, since `font_cx` is borrowed by the builder below.
+    let mut chord_widths = line
+        .content
+        .iter()
+        .filter_map(|item| match item {
+            songbook_grammar::LineContent::Command { content, .. } => {
+                Some(measure_width(content, font_cx))
+            }
+            _ => None,
+        })
+        .collect::<Vec<_>>()
+        .into_iter();
+
     let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, DISPLAY_SCALE);
 
     let mut i = 0;
@@ -96,6 +118,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
                 out_vec.push(Item {
                     bold: true,
                     pos: (0., 0.),
+                    width: chord_widths.next().unwrap_or(0.0),
                     text: content.clone(),
                 });
                 builder.push_inline_box(parley::InlineBox {
@@ -128,6 +151,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
                     let item = Item {
                         bold: false,
+                        width: glyph_run.advance(),
                         pos: (glyph_run.offset(), glyph_run.baseline()),
                         text: complete_text[glyph_run.run().text_range()].to_owned(),
                     };

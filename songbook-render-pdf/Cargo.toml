@@ -1,0 +1,13 @@
+[package]
+name = "songbook-render-pdf"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+krilla = "0.8.2"
+songbook-grammar = { path = "../songbook-grammar" }
+songbook-layout = { path = "../songbook-layout" }
+
+[[bin]]
+name = "render-pdf"
+path = "src/main.rs"

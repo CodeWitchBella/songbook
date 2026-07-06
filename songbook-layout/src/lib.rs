@@ -6,6 +6,16 @@ mod layout_song;
 pub use data::{Item, Layout};
 use std::io::Read;
 
+/// Decompress a font blob into raw TTF/OTF bytes, sniffing woff1/woff2 by their
+/// magic number and passing through anything already uncompressed.
+pub fn decompress_font(data: Vec<u8>) -> Vec<u8> {
+    match data.get(0..4) {
+        Some(b"wOF2") => wuff::decompress_woff2(&data).unwrap(),
+        Some(b"wOFF") => wuff::decompress_woff1(&data).unwrap(),
+        _ => data,
+    }
+}
+
 use parley::fontique::Blob;
 use parley::fontique::FallbackKey;
 use parley::fontique::FontInfoOverride;
@@ -36,11 +46,7 @@ impl LayoutEngine {
             weight: None,
             axes: None,
         };
-        let ttf = match data.get(0..4) {
-            Some(b"wOF2") => wuff::decompress_woff2(&data).unwrap(),
-            Some(b"wOFF") => wuff::decompress_woff1(&data).unwrap(),
-            _ => data,
-        };
+        let ttf = decompress_font(data);
         let info = self
             .font_cx
             .collection

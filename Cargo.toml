@@ -5,6 +5,7 @@ members = [
     "songbook-layout",
     "songbook-render-canvas",
     "songbook-render-html",
+    "songbook-render-pdf",
 ]
 
 [profile.release]
