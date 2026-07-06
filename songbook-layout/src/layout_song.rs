@@ -80,26 +80,67 @@ pub fn layout_song(
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
+    // Command state threaded across the song, mirroring `parseSongMyFormat`
+    // in the frontend. This renderer produces the paged (non-continuous) view,
+    // so chord on/off is honoured and the `paged` variant is the one shown.
+    let requested_variant = Variant::Paged;
+    let mut chords_off = false;
+    let mut variant = Variant::Both;
+
     for portion in &song.portions {
-        match portion {
-            songbook_grammar::FilePortion::Section(lines) => {
-                for line in lines {
-                    let tag = line
-                        .label
-                        .as_deref()
-                        .and_then(|label| transform_tag(label, &mut verse_counter));
-                    let (mut items, line_height) =
-                        layout_line(line, tag, font_px, transpose, font_cx);
-                    for item in &mut items {
-                        item.pos.1 += y;
-                    }
-                    y += line_height;
-                    body_items.append(&mut items);
+        let songbook_grammar::FilePortion::Section(lines) = portion else {
+            // `PageBreak`: this renderer lays the song out as a single flow.
+            continue;
+        };
+
+        // A paragraph made up entirely of `>`-commands sets state and is not
+        // itself rendered (and contributes no paragraph space).
+        if let Some(commands) = command_block(lines) {
+            for (cmd, args) in commands {
+                match cmd {
+                    "chords" => match args {
+                        "off" => chords_off = true,
+                        "on" => chords_off = false,
+                        _ => {}
+                    },
+                    "variant" => variant = Variant::parse(args),
+                    _ => {}
                 }
             }
-            songbook_grammar::FilePortion::PageBreak => {}
+            continue;
         }
-        // `em(paragraphSpace)` after every paragraph.
+
+        // Variants other than `both` that don't match the requested one hide
+        // the whole paragraph (frontend blanks the parts, then drops the empty
+        // paragraph). The verse counter still advances so numbering matches.
+        let hidden = variant != Variant::Both && variant != requested_variant;
+
+        let mut paragraph_items: Vec<Item> = vec![];
+        let mut paragraph_y = y;
+        for line in lines {
+            let tag = line
+                .label
+                .as_deref()
+                .and_then(|label| transform_tag(label, &mut verse_counter));
+            if hidden {
+                continue;
+            }
+            let (mut items, line_height) =
+                layout_line(line, tag, font_px, transpose, chords_off, font_cx);
+            for item in &mut items {
+                item.pos.1 += paragraph_y;
+            }
+            paragraph_y += line_height;
+            paragraph_items.append(&mut items);
+        }
+
+        if hidden {
+            continue;
+        }
+
+        y = paragraph_y;
+        body_items.append(&mut paragraph_items);
+        // `em(paragraphSpace)` after every rendered paragraph.
         y += para_space;
     }
 
@@ -184,6 +225,30 @@ pub fn measure_text_width(text: &str, font_size: f32, font_cx: &mut parley::Font
     measure(text, font_size, false, font_cx)
 }
 
+/// Advance width *including* trailing whitespace. parley's `width()` trims
+/// trailing whitespace, but the frontend flows tag/spacer whitespace as real
+/// space (an `&nbsp;` after the tag, invisible spacer chords). Measure with a
+/// sentinel appended and subtract it so that space survives.
+fn measure_trailing(
+    text: &str,
+    font_px: f32,
+    bold: bool,
+    font_cx: &mut parley::FontContext,
+) -> f32 {
+    if !text.starts_with(char::is_whitespace) && !text.ends_with(char::is_whitespace) {
+        return measure(text, font_px, bold, font_cx);
+    }
+    // Sandwich the text between sentinels so parley trims neither the leading
+    // nor the trailing whitespace, then subtract the two sentinels' own width.
+    const SENTINEL: &str = ".";
+    measure(
+        &format!("{SENTINEL}{text}{SENTINEL}"),
+        font_px,
+        bold,
+        font_cx,
+    ) - measure(&format!("{SENTINEL}{SENTINEL}"), font_px, bold, font_cx)
+}
+
 /// A chord/command parsed from a line, with its prefix conventions resolved:
 /// `_` marks a spacer that widens the lyric flow, `^` (optionally after `_`)
 /// marks a chord drawn in the normal weight rather than bold.
@@ -205,6 +270,7 @@ fn layout_line(
     tag: Option<String>,
     font_px: f32,
     transpose: i32,
+    hide_chords: bool,
     font_cx: &mut parley::FontContext,
 ) -> (Vec<Item>, f32) {
     let complete_text = collect_text(line);
@@ -215,24 +281,30 @@ fn layout_line(
     let tag_text = tag.as_deref().map(|t| format!("{t}\u{00a0}"));
     let tag_width = tag_text
         .as_deref()
-        .map(|t| measure(t, font_px, true, font_cx))
+        .map(|t| measure_trailing(t, font_px, true, font_cx))
         .unwrap_or(0.0);
 
     // Collect the chords in order, resolving their prefixes and measuring the
     // visible text at the appropriate weight.
     let mut chords: Vec<Chord> = vec![];
-    {
+    if !hide_chords {
         let mut index = 0usize;
         for item in &line.content {
             match item {
                 songbook_grammar::LineContent::Text(part) => index += part.len(),
-                songbook_grammar::LineContent::Command { content, .. } => {
-                    let spacer = content.starts_with('_');
-                    let rest = content.strip_prefix('_').unwrap_or(content);
-                    let normal_weight = rest.starts_with('^');
-                    let text = transpose_chord_line(rest.trim_start_matches('^'), transpose);
+                songbook_grammar::LineContent::Command { lead, content } => {
+                    // The grammar captures the `_` (spacer) and `^` (normal
+                    // weight) markers in the command's lead, e.g. `[_^Emi]`.
+                    let lead = lead.as_deref().unwrap_or("");
+                    let spacer = lead.contains('_');
+                    let normal_weight = lead.contains('^');
+                    let text = transpose_chord_line(content, transpose);
                     let width = if text.is_empty() {
                         0.0
+                    } else if spacer {
+                        // Spacers push following lyrics right by their (often
+                        // all-whitespace) advance, so keep trailing space.
+                        measure_trailing(&text, font_px, !normal_weight, font_cx)
                     } else {
                         measure(&text, font_px, !normal_weight, font_cx)
                     };
@@ -378,6 +450,51 @@ fn transpose_chord_line(chords: &str, t: i32) -> String {
         .map(|c| transpose_chord(c, t))
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+/// Which of a song's variants a paragraph belongs to. `paged`/`long` blocks are
+/// only shown in the matching render mode; `both` (the default) is always shown.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Variant {
+    Both,
+    Paged,
+    Long,
+}
+
+impl Variant {
+    /// Parse a `>variant …` argument, defaulting to `both` for an empty or
+    /// unknown value, mirroring `handleCommand` in the frontend.
+    fn parse(arg: &str) -> Self {
+        match arg {
+            "paged" => Variant::Paged,
+            "long" => Variant::Long,
+            _ => Variant::Both,
+        }
+    }
+}
+
+/// If every line of a paragraph is a bare `>`-command (lead `>`, no lyric text,
+/// no tag), return the parsed `(command, args)` pairs; otherwise `None`. Matches
+/// `parseCommands` in the frontend: a single non-command line disqualifies the
+/// whole paragraph.
+fn command_block(lines: &[Line]) -> Option<Vec<(&str, &str)>> {
+    let mut commands = vec![];
+    for line in lines {
+        if line.label.is_some() || line.content.len() != 1 {
+            return None;
+        }
+        match &line.content[0] {
+            songbook_grammar::LineContent::Command {
+                lead: Some(lead),
+                content,
+            } if lead == ">" => {
+                let (cmd, args) = content.split_once(' ').unwrap_or((content, ""));
+                commands.push((cmd, args));
+            }
+            _ => return None,
+        }
+    }
+    Some(commands)
 }
 
 /// Rewrite a raw line label into its displayed tag: `S:` verses become the
