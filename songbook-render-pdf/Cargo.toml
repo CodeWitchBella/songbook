@@ -5,9 +5,15 @@ edition = "2024"
 
 [dependencies]
 krilla = "0.8.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 songbook-grammar = { path = "../songbook-grammar" }
 songbook-layout = { path = "../songbook-layout" }
 
 [[bin]]
 name = "render-pdf"
 path = "src/main.rs"
+
+[[bin]]
+name = "render-collection"
+path = "src/collection.rs"

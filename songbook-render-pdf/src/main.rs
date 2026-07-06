@@ -10,8 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use songbook_grammar::Song;
-use songbook_layout::LayoutEngine;
-use songbook_render_pdf::{Fonts, render_song};
+use songbook_render_pdf::{render_song, setup};
 
 /// Directory holding the fonts, relative to the crate.
 const SONGS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../songs");
@@ -44,29 +43,14 @@ fn main() -> ExitCode {
         }
     };
 
-    let regular =
-        std::fs::read(font_path("cantarell-regular.woff2")).expect("missing regular font");
-    let bold = std::fs::read(font_path("cantarell-bold.woff2")).expect("missing bold font");
-    let chord_regular = std::fs::read(font_path("atkinson-hyperlegible-regular.woff2"))
-        .expect("missing chord regular font");
-    let chord_bold = std::fs::read(font_path("atkinson-hyperlegible-bold.woff2"))
-        .expect("missing chord bold font");
-
-    let fonts = Fonts::new(
-        regular.clone(),
-        bold.clone(),
-        chord_regular.clone(),
-        chord_bold.clone(),
+    let (fonts, mut engine) = setup(
+        std::fs::read(font_path("cantarell-regular.woff2")).expect("missing regular font"),
+        std::fs::read(font_path("cantarell-bold.woff2")).expect("missing bold font"),
+        std::fs::read(font_path("atkinson-hyperlegible-regular.woff2"))
+            .expect("missing chord regular font"),
+        std::fs::read(font_path("atkinson-hyperlegible-bold.woff2"))
+            .expect("missing chord bold font"),
     );
-
-    // The layout engine measures text with parley, so it needs the same fonts
-    // registered under the families it looks up: lyrics/tags/header in the
-    // lyric family, chords in the chord family.
-    let mut engine = LayoutEngine::new();
-    engine.register_fonts(regular, songbook_layout::LYRIC_FONT_FAMILY);
-    engine.register_fonts(bold, songbook_layout::LYRIC_FONT_FAMILY);
-    engine.register_fonts(chord_regular, songbook_layout::CHORD_FONT_FAMILY);
-    engine.register_fonts(chord_bold, songbook_layout::CHORD_FONT_FAMILY);
 
     let pdf = render_song(&song, &fonts, &mut engine);
 

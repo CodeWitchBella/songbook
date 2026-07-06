@@ -39,6 +39,33 @@ fn load_font(data: Vec<u8>) -> Font {
     Font::new(ttf.into(), 0).expect("failed to parse font")
 }
 
+/// Build a [`Fonts`] and a matching [`LayoutEngine`] from the four font blobs.
+///
+/// The layout engine measures text with parley, so it needs the same fonts
+/// registered under the families it looks up: lyrics/tags/header in the lyric
+/// family, chords in the chord family.
+pub fn setup(
+    regular: Vec<u8>,
+    bold: Vec<u8>,
+    chord_regular: Vec<u8>,
+    chord_bold: Vec<u8>,
+) -> (Fonts, LayoutEngine) {
+    let fonts = Fonts::new(
+        regular.clone(),
+        bold.clone(),
+        chord_regular.clone(),
+        chord_bold.clone(),
+    );
+
+    let mut engine = LayoutEngine::new();
+    engine.register_fonts(regular, songbook_layout::LYRIC_FONT_FAMILY);
+    engine.register_fonts(bold, songbook_layout::LYRIC_FONT_FAMILY);
+    engine.register_fonts(chord_regular, songbook_layout::CHORD_FONT_FAMILY);
+    engine.register_fonts(chord_bold, songbook_layout::CHORD_FONT_FAMILY);
+
+    (fonts, engine)
+}
+
 const MARGIN: f32 = 28.0;
 const PAGE_WIDTH: f32 = 419.53;
 const PAGE_HEIGHT: f32 = 595.28;
@@ -51,17 +78,40 @@ fn chord_fill() -> Fill {
 }
 
 pub fn render_song(song: &Song, fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
+    let layout = layout_song(song, engine);
+    render_layout(&layout, fonts)
+}
+
+/// Render a whole collection: each song is laid out independently and starts on
+/// a fresh page, and all their pages are concatenated into one PDF.
+pub fn render_collection(songs: &[Song], fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
+    let mut document = Document::new();
+    for song in songs {
+        let layout = layout_song(song, engine);
+        render_layout_into(&mut document, &layout, fonts);
+    }
+    document.finish().expect("failed to finish PDF")
+}
+
+/// Lay out a single song against the A5 content area.
+fn layout_song(song: &Song, engine: &mut LayoutEngine) -> Layout {
     let content_width = (PAGE_WIDTH - 2.0 * MARGIN) as f64;
     let content_height = (PAGE_HEIGHT - 2.0 * MARGIN) as f64;
-    let layout = engine.run(song, Some((content_width, content_height)));
-    render_layout(&layout, fonts)
+    engine.run(song, Some((content_width, content_height)))
 }
 
 /// Render an already computed [`Layout`] into PDF bytes across A5 pages.
 pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
+    let mut document = Document::new();
+    render_layout_into(&mut document, layout, fonts);
+    document.finish().expect("failed to finish PDF")
+}
+
+/// Append a laid-out song to `document`, starting it on a fresh page and
+/// flowing its items across as many A5 pages as needed.
+fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
 
-    let mut document = Document::new();
     let mut page = document.start_page_with(page_settings());
     let mut surface = page.surface();
     let mut page_top = 0.0_f32;
@@ -103,7 +153,6 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
 
     surface.finish();
     page.finish();
-    document.finish().expect("failed to finish PDF")
 }
 
 fn page_settings() -> PageSettings {
