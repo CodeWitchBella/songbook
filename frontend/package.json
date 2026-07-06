@@ -13,7 +13,7 @@
     "build-storybook": "storybook build",
     "test-storybook": "vitest run --project=storybook",
     "extract": "node extract.js",
-    "gen:api": "pnpm --dir ../backend i --frozen-lockfile && pnpm --dir ../backend run gen:openapi ../frontend/src/store/openapi.json && pnpm --filter openapi-codegen run gen",
+    "gen:api": "pnpm --filter songbook-backend run gen:openapi ../frontend/src/store/openapi.json && pnpm --filter openapi-codegen run gen",
     "types": "i18next-cli types",
     "lint": "oxlint",
     "fmt": "oxfmt",

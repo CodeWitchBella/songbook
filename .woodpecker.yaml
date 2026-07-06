@@ -14,24 +14,22 @@ steps:
     depends_on: []
     commands:
       - pnpm runtime set node 26 -g
-      - cd backend
       - pnpm i --frozen-lockfile
-      - pnpm run fmt:check
-      - pnpm run lint
-      - pnpm exec tsc --noEmit
+      - pnpm --filter songbook-backend run fmt:check
+      - pnpm --filter songbook-backend run lint
+      - pnpm --filter songbook-backend exec tsc --noEmit
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11
     depends_on: []
     commands:
       - pnpm runtime set node 26 -g
-      - cd frontend
       - pnpm i --frozen-lockfile
-      - pnpm run gen:api
-      - pnpm run types
-      - pnpm run fmt:check
-      - pnpm run lint
-      - pnpm exec tsc --noEmit
+      - pnpm --filter songbook-frontend run gen:api
+      - pnpm --filter songbook-frontend run types
+      - pnpm --filter songbook-frontend run fmt:check
+      - pnpm --filter songbook-frontend run lint
+      - pnpm --filter songbook-frontend exec tsc --noEmit
 
   - name: build and push
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b

@@ -19,7 +19,7 @@
     "fmt:check": "oxfmt --check"
   },
   "dependencies": {
-    "@hono/node-server": "^2.0.8",
+    "@hono/node-server": "^2.0.6",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.4.0",
     "bcryptjs": "^3.0.3",
@@ -36,9 +36,9 @@
   "devDependencies": {
     "@types/latinize": "^0.2.18",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^26.1.0",
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.72.0",
+    "@types/node": "^26.0.1",
+    "oxfmt": "^0.56.0",
+    "oxlint": "^1.71.0",
     "typescript": "^6.0.3"
   },
   "devEngines": {

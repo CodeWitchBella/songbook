@@ -1,12 +1,14 @@
+packages:
+  - backend
+  - frontend
+  # Isolated codegen tool: openapi-typescript needs a classic TypeScript, but the
+  # app builds against the TypeScript 7 RC (native port) which lacks the Node JS
+  # API `exports` the generator imports. A nested package keeps its own TS.
+  - "frontend/tools/*"
 allowBuilds:
   "@swc/core": true
   canvas: true
   esbuild: true
-packages:
-  # Isolated codegen tool: openapi-typescript needs a classic TypeScript, but the
-  # app builds against the TypeScript 7 RC (native port) which lacks the Node JS
-  # API `exports` the generator imports. A nested package keeps its own TS.
-  - "tools/*"
 catalog:
   react: "^19.2.7"
   react-dom: "^19.2.7"
