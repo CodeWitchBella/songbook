@@ -4,6 +4,7 @@ mod data;
 mod layout_song;
 
 pub use data::{Item, ItemType, Layout};
+pub use layout_song::{CHORD_FONT_FAMILY, LYRIC_FONT_FAMILY};
 use std::io::Read;
 
 /// Decompress a font blob into raw TTF/OTF bytes, sniffing woff1/woff2 by their

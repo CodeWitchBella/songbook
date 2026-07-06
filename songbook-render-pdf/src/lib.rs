@@ -11,13 +11,25 @@ use songbook_layout::{ItemType, Layout, LayoutEngine};
 pub struct Fonts {
     regular: Font,
     bold: Font,
+    chord_regular: Font,
+    chord_bold: Font,
 }
 
 impl Fonts {
-    pub fn new(regular: Vec<u8>, bold: Vec<u8>) -> Self {
+    /// `regular`/`bold` are the lyric font (Cantarell); `chord_regular`/
+    /// `chord_bold` are the chord font (Atkinson Hyperlegible), matching the
+    /// frontend.
+    pub fn new(
+        regular: Vec<u8>,
+        bold: Vec<u8>,
+        chord_regular: Vec<u8>,
+        chord_bold: Vec<u8>,
+    ) -> Self {
         Self {
             regular: load_font(regular),
             bold: load_font(bold),
+            chord_regular: load_font(chord_regular),
+            chord_bold: load_font(chord_bold),
         }
     }
 }
@@ -71,8 +83,8 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
         }
 
         let (font, fill) = match item.item_type {
-            ItemType::Chord => (fonts.bold.clone(), chord_fill()),
-            ItemType::ChordNormal => (fonts.regular.clone(), chord_fill()),
+            ItemType::Chord => (fonts.chord_bold.clone(), chord_fill()),
+            ItemType::ChordNormal => (fonts.chord_regular.clone(), chord_fill()),
             ItemType::Header | ItemType::Tag => (fonts.bold.clone(), Fill::default()),
             ItemType::Text => (fonts.regular.clone(), Fill::default()),
             ItemType::BoldText => (fonts.bold.clone(), Fill::default()),

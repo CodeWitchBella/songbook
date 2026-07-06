@@ -47,14 +47,26 @@ fn main() -> ExitCode {
     let regular =
         std::fs::read(font_path("cantarell-regular.woff2")).expect("missing regular font");
     let bold = std::fs::read(font_path("cantarell-bold.woff2")).expect("missing bold font");
+    let chord_regular = std::fs::read(font_path("atkinson-hyperlegible-regular.woff2"))
+        .expect("missing chord regular font");
+    let chord_bold = std::fs::read(font_path("atkinson-hyperlegible-bold.woff2"))
+        .expect("missing chord bold font");
 
-    let fonts = Fonts::new(regular.clone(), bold.clone());
+    let fonts = Fonts::new(
+        regular.clone(),
+        bold.clone(),
+        chord_regular.clone(),
+        chord_bold.clone(),
+    );
 
     // The layout engine measures text with parley, so it needs the same fonts
-    // registered under the "Cantarell" family it looks up.
+    // registered under the families it looks up: lyrics/tags/header in the
+    // lyric family, chords in the chord family.
     let mut engine = LayoutEngine::new();
-    engine.register_fonts(regular, "Cantarell");
-    engine.register_fonts(bold, "Cantarell");
+    engine.register_fonts(regular, songbook_layout::LYRIC_FONT_FAMILY);
+    engine.register_fonts(bold, songbook_layout::LYRIC_FONT_FAMILY);
+    engine.register_fonts(chord_regular, songbook_layout::CHORD_FONT_FAMILY);
+    engine.register_fonts(chord_bold, songbook_layout::CHORD_FONT_FAMILY);
 
     let pdf = render_song(&song, &fonts, &mut engine);
 

@@ -14,6 +14,12 @@ const TITLE_SPACE_FACTOR: f32 = 1.75;
 const CHORD_LINE_FACTOR: f32 = 2.2;
 /// Small top margin above the header, in em.
 const HEADER_TOP_MARGIN: f32 = 0.75;
+/// Font family for lyrics, tags and the header. Renderers must register their
+/// regular/bold faces under this name.
+pub const LYRIC_FONT_FAMILY: &str = "Cantarell";
+/// Font family for chords (matching the frontend, which sets chords in Atkinson
+/// Hyperlegible). Renderers must register its faces under this name.
+pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 
 /// Lay out the song.
 ///
@@ -193,13 +199,14 @@ fn prepare_builder<'a>(
     font_cx: &'a mut parley::FontContext,
     text: &'a str,
     font_px: f32,
+    family: &'a str,
     display_scale: f32,
 ) -> RangedBuilder<'a, ()> {
     let mut builder = layout_cx.ranged_builder(font_cx, text, display_scale, false);
     builder.push_default(StyleProperty::FontSize(font_px));
     builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(400.0)));
     builder.push_default(StyleProperty::FontFamily(parley::FontFamily::Single(
-        parley::FontFamilyName::Named(std::borrow::Cow::Borrowed("Cantarell")),
+        parley::FontFamilyName::Named(std::borrow::Cow::Borrowed(family)),
     )));
     builder.push_default(StyleProperty::LineHeight(
         parley::LineHeight::MetricsRelative(1.0),
@@ -208,10 +215,22 @@ fn prepare_builder<'a>(
 }
 
 /// Measure the advance width of a bit of text set in the given font size and
-/// weight.
+/// weight, using the lyric font family.
 pub fn measure(text: &str, font_px: f32, bold: bool, font_cx: &mut parley::FontContext) -> f32 {
+    measure_in(text, font_px, bold, LYRIC_FONT_FAMILY, font_cx)
+}
+
+/// Measure the advance width of text set in the given font size, weight and
+/// font family.
+fn measure_in(
+    text: &str,
+    font_px: f32,
+    bold: bool,
+    family: &str,
+    font_cx: &mut parley::FontContext,
+) -> f32 {
     let mut layout_cx = parley::LayoutContext::new();
-    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, font_px, 1.0);
+    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, font_px, family, 1.0);
     if bold {
         builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(700.0)));
     }
@@ -233,20 +252,28 @@ fn measure_trailing(
     text: &str,
     font_px: f32,
     bold: bool,
+    family: &str,
     font_cx: &mut parley::FontContext,
 ) -> f32 {
     if !text.starts_with(char::is_whitespace) && !text.ends_with(char::is_whitespace) {
-        return measure(text, font_px, bold, font_cx);
+        return measure_in(text, font_px, bold, family, font_cx);
     }
     // Sandwich the text between sentinels so parley trims neither the leading
     // nor the trailing whitespace, then subtract the two sentinels' own width.
     const SENTINEL: &str = ".";
-    measure(
+    measure_in(
         &format!("{SENTINEL}{text}{SENTINEL}"),
         font_px,
         bold,
+        family,
         font_cx,
-    ) - measure(&format!("{SENTINEL}{SENTINEL}"), font_px, bold, font_cx)
+    ) - measure_in(
+        &format!("{SENTINEL}{SENTINEL}"),
+        font_px,
+        bold,
+        family,
+        font_cx,
+    )
 }
 
 /// A chord/command parsed from a line, with its prefix conventions resolved:
@@ -305,9 +332,9 @@ fn layout_line(
                 } else if spacer {
                     // Spacers push following lyrics right by their (often
                     // all-whitespace) advance, so keep trailing space.
-                    measure_trailing(&text, font_px, !normal_weight, font_cx)
+                    measure_trailing(&text, font_px, !normal_weight, CHORD_FONT_FAMILY, font_cx)
                 } else {
-                    measure(&text, font_px, !normal_weight, font_cx)
+                    measure_in(&text, font_px, !normal_weight, CHORD_FONT_FAMILY, font_cx)
                 };
                 chords.push(Chord {
                     index: complete_text.len(),
@@ -326,7 +353,7 @@ fn layout_line(
     let tag_text = tag.as_deref().map(|t| format!("{t}\u{00a0}"));
     let tag_width = tag_text
         .as_deref()
-        .map(|t| measure_trailing(t, font_px, true, font_cx))
+        .map(|t| measure_trailing(t, font_px, true, LYRIC_FONT_FAMILY, font_cx))
         .unwrap_or(0.0);
 
     let has_chord = chords.iter().any(|c| !c.text.is_empty());
@@ -352,7 +379,14 @@ fn layout_line(
     // Lay out the lyric text, inserting zero-width (or spacer-width) inline
     // boxes so parley reports the x anchor of each chord.
     let mut layout_cx = parley::LayoutContext::new();
-    let mut builder = prepare_builder(&mut layout_cx, font_cx, &complete_text, font_px, 1.0);
+    let mut builder = prepare_builder(
+        &mut layout_cx,
+        font_cx,
+        &complete_text,
+        font_px,
+        LYRIC_FONT_FAMILY,
+        1.0,
+    );
     for range in &bold_ranges {
         builder.push(
             StyleProperty::FontWeight(parley::FontWeight::new(700.0)),
@@ -552,7 +586,14 @@ fn transform_tag(label: &str, verse_counter: &mut u32) -> Option<String> {
 fn line_metrics(text: &str, font_px: f32, font_cx: &mut parley::FontContext) -> (f32, f32) {
     let mut layout_cx = parley::LayoutContext::new();
     let measured = if text.is_empty() { " " } else { text };
-    let builder = prepare_builder(&mut layout_cx, font_cx, measured, font_px, 1.0);
+    let builder = prepare_builder(
+        &mut layout_cx,
+        font_cx,
+        measured,
+        font_px,
+        LYRIC_FONT_FAMILY,
+        1.0,
+    );
     let mut layout: parley::Layout<()> = builder.build(measured);
     layout.break_all_lines(None);
     match layout.lines().next() {

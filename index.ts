@@ -28,8 +28,17 @@ const song = await (
 wasm.hook();
 const renderer = new wasm.Renderer()
 console.log(renderer)
-const font = await (await fetch("songs/cantarell-regular.woff2")).arrayBuffer()
-renderer.register_fonts(new Uint8Array(font), "Cantarell")
+// Register the fonts the layout engine measures with: lyrics/tags/header in
+// Cantarell, chords in Atkinson Hyperlegible (matching the frontend and the
+// LYRIC_FONT_FAMILY / CHORD_FONT_FAMILY names the Rust layout looks up).
+async function registerFont(file: string, family: string) {
+  const font = await (await fetch(`songs/${file}`)).arrayBuffer()
+  renderer.register_fonts(new Uint8Array(font), family)
+}
+await registerFont("cantarell-regular.woff2", "Cantarell")
+await registerFont("cantarell-bold.woff2", "Cantarell")
+await registerFont("atkinson-hyperlegible-regular.woff2", "Atkinson Hyperlegible")
+await registerFont("atkinson-hyperlegible-bold.woff2", "Atkinson Hyperlegible")
 console.log(parseSong(parser as LRParser, song, false))
 const parsed = JSON.stringify(parseSong(parser as LRParser, song), null, 2);
 
