@@ -67,8 +67,8 @@ pub fn setup(
 }
 
 const MARGIN: f32 = 28.0;
-const PAGE_WIDTH: f32 = 419.53;
-const PAGE_HEIGHT: f32 = 595.28;
+const PAGE_WIDTH: f32 = 595.28;
+const PAGE_HEIGHT: f32 = 841.89;
 
 fn chord_fill() -> Fill {
     Fill {
@@ -93,14 +93,14 @@ pub fn render_collection(songs: &[Song], fonts: &Fonts, engine: &mut LayoutEngin
     document.finish().expect("failed to finish PDF")
 }
 
-/// Lay out a single song against the A5 content area.
+/// Lay out a single song against the A4 content area.
 fn layout_song(song: &Song, engine: &mut LayoutEngine) -> Layout {
     let content_width = (PAGE_WIDTH - 2.0 * MARGIN) as f64;
     let content_height = (PAGE_HEIGHT - 2.0 * MARGIN) as f64;
     engine.run(song, Some((content_width, content_height)))
 }
 
-/// Render an already computed [`Layout`] into PDF bytes across A5 pages.
+/// Render an already computed [`Layout`] into PDF bytes across A4 pages.
 pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
     let mut document = Document::new();
     render_layout_into(&mut document, layout, fonts);
@@ -108,7 +108,7 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
 }
 
 /// Append a laid-out song to `document`, starting it on a fresh page and
-/// flowing its items across as many A5 pages as needed.
+/// flowing its items across as many A4 pages as needed.
 fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
 

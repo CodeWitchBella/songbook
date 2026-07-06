@@ -30,8 +30,10 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 /// the lyric baseline.
 ///
 /// `viewport` is the size of the page's usable content area, used to
-/// right-align the author and to shrink the body (but not the header) to fit.
-/// Pass `None` to leave the song at its natural size.
+/// right-align the author and to flow the body across pages: a paragraph
+/// that doesn't fit in the room left on the current page starts a fresh one
+/// instead of the font size being shrunk. Pass `None` to leave the song as a
+/// single, unpaginated flow.
 pub fn layout_song(
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
@@ -83,6 +85,15 @@ pub fn layout_song(
     // --- Body -------------------------------------------------------------
     let mut body_items: Vec<Item> = vec![];
     let mut y = 0.0f32;
+    // Page flow bookkeeping, in body-y coordinates (i.e. before the global
+    // `header_height` offset added at the end is folded back in). `page_end`
+    // is where the current page runs out of room. Only the first page loses
+    // `header_height` of space to the header; every later page gets the full
+    // page height, matching the item-level page-splitting `render_layout_into`
+    // (songbook-render-pdf/src/lib.rs) already does against the same
+    // continuous y coordinate.
+    let content_height = viewport.map(|(_, height)| height as f32);
+    let mut page_end = content_height.map(|h| h - header_height);
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
@@ -122,7 +133,7 @@ pub fn layout_song(
         let hidden = variant != Variant::Both && variant != requested_variant;
 
         let mut paragraph_items: Vec<Item> = vec![];
-        let mut paragraph_y = y;
+        let mut local_y = 0.0f32;
         for line in lines {
             let tag = line
                 .label
@@ -134,9 +145,9 @@ pub fn layout_song(
             let (mut items, line_height) =
                 layout_line(line, tag, font_px, transpose, chords_off, font_cx);
             for item in &mut items {
-                item.pos.1 += paragraph_y;
+                item.pos.1 += local_y;
             }
-            paragraph_y += line_height;
+            local_y += line_height;
             paragraph_items.append(&mut items);
         }
 
@@ -144,39 +155,31 @@ pub fn layout_song(
             continue;
         }
 
-        y = paragraph_y;
-        body_items.append(&mut paragraph_items);
+        let paragraph_height = local_y;
+
+        // If the paragraph doesn't fit in the room left on the current page
+        // but would fit whole on a fresh page, start a new page instead of
+        // shrinking (see tickets/01-multipage-flow.md). A paragraph taller
+        // than a full page is left to overflow across pages; the renderer's
+        // item-level page splitting still keeps it from being lost.
+        if let (Some(end), Some(page_height)) = (page_end, content_height) {
+            if y + paragraph_height > end && paragraph_height <= page_height {
+                y = end;
+                page_end = Some(end + page_height);
+            }
+        }
+
+        for mut item in paragraph_items {
+            item.pos.1 += y;
+            body_items.push(item);
+        }
+        y += paragraph_height;
         // `em(paragraphSpace)` after every rendered paragraph.
         y += para_space;
     }
 
-    // --- Scale the body to fit the viewport -------------------------------
-    let scale = match viewport {
-        Some((width, height)) => {
-            let (max_right, max_bottom) =
-                body_items.iter().fold((0.0_f32, 0.0_f32), |(r, b), item| {
-                    ((item.pos.0 + item.width).max(r), item.pos.1.max(b))
-                });
-            let avail_height = (height - header_height as f64).max(0.0);
-            let scale_axis = |avail: f64, extent: f32| {
-                if extent > 0.0 {
-                    avail as f32 / extent
-                } else {
-                    1.0
-                }
-            };
-            scale_axis(width, max_right)
-                .min(scale_axis(avail_height, max_bottom))
-                .min(1.0)
-        }
-        None => 1.0,
-    };
-
     for mut item in body_items {
-        item.pos.0 *= scale;
-        item.pos.1 = item.pos.1 * scale + header_height;
-        item.width *= scale;
-        item.font_size *= scale;
+        item.pos.1 += header_height;
         layout.items.push(item);
     }
 
