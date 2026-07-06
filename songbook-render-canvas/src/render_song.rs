@@ -28,11 +28,7 @@ pub fn draw(rc: &mut impl RenderContext, song: &songbook_layout::Layout) -> anyh
             .new_text_layout(item.text.clone())
             .font(font.clone(), item.font_size as f64)
             .default_attribute(TextAttribute::Weight(piet::FontWeight::new(
-                if matches!(item.item_type, ItemType::Chord | ItemType::Header) {
-                    600
-                } else {
-                    400
-                },
+                if item.item_type.is_bold() { 600 } else { 400 },
             )))
             // .default_attribute(TextAttribute::TextColor(RED_ALPHA))
             .build()

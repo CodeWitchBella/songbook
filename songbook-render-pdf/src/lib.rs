@@ -72,7 +72,8 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
 
         let (font, fill) = match item.item_type {
             ItemType::Chord => (fonts.bold.clone(), chord_fill()),
-            ItemType::Header => (fonts.bold.clone(), Fill::default()),
+            ItemType::ChordNormal => (fonts.regular.clone(), chord_fill()),
+            ItemType::Header | ItemType::Tag => (fonts.bold.clone(), Fill::default()),
             ItemType::Text => (fonts.regular.clone(), Fill::default()),
         };
 

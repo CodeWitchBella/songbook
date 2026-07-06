@@ -11,18 +11,24 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
     out.push_str(r#"<template shadowrootmode="open">"#);
     out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset}</style>"#);
     for item in song.items.iter() {
-        let bold = matches!(item.item_type, ItemType::Chord | ItemType::Header);
-        if bold {
+        // Chords stay interactive (buttons); everything else is a plain div.
+        let interactive = matches!(item.item_type, ItemType::Chord | ItemType::ChordNormal);
+        if interactive {
             out.push_str(r#"<button style=""#);
         } else {
             out.push_str(r#"<div style=""#);
         }
+        let weight = if item.item_type.is_bold() {
+            "bold"
+        } else {
+            "normal"
+        };
         out.push_str(&format!(
-            r#"position:absolute;left:{}px;top:{}px;">"#,
-            item.pos.0, item.pos.1
+            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};">"#,
+            item.pos.0, item.pos.1, item.font_size, weight
         ));
         out.push_str(&item.text);
-        if bold {
+        if interactive {
             out.push_str(r#"</button>"#);
         } else {
             out.push_str(r#"</div>"#);
