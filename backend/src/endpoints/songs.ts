@@ -106,33 +106,38 @@ export function registerSongs(api: Api) {
     },
   );
 
-  api.openapi(
-    {
-      method: "get",
-      path: "/song/by-slug/{slug}",
-      request: {
-        params: z.object({
-          slug: z.string(),
-        }),
+  const registerSongLookup = (paramName: string, path: string, column: (typeof schema.song)["slug" | "idString"]) => {
+    api.openapi(
+      {
+        method: "get",
+        path,
+        request: {
+          params: z.object({
+            [paramName]: z.string(),
+          }),
+        },
+        responses: {
+          200: { description: "The requested song", ...json(SongRecordSchema) },
+          404: { description: "Song not found", ...json(z.object({ error: z.string() })) },
+        },
       },
-      responses: {
-        200: { description: "The requested song", ...json(SongRecordSchema) },
-        404: { description: "Song not found", ...json(z.object({ error: z.string() })) },
-      },
-    },
-    async c => {
-      const context = await c.var.makeContext();
-      const { slug } = c.req.valid("param");
+      async c => {
+        const context = await c.var.makeContext();
+        const value = c.req.valid("param")[paramName];
 
-      const songRow = await context.db.query.song.findFirst({
-        where: eq(schema.song.slug, slug),
-      });
-      if (!songRow) {
-        return c.json({ error: "Song not found" }, 404);
-      }
-      return c.json(await serializeSongRecord(songRow, context), 200);
-    },
-  );
+        const songRow = await context.db.query.song.findFirst({
+          where: eq(column, value),
+        });
+        if (!songRow) {
+          return c.json({ error: "Song not found" }, 404);
+        }
+        return c.json(await serializeSongRecord(songRow, context), 200);
+      },
+    );
+  };
+
+  registerSongLookup("slug", "/song/by-slug/{slug}", schema.song.slug);
+  registerSongLookup("id", "/song/by-id/{id}", schema.song.idString);
 }
 
 async function songs(vars: any, context: MyContext) {
