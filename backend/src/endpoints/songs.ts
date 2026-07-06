@@ -3,6 +3,8 @@ import type { MyContext } from "#/lib/context.ts";
 import { getViewer } from "#/lib/session.ts";
 import { RestUserSchema, json, restRoute, type Api } from "#/lib/openapi.ts";
 import { serializeSongRecord, serializeUser } from "./serialize.ts";
+import { eq } from "drizzle-orm";
+import { schema } from "#/db/drizzle.ts";
 
 const SongDataSchema = z
   .object({
@@ -101,6 +103,34 @@ export function registerSongs(api: Api) {
       return c.json({
         index: songRows.map(({ lastModified, idString, ...v }) => ({ modifiedAt: lastModified, id: idString, ...v })),
       });
+    },
+  );
+
+  api.openapi(
+    {
+      method: "get",
+      path: "/song/by-slug/{slug}",
+      request: {
+        params: z.object({
+          slug: z.string(),
+        }),
+      },
+      responses: {
+        200: { description: "The requested song", ...json(SongRecordSchema) },
+        404: { description: "Song not found", ...json(z.object({ error: z.string() })) },
+      },
+    },
+    async c => {
+      const context = await c.var.makeContext();
+      const { slug } = c.req.valid("param");
+
+      const songRow = await context.db.query.song.findFirst({
+        where: eq(schema.song.slug, slug),
+      });
+      if (!songRow) {
+        return c.json({ error: "Song not found" }, 404);
+      }
+      return c.json(await serializeSongRecord(songRow, context), 200);
     },
   );
 }
