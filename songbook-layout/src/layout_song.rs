@@ -38,6 +38,9 @@ pub fn layout_song(
     let font_px = fm.map(|fm| fm.font_size as f32).unwrap_or(1.0) * EM;
     let para_space = fm.map(|fm| fm.paragraph_space as f32).unwrap_or(1.0) * EM;
     let title_space = fm.map(|fm| fm.title_space as f32).unwrap_or(1.0) * TITLE_SPACE_FACTOR * EM;
+    // Chords are transposed by the song's `pretranspose`, mirroring the
+    // reference's `transpose + pretranspose` (no interactive transpose here).
+    let transpose = fm.map(|fm| fm.pretranspose.round() as i32).unwrap_or(0);
 
     let mut layout: Layout = Layout {
         font_size: font_px as f64,
@@ -78,11 +81,19 @@ pub fn layout_song(
     // --- Body -------------------------------------------------------------
     let mut body_items: Vec<Item> = vec![];
     let mut y = 0.0f32;
+    // Running verse counter, threaded across the whole song so that `S:` tags
+    // render as `1.`, `2.`, … like the reference's `pCounter`.
+    let mut verse_counter = 0u32;
     for portion in &song.portions {
         match portion {
             songbook_grammar::FilePortion::Section(lines) => {
                 for line in lines {
-                    let (mut items, line_height) = layout_line(line, font_px, font_cx);
+                    let tag = line
+                        .label
+                        .as_deref()
+                        .and_then(|label| transform_tag(label, &mut verse_counter));
+                    let (mut items, line_height) =
+                        layout_line(line, tag, font_px, transpose, font_cx);
                     for item in &mut items {
                         item.pos.1 += y;
                     }
@@ -193,13 +204,19 @@ struct Chord {
     normal_weight: bool,
 }
 
-fn layout_line(line: &Line, font_px: f32, font_cx: &mut parley::FontContext) -> (Vec<Item>, f32) {
+fn layout_line(
+    line: &Line,
+    tag: Option<String>,
+    font_px: f32,
+    transpose: i32,
+    font_cx: &mut parley::FontContext,
+) -> (Vec<Item>, f32) {
     let complete_text = collect_text(line);
 
-    // Optional tag (návěští, e.g. "R:" / "S:") rendered bold at the start of
+    // Optional tag (návěští, e.g. "R." / "1.") rendered bold at the start of
     // the line; it shifts everything after it to the right.
-    let tag = line.label.as_deref().filter(|t| !t.is_empty());
-    let tag_text = tag.map(|t| format!("{t}\u{00a0}"));
+    let tag = tag.filter(|t| !t.is_empty());
+    let tag_text = tag.as_deref().map(|t| format!("{t}\u{00a0}"));
     let tag_width = tag_text
         .as_deref()
         .map(|t| measure(t, font_px, true, font_cx))
@@ -217,7 +234,7 @@ fn layout_line(line: &Line, font_px: f32, font_cx: &mut parley::FontContext) -> 
                     let spacer = content.starts_with('_');
                     let rest = content.strip_prefix('_').unwrap_or(content);
                     let normal_weight = rest.starts_with('^');
-                    let text = rest.trim_start_matches('^').to_owned();
+                    let text = transpose_chord_line(rest.trim_start_matches('^'), transpose);
                     let width = if text.is_empty() {
                         0.0
                     } else {
@@ -322,6 +339,77 @@ fn layout_line(line: &Line, font_px: f32, font_cx: &mut parley::FontContext) -> 
     }
 
     (out, line_height)
+}
+
+/// Note names in sharp and flat spelling, indexed by semitone (Czech `H` = B
+/// natural). Mirrors the two `notes` lists in the reference `chord.tsx`.
+const SHARP_NOTES: [&str; 12] = [
+    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "H",
+];
+const FLAT_NOTES: [&str; 12] = [
+    "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "B", "H",
+];
+
+fn remainder(num: i32, div: i32) -> i32 {
+    ((num % div) + div) % div
+}
+
+/// Transpose a single chord token by `t` semitones, replacing its root note.
+/// Follows the reference `transposeChord`: match the longest note prefix in the
+/// sharp list first, then the flat list, and replace it with the transposed
+/// note from the same spelling.
+fn transpose_chord(chord: &str, t: i32) -> String {
+    for list in [&SHARP_NOTES, &FLAT_NOTES] {
+        // Indices sorted so multi-character notes (C#, Db, …) match first.
+        let mut order: Vec<usize> = (0..list.len()).collect();
+        order.sort_by_key(|&i| std::cmp::Reverse(list[i].len()));
+        for i in order {
+            if chord.starts_with(list[i]) {
+                let replacement = list[remainder(i as i32 + t, list.len() as i32) as usize];
+                return chord.replacen(list[i], replacement, 1);
+            }
+        }
+    }
+    chord.to_owned()
+}
+
+/// Transpose every space-separated chord in a chord string (e.g. "Emi Edim H7").
+fn transpose_chord_line(chords: &str, t: i32) -> String {
+    if t == 0 {
+        return chords.to_owned();
+    }
+    chords
+        .split(' ')
+        .map(|c| transpose_chord(c, t))
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// Rewrite a raw line label into its displayed tag, mirroring the reference
+/// parser (`my-format.ts`): `S:` verses become the running verse number
+/// (`1.`, `2.`, …), and `R`/`R1:` choruses become `R.` / `R1.`.
+fn transform_tag(label: &str, verse_counter: &mut u32) -> Option<String> {
+    let label = label.trim();
+    if label.is_empty() {
+        return None;
+    }
+    if let Some(rest) = label.strip_prefix("S:") {
+        *verse_counter += 1;
+        let rest = rest.trim();
+        if rest.is_empty() {
+            Some(format!("{verse_counter}."))
+        } else {
+            Some(format!("{verse_counter}. = {rest}."))
+        }
+    } else if let Some(inner) = label
+        .strip_prefix('R')
+        .and_then(|rest| rest.strip_suffix(':'))
+        .filter(|inner| inner.chars().all(|c| c.is_ascii_digit()))
+    {
+        Some(format!("R{inner}."))
+    } else {
+        Some(label.to_owned())
+    }
 }
 
 /// Baseline offset and natural line height of a plain text line.
