@@ -34,8 +34,15 @@
             text = ''
               files=$(git diff --cached --name-only --diff-filter=ACMR)
               [ -z "$files" ] && exit 0
+              status=0
               # shellcheck disable=SC2086
-              treefmt --fail-on-change --no-cache $files
+              treefmt --no-cache $files || status=$?
+              # shellcheck disable=SC2086
+              if ! git diff --quiet -- $files; then
+                echo "treefmt applied fixes (left unstaged); review and re-stage them." >&2
+                status=1
+              fi
+              exit $status
             '';
           };
 
@@ -48,9 +55,17 @@
             ];
             text = ''
               root=$(git rev-parse --show-toplevel)
-              [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- '*.rs' '*Cargo.toml' '*Cargo.lock')" ] && exit 0
+              files=$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- '*.rs' '*Cargo.toml' '*Cargo.lock')
+              [ -z "$files" ] && exit 0
               cd "$root"
-              exec cargo fmt --all --check
+              status=0
+              cargo fmt --all || status=$?
+              # shellcheck disable=SC2086
+              if ! git diff --quiet -- $files; then
+                echo "cargo fmt applied fixes (left unstaged); review and re-stage them." >&2
+                status=1
+              fi
+              exit $status
             '';
           };
 
