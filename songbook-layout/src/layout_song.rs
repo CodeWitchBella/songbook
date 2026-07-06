@@ -59,8 +59,8 @@ fn prepare_builder<'a>(
     builder.push_default(StyleProperty::FontSize(FONT_SIZE as f32));
     builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(400.0)));
     // font_cx.collection.
-    builder.push_default(StyleProperty::FontStack(parley::FontStack::Single(
-        parley::FontFamily::Named(std::borrow::Cow::Borrowed("Cantarell")),
+    builder.push_default(StyleProperty::FontFamily(parley::FontFamily::Single(
+        parley::FontFamilyName::Named(std::borrow::Cow::Borrowed("Cantarell")),
     )));
     builder.push_default(StyleProperty::LineHeight(
         parley::LineHeight::MetricsRelative(1.0),
@@ -100,6 +100,7 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
                 });
                 builder.push_inline_box(parley::InlineBox {
                     id: out_vec.len() as u64,
+                    kind: parley::InlineBoxKind::InFlow,
                     index: i,
                     width: 0.0,
                     height: (nobox_metrics.line_height + nobox_metrics.baseline) as f32,

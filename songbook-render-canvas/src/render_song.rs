@@ -119,6 +119,7 @@ fn render_text(song: &Song) {
     // Add a box to be laid out inline with the text
     builder.push_inline_box(InlineBox {
         id: 0,
+        kind: parley::InlineBoxKind::InFlow,
         index: 5,
         width: 50.0,
         height: 50.0,
@@ -130,7 +131,7 @@ fn render_text(song: &Song) {
     // Run line-breaking and alignment on the Layout
     const MAX_WIDTH: Option<f32> = Some(100.0);
     layout.break_all_lines(MAX_WIDTH);
-    layout.align(MAX_WIDTH, Alignment::Start, AlignmentOptions::default());
+    layout.align(Alignment::Start, AlignmentOptions::default());
 
     // Inspect computed layout (see examples for more details)
     let width = layout.width();
