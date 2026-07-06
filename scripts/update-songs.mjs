@@ -1,20 +1,18 @@
 #!/usr/bin/env node
-// Updates .song files' frontmatter with the latest metadata fetched from
-// https://zpevnik.skorepova.info, keyed by slug (the filename without the
-// .song extension). The frontmatter mirrors the server's SongRecord (see the
-// Frontmatter type in song-parse.ts); the chordpro body after the fence is
-// left untouched, since it may have been hand-edited (e.g. S:/R: line
-// labels) and diverges from the server's plain text.
+// Redownloads .song files from https://zpevnik.skorepova.info, keyed by slug
+// (the filename without the .song extension). Both the frontmatter (which
+// mirrors the server's SongRecord - see the Frontmatter type in
+// song-parse.ts) and the chordpro body are taken from the server; the
+// current file contents are ignored entirely and overwritten.
 // Each updated file is then reconverted to .json via song-to-json.mjs.
 //
 // Usage:
 //   node scripts/update-songs.mjs [file.song ...]   # defaults to all songs/*.song
 
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, basename } from "node:path";
 import { glob } from "node:fs/promises";
-import { extractFrontmatter } from "../song-parse.ts";
 import { convert } from "./song-to-json.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -32,8 +30,6 @@ async function fetchSongData(slug) {
 
 async function update(path) {
   const slug = basename(path).replace(/\.song$/, "");
-  const song = await readFile(path, "utf8");
-  const [, body] = extractFrontmatter(song);
 
   let frontmatter;
   try {
@@ -43,6 +39,7 @@ async function update(path) {
     return;
   }
 
+  const body = frontmatter.text ?? "";
   const out = `---\n${JSON.stringify(frontmatter, null, 2)}\n---\n${body}`;
   await writeFile(path, out);
   console.log(`${path} <- ${slug}`);
