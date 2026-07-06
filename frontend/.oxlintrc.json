@@ -9,7 +9,10 @@
     "react-hooks/exhaustive-deps": "error",
     "typescript/consistent-type-imports": ["error", { "prefer": "type-imports", "disallowTypeAnnotations": false }],
     "typescript/no-unused-vars": ["warn", { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_$" }],
-    "import/no-duplicates": "error"
+    "import/no-duplicates": "error",
+    // False-positives on Vite query imports (?url yields a string default
+    // export); tsc checks default exports for real via vite/client types.
+    "import/default": "off"
   },
   "ignorePatterns": ["**/dist/**/*", "**/node_modules/**/*"],
   "env": {

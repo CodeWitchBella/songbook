@@ -2,7 +2,9 @@ import { saveAs } from "file-saver";
 import { DateTime } from "luxon";
 import type { PropsWithChildren, ReactElement } from "react";
 import { lazy, useEffect, useRef, useState } from "react";
-//import 'react-pdf/dist/Page/AnnotationLayer.css'
+import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 import type { SongType } from "#/store/store-song";
 import type { Line } from "#/utils/song-parser/song-parser";
 import { parseSong } from "#/utils/song-parser/song-parser";
@@ -19,14 +21,13 @@ import { PDFBlobProvider, PDFDocument, PDFProvider, usePDF } from "./primitives"
 import { getSongbookMeta } from "./songbook-meta";
 
 const ReactPDF = lazy(
-  once(() =>
-    import("react-pdf").then(rpdf => {
-      rpdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${rpdf.pdfjs.version}/pdf.worker.js`;
-      return {
-        default: ({ children }: { children: (rpdf: typeof import("react-pdf")) => ReactElement }) => children(rpdf),
-      };
-    }),
-  ),
+  once(async () => {
+    const rpdf = await import("react-pdf");
+    rpdf.pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+    return {
+      default: ({ children }: { children: (rpdf: typeof import("react-pdf")) => ReactElement }) => children(rpdf),
+    };
+  }),
 );
 
 type Props = {

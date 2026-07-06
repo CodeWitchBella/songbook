@@ -295,6 +295,9 @@ importers:
       p-queue:
         specifier: ^9.3.0
         version: 9.3.0
+      pdfjs-dist:
+        specifier: 5.4.296
+        version: 5.4.296
       react:
         specifier: ^19.2.7
         version: 19.2.7
