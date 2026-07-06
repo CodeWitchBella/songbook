@@ -7,6 +7,16 @@ pub struct Item {
     pub text: String,
     pub bold: bool,
 
+    /// True for the title/author drawn at the top of the page. Renderers use
+    /// this to style the header distinctly from bold chord text.
+    #[serde(default)]
+    pub is_header: bool,
+
+    /// Font size this item was laid out at, in the same units as
+    /// [`Layout::font_size`]. The header is set in a different size than the
+    /// body, so it's carried per-item rather than assumed from the layout.
+    pub font_size: f32,
+
     /// Advance width of the rendered text, in the same (screenspace) units as
     /// [`Item::pos`]. Used to know the item's right extent.
     pub width: f32,
@@ -56,18 +66,24 @@ impl Layout {
                 Item {
                     text: "When the gays".to_owned(),
                     bold: false,
+                    is_header: false,
+                    font_size: 16.,
                     width: 0.,
                     pos: (0., 32.0),
                 },
                 Item {
                     text: "Gmi".to_owned(),
                     bold: true,
+                    is_header: false,
+                    font_size: 16.,
                     width: 0.,
                     pos: (6., 16.0),
                 },
                 Item {
                     text: "are old".to_owned(),
                     bold: false,
+                    is_header: false,
+                    font_size: 16.,
                     width: 0.,
                     pos: (16., 48.0),
                 },

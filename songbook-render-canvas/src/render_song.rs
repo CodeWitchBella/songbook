@@ -25,7 +25,7 @@ pub fn draw(rc: &mut impl RenderContext, song: &songbook_layout::Layout) -> anyh
         let layout = rc
             .text()
             .new_text_layout(item.text.clone())
-            .font(font.clone(), song.font_size)
+            .font(font.clone(), item.font_size as f64)
             .default_attribute(TextAttribute::Weight(piet::FontWeight::new(if item.bold {
                 600
             } else {

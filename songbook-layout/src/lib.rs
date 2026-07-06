@@ -33,8 +33,10 @@ impl LayoutEngine {
         }
     }
 
-    pub fn run(self: &mut Self, parsed: &Song) -> Layout {
-        let layout = layout_song::layout_song(&parsed, &mut self.font_cx);
+    /// Lay out the song. `viewport` is the usable content area of the target
+    /// page; pass `None` for renderers without a fixed page size.
+    pub fn run(self: &mut Self, parsed: &Song, viewport: Option<(f64, f64)>) -> Layout {
+        let layout = layout_song::layout_song(&parsed, &mut self.font_cx, viewport);
         layout
     }
 

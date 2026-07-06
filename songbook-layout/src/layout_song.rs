@@ -7,13 +7,63 @@ use crate::data::{Item, Layout};
 
 const FONT_SIZE: f64 = 16.;
 const SECTION_SPACE: f64 = 24.;
+const HEADER_FONT_SIZE: f64 = 20.;
+const HEADER_SPACE: f64 = 16.;
 
-pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Layout {
+/// Lay out the song, including a header with the title on the left and the
+/// author on the right at the top of the page.
+///
+/// `viewport` is the size of the page's usable content area, used to
+/// right-align the author and to shrink the body (but not the header) to
+/// fit. Pass `None` to leave the song at its natural size.
+pub fn layout_song(
+    song: &Song,
+    font_cx: &mut parley::FontContext,
+    viewport: Option<(f64, f64)>,
+) -> Layout {
     let mut layout: Layout = Layout {
         font_size: FONT_SIZE,
         items: Default::default(),
     };
-    let mut y = 0.;
+
+    let content_width = viewport.map(|(width, _)| width);
+    let title = song
+        .frontmatter
+        .as_ref()
+        .map(|fm| fm.title.as_str())
+        .unwrap_or("");
+    let author = song
+        .frontmatter
+        .as_ref()
+        .map(|fm| fm.author.as_str())
+        .unwrap_or("");
+    let title_width = measure_text_width(title, HEADER_FONT_SIZE as f32, font_cx);
+    let author_width = measure_text_width(author, HEADER_FONT_SIZE as f32, font_cx);
+    let author_x = match content_width {
+        Some(content_width) => (content_width as f32 - author_width).max(0.0),
+        None => title_width + HEADER_FONT_SIZE as f32,
+    };
+    layout.items.push(Item {
+        text: title.to_owned(),
+        bold: true,
+        is_header: true,
+        font_size: HEADER_FONT_SIZE as f32,
+        width: title_width,
+        pos: (0., HEADER_FONT_SIZE as f32),
+    });
+    layout.items.push(Item {
+        text: author.to_owned(),
+        bold: false,
+        is_header: true,
+        font_size: HEADER_FONT_SIZE as f32,
+        width: author_width,
+        pos: (author_x, HEADER_FONT_SIZE as f32),
+    });
+
+    let header_height = HEADER_FONT_SIZE + HEADER_SPACE;
+
+    let mut body_items: Vec<Item> = vec![];
+    let mut y = 0.0;
     for portion in &song.portions {
         match portion {
             songbook_grammar::FilePortion::Section(lines) => {
@@ -23,12 +73,41 @@ pub fn layout_song(song: &Song, font_cx: &mut parley::FontContext) -> Layout {
                         item.pos.1 += y as f32;
                     }
                     y += data.1;
-                    layout.items.append(&mut data.0);
+                    body_items.append(&mut data.0);
                 }
             }
             songbook_grammar::FilePortion::PageBreak => {}
         }
         y += SECTION_SPACE;
+    }
+
+    let scale = match viewport {
+        Some((width, height)) => {
+            let (max_right, max_bottom) =
+                body_items.iter().fold((0.0_f32, 0.0_f32), |(r, b), item| {
+                    ((item.pos.0 + item.width).max(r), item.pos.1.max(b))
+                });
+            let avail_height = (height - header_height).max(0.0);
+            let scale_axis = |avail: f64, extent: f32| {
+                if extent > 0.0 {
+                    avail as f32 / extent
+                } else {
+                    1.0
+                }
+            };
+            scale_axis(width, max_right)
+                .min(scale_axis(avail_height, max_bottom))
+                .min(1.0)
+        }
+        None => 1.0,
+    };
+
+    for mut item in body_items {
+        item.pos.0 *= scale;
+        item.pos.1 = item.pos.1 * scale + header_height as f32;
+        item.width *= scale;
+        item.font_size *= scale;
+        layout.items.push(item);
     }
 
     layout
@@ -67,6 +146,16 @@ fn prepare_builder<'a>(
     ));
 
     builder
+}
+
+/// Measure the advance width of a bit of text set in the given font size.
+pub fn measure_text_width(text: &str, font_size: f32, font_cx: &mut parley::FontContext) -> f32 {
+    let mut layout_cx = parley::LayoutContext::new();
+    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, 1.0);
+    builder.push_default(StyleProperty::FontSize(font_size));
+    let mut layout: parley::Layout<()> = builder.build(text);
+    layout.break_all_lines(None);
+    layout.width()
 }
 
 /// Measure the advance width of a bit of (bold) chord text.
@@ -117,6 +206,8 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
             songbook_grammar::LineContent::Command { lead, content } => {
                 out_vec.push(Item {
                     bold: true,
+                    is_header: false,
+                    font_size: FONT_SIZE as f32,
                     pos: (0., 0.),
                     width: chord_widths.next().unwrap_or(0.0),
                     text: content.clone(),
@@ -151,6 +242,8 @@ fn layout_line(line: &Line, y: f64, font_cx: &mut parley::FontContext) -> (Vec<I
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
                     let item = Item {
                         bold: false,
+                        is_header: false,
+                        font_size: FONT_SIZE as f32,
                         width: glyph_run.advance(),
                         pos: (glyph_run.offset(), glyph_run.baseline()),
                         text: complete_text[glyph_run.run().text_range()].to_owned(),
