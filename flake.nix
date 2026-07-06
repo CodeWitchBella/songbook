@@ -18,10 +18,63 @@
       ];
       perSystem =
         {
+          config,
           pkgs,
           system,
+          lib,
           ...
         }:
+        let
+          treefmt-pre-commit = pkgs.writeShellApplication {
+            name = "treefmt-pre-commit";
+            runtimeInputs = [
+              config.treefmt.build.wrapper
+              pkgs.git
+            ];
+            text = ''
+              files=$(git diff --cached --name-only --diff-filter=ACMR)
+              [ -z "$files" ] && exit 0
+              # shellcheck disable=SC2086
+              treefmt --fail-on-change --no-cache $files
+            '';
+          };
+
+          cargo-fmt-pre-commit = pkgs.writeShellApplication {
+            name = "cargo-fmt-pre-commit";
+            runtimeInputs = [
+              pkgs.git
+              pkgs.cargo
+              pkgs.rustc
+            ];
+            text = ''
+              root=$(git rev-parse --show-toplevel)
+              [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- '*.rs' '*Cargo.toml' '*Cargo.lock')" ] && exit 0
+              cd "$root"
+              exec cargo fmt --all --check
+            '';
+          };
+
+          cargo-check-pre-commit = pkgs.writeShellApplication {
+            name = "cargo-check-pre-commit";
+            runtimeInputs = [
+              pkgs.git
+              pkgs.cargo
+              pkgs.rustc
+            ];
+            text = ''
+              root=$(git rev-parse --show-toplevel)
+              [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- '*.rs' '*Cargo.toml' '*Cargo.lock')" ] && exit 0
+              cd "$root"
+              exec cargo check --all-targets
+            '';
+          };
+
+          preCommitHooks = {
+            treefmt = lib.getExe treefmt-pre-commit;
+            cargo-fmt = lib.getExe cargo-fmt-pre-commit;
+            cargo-check = lib.getExe cargo-check-pre-commit;
+          };
+        in
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
@@ -54,7 +107,7 @@
                   nodejs
                   (pkgs.writeShellScriptBin "dev-build-canvas" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-canvas"'')
                   (pkgs.writeShellScriptBin "dev-build-html" ''cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-html"'')
-                  (pkgs.writeShellScriptBin "dev-serve" ''pnpm exec vite'')
+                  (pkgs.writeShellScriptBin "dev-serve" "pnpm exec vite")
                   wasm-pack
                   wasm-bindgen-cli
                   cargo
@@ -62,6 +115,13 @@
                   rustc
                 ]
               );
+              shellHook = ''
+                ${lib.concatStringsSep "\n" (
+                  lib.mapAttrsToList (name: command: ''
+                    ${pkgs.git}/bin/git config --local hook.${name}.event pre-commit
+                    ${pkgs.git}/bin/git config --local hook.${name}.command "${command}"'') preCommitHooks
+                )}
+              '';
             };
         };
     };
