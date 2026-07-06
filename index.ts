@@ -1,5 +1,5 @@
-import type { SyntaxNode } from "@lezer/common";
 import type { LRParser } from "@lezer/lr";
+import { parseSong } from "./song-parse";
 import * as wasm1 from "./songbook-render-canvas/pkg/songbook_render_canvas.js";
 import * as wasm2 from "./songbook-render-html/pkg/songbook_render_html.js"
 
@@ -30,10 +30,8 @@ const renderer = new wasm.Renderer()
 console.log(renderer)
 const font = await (await fetch("songs/cantarell-regular.woff2")).arrayBuffer()
 renderer.register_fonts(new Uint8Array(font), "Cantarell")
-const tree = (parser as LRParser).parse(song);
-const resolved = tree.resolve(0)
-console.log(processNode(resolved, song, false)[0])
-const parsed = JSON.stringify(processNode(resolved, song, true)[0], null, 2);
+console.log(parseSong(parser as LRParser, song, false))
+const parsed = JSON.stringify(parseSong(parser as LRParser, song), null, 2);
 
 // console.log(parsed);
 // renderer.parse(parsed);
@@ -49,30 +47,6 @@ if('htmlify' in renderer) {
 } else {
   resize();
   window.addEventListener("resize", resize);
-}
-
-type Node = {
-  [type: string]: Node[] | string;
-};
-
-function collectSiblings(node: SyntaxNode, text: string, exitOnError: boolean): [Node[], boolean] {
-  const arr: Node[] = [];
-  for (let i: SyntaxNode | null = node; i; i = i.nextSibling) {
-    if (i.type.isError && exitOnError) return [arr, false /* if we want to end parsing put exitOnError here */];
-    const [node, exit] = processNode(i, text, exitOnError);
-    arr.push(node);
-    if (exit) return [arr, true];
-  }
-  return [arr, false];
-}
-
-function processNode(node: SyntaxNode, text: string, exitOnError: boolean): [Node, boolean] {
-  const child = node.firstChild;
-  if (child) {
-    const [children, exit] = collectSiblings(child, text, exitOnError);
-    return [{ [node.type.name]: children }, exit];
-  }
-  return [{ [node.type.name]: text.substring(node.from, node.to) }, false];
 }
 
 function resize() {
