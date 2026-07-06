@@ -4,19 +4,20 @@
 // testing the rust code.
 //
 // Usage:
-//   node song-to-json.mjs <file.song> [more.song ...]
-//   node song-to-json.mjs            # converts all songs/*.song
+//   node scripts/song-to-json.mjs <file.song> [more.song ...]
+//   node scripts/song-to-json.mjs            # converts all songs/*.song
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { glob } from "node:fs/promises";
 import { buildParser } from "@lezer/generator";
-import { parseSong } from "./song-parse.ts";
+import { parseSong } from "../song-parse.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const root = resolve(here, "..");
 
-const grammar = await readFile(resolve(here, "song.grammar"), "utf8");
+const grammar = await readFile(resolve(root, "song.grammar"), "utf8");
 const parser = buildParser(grammar);
 
 async function convert(path) {
@@ -30,7 +31,7 @@ async function convert(path) {
 let files = process.argv.slice(2);
 if (files.length === 0) {
   files = [];
-  for await (const f of glob(resolve(here, "songs/*.song"))) files.push(f);
+  for await (const f of glob(resolve(root, "songs/*.song"))) files.push(f);
 }
 
 for (const f of files) await convert(f);

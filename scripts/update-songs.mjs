@@ -7,15 +7,16 @@
 // labels) and diverges from the server's plain text.
 //
 // Usage:
-//   node update-songs.mjs [file.song ...]   # defaults to all songs/*.song
+//   node scripts/update-songs.mjs [file.song ...]   # defaults to all songs/*.song
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, basename } from "node:path";
 import { glob } from "node:fs/promises";
-import { extractFrontmatter } from "./song-parse.ts";
+import { extractFrontmatter } from "../song-parse.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
+const root = resolve(here, "..");
 const API_BASE = "https://zpevnik.skorepova.info/api";
 
 async function fetchSongData(slug) {
@@ -48,7 +49,7 @@ async function update(path) {
 let files = process.argv.slice(2);
 if (files.length === 0) {
   files = [];
-  for await (const f of glob(resolve(here, "songs/*.song"))) files.push(f);
+  for await (const f of glob(resolve(root, "songs/*.song"))) files.push(f);
 }
 
 for (const f of files) await update(f);
