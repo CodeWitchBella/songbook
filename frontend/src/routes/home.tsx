@@ -75,3 +75,5 @@ export default function Home() {
 function Gap({ height = 10 }: { height?: number }) {
   return <div style={{ height }} />;
 }
+
+export { Home as Component };

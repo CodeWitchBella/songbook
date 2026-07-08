@@ -70,3 +70,5 @@ export default function Login() {
     </form>
   );
 }
+
+export { Login as Component };

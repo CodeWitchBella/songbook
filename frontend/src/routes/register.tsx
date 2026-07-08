@@ -99,3 +99,5 @@ export default function Register() {
     </form>
   );
 }
+
+export { Register as Component };

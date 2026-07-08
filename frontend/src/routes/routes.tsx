@@ -32,22 +32,6 @@ const imports = {
   CollectionDiff: once(() => import("./collection-diff")),
 };
 
-const CollectionList = React.lazy(imports.CollectionList);
-const Collection = React.lazy(imports.Collection);
-const Home = React.lazy(imports.Home);
-const Song = React.lazy(imports.Song);
-const CreateSong = React.lazy(imports.CreateSong);
-const EditSong = React.lazy(imports.EditSong);
-const Changelog = React.lazy(imports.Changelog);
-const Login = React.lazy(imports.Login);
-const Register = React.lazy(imports.Register);
-const AddToCollection = React.lazy(imports.AddToCollection);
-const Credits = React.lazy(imports.Credits);
-const About = React.lazy(imports.About);
-const QuickSettings = React.lazy(imports.QuickSettings);
-const Chords = React.lazy(imports.Chords);
-const CollectionDiff = React.lazy(imports.CollectionDiff);
-
 const router = createBrowserRouter(
   [
     {
@@ -55,25 +39,25 @@ const router = createBrowserRouter(
       element: <RootRoute />,
       children: createRoutesFromElements(
         <>
-          <Route index={true} element={<Home />} />
+          <Route index={true} lazy={imports.Home} />
           <Route path="installed-home" element={<Navigate to="/" replace={true} />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+          <Route path="login" lazy={imports.Login} />
+          <Route path="register" lazy={imports.Register} />
           <Route path="all-songs" lazy={imports.AllSongs} />
-          <Route path="credits" element={<Credits />} />
-          <Route path="quick-settings" element={<QuickSettings />} />
-          <Route path="about" element={<About />} />
-          <Route path="add-to-collection/:slug" element={<AddToCollection />} />
-          <Route path="collections" element={<CollectionList />} />
-          <Route path="collections/:slug/:slug2" element={<Collection />} />
-          <Route path="collections/:slug" element={<Collection />} />
-          <Route path="song/:slug" element={<Song />} />
-          <Route path="new" element={<CreateSong />} />
-          <Route path="new/:type" element={<CreateSong />} />
-          <Route path="edit/:slug" element={<EditSong />} />
-          <Route path="changelog" element={<Changelog />} />
-          <Route path="chords" element={<Chords />} />
-          <Route path="diff" element={<CollectionDiff />} />
+          <Route path="credits" lazy={imports.Credits} />
+          <Route path="quick-settings" lazy={imports.QuickSettings} />
+          <Route path="about" lazy={imports.About} />
+          <Route path="add-to-collection/:slug" lazy={imports.AddToCollection} />
+          <Route path="collections" lazy={imports.CollectionList} />
+          <Route path="collections/:slug/:slug2" lazy={imports.Collection} />
+          <Route path="collections/:slug" lazy={imports.Collection} />
+          <Route path="song/:slug" lazy={imports.Song} />
+          <Route path="new" lazy={imports.CreateSong} />
+          <Route path="new/:type" lazy={imports.CreateSong} />
+          <Route path="edit/:slug" lazy={imports.EditSong} />
+          <Route path="changelog" lazy={imports.Changelog} />
+          <Route path="chords" lazy={imports.Chords} />
+          <Route path="diff" lazy={imports.CollectionDiff} />
 
           <Route path="*" element={<NotFound />} />
         </>,

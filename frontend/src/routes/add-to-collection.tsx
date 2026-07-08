@@ -223,3 +223,5 @@ function createCollection(name: string): Promise<string> {
     return id;
   });
 }
+
+export { AddToCollection as Component };

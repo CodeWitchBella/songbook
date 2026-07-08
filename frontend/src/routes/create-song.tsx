@@ -221,3 +221,5 @@ function CreateSongManual() {
     </div>
   );
 }
+
+export { CreateSong as Component };

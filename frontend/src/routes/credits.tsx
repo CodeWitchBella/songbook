@@ -31,3 +31,5 @@ export default function Credits() {
   );
 }
 const iconicApp = "iconic.app";
+
+export { Credits as Component };

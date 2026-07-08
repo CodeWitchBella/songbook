@@ -60,3 +60,5 @@ function Stats({ set, songCount }: { set: Set<string> | undefined; songCount: nu
     </div>
   );
 }
+
+export { Collection as Component };

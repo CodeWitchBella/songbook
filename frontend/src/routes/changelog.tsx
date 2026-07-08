@@ -104,3 +104,5 @@ function Head() {
     </div>
   );
 }
+
+export { Changelog as Component };

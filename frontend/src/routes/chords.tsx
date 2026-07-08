@@ -57,3 +57,5 @@ export default function Chords() {
     </div>
   );
 }
+
+export { Chords as Component };

@@ -366,3 +366,5 @@ export default function EditSongRoute() {
 
   return <EditSong song={song} refetch={methods.refresh} />;
 }
+
+export { EditSongRoute as Component };

@@ -37,3 +37,5 @@ export default function CollectionList() {
     </div>
   );
 }
+
+export { CollectionList as Component };

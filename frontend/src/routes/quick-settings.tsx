@@ -98,3 +98,5 @@ function TitledSelect<T extends string>({
     </Titled>
   );
 }
+
+export { QuickSettings as Component };

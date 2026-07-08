@@ -65,3 +65,5 @@ function Gap({ height = 10 }: { height?: number }) {
 }
 
 const endash = "–";
+
+export { About as Component };

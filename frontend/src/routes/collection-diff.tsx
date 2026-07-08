@@ -245,3 +245,5 @@ function compareSongs({ item: a }: { item: SongType }, { item: b }: { item: Song
   if (ret !== 0) return ret;
   return a.author.localeCompare(b.author);
 }
+
+export { CollectionDiff as Component };

@@ -46,3 +46,5 @@ function useWakeLock() {
 }
 
 export default SongRoute;
+
+export { SongRoute as Component };
