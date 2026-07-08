@@ -55,6 +55,7 @@ async function fetchIndex(): Promise<SongIndex[]> {
     throw new Error("Failed to fetch index");
   }
   if (!data) throw new Error("This should never happen");
+  // @ts-expect-error slug/title/author removed from /song response
   return data.index;
 }
 

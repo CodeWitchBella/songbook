@@ -35,10 +35,6 @@ const SongIndexResponse = z
         .object({
           id: z.string(),
           modifiedAt: z.string(),
-
-          slug: z.string(),
-          title: z.string(),
-          author: z.string(),
         })
         .openapi("SongIndex"),
     ),
@@ -76,15 +72,12 @@ export function registerSongs(api: Api) {
 
       const songRows = await context.db.query.song.findMany({
         columns: {
-          author: true,
-          title: true,
-          slug: true,
           idString: true,
           lastModified: true,
         },
       });
       return c.json({
-        index: songRows.map(({ lastModified, idString, ...v }) => ({ modifiedAt: lastModified, id: idString, ...v })),
+        index: songRows.map(({ lastModified, idString }) => ({ modifiedAt: lastModified, id: idString })),
       });
     },
   );
