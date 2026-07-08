@@ -104,19 +104,28 @@ pub fn layout_song(
     let title = fm.map(|fm| fm.title.as_str()).unwrap_or("");
     let author = fm.map(|fm| fm.author.as_str()).unwrap_or("");
 
-    let (natural_layout, natural_metrics) = build(
-        song,
-        font_cx,
-        viewport,
-        font_px_base,
-        transpose,
-        title,
-        author,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-    );
+    // The header is set at a fixed size regardless of compression (the body
+    // font is the only one ever scaled down), so it only needs shaping once.
+    let header_items = measure_header(title, author, viewport, font_cx);
+
+    // Text shaping (parley) only depends on the body font size, which only
+    // moves in the last quarter of the compression search below; every other
+    // step reuses the same shaped lines. Cache by font size so those steps
+    // skip re-shaping the whole song.
+    let mut measured_cache: Vec<(u32, Vec<MeasuredParagraph>)> = vec![];
+
+    let (natural_layout, natural_metrics) = {
+        let measured = get_measured(&mut measured_cache, song, font_cx, font_px_base, transpose);
+        assemble(
+            measured,
+            &header_items,
+            viewport,
+            font_px_base,
+            0.0,
+            0.0,
+            0.0,
+        )
+    };
 
     // Only paginated layouts are eligible for compression: with no viewport
     // there's no page to save a paragraph from spilling onto.
@@ -144,21 +153,20 @@ pub fn layout_song(
         let t_section = ((progress - 0.25) / 0.25).clamp(0.0, 1.0);
         let t_chord = ((progress - 0.50) / 0.25).clamp(0.0, 1.0);
         let t_font = ((progress - 0.75) / 0.25).clamp(0.0, 1.0);
-        let (candidate, candidate_metrics) = build(
-            song,
-            font_cx,
+        let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
+
+        let measured = get_measured(&mut measured_cache, song, font_cx, font_px, transpose);
+        let (candidate, candidate_metrics) = assemble(
+            measured,
+            &header_items,
             viewport,
-            font_px_base,
-            transpose,
-            title,
-            author,
+            font_px,
             t_header,
             t_section,
             t_chord,
-            t_font,
         );
-        // Viewport is `Some` here (checked above), so `build` always returns
-        // metrics in this branch.
+        // Viewport is `Some` here (checked above), so `assemble` always
+        // returns metrics in this branch.
         let cm = candidate_metrics.unwrap();
         if cm.page_count <= target_pages {
             return candidate;
@@ -168,38 +176,14 @@ pub fn layout_song(
     natural_layout
 }
 
-/// Build the header and body of a song's layout at a given body font scale
-/// and header/section spacing compression, and (when `viewport` is `Some`)
-/// the resulting page metrics.
-///
-/// `t_header`/`t_section`/`t_chord`/`t_font`, each in `[0, 1]`, interpolate
-/// from the natural spacing/chord-line height/font (`0.0`) toward the
-/// compression floors (`1.0`); pass all zero for the natural, uncompressed
-/// layout. Font and chord-line scaling change paragraph heights, so paragraphs
-/// are always rebuilt (re-measured with parley) here rather than cached across
-/// calls — cheap enough since songs are short.
-fn build(
-    song: &songbook_grammar::Song,
-    font_cx: &mut parley::FontContext,
-    viewport: Option<(f64, f64)>,
-    font_px_base: f32,
-    transpose: i32,
+/// Shape the title/author once, at their fixed header size. Never touched by
+/// anti-orphan compression, so it's pulled out of the search loop entirely.
+fn measure_header(
     title: &str,
     author: &str,
-    t_header: f32,
-    t_section: f32,
-    t_chord: f32,
-    t_font: f32,
-) -> (Layout, Option<PageMetrics>) {
-    let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
-    let chord_line_factor = lerp(CHORD_LINE_FACTOR, CHORD_LINE_FACTOR_FLOOR, t_chord);
-
-    let mut layout: Layout = Layout {
-        font_size: font_px as f64,
-        items: Default::default(),
-    };
-
-    // --- Header -------------------------------------------------------------
+    viewport: Option<(f64, f64)>,
+    font_cx: &mut parley::FontContext,
+) -> [Item; 2] {
     let content_width = viewport.map(|(width, _)| width);
     let header_px = HEADER_EM * EM;
     let title_width = measure(title, header_px, true, font_cx);
@@ -210,29 +194,64 @@ fn build(
     };
     // Baseline sits below the top margin by roughly the ascent.
     let header_baseline = HEADER_TOP_MARGIN * EM + header_px;
-    layout.items.push(Item {
-        text: title.to_owned(),
-        item_type: ItemType::Header,
-        font_size: header_px,
-        width: title_width,
-        pos: (0., header_baseline),
-    });
-    layout.items.push(Item {
-        text: author.to_owned(),
-        item_type: ItemType::Header,
-        font_size: header_px,
-        width: author_width,
-        pos: (author_x, header_baseline),
-    });
+    [
+        Item {
+            text: title.to_owned(),
+            item_type: ItemType::Header,
+            font_size: header_px,
+            width: title_width,
+            pos: (0., header_baseline),
+        },
+        Item {
+            text: author.to_owned(),
+            item_type: ItemType::Header,
+            font_size: header_px,
+            width: author_width,
+            pos: (author_x, header_baseline),
+        },
+    ]
+}
 
-    // --- Body: lay out each rendered paragraph, remembering whether its
-    // first line carries chords (that decides the space in front of it). ---
-    struct Paragraph {
-        items: Vec<Item>,
-        height: f32,
-        has_chord: bool,
+/// A paragraph's lines, shaped at a given body font size but not yet placed
+/// (no vertical spacing, page flow or chord-line height applied — see
+/// [`assemble`]).
+struct MeasuredParagraph {
+    lines: Vec<MeasuredLine>,
+    /// Whether the paragraph's first line carries chords, independent of the
+    /// chord-line height compression that only affects placement.
+    has_chord: bool,
+}
+
+/// Fetch the song shaped at `font_px`, computing and caching it on first use.
+/// Most anti-orphan compression steps only touch spacing, not font size, so
+/// repeated calls at the same `font_px` are nearly always cache hits.
+fn get_measured<'a>(
+    cache: &'a mut Vec<(u32, Vec<MeasuredParagraph>)>,
+    song: &songbook_grammar::Song,
+    font_cx: &mut parley::FontContext,
+    font_px: f32,
+    transpose: i32,
+) -> &'a [MeasuredParagraph] {
+    let key = font_px.to_bits();
+    if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
+        return &cache[pos].1;
     }
-    let mut paragraphs: Vec<Paragraph> = vec![];
+    let measured = measure_song(song, font_cx, font_px, transpose);
+    cache.push((key, measured));
+    &cache.last().unwrap().1
+}
+
+/// Shape every line of the song's body at `font_px`. This is the only part of
+/// layout that calls into parley; everything else (spacing, page flow) is
+/// cheap arithmetic done in [`assemble`] and safe to redo every compression
+/// step.
+fn measure_song(
+    song: &songbook_grammar::Song,
+    font_cx: &mut parley::FontContext,
+    font_px: f32,
+    transpose: i32,
+) -> Vec<MeasuredParagraph> {
+    let mut paragraphs: Vec<MeasuredParagraph> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
@@ -271,8 +290,7 @@ fn build(
         // paragraph). The verse counter still advances so numbering matches.
         let hidden = variant != Variant::Both && variant != requested_variant;
 
-        let mut paragraph_items: Vec<Item> = vec![];
-        let mut local_y = 0.0f32;
+        let mut measured_lines: Vec<MeasuredLine> = vec![];
         let mut first_line_has_chord: Option<bool> = None;
         for line in lines {
             let tag = line
@@ -282,33 +300,68 @@ fn build(
             if hidden {
                 continue;
             }
-            let (mut items, line_height, has_chord) = layout_line(
-                line,
-                tag,
-                font_px,
-                chord_line_factor,
-                transpose,
-                chords_off,
-                font_cx,
-            );
+            let measured = measure_line(line, tag, font_px, transpose, chords_off, font_cx);
             if first_line_has_chord.is_none() {
-                first_line_has_chord = Some(has_chord);
+                first_line_has_chord = Some(measured.has_chord);
             }
-            for item in &mut items {
-                item.pos.1 += local_y;
-            }
-            local_y += line_height;
-            paragraph_items.append(&mut items);
+            measured_lines.push(measured);
         }
 
         if hidden {
             continue;
         }
 
+        paragraphs.push(MeasuredParagraph {
+            lines: measured_lines,
+            has_chord: first_line_has_chord.unwrap_or(false),
+        });
+    }
+
+    paragraphs
+}
+
+/// Arrange already-shaped paragraphs into a page-flowed layout: header/section
+/// spacing, chord-line height and page breaks. Pure arithmetic over the
+/// [`MeasuredParagraph`]s produced by [`measure_song`] — no parley calls — so
+/// it's cheap to call once per anti-orphan compression step.
+fn assemble(
+    measured_paragraphs: &[MeasuredParagraph],
+    header_items: &[Item; 2],
+    viewport: Option<(f64, f64)>,
+    font_px: f32,
+    t_header: f32,
+    t_section: f32,
+    t_chord: f32,
+) -> (Layout, Option<PageMetrics>) {
+    let chord_line_factor = lerp(CHORD_LINE_FACTOR, CHORD_LINE_FACTOR_FLOOR, t_chord);
+    let header_px = HEADER_EM * EM;
+
+    let mut layout: Layout = Layout {
+        font_size: font_px as f64,
+        items: header_items.to_vec(),
+    };
+
+    struct Paragraph {
+        items: Vec<Item>,
+        height: f32,
+        has_chord: bool,
+    }
+    let mut paragraphs: Vec<Paragraph> = Vec::with_capacity(measured_paragraphs.len());
+    for mp in measured_paragraphs {
+        let mut paragraph_items: Vec<Item> = vec![];
+        let mut local_y = 0.0f32;
+        for line in &mp.lines {
+            let (mut items, line_height) = place_line(line, font_px, chord_line_factor);
+            for item in &mut items {
+                item.pos.1 += local_y;
+            }
+            local_y += line_height;
+            paragraph_items.append(&mut items);
+        }
         paragraphs.push(Paragraph {
             items: paragraph_items,
             height: local_y,
-            has_chord: first_line_has_chord.unwrap_or(false),
+            has_chord: mp.has_chord,
         });
     }
 
@@ -522,15 +575,30 @@ struct Chord {
     normal_weight: bool,
 }
 
-fn layout_line(
+/// A line shaped at a given font size, not yet placed: text/tag items carry
+/// `pos.1 == 0.0` and chord items `pos.1 == -font_px`, i.e. their offset from
+/// the text baseline, since a chord always sits exactly one em above it
+/// regardless of chord-line height compression. [`place_line`] turns these
+/// offsets into absolute y once it knows this step's chord-line factor.
+struct MeasuredLine {
+    items: Vec<Item>,
+    baseline: f32,
+    descent: f32,
+    has_chord: bool,
+}
+
+/// Shape a line's text and chords at `font_px` — the only part of laying out
+/// a line that calls into parley. Vertical placement (which depends on the
+/// anti-orphan search's chord-line compression) is deferred to [`place_line`]
+/// so it can be redone cheaply without re-shaping.
+fn measure_line(
     line: &Line,
     tag: Option<String>,
     font_px: f32,
-    chord_line_factor: f32,
     transpose: i32,
     hide_chords: bool,
     font_cx: &mut parley::FontContext,
-) -> (Vec<Item>, f32, bool) {
+) -> MeasuredLine {
     // Build the lyric flow text and collect chords in a single pass. `[*…]`
     // commands are bold inline lyric text (not chords), so they join the flow
     // and survive `chords off`; `_`/`^` leads mark spacers and normal-weight
@@ -592,18 +660,10 @@ fn layout_line(
     // Metrics of the plain lyric line, used to place the baseline.
     let (baseline, natural_height) = line_metrics(&complete_text, font_px, font_cx);
     let descent = (natural_height - baseline).max(0.0);
-    let line_height = if has_chord {
-        font_px * chord_line_factor
-    } else {
-        natural_height.max(font_px)
-    };
-    // Lyrics sit at the bottom of the (taller) chord line; chords one em above.
-    let text_baseline = if has_chord {
-        line_height - descent
-    } else {
-        baseline
-    };
-    let chord_baseline = text_baseline - font_px;
+    // Text/tag items are anchored at the text baseline (offset 0); chords
+    // always sit exactly one em above it.
+    let text_baseline_offset = 0.0f32;
+    let chord_baseline_offset = -font_px;
 
     let mut out: Vec<Item> = vec![];
 
@@ -655,7 +715,7 @@ fn layout_line(
                         },
                         font_size: font_px,
                         width: glyph_run.advance(),
-                        pos: (glyph_run.offset() + tag_width, text_baseline),
+                        pos: (glyph_run.offset() + tag_width, text_baseline_offset),
                         text: complete_text[range].to_owned(),
                     });
                 }
@@ -679,7 +739,7 @@ fn layout_line(
             },
             font_size: font_px,
             width: chord.width,
-            pos: (chord_x[i] + tag_width, chord_baseline),
+            pos: (chord_x[i] + tag_width, chord_baseline_offset),
             text: chord.text.clone(),
         });
     }
@@ -690,12 +750,45 @@ fn layout_line(
             item_type: ItemType::Tag,
             font_size: font_px,
             width: tag_width,
-            pos: (0.0, text_baseline),
+            pos: (0.0, text_baseline_offset),
             text: tag_text.trim_end().to_owned(),
         });
     }
 
-    (out, line_height, has_chord)
+    MeasuredLine {
+        items: out,
+        baseline,
+        descent,
+        has_chord,
+    }
+}
+
+/// Turn a shaped line's baseline-relative item offsets into absolute
+/// positions for a given chord-line height factor, and report the line's
+/// total height. Pure arithmetic — no parley calls — so it's cheap to redo
+/// for every anti-orphan compression step even when the shaping is cached.
+fn place_line(measured: &MeasuredLine, font_px: f32, chord_line_factor: f32) -> (Vec<Item>, f32) {
+    let line_height = if measured.has_chord {
+        font_px * chord_line_factor
+    } else {
+        (measured.baseline + measured.descent).max(font_px)
+    };
+    // Lyrics sit at the bottom of the (taller) chord line; chords one em above.
+    let text_baseline = if measured.has_chord {
+        line_height - measured.descent
+    } else {
+        measured.baseline
+    };
+    let items = measured
+        .items
+        .iter()
+        .cloned()
+        .map(|mut item| {
+            item.pos.1 += text_baseline;
+            item
+        })
+        .collect();
+    (items, line_height)
 }
 
 /// Note names in sharp and flat spelling, indexed by semitone (Czech `H` = B

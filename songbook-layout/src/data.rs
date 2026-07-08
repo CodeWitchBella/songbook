@@ -2,7 +2,7 @@
 
 use serde::Serialize;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub enum ItemType {
     /// Lyric text, drawn in the normal weight.
     Text,
@@ -28,7 +28,7 @@ impl ItemType {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Item {
     pub text: String,
     pub item_type: ItemType,
