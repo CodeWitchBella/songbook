@@ -1,12 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useOptimistic, useRef, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 
 export function SearchTextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const ref = useRef<HTMLInputElement>(null);
-  const prevValue = useRef(value);
-  useEffect(() => {
-    prevValue.current = value;
-  });
+  const [optimisticValue, setOptimisticValue] = useOptimistic(value);
+  const [, startTransition] = useTransition();
+
+  // Show the new value immediately; `value` itself only catches up once the
+  // (async, router-driven) onChange round-trips, which is too slow for fast typing.
+  function change(next: string) {
+    startTransition(() => {
+      setOptimisticValue(next);
+      onChange(next);
+    });
+  }
+
   useEffect(() => {
     const body = document.body;
     body.addEventListener("keydown", listener);
@@ -17,29 +25,34 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
     function listener(event: KeyboardEvent) {
       // ignore shortcuts
       if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (event.key.trim().length !== 1) return;
       const focused = document.activeElement === ref.current;
-      if (event.key.length === 1) {
-        onChange(prevValue.current + event.key);
-        setTimeout(() => {
-          ref.current?.focus();
-        }, 0);
-      }
       if (event.key === "Escape" && focused) {
         ref.current?.blur();
+        return;
       }
+      if (event.key.trim().length !== 1) return;
+      // The input's own onChange already handles this keystroke when focused;
+      // handling it here too would double the character.
+      if (focused) return;
+      startTransition(() => {
+        setOptimisticValue(optimisticValue + event.key);
+        onChange(optimisticValue + event.key);
+      });
+      setTimeout(() => {
+        ref.current?.focus();
+      }, 0);
     }
-  }, [onChange, value]);
+  }, [optimisticValue, onChange, setOptimisticValue, startTransition]);
   const { t } = useTranslation();
   return (
     <div className="relative flex grow flex-col">
       <input
         ref={ref}
         type="search"
-        value={value}
+        value={optimisticValue}
         onChange={event => {
           event.stopPropagation();
-          onChange(event.target.value);
+          change(event.target.value);
         }}
         placeholder={t("Type to search")}
         onKeyDown={event => {
@@ -48,7 +61,7 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
         aria-label="Vyhledávání"
         className="h-10 w-[calc(100%-4px)] border border-solid border-black bg-white pl-2.5 text-black dark:border-white dark:bg-neutral-950 dark:text-white"
       />
-      <ClearButton onClick={() => onChange("")} />
+      <ClearButton onClick={() => change("")} />
     </div>
   );
 }
