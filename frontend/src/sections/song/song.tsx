@@ -4,7 +4,7 @@ import { SongLook } from "#/components/song-look/song-look";
 import SongMenu from "#/components/song-look/song-menu";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useSong } from "#/store/store";
+import type { SongType } from "#/store/store-song";
 import * as parser from "#/utils/song-parser/song-parser";
 
 function queryJoin(path: string, query: string) {
@@ -13,23 +13,22 @@ function queryJoin(path: string, query: string) {
 }
 
 export default function SongSection({
-  slug,
+  song,
   enableMenu = false,
   embed = false,
 }: {
-  slug: string;
+  song: SongType;
   enableMenu?: boolean;
   embed?: boolean;
 }) {
-  const { song } = useSong({ slug });
   const [continuous] = useContinuousModeSetting();
-  const parsed = song ? parser.parseSong("my", song.text, { continuous }) : null;
+  const parsed = parser.parseSong("my", song.text, { continuous });
 
   const location = useLocation();
   const navigate = useNavigate();
   const [chordHelp, setChordHelp] = useState("");
 
-  if (!song || !parsed) return null;
+  if (!parsed) return null;
 
   const query = new URLSearchParams(location.search);
   const tr = query.get("transposition");
