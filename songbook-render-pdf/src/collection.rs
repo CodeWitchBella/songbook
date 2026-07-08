@@ -56,13 +56,18 @@ fn main() -> ExitCode {
         }
     };
 
-    let collection: Collection = match serde_json::from_str(&src) {
+    let mut collection: Collection = match serde_json::from_str(&src) {
         Ok(collection) => collection,
         Err(err) => {
             eprintln!("failed to parse collection {}: {err}", input.display());
             return ExitCode::FAILURE;
         }
     };
+
+    collection
+        .data
+        .song_list
+        .sort_by(|a, b| a.title.cmp(&b.title));
 
     // Load and parse every song up front so a bad song fails loudly rather than
     // producing a silently incomplete PDF.
