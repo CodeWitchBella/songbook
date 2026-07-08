@@ -1,6 +1,7 @@
 // https://codewitchbella.com/blog/2023-lezer-playground
 
 @top File {
+  "\n"*
   (
     (Section |  PageBreak)
     ("\n"+ | eof)
@@ -8,8 +9,10 @@
 }
 
 Line {
-  LineLabel?
-  (Text | Command)+
+  (
+    LineLabel (Text | Command)*
+    | (Text | Command)+
+  )
   ("\n" | eof)
 }
 
