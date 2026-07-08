@@ -85,10 +85,28 @@ pub fn render_song(song: &Song, fonts: &Fonts, engine: &mut LayoutEngine) -> Vec
 /// Render a whole collection: each song is laid out independently and starts on
 /// a fresh page, and all their pages are concatenated into one PDF.
 pub fn render_collection(songs: &[Song], fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
+    render_collection_with(songs, fonts, engine, |_, _, _| {})
+}
+
+/// Like [`render_collection`], but calls `on_song(index, layout_time, render_time)`
+/// after each song is laid out and rendered, so callers can report per-song timing.
+pub fn render_collection_with(
+    songs: &[Song],
+    fonts: &Fonts,
+    engine: &mut LayoutEngine,
+    mut on_song: impl FnMut(usize, std::time::Duration, std::time::Duration),
+) -> Vec<u8> {
     let mut document = Document::new();
-    for song in songs {
+    for (index, song) in songs.iter().enumerate() {
+        let layout_start = std::time::Instant::now();
         let layout = layout_song(song, engine);
+        let layout_elapsed = layout_start.elapsed();
+
+        let render_start = std::time::Instant::now();
         render_layout_into(&mut document, &layout, fonts);
+        let render_elapsed = render_start.elapsed();
+
+        on_song(index, layout_elapsed, render_elapsed);
     }
     document.finish().expect("failed to finish PDF")
 }

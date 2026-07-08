@@ -10,11 +10,14 @@
 
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use std::time::Instant;
 
+use icu_collator::{Collator, CollatorBorrowed, options::CollatorOptions};
+use icu_locale_core::locale;
 use serde::Deserialize;
 
 use songbook_grammar::Song;
-use songbook_render_pdf::{render_collection, setup};
+use songbook_render_pdf::{render_collection_with, setup};
 
 /// Directory holding the fonts and per-song JSON, relative to the crate.
 const SONGS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../songs");
@@ -64,13 +67,19 @@ fn main() -> ExitCode {
         }
     };
 
+    let sort_start = Instant::now();
+    let collator: CollatorBorrowed =
+        Collator::try_new(locale!("cs").into(), CollatorOptions::default())
+            .expect("Czech collation data is compiled in");
     collection
         .data
         .song_list
-        .sort_by(|a, b| a.title.cmp(&b.title));
+        .sort_by(|a, b| collator.compare(&a.title, &b.title));
+    let sort_elapsed = sort_start.elapsed();
 
     // Load and parse every song up front so a bad song fails loudly rather than
     // producing a silently incomplete PDF.
+    let parse_start = Instant::now();
     let mut songs = Vec::with_capacity(collection.data.song_list.len());
     for entry in &collection.data.song_list {
         let path = Path::new(SONGS_DIR).join(format!("{}.json", entry.slug));
@@ -93,7 +102,9 @@ fn main() -> ExitCode {
             }
         }
     }
+    let parse_elapsed = parse_start.elapsed();
 
+    let setup_start = Instant::now();
     let (fonts, mut engine) = setup(
         std::fs::read(font_path("cantarell-regular.woff2")).expect("missing regular font"),
         std::fs::read(font_path("cantarell-bold.woff2")).expect("missing bold font"),
@@ -102,19 +113,41 @@ fn main() -> ExitCode {
         std::fs::read(font_path("atkinson-hyperlegible-bold.woff2"))
             .expect("missing chord bold font"),
     );
+    let setup_elapsed = setup_start.elapsed();
 
-    let pdf = render_collection(&songs, &fonts, &mut engine);
+    let render_start = Instant::now();
+    let pdf = render_collection_with(&songs, &fonts, &mut engine, |index, layout, render| {
+        eprintln!(
+            "  song {:>3}: layout {:>7.1?}, render {:>7.1?}  \"{}\"",
+            index + 1,
+            layout,
+            render,
+            collection.data.song_list[index].title,
+        );
+    });
+    let render_elapsed = render_start.elapsed();
 
+    let write_start = Instant::now();
     if let Err(err) = std::fs::write(&output, pdf) {
         eprintln!("failed to write {}: {err}", output.display());
         return ExitCode::FAILURE;
     }
+    let write_elapsed = write_start.elapsed();
 
     println!(
         "wrote {} ({} songs from \"{}\")",
         output.display(),
         songs.len(),
         collection.data.name
+    );
+    eprintln!(
+        "timings: sort {:.1?}, parse {:.1?}, setup {:.1?}, render {:.1?}, write {:.1?}, total {:.1?}",
+        sort_elapsed,
+        parse_elapsed,
+        setup_elapsed,
+        render_elapsed,
+        write_elapsed,
+        sort_elapsed + parse_elapsed + setup_elapsed + render_elapsed + write_elapsed,
     );
     ExitCode::SUCCESS
 }
