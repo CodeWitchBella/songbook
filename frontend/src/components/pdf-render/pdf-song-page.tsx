@@ -70,6 +70,7 @@ function ChordLine({ l }: { l: Line }) {
               position: "absolute",
               width: vw(100),
               flexDirection: "row",
+              flexWrap: "nowrap",
               marginTop: em(-0),
               marginBottom: em(-0.15),
             }}

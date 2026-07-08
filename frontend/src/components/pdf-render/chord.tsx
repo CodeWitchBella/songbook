@@ -46,13 +46,15 @@ export function Chord({ children, spacer = false }: { children: string; spacer?:
         spacer ? { opacity: 0 } : { position: "absolute", zIndex: 1 },
         { fontWeight: normal ? "normal" : "bold", fontFamily: FONT_ATKINSON, fontStyle: "normal" },
         { marginBottom: -20 },
+        // @ts-expect-error whiteSpace is a web-only style not in the RN Text style types
+        { whiteSpace: "nowrap" },
       ]}
     >
       {children.split(/ /).map((chord, index) => {
         const transposed = transposeChord(chord, transpose);
         return (
           <Fragment key={index}>
-            {index !== 0 ? " " : null}
+            {index !== 0 ? " " : null}
             {onChordPress && getChordDefinition(transposed).def ? (
               <Pressable
                 onPress={() => onChordPress(transposed)}
