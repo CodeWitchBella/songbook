@@ -67,39 +67,22 @@ export function registerSongs(api: Api) {
     {
       method: "get",
       path: "/song",
-      request: {
-        query: z.object({
-          modifiedAfter: z.string().optional(),
-        }),
-      },
       responses: {
         200: { description: "GraphQL response", ...json(SongIndexResponse) },
       },
     },
     async c => {
       const context = await c.var.makeContext();
-      const modifiedAfter = c.req.query("modifiedAfter");
 
-      const songRows = modifiedAfter
-        ? await context.db.query.song.findMany({
-            where: (song, { gt }) => gt(song.lastModified, modifiedAfter),
-            columns: {
-              author: true,
-              title: true,
-              slug: true,
-              idString: true,
-              lastModified: true,
-            },
-          })
-        : await context.db.query.song.findMany({
-            columns: {
-              author: true,
-              title: true,
-              slug: true,
-              idString: true,
-              lastModified: true,
-            },
-          });
+      const songRows = await context.db.query.song.findMany({
+        columns: {
+          author: true,
+          title: true,
+          slug: true,
+          idString: true,
+          lastModified: true,
+        },
+      });
       return c.json({
         index: songRows.map(({ lastModified, idString, ...v }) => ({ modifiedAt: lastModified, id: idString, ...v })),
       });
