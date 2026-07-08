@@ -8,6 +8,8 @@ import { songStoreChannel, type SongIndex, type SongList, type SongRecord, type 
 
 const FETCH_CONCURRENCY = 5;
 const BROADCAST_THROTTLE_MS = 250;
+const FETCH_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 1000;
 
 /**
  * In-memory state. The worker is the single writer of the IDB store, so the
@@ -53,6 +55,15 @@ function toSearchable(record: SongRecord): SearchableSong {
   };
 }
 
+async function removeSong(id: string) {
+  if (!(id in index)) return;
+  delete index[id];
+  searchCache?.delete(id);
+  await deleteSong(id).catch(console.error);
+  persistIndex();
+  broadcastChanged();
+}
+
 async function storeFetchedSong(record: SongRecord, remoteModifiedAt?: string) {
   await writeSong(record);
   const localModifiedAt = record.lastModified ?? remoteModifiedAt ?? null;
@@ -69,14 +80,29 @@ async function storeFetchedSong(record: SongRecord, remoteModifiedAt?: string) {
   broadcastChanged();
 }
 
-async function fetchSongById(id: string): Promise<SongRecord | null> {
-  const res = await client.GET("/song/by-id/{id}", { params: { path: { id } } });
-  return res.data ?? null;
+/** Retry transient failures with exponential backoff (1s, 2s, …). */
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt >= FETCH_ATTEMPTS - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * 2 ** attempt));
+    }
+  }
 }
 
-async function fetchSongBySlug(slug: string): Promise<SongRecord | null> {
-  const res = await client.GET("/song/by-slug/{slug}", { params: { path: { slug } } });
-  return res.data ?? null;
+/** Returns null on 404 (song gone); throws (after retries) on other failures. */
+function fetchSong(query: { slug: string } | { id: string }): Promise<SongRecord | null> {
+  return withRetry(async () => {
+    const res =
+      "id" in query
+        ? await client.GET("/song/by-id/{id}", { params: { path: { id: query.id } } })
+        : await client.GET("/song/by-slug/{slug}", { params: { path: { slug: query.slug } } });
+    if (res.data) return res.data;
+    if (res.response.status === 404) return null;
+    throw new Error(`Failed to fetch song (status ${res.response.status})`);
+  });
 }
 
 /** Run tasks over items with limited concurrency; failures are per-item. */
@@ -100,9 +126,11 @@ let refetchInFlight: Promise<void> | null = null;
 function refetch(): Promise<void> {
   if (refetchInFlight) return refetchInFlight;
   refetchInFlight = (async () => {
-    const res = await client.GET("/song");
-    if (!res.data) throw new Error("Failed to load song index");
-    const remote = res.data.index;
+    const remote = await withRetry(async () => {
+      const res = await client.GET("/song");
+      if (!res.data) throw new Error(`Failed to load song index (status ${res.response.status})`);
+      return res.data.index;
+    });
 
     const remoteIds = new Set(remote.map(entry => entry.id));
     let indexChanged = false;
@@ -110,12 +138,7 @@ function refetch(): Promise<void> {
     // The remote index lists all songs, so anything local it does not mention
     // was deleted on the server.
     for (const id of Object.keys(index)) {
-      if (!remoteIds.has(id)) {
-        delete index[id];
-        searchCache?.delete(id);
-        await deleteSong(id).catch(console.error);
-        indexChanged = true;
-      }
+      if (!remoteIds.has(id)) await removeSong(id);
     }
 
     for (const entry of remote) {
@@ -145,8 +168,10 @@ function refetch(): Promise<void> {
 
     const stale = Object.values(index).filter(isOutdated);
     await pool(stale, async entry => {
-      const record = await fetchSongById(entry.id);
+      const record = await fetchSong({ id: entry.id });
       if (record) await storeFetchedSong(record, entry.remoteModifiedAt);
+      // 404: deleted on the server after we loaded its index.
+      else await removeSong(entry.id);
     });
   })().finally(() => {
     refetchInFlight = null;
@@ -214,11 +239,14 @@ const api: SongStoreApi = {
 
     // Cache miss or outdated: try the network, fall back to whatever we have.
     try {
-      const record = "id" in query ? await fetchSongById(query.id) : await fetchSongBySlug(query.slug);
+      const record = await fetchSong(query);
       if (record) {
         await storeFetchedSong(record, entry?.remoteModifiedAt);
         return record;
       }
+      // 404: the song is gone; drop any local copy instead of serving it.
+      if (entry) await removeSong(entry.id);
+      return null;
     } catch (error) {
       console.error(error);
     }
