@@ -26,6 +26,23 @@ const CollectionRecordSchema = z
   })
   .openapi("CollectionRecord");
 
+const CollectionRecordFlatSchema = z
+  .object({ id: z.string(), lastModified: z.string().nullable(), data: CollectionDataSchema })
+  .openapi("CollectionRecordFlat");
+
+const CollectionIndexResponse = z
+  .object({
+    index: z.array(
+      z
+        .object({
+          id: z.string(),
+          modifiedAt: z.string(),
+        })
+        .openapi("CollectionIndexEntry"),
+    ),
+  })
+  .openapi("CollectionIndexResponse");
+
 const CollectionDetailSchema = z
   .object({
     __typename: z.string(),
@@ -58,6 +75,67 @@ export function registerCollections(api: Api) {
     data: z.object({ collections: z.array(CollectionRecordSchema) }),
     handler: collections,
   });
+
+  api.openapi(
+    {
+      method: "get",
+      path: "/collections",
+      responses: {
+        200: { description: "Collection index", ...json(CollectionIndexResponse) },
+      },
+    },
+    async c => {
+      const context = await c.var.makeContext();
+
+      const collectionRows = await context.db.query.collection.findMany({
+        columns: {
+          idString: true,
+          lastModified: true,
+        },
+      });
+      return c.json({
+        index: collectionRows.map(({ lastModified, idString }) => ({ modifiedAt: lastModified, id: idString })),
+      });
+    },
+  );
+
+  const registerCollectionLookup = (
+    paramName: string,
+    path: string,
+    column: (typeof schema.collection)["slug" | "idString"],
+  ) => {
+    api.openapi(
+      {
+        method: "get",
+        path,
+        request: {
+          params: z.object({
+            [paramName]: z.string(),
+          }),
+        },
+        responses: {
+          200: { description: "The requested collection", ...json(CollectionRecordFlatSchema) },
+          404: { description: "Collection not found", ...json(z.object({ error: z.string() })) },
+        },
+      },
+      async c => {
+        const context = await c.var.makeContext();
+        const value = c.req.valid("param")[paramName];
+
+        const collectionRow = await context.db.query.collection.findFirst({
+          where: eq(column, value),
+        });
+        if (!collectionRow) {
+          return c.json({ error: "Collection not found" }, 404);
+        }
+        const record = await serializeCollectionRecord(collectionRow, context);
+        return c.json({ id: record.id, lastModified: record.lastModified ?? null, data: record.data! }, 200);
+      },
+    );
+  };
+
+  registerCollectionLookup("slug", "/collections/by-slug/{slug}", schema.collection.slug);
+  registerCollectionLookup("id", "/collections/by-id/{id}", schema.collection.idString);
 
   api.openapi(
     {

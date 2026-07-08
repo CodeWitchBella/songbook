@@ -61,7 +61,7 @@ export const deletedSong = pgTable("deleted_song", {
 
 export const collection = pgTable("collection", {
   id,
-  idString: char("id_string", { length: 20 }).unique(),
+  idString: char("id_string", { length: 20 }).unique().notNull(),
   slug: varchar("slug", { length: 256 }).notNull().unique(),
   name: varchar("name", { length: 256 }).notNull(),
   insertedAt: timestamp("inserted_at", timestampCfg)
