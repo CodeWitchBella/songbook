@@ -5,13 +5,13 @@ import { SearchTextInput } from "#/components/search-text-input";
 import TopMenu from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
 import type { PropsWithChildren, ReactNode } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-import { useSongList } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 
-import { FilteredList } from "./filtered-list";
+import { SongListLook } from "./song-list-look";
+import { buildList, compareListed, useWorkerSearch, useWorkerSongList } from "./worker-list";
 
 function SearchContainer({ children }: PropsWithChildren<{}>) {
   return (
@@ -34,37 +34,17 @@ function Search({
   topMenu: ReactNode;
 }>) {
   return (
-    <>
-      <SearchContainer>
-        {children}
-        <div className="relative my-2 flex items-stretch px-1">
-          <BackButton className="py-2 pr-2">
-            <BackArrow />
-          </BackButton>
-          <SearchTextInput value={text} onChange={onChange} />
-          {topMenu}
-        </div>
-      </SearchContainer>
-    </>
+    <SearchContainer>
+      {children}
+      <div className="relative my-2 flex items-stretch px-1">
+        <BackButton className="py-2 pr-2">
+          <BackArrow />
+        </BackButton>
+        <SearchTextInput value={text} onChange={onChange} />
+        {topMenu}
+      </div>
+    </SearchContainer>
   );
-}
-
-function compareSongs(sortByAuthor: boolean) {
-  return (a: SongType, b: SongType) => {
-    if (sortByAuthor) {
-      const ret = a.author.localeCompare(b.author);
-      if (ret !== 0) return ret;
-      return a.title.localeCompare(b.title);
-    } else {
-      const ret = a.title.localeCompare(b.title);
-      if (ret !== 0) return ret;
-      return a.author.localeCompare(b.author);
-    }
-  };
-}
-
-function Loader() {
-  return <div className="flex h-full w-full items-center justify-center text-lg">Načítám seznam písní...</div>;
 }
 
 export default function SongList({
@@ -81,35 +61,43 @@ export default function SongList({
   menu?: ReactNode;
 }) {
   const { t } = useTranslation();
-  const { songs: source, initing, loading, getSongById } = useSongList();
+  const { songs } = useWorkerSongList();
   const [sortByAuthorSrc, setSortByAuthor] = useQueryParam("sortByAuthor");
   const sortByAuthor = sortByAuthorSrc === "yes";
 
-  const songs = useMemo(
+  const [searchSrc, setSearch] = useQueryParam("q");
+  const search = searchSrc || "";
+  const results = useWorkerSearch(search);
+
+  const byId = useMemo(() => new Map(songs.map(s => [s.id, s])), [songs]);
+  const sorted = useMemo(() => [...songs].sort(compareListed(sortByAuthor)), [songs, sortByAuthor]);
+  const list = useMemo(
     () =>
-      source
-        .map(s => s.item)
-        .filter(song => {
-          if (filter) return filter(song.id);
-          return true;
-        })
-        .sort(compareSongs(sortByAuthor)),
-    [filter, sortByAuthor, source],
+      buildList(
+        byId,
+        results,
+        sorted.map(s => s.id),
+        sortByAuthor,
+        filter,
+      ),
+    [byId, results, sorted, sortByAuthor, filter],
+  );
+
+  // PDF over the listed (text-less) songs; the shared worker keeps song bodies
+  // out of the tab, so the whole-songbook PDF is degraded until it gets a path.
+  const pdfList = useMemo(
+    () => (filter ? sorted.filter(s => filter(s.id)) : sorted) as unknown as SongType[],
+    [sorted, filter],
   );
 
   const location = useLocation();
   const navigate = useNavigate();
   const clearOnBackRef = useRef((location.state as any)?.clearOnBack);
-  useEffect(() => {
-    clearOnBackRef.current = (location.state as any)?.clearOnBack;
-  });
-
-  const [search, setSearch] = useQueryParam("q");
 
   return (
     <>
       <Search
-        text={search || ""}
+        text={search}
         onChange={v => {
           if (clearOnBackRef.current) {
             if (v) {
@@ -146,7 +134,7 @@ export default function SongList({
               {sortByAuthor ? t("Sort by name") : t("Sort by interpret")}
             </ListButton>
             <Gap />
-            <DownloadPDF list={songs} slug={slug} title={title || "Zpěvník"}>
+            <DownloadPDF list={pdfList} slug={slug} title={title || "Zpěvník"}>
               {(text, onClick) => (
                 <ListButton onPress={onClick} style={{ textAlign: "left" }}>
                   {text}
@@ -160,11 +148,7 @@ export default function SongList({
         {header ?? null}
       </Search>
       <div className="min-h-0 grow">
-        {songs.length !== 0 ? (
-          <FilteredList songs={songs} search={search || ""} sortByAuthor={sortByAuthor} getSongById={getSongById} />
-        ) : initing || loading ? (
-          <Loader />
-        ) : null}
+        <SongListLook list={list} />
       </div>
     </>
   );

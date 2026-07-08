@@ -34,7 +34,6 @@ const imports = {
 
 const CollectionList = React.lazy(imports.CollectionList);
 const Collection = React.lazy(imports.Collection);
-const AllSongs = React.lazy(imports.AllSongs);
 const Home = React.lazy(imports.Home);
 const Song = React.lazy(imports.Song);
 const CreateSong = React.lazy(imports.CreateSong);
@@ -60,7 +59,7 @@ const router = createBrowserRouter(
           <Route path="installed-home" element={<Navigate to="/" replace={true} />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="all-songs" element={<AllSongs />} />
+          <Route path="all-songs" lazy={imports.AllSongs} />
           <Route path="credits" element={<Credits />} />
           <Route path="quick-settings" element={<QuickSettings />} />
           <Route path="about" element={<About />} />

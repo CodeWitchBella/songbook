@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import AllSongs from "./all-songs";
+import { Component as AllSongs } from "./all-songs";
 
 const meta = {
   title: "Routes/AllSongs",
