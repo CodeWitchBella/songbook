@@ -10,6 +10,10 @@ const EM: f32 = 16.0;
 const HEADER_EM: f32 = 1.2;
 /// Height of a line that carries chords, as a multiple of `fontSize` em.
 const CHORD_LINE_FACTOR: f32 = 2.2;
+/// Floor the chord-line height can be compressed to (as a multiple of
+/// `fontSize` em) during the anti-orphan search. On chord-heavy songs this is
+/// the highest-leverage lever, since almost every line pays this height.
+const CHORD_LINE_FACTOR_FLOOR: f32 = 2.0;
 /// Small top margin above the header, in em.
 const HEADER_TOP_MARGIN: f32 = 0.75;
 
@@ -35,8 +39,8 @@ const SECTION_GAP_FLOOR_EM: f32 = 0.4;
 const FONT_SCALE_FLOOR: f32 = 0.95;
 /// Number of discrete steps the anti-orphan compression search tries between
 /// the natural layout and the floors above, escalating header space, then
-/// section gaps, then font size (see `layout_song`).
-const COMPRESSION_STEPS: u32 = 24;
+/// section gaps, then chord-line height, then font size (see `layout_song`).
+const COMPRESSION_STEPS: u32 = 32;
 
 fn lerp(a: f32, b: f32, t: f32) -> f32 {
     a + (b - a) * t
@@ -65,8 +69,8 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 
 /// Lay out the song.
 ///
-/// The per-song `fontSize` frontmatter value is interpreted as a multiple of
-/// [`EM`]. The header sets the title on the left and the author on the right,
+/// The body is set at [`EM`]; the per-song `fontSize` frontmatter is ignored.
+/// The header sets the title on the left and the author on the right,
 /// both bold. Lines that carry chords reserve `fontSize * 2.2` em of height
 /// with the chords sitting one em above the lyric baseline. Header space and
 /// inter-section gaps are chosen automatically from whether the adjoining
@@ -92,7 +96,9 @@ pub fn layout_song(
     viewport: Option<(f64, f64)>,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
-    let font_px_base = fm.map(|fm| fm.font_size as f32).unwrap_or(1.0) * EM;
+    // The per-song `fontSize` frontmatter is intentionally ignored; every song
+    // is laid out at the base em and only the anti-orphan search may shrink it.
+    let font_px_base = EM;
     // Chords are transposed by the song's `pretranspose`.
     let transpose = fm.map(|fm| fm.pretranspose.round() as i32).unwrap_or(0);
     let title = fm.map(|fm| fm.title.as_str()).unwrap_or("");
@@ -106,6 +112,7 @@ pub fn layout_song(
         transpose,
         title,
         author,
+        0.0,
         0.0,
         0.0,
         0.0,
@@ -127,15 +134,16 @@ pub fn layout_song(
 
     // The last page is nearly empty (an "orphan"): search for the lightest
     // compression that removes one page. Escalate header space, then section
-    // gaps, then body font size — each lever gets an equal third of the
-    // search's progress, and later levers only start once earlier ones have
-    // maxed out — and take the first step that works.
+    // gaps, then chord-line height, then body font size — each lever gets an
+    // equal quarter of the search's progress, and later levers only start once
+    // earlier ones have maxed out — and take the first step that works.
     let target_pages = metrics.page_count - 1;
     for k in 1..=COMPRESSION_STEPS {
         let progress = k as f32 / COMPRESSION_STEPS as f32;
-        let t_header = (progress / (1.0 / 3.0)).clamp(0.0, 1.0);
-        let t_section = ((progress - 1.0 / 3.0) / (1.0 / 3.0)).clamp(0.0, 1.0);
-        let t_font = ((progress - 2.0 / 3.0) / (1.0 / 3.0)).clamp(0.0, 1.0);
+        let t_header = (progress / 0.25).clamp(0.0, 1.0);
+        let t_section = ((progress - 0.25) / 0.25).clamp(0.0, 1.0);
+        let t_chord = ((progress - 0.50) / 0.25).clamp(0.0, 1.0);
+        let t_font = ((progress - 0.75) / 0.25).clamp(0.0, 1.0);
         let (candidate, candidate_metrics) = build(
             song,
             font_cx,
@@ -146,11 +154,13 @@ pub fn layout_song(
             author,
             t_header,
             t_section,
+            t_chord,
             t_font,
         );
         // Viewport is `Some` here (checked above), so `build` always returns
         // metrics in this branch.
-        if candidate_metrics.unwrap().page_count <= target_pages {
+        let cm = candidate_metrics.unwrap();
+        if cm.page_count <= target_pages {
             return candidate;
         }
     }
@@ -162,12 +172,12 @@ pub fn layout_song(
 /// and header/section spacing compression, and (when `viewport` is `Some`)
 /// the resulting page metrics.
 ///
-/// `t_header`/`t_section`/`t_font`, each in `[0, 1]`, interpolate from the
-/// natural spacing/font (`0.0`) toward the compression floors (`1.0`); pass
-/// all zero for the natural, uncompressed layout. Font scaling changes
-/// paragraph heights, so paragraphs are always rebuilt (re-measured with
-/// parley) here rather than cached across calls — cheap enough since songs
-/// are short.
+/// `t_header`/`t_section`/`t_chord`/`t_font`, each in `[0, 1]`, interpolate
+/// from the natural spacing/chord-line height/font (`0.0`) toward the
+/// compression floors (`1.0`); pass all zero for the natural, uncompressed
+/// layout. Font and chord-line scaling change paragraph heights, so paragraphs
+/// are always rebuilt (re-measured with parley) here rather than cached across
+/// calls — cheap enough since songs are short.
 fn build(
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
@@ -178,9 +188,11 @@ fn build(
     author: &str,
     t_header: f32,
     t_section: f32,
+    t_chord: f32,
     t_font: f32,
 ) -> (Layout, Option<PageMetrics>) {
     let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
+    let chord_line_factor = lerp(CHORD_LINE_FACTOR, CHORD_LINE_FACTOR_FLOOR, t_chord);
 
     let mut layout: Layout = Layout {
         font_size: font_px as f64,
@@ -270,8 +282,15 @@ fn build(
             if hidden {
                 continue;
             }
-            let (mut items, line_height, has_chord) =
-                layout_line(line, tag, font_px, transpose, chords_off, font_cx);
+            let (mut items, line_height, has_chord) = layout_line(
+                line,
+                tag,
+                font_px,
+                chord_line_factor,
+                transpose,
+                chords_off,
+                font_cx,
+            );
             if first_line_has_chord.is_none() {
                 first_line_has_chord = Some(has_chord);
             }
@@ -507,6 +526,7 @@ fn layout_line(
     line: &Line,
     tag: Option<String>,
     font_px: f32,
+    chord_line_factor: f32,
     transpose: i32,
     hide_chords: bool,
     font_cx: &mut parley::FontContext,
@@ -573,7 +593,7 @@ fn layout_line(
     let (baseline, natural_height) = line_metrics(&complete_text, font_px, font_cx);
     let descent = (natural_height - baseline).max(0.0);
     let line_height = if has_chord {
-        font_px * CHORD_LINE_FACTOR
+        font_px * chord_line_factor
     } else {
         natural_height.max(font_px)
     };
