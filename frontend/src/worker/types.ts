@@ -61,3 +61,47 @@ export type SongStoreApi = {
 
 /** BroadcastChannel name; every message means "something changed, re-ask". */
 export const songStoreChannel = "songbook-song-store";
+
+// The generated schema types `owner` the same way it types song's `editor`
+// (a nullable $ref becomes an impossible-to-satisfy intersection); spell out
+// what it actually means. `data` is also declared optional even though a
+// successful response always includes it.
+type RawCollectionDetail = NonNullable<components["schemas"]["CollectionDetail"]["data"]>;
+export type CollectionRecord = {
+  id: string;
+  lastModified: string | null;
+  data: Omit<RawCollectionDetail, "owner"> & { owner: components["schemas"]["RestUser"] | null };
+};
+
+/** Denormalized per-collection entry stored in the single index key. */
+export type CollectionIndexEntry = {
+  id: string;
+  /** lastModified reported by the remote index (POST /collections). */
+  remoteModifiedAt: string;
+  /** lastModified of the locally stored record; null = song list not fetched yet. */
+  localModifiedAt: string | null;
+  slug: string | null;
+  name: string | null;
+};
+
+export type CollectionIndex = Record<string, CollectionIndexEntry>;
+
+export type ListedCollection = {
+  id: string;
+  slug: string;
+  name: string;
+};
+
+export type CollectionList = {
+  collections: ListedCollection[];
+  stats: SongListStats;
+};
+
+export type CollectionStoreApi = {
+  getCollectionList(): Promise<CollectionList>;
+  getCollection(query: { slug: string } | { id: string }): Promise<CollectionRecord | null>;
+  triggerRefetch(): Promise<void>;
+};
+
+/** BroadcastChannel name; every message means "something changed, re-ask". */
+export const collectionStoreChannel = "songbook-collection-store";
