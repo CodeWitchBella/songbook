@@ -15,8 +15,6 @@ pub struct Frontmatter {
     pub last_modified: String,
     pub text: String,
     pub font_size: f64,
-    pub paragraph_space: f64,
-    pub title_space: f64,
     pub spotify: Option<String>,
     pub pretranspose: f64,
     pub inserted_at: Option<String>,

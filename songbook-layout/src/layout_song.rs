@@ -8,12 +8,54 @@ use crate::data::{Item, ItemType, Layout};
 const EM: f32 = 16.0;
 /// Header text size as a multiple of [`EM`], independent of the song font size.
 const HEADER_EM: f32 = 1.2;
-/// Space below the header, as a multiple of `titleSpace` em.
-const TITLE_SPACE_FACTOR: f32 = 1.75;
 /// Height of a line that carries chords, as a multiple of `fontSize` em.
 const CHORD_LINE_FACTOR: f32 = 2.2;
 /// Small top margin above the header, in em.
 const HEADER_TOP_MARGIN: f32 = 0.75;
+
+/// Space below the header (before the body starts), in em, when the song's
+/// first rendered body line carries chords. Chord lines are already tall, so
+/// a tighter gap reads better than the no-chords default below.
+const HEADER_SPACE_CHORDS_EM: f32 = 0.5;
+/// Space below the header, in em, when the first rendered body line has no
+/// chords.
+const HEADER_SPACE_NO_CHORDS_EM: f32 = 1.0;
+/// Floor the header space can be compressed to (see `layout_song`'s
+/// anti-orphan search) when a song's last page is nearly empty.
+const HEADER_SPACE_FLOOR_EM: f32 = 0.3;
+/// Gap inserted before a section, in em, when that section's first rendered
+/// line carries chords.
+const SECTION_GAP_CHORDS_EM: f32 = 0.7;
+/// Gap inserted before a section, in em, when it has no chords.
+const SECTION_GAP_NO_CHORDS_EM: f32 = 1.0;
+/// Floor a section gap can be compressed to.
+const SECTION_GAP_FLOOR_EM: f32 = 0.4;
+/// Floor the body font can be scaled to (as a fraction of its natural size)
+/// during compression. The header font is never touched.
+const FONT_SCALE_FLOOR: f32 = 0.95;
+/// Number of discrete steps the anti-orphan compression search tries between
+/// the natural layout and the floors above, escalating header space, then
+/// section gaps, then font size (see `layout_song`).
+const COMPRESSION_STEPS: u32 = 24;
+
+fn lerp(a: f32, b: f32, t: f32) -> f32 {
+    a + (b - a) * t
+}
+
+/// Page metrics of a layout built against a fixed viewport, mirroring the
+/// pagination `render_layout_into` performs in songbook-render-pdf (a page
+/// break happens whenever an item's y runs `content_height` past the current
+/// page's top). Used to compare compression candidates by page count.
+struct PageMetrics {
+    page_count: u32,
+    /// How full the last page is, in `[0, 1]` of `content_height`.
+    last_fill_fraction: f32,
+    /// How full the second-to-last page is, in `[0, 1]`. `1.0` when there is
+    /// only one page. This can be below `1.0` even though it isn't the last
+    /// page: a paragraph too tall for the room left gets bumped to the next
+    /// page, leaving a gap here.
+    prev_fill_fraction: f32,
+}
 /// Font family for lyrics, tags and the header. Renderers must register their
 /// regular/bold faces under this name.
 pub const LYRIC_FONT_FAMILY: &str = "Cantarell";
@@ -23,38 +65,130 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 
 /// Lay out the song.
 ///
-/// The per-song `fontSize`, `paragraphSpace` and `titleSpace` frontmatter
-/// values are interpreted as multiples of [`EM`]. The header sets the title on
-/// the left and the author on the right, both bold. Lines that carry chords
-/// reserve `fontSize * 2.2` em of height with the chords sitting one em above
-/// the lyric baseline.
+/// The per-song `fontSize` frontmatter value is interpreted as a multiple of
+/// [`EM`]. The header sets the title on the left and the author on the right,
+/// both bold. Lines that carry chords reserve `fontSize * 2.2` em of height
+/// with the chords sitting one em above the lyric baseline. Header space and
+/// inter-section gaps are chosen automatically from whether the adjoining
+/// body line carries chords (see [`build`]).
 ///
 /// `viewport` is the size of the page's usable content area, used to
 /// right-align the author and to flow the body across pages: a paragraph
 /// that doesn't fit in the room left on the current page starts a fresh one
 /// instead of the font size being shrunk. Pass `None` to leave the song as a
 /// single, unpaginated flow.
+///
+/// When paginated with more than one page, and the last two pages' content
+/// would overflow a single page by less than 10% (counting the empty space
+/// already left on the second-to-last page), this also runs an anti-orphan
+/// search: it
+/// re-lays the song out with progressively tighter header/section spacing
+/// and, as a last resort, a slightly smaller body font, and keeps the first
+/// (lightest) variant that fits the song into one fewer page. If none of the
+/// tried steps manage that, the natural layout is kept as is.
 pub fn layout_song(
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
     viewport: Option<(f64, f64)>,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
-    let font_px = fm.map(|fm| fm.font_size as f32).unwrap_or(1.0) * EM;
-    let para_space = fm.map(|fm| fm.paragraph_space as f32).unwrap_or(1.0) * EM;
-    let title_space = fm.map(|fm| fm.title_space as f32).unwrap_or(1.0) * TITLE_SPACE_FACTOR * EM;
+    let font_px_base = fm.map(|fm| fm.font_size as f32).unwrap_or(1.0) * EM;
     // Chords are transposed by the song's `pretranspose`.
     let transpose = fm.map(|fm| fm.pretranspose.round() as i32).unwrap_or(0);
+    let title = fm.map(|fm| fm.title.as_str()).unwrap_or("");
+    let author = fm.map(|fm| fm.author.as_str()).unwrap_or("");
+
+    let (natural_layout, natural_metrics) = build(
+        song,
+        font_cx,
+        viewport,
+        font_px_base,
+        transpose,
+        title,
+        author,
+        0.0,
+        0.0,
+        0.0,
+    );
+
+    // Only paginated layouts are eligible for compression: with no viewport
+    // there's no page to save a paragraph from spilling onto.
+    let Some(metrics) = natural_metrics else {
+        return natural_layout;
+    };
+    // Trigger the search when the last two pages' combined content would
+    // overflow a single page by less than 10% — i.e. the empty space already
+    // sitting on the second-to-last page plus the sparse last page nearly add
+    // up to one free page. `(prev_fill + last_fill) - 1.0` is that overflow.
+    let combined_overflow = metrics.prev_fill_fraction + metrics.last_fill_fraction - 1.0;
+    if metrics.page_count <= 1 || combined_overflow >= 0.10 {
+        return natural_layout;
+    }
+
+    // The last page is nearly empty (an "orphan"): search for the lightest
+    // compression that removes one page. Escalate header space, then section
+    // gaps, then body font size — each lever gets an equal third of the
+    // search's progress, and later levers only start once earlier ones have
+    // maxed out — and take the first step that works.
+    let target_pages = metrics.page_count - 1;
+    for k in 1..=COMPRESSION_STEPS {
+        let progress = k as f32 / COMPRESSION_STEPS as f32;
+        let t_header = (progress / (1.0 / 3.0)).clamp(0.0, 1.0);
+        let t_section = ((progress - 1.0 / 3.0) / (1.0 / 3.0)).clamp(0.0, 1.0);
+        let t_font = ((progress - 2.0 / 3.0) / (1.0 / 3.0)).clamp(0.0, 1.0);
+        let (candidate, candidate_metrics) = build(
+            song,
+            font_cx,
+            viewport,
+            font_px_base,
+            transpose,
+            title,
+            author,
+            t_header,
+            t_section,
+            t_font,
+        );
+        // Viewport is `Some` here (checked above), so `build` always returns
+        // metrics in this branch.
+        if candidate_metrics.unwrap().page_count <= target_pages {
+            return candidate;
+        }
+    }
+
+    natural_layout
+}
+
+/// Build the header and body of a song's layout at a given body font scale
+/// and header/section spacing compression, and (when `viewport` is `Some`)
+/// the resulting page metrics.
+///
+/// `t_header`/`t_section`/`t_font`, each in `[0, 1]`, interpolate from the
+/// natural spacing/font (`0.0`) toward the compression floors (`1.0`); pass
+/// all zero for the natural, uncompressed layout. Font scaling changes
+/// paragraph heights, so paragraphs are always rebuilt (re-measured with
+/// parley) here rather than cached across calls — cheap enough since songs
+/// are short.
+fn build(
+    song: &songbook_grammar::Song,
+    font_cx: &mut parley::FontContext,
+    viewport: Option<(f64, f64)>,
+    font_px_base: f32,
+    transpose: i32,
+    title: &str,
+    author: &str,
+    t_header: f32,
+    t_section: f32,
+    t_font: f32,
+) -> (Layout, Option<PageMetrics>) {
+    let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
 
     let mut layout: Layout = Layout {
         font_size: font_px as f64,
         items: Default::default(),
     };
 
-    // --- Header -----------------------------------------------------------
+    // --- Header -------------------------------------------------------------
     let content_width = viewport.map(|(width, _)| width);
-    let title = fm.map(|fm| fm.title.as_str()).unwrap_or("");
-    let author = fm.map(|fm| fm.author.as_str()).unwrap_or("");
     let header_px = HEADER_EM * EM;
     let title_width = measure(title, header_px, true, font_cx);
     let author_width = measure(author, header_px, true, font_cx);
@@ -78,22 +212,15 @@ pub fn layout_song(
         width: author_width,
         pos: (author_x, header_baseline),
     });
-    // Space consumed by the header before the body starts: the header line box
-    // plus the configured space below it.
-    let header_height = HEADER_TOP_MARGIN * EM + header_px * 1.3 + title_space;
 
-    // --- Body -------------------------------------------------------------
-    let mut body_items: Vec<Item> = vec![];
-    let mut y = 0.0f32;
-    // Page flow bookkeeping, in body-y coordinates (i.e. before the global
-    // `header_height` offset added at the end is folded back in). `page_end`
-    // is where the current page runs out of room. Only the first page loses
-    // `header_height` of space to the header; every later page gets the full
-    // page height, matching the item-level page-splitting `render_layout_into`
-    // (songbook-render-pdf/src/lib.rs) already does against the same
-    // continuous y coordinate.
-    let content_height = viewport.map(|(_, height)| height as f32);
-    let mut page_end = content_height.map(|h| h - header_height);
+    // --- Body: lay out each rendered paragraph, remembering whether its
+    // first line carries chords (that decides the space in front of it). ---
+    struct Paragraph {
+        items: Vec<Item>,
+        height: f32,
+        has_chord: bool,
+    }
+    let mut paragraphs: Vec<Paragraph> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
@@ -111,7 +238,7 @@ pub fn layout_song(
         };
 
         // A paragraph made up entirely of `>`-commands sets state and is not
-        // itself rendered (and contributes no paragraph space).
+        // itself rendered (and contributes no section gap).
         if let Some(commands) = command_block(lines) {
             for (cmd, args) in commands {
                 match cmd {
@@ -134,6 +261,7 @@ pub fn layout_song(
 
         let mut paragraph_items: Vec<Item> = vec![];
         let mut local_y = 0.0f32;
+        let mut first_line_has_chord: Option<bool> = None;
         for line in lines {
             let tag = line
                 .label
@@ -142,8 +270,11 @@ pub fn layout_song(
             if hidden {
                 continue;
             }
-            let (mut items, line_height) =
+            let (mut items, line_height, has_chord) =
                 layout_line(line, tag, font_px, transpose, chords_off, font_cx);
+            if first_line_has_chord.is_none() {
+                first_line_has_chord = Some(has_chord);
+            }
             for item in &mut items {
                 item.pos.1 += local_y;
             }
@@ -155,7 +286,43 @@ pub fn layout_song(
             continue;
         }
 
-        let paragraph_height = local_y;
+        paragraphs.push(Paragraph {
+            items: paragraph_items,
+            height: local_y,
+            has_chord: first_line_has_chord.unwrap_or(false),
+        });
+    }
+
+    // Header space is sized off the FIRST rendered paragraph's chords; each
+    // gap between section i and i+1 is sized off section i+1's chords (a gap
+    // is a "coming up" cue, not a "just finished" one). Compression pulls
+    // both toward their floors via `t_header`/`t_section`.
+    let first_has_chord = paragraphs.first().map(|p| p.has_chord).unwrap_or(false);
+    let header_space_base = if first_has_chord {
+        HEADER_SPACE_CHORDS_EM
+    } else {
+        HEADER_SPACE_NO_CHORDS_EM
+    };
+    let header_space = lerp(header_space_base, HEADER_SPACE_FLOOR_EM, t_header) * EM;
+    // Space consumed by the header before the body starts: the header line box
+    // plus the (compressible) space below it.
+    let header_height = HEADER_TOP_MARGIN * EM + header_px * 1.3 + header_space;
+
+    let mut body_items: Vec<Item> = vec![];
+    let mut y = 0.0f32;
+    // Page flow bookkeeping, in body-y coordinates (i.e. before the global
+    // `header_height` offset added at the end is folded back in). `page_end`
+    // is where the current page runs out of room. Only the first page loses
+    // `header_height` of space to the header; every later page gets the full
+    // page height, matching the item-level page-splitting `render_layout_into`
+    // (songbook-render-pdf/src/lib.rs) already does against the same
+    // continuous y coordinate.
+    let content_height = viewport.map(|(_, height)| height as f32);
+    let mut page_end = content_height.map(|h| h - header_height);
+
+    let n = paragraphs.len();
+    for i in 0..n {
+        let paragraph_height = paragraphs[i].height;
 
         // If the paragraph doesn't fit in the room left on the current page
         // but would fit whole on a fresh page, start a new page instead of
@@ -169,13 +336,22 @@ pub fn layout_song(
             }
         }
 
-        for mut item in paragraph_items {
+        for mut item in std::mem::take(&mut paragraphs[i].items) {
             item.pos.1 += y;
             body_items.push(item);
         }
         y += paragraph_height;
-        // `em(paragraphSpace)` after every rendered paragraph.
-        y += para_space;
+
+        // Gap before the NEXT section, sized off whether it has chords; none
+        // after the last one.
+        if i + 1 < n {
+            let gap_base = if paragraphs[i + 1].has_chord {
+                SECTION_GAP_CHORDS_EM
+            } else {
+                SECTION_GAP_NO_CHORDS_EM
+            };
+            y += lerp(gap_base, SECTION_GAP_FLOOR_EM, t_section) * EM;
+        }
     }
 
     for mut item in body_items {
@@ -183,7 +359,39 @@ pub fn layout_song(
         layout.items.push(item);
     }
 
-    layout
+    let metrics = content_height.map(|content_height| {
+        let max_y = layout
+            .items
+            .iter()
+            .filter(|item| !item.text.trim().is_empty())
+            .map(|item| item.pos.1)
+            .fold(0.0f32, f32::max);
+        let page_count = (max_y / content_height).floor() as u32 + 1;
+        let last_fill_fraction =
+            (max_y - (page_count - 1) as f32 * content_height) / content_height;
+        // Fill of the second-to-last page: the lowest baseline that still lands
+        // on page `page_count - 2`, measured from that page's top.
+        let prev_fill_fraction = if page_count < 2 {
+            1.0
+        } else {
+            let prev_top = (page_count - 2) as f32 * content_height;
+            let prev_max_y = layout
+                .items
+                .iter()
+                .filter(|item| !item.text.trim().is_empty())
+                .map(|item| item.pos.1)
+                .filter(|&y| y >= prev_top && y - prev_top <= content_height)
+                .fold(prev_top, f32::max);
+            (prev_max_y - prev_top) / content_height
+        };
+        PageMetrics {
+            page_count,
+            last_fill_fraction,
+            prev_fill_fraction,
+        }
+    });
+
+    (layout, metrics)
 }
 
 /// The concatenated lyric text of a line (chords/commands contribute no text).
@@ -302,7 +510,7 @@ fn layout_line(
     transpose: i32,
     hide_chords: bool,
     font_cx: &mut parley::FontContext,
-) -> (Vec<Item>, f32) {
+) -> (Vec<Item>, f32, bool) {
     // Build the lyric flow text and collect chords in a single pass. `[*…]`
     // commands are bold inline lyric text (not chords), so they join the flow
     // and survive `chords off`; `_`/`^` leads mark spacers and normal-weight
@@ -467,7 +675,7 @@ fn layout_line(
         });
     }
 
-    (out, line_height)
+    (out, line_height, has_chord)
 }
 
 /// Note names in sharp and flat spelling, indexed by semitone (Czech `H` = B
