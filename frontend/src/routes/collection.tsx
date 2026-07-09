@@ -1,34 +1,47 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useRevalidator } from "react-router";
 import SongList from "#/sections/song-list/song-list";
-import { useCollection, usePagesNum } from "#/store/store";
+import { usePagesNum } from "#/store/store";
+import { getCollectionStore, useCollectionStoreChange } from "#/worker/client";
+import type { CollectionRecord } from "#/worker/types";
 
-const emptyArray: never[] = [];
-function useColectionWithSet(slug: string) {
-  const { collection } = useCollection({ slug });
-  const songList = collection ? collection.songList : emptyArray;
-  const set = useMemo(() => {
-    const v = new Set<string>();
-    for (const id of songList) v.add(id);
-    return v;
-  }, [songList]);
-  if (!collection) return null;
-  return { set, ...collection };
+function slugFromParams(params: { slug?: string; slug2?: string }) {
+  return params.slug + (params.slug2 ? "/" + params.slug2 : "");
 }
 
-export default function Collection() {
-  const params = useParams();
-  const slug = params.slug + (params.slug2 ? "/" + params.slug2 : "");
-  console.log(slug);
-  const collection = useColectionWithSet(slug);
+type LoaderData = { collection: CollectionRecord | null };
+
+export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData> {
+  const slug = slugFromParams(params);
+  const collection = await getCollectionStore().getCollection({ slug });
+  console.log(collection);
+  return { collection };
+}
+
+const emptyArray: never[] = [];
+function useCollectionWithSet(record: CollectionRecord | null) {
+  const songList = record ? record.data.songList : emptyArray;
+  const set = useMemo(() => {
+    const v = new Set<string>();
+    for (const song of songList) v.add(song.id);
+    return v;
+  }, [songList]);
+  if (!record) return null;
+  return { set, ...record.data };
+}
+
+function CollectionRoute() {
+  const { collection: record } = useLoaderData() as LoaderData;
+  const revalidator = useRevalidator();
+  const revalidate = useCallback(() => revalidator.revalidate(), [revalidator]);
+  useCollectionStoreChange(revalidate);
+
+  const collection = useCollectionWithSet(record);
   const set = collection?.set;
   const filter = useCallback((id: string) => set?.has(id) || false, [set]);
 
-  const collectionId = collection?.id;
-  useEffect(() => {
-    if (collectionId) console.log("Collection id:", collectionId);
-  }, [collectionId]);
   if (!collection)
     return <div className="flex h-full items-center justify-center text-xl">Kolekce se načítá nebo neexistuje</div>;
   return (
@@ -37,7 +50,7 @@ export default function Collection() {
       header={
         <div className="flex flex-col pt-3">
           <span className="text-center text-base font-bold text-black dark:text-white">
-            {(collection.slug.includes("/") ? (collection.owner.handle || collection.owner.name) + " > " : "") +
+            {(collection.slug.includes("/") ? (collection.owner?.handle || collection.owner?.name) + " > " : "") +
               collection.name}
           </span>
         </div>
@@ -61,4 +74,4 @@ function Stats({ set, songCount }: { set: Set<string> | undefined; songCount: nu
   );
 }
 
-export { Collection as Component };
+export { CollectionRoute as Component };

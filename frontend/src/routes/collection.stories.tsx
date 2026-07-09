@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import Collection from "./collection";
+import { Component as Collection } from "./collection";
 
 const meta = {
   title: "Routes/Collection",
