@@ -1,15 +1,81 @@
 import { PageHeader } from "#/components/page-header";
 import { useQueryParam } from "#/components/use-router";
-import React, { useMemo } from "react";
-import type { WithMethods } from "#/store/generic-store";
+import React, { useEffect, useMemo, useState } from "react";
 import { restAddToCollection, restRemoveFromCollection } from "#/store/api";
-import { useCollection, useCollectionList, useSongList } from "#/store/store";
-import type { SongType } from "#/store/store-song";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
+import { getCollectionStore, getSongStore, onCollectionStoreChange, onSongStoreChange } from "#/worker/client";
+import type { CollectionRecord, ListedCollection, ListedSong } from "#/worker/types";
+
+function useListedCollections(): ListedCollection[] {
+  const [list, setList] = useState<ListedCollection[]>([]);
+  useEffect(() => {
+    let alive = true;
+    const load = () =>
+      getCollectionStore()
+        .getCollectionList()
+        .then(v => {
+          if (alive) setList(v.collections);
+        });
+    load();
+    const off = onCollectionStoreChange(load);
+    return () => {
+      alive = false;
+      off();
+    };
+  }, []);
+  return list;
+}
+
+function useCollectionBySlug(slug: string | null): CollectionRecord | null {
+  const [record, setRecord] = useState<CollectionRecord | null>(null);
+  useEffect(() => {
+    if (!slug) {
+      setRecord(null);
+      return undefined;
+    }
+    let alive = true;
+    const load = () =>
+      getCollectionStore()
+        .getCollection({ slug })
+        .then(v => {
+          if (alive) setRecord(v);
+        });
+    load();
+    const off = onCollectionStoreChange(load);
+    return () => {
+      alive = false;
+      off();
+    };
+  }, [slug]);
+  return record;
+}
+
+function useListedSongs(): ListedSong[] {
+  const [songs, setSongs] = useState<ListedSong[]>([]);
+  useEffect(() => {
+    let alive = true;
+    const load = () =>
+      getSongStore()
+        .getSongList()
+        .then(v => {
+          if (alive) setSongs(v.songs);
+        });
+    load();
+    const off = onSongStoreChange(load);
+    return () => {
+      alive = false;
+      off();
+    };
+  }, []);
+  return songs;
+}
 
 export default function CollectionDiff() {
-  const { list: unsortedList } = useCollectionList();
-  const sortedList = useMemo(() => [...unsortedList].sort(collectionCompare), [unsortedList]);
+  const unsortedList = useListedCollections();
+  const sortedList = useMemo(
+    () => [...unsortedList].sort((a, b) => collectionCompare({ item: a }, { item: b })),
+    [unsortedList],
+  );
   const [a, setA] = useQueryParam("a");
   const [b, setB] = useQueryParam("b");
   const [ban, setBan] = useQueryParam("ban");
@@ -28,7 +94,7 @@ export default function CollectionDiff() {
             <option disabled value="">
               Choose collection
             </option>
-            {sortedList.map(({ item }) => (
+            {sortedList.map(item => (
               <option key={item.id} value={item.slug}>
                 {collectionFullName(item)}
               </option>
@@ -46,7 +112,7 @@ export default function CollectionDiff() {
             <option disabled value="">
               Choose collection
             </option>
-            {sortedList.map(({ item }) => (
+            {sortedList.map(item => (
               <option key={item.id} value={item.slug}>
                 {collectionFullName(item)}
               </option>
@@ -62,7 +128,7 @@ export default function CollectionDiff() {
             }}
           >
             <option value="">None</option>
-            {sortedList.map(({ item }) => (
+            {sortedList.map(item => (
               <option key={item.id} value={item.slug}>
                 {collectionFullName(item)}
               </option>
@@ -76,23 +142,23 @@ export default function CollectionDiff() {
 }
 
 function ActualDiff({ a: aSlug, b: bSlug, ban: banSlug }: { a: string; b: string; ban: string | null }) {
-  const { collection: a } = useCollection({ slug: aSlug });
-  const { collection: ban } = useCollection({ slug: banSlug });
-  const { collection: b, methods: methodsB } = useCollection({ slug: bSlug });
-  const { songs: unsortedSongs } = useSongList();
+  const a = useCollectionBySlug(aSlug);
+  const ban = useCollectionBySlug(banSlug);
+  const b = useCollectionBySlug(bSlug);
+  const unsortedSongs = useListedSongs();
 
-  const songs = useMemo(() => unsortedSongs.sort(compareSongs), [unsortedSongs]);
+  const songs = useMemo(() => [...unsortedSongs].sort(compareSongs), [unsortedSongs]);
 
   function refresh() {
-    methodsB?.refresh();
+    getCollectionStore().triggerRefetch();
   }
 
   const sets = useMemo(() => {
     if (!a || !b) return null;
 
-    const aSet = new Set(a.songList);
-    const bSet = new Set(b.songList);
-    const banSet = new Set(ban?.songList ?? []);
+    const aSet = new Set(a.data.songIds);
+    const bSet = new Set(b.data.songIds);
+    const banSet = new Set(ban?.data.songIds ?? []);
 
     const added = new Set<string>();
     const removed = new Set<string>();
@@ -100,9 +166,7 @@ function ActualDiff({ a: aSlug, b: bSlug, ban: banSlug }: { a: string; b: string
     const neither = new Set<string>();
     const bad = new Set<string>();
 
-    for (const {
-      item: { id },
-    } of songs) {
+    for (const { id } of songs) {
       const inA = aSet.has(id);
       const inB = bSet.has(id);
       if (banSet.has(id)) {
@@ -205,7 +269,7 @@ function SongList({
   title,
   actionTitle,
 }: {
-  songs: readonly WithMethods<SongType>[];
+  songs: readonly ListedSong[];
   set: Set<string>;
   title: string;
   actionTitle: string;
@@ -213,7 +277,7 @@ function SongList({
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
       <h2>{title}</h2>
-      {songs.map(({ item: song }) =>
+      {songs.map(song =>
         set.has(song.id) ? (
           <div key={song.id}>
             <input type="submit" name="song" data-song={song.id} value={actionTitle} />
@@ -233,7 +297,7 @@ function removeFromCollection(song: string, collection: string) {
   return restRemoveFromCollection(collection, song);
 }
 
-function compareSongs({ item: a }: { item: SongType }, { item: b }: { item: SongType }) {
+function compareSongs(a: ListedSong, b: ListedSong) {
   const ret = a.title.localeCompare(b.title);
   if (ret !== 0) return ret;
   return a.author.localeCompare(b.author);

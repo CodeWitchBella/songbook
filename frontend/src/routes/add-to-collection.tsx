@@ -3,39 +3,53 @@ import { ErrorPage } from "#/components/error-page";
 import { LargeInput } from "#/components/input";
 import { BasicButton } from "#/components/interactive/basic-button";
 import { ListButton } from "#/components/interactive/list-button";
-import { useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
-import type { WithMethods } from "#/store/generic-store";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useRevalidator } from "react-router";
 import { restAddToCollection, restCreateCollection, restRemoveFromCollection } from "#/store/api";
-import { useCollectionList, useSong, useViewer } from "#/store/store";
-import type { CollectionType } from "#/store/store-collections";
+import { useViewer } from "#/store/store";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
+import { getCollectionStore, getSongStore, useCollectionStoreChange, useSongStoreChange } from "#/worker/client";
+import type { CollectionRecord } from "#/worker/types";
+
+type LoaderData = { songId: string | null; collections: CollectionRecord[] };
+
+export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData> {
+  const slug = params.slug;
+  if (!slug) return { songId: null, collections: [] };
+  const [record, { collections: listed }] = await Promise.all([
+    getSongStore().getSong({ slug }),
+    getCollectionStore().getCollectionList(),
+  ]);
+  const collections = await Promise.all(listed.map(c => getCollectionStore().getCollection({ id: c.id })));
+  return {
+    songId: record?.id ?? null,
+    collections: collections.filter((c): c is CollectionRecord => c !== null),
+  };
+}
 
 export default function AddToCollection() {
   const { t } = useTranslation();
-  const { refresh, list } = useCollectionList();
-  const params = useParams<{ slug: string }>();
-  if (!params.slug) throw new Error("Invalid route");
-  const { song } = useSong({ slug: params.slug });
+  const { songId, collections } = useLoaderData() as LoaderData;
+  const revalidator = useRevalidator();
+  const revalidate = useCallback(() => revalidator.revalidate(), [revalidator]);
+  useCollectionStoreChange(revalidate);
+  useSongStoreChange(revalidate);
   const [viewer] = useViewer();
   const [error, setError] = useState("");
   const goBack = useGoBack();
 
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  if (!song) {
+  if (!songId) {
     return <ErrorPage text={t("Song not found")} />;
   }
 
-  const addable: typeof list = [];
-  const removable: typeof list = [];
-  const locked: typeof list = [];
-  for (const c of list) {
-    const isInCollection = c.item.songList.includes(song.id);
-    const editable = !c.item.locked && c.item.owner.name === viewer?.name;
+  const addable: CollectionRecord[] = [];
+  const removable: CollectionRecord[] = [];
+  const locked: CollectionRecord[] = [];
+  for (const c of collections) {
+    const isInCollection = c.data.songIds.includes(songId);
+    const editable = !c.data.locked && c.data.owner?.name === viewer?.name;
     if (editable) {
       if (isInCollection) {
         removable.push(c);
@@ -56,7 +70,7 @@ export default function AddToCollection() {
         <div className="pt-2" />
         <ListButton to="/register">Vytvořit účet</ListButton>
         {locked.length > 0 ? <Title text="Píseň je v kolekcích" first={false} /> : null}
-        <CollectionList list={locked.sort(collectionCompare)} />
+        <CollectionList list={sortCollections(locked)} />
       </div>
     );
   }
@@ -65,12 +79,12 @@ export default function AddToCollection() {
     <div className="mx-auto flex max-w-xl flex-col gap-2">
       {addable.length > 0 ? <Title first={true} text={t("collection.Add song to collection")} error={error} /> : null}
       <CollectionList
-        list={addable.sort(collectionCompare)}
+        list={sortCollections(addable)}
         onPress={collectionId => {
           setError("");
-          addToCollection(song.id, collectionId).then(
+          addToCollection(songId, collectionId).then(
             () => {
-              refresh();
+              getCollectionStore().triggerRefetch();
               goBack();
             },
             err => {
@@ -84,12 +98,12 @@ export default function AddToCollection() {
         <Title first={addable.length < 1} text={t("collection.Remove song from collection")} error={error} />
       ) : null}
       <CollectionList
-        list={removable.sort(collectionCompare)}
+        list={sortCollections(removable)}
         onPress={collectionId => {
           setError("");
-          removeFromCollection(song.id, collectionId).then(
+          removeFromCollection(songId, collectionId).then(
             () => {
-              refresh();
+              getCollectionStore().triggerRefetch();
               goBack();
             },
             err => {
@@ -103,9 +117,9 @@ export default function AddToCollection() {
       <NewCollection
         onDone={collectionId => {
           setError("");
-          addToCollection(song.id, collectionId).then(
+          addToCollection(songId, collectionId).then(
             () => {
-              refresh();
+              getCollectionStore().triggerRefetch();
               goBack();
             },
             err => {
@@ -116,9 +130,13 @@ export default function AddToCollection() {
         }}
       />
       {locked.length > 0 ? <Title first={false} text={t("collection.Song is also in collections")} /> : null}
-      <CollectionList list={locked.sort(collectionCompare)} />
+      <CollectionList list={sortCollections(locked)} />
     </div>
   );
+}
+
+function sortCollections(list: readonly CollectionRecord[]) {
+  return [...list].sort((a, b) => collectionCompare({ item: a.data }, { item: b.data }));
 }
 
 function Title({ first, text, error }: { first: boolean; text: string; error?: string | null }) {
@@ -175,31 +193,25 @@ function NewCollection({ onDone }: { onDone: (id: string) => void }) {
   );
 }
 
-function CollectionList({
-  list,
-  onPress,
-}: {
-  list: readonly WithMethods<CollectionType>[];
-  onPress?: (id: string) => void;
-}) {
+function CollectionList({ list, onPress }: { list: readonly CollectionRecord[]; onPress?: (id: string) => void }) {
   if (list.length < 1) return null;
   return (
     <>
       {onPress
         ? list.map(item => (
             <ListButton
-              key={item.item.id}
+              key={item.id}
               onPress={() => {
-                onPress(item.item.id);
+                onPress(item.id);
               }}
               style={{ marginTop: 8 }}
             >
-              <span>{collectionFullName(item.item)}</span>
+              <span>{collectionFullName(item.data)}</span>
             </ListButton>
           ))
         : list.map(item => (
-            <span key={item.item.id} className="mt-2 text-black dark:text-white">
-              {collectionFullName(item.item)}
+            <span key={item.id} className="mt-2 text-black dark:text-white">
+              {collectionFullName(item.data)}
             </span>
           ))}
     </>
