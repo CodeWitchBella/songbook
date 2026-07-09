@@ -260,6 +260,7 @@
                 '';
                 working_dir = "backend";
                 depends_on.backend-install.condition = "process_completed_successfully";
+                availability.restart = "on_failure";
               };
               frontend-install = {
                 command = ''
