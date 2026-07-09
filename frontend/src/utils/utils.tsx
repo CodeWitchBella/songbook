@@ -35,10 +35,11 @@ export function collectionCompare(ai: { item: { name: string } }, bi: { item: { 
 
 export function collectionFullName(collection: {
   slug: string;
-  owner: { handle?: string; name: string };
+  owner?: { handle?: string | null; name?: string | null } | null;
   name: string;
 }) {
   return (
-    (collection.slug.includes("/") ? (collection.owner.handle || collection.owner.name) + " > " : "") + collection.name
+    (collection.slug.includes("/") ? (collection.owner?.handle || collection.owner?.name || "") + " > " : "") +
+    collection.name
   );
 }

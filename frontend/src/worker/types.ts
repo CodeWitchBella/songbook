@@ -64,13 +64,18 @@ export const songStoreChannel = "songbook-song-store";
 
 // The generated schema types `owner` the same way it types song's `editor`
 // (a nullable $ref becomes an impossible-to-satisfy intersection); spell out
-// what it actually means. `data` is also declared optional even though a
-// successful response always includes it.
-type RawCollectionDetail = NonNullable<components["schemas"]["CollectionDetail"]["data"]>;
+// what it actually means. Also, `/collections/by-id` and `/collections/by-slug`
+// actually respond with `CollectionRecordFlat` (whose `data.songList` is
+// `{ id: string }[]`), not the differently-shaped (and unused) `CollectionDetail`;
+// `songList` is flattened to a plain `songIds: string[]` for convenience.
+type RawCollectionData = components["schemas"]["CollectionData"];
 export type CollectionRecord = {
   id: string;
   lastModified: string | null;
-  data: Omit<RawCollectionDetail, "owner"> & { owner: components["schemas"]["RestUser"] | null };
+  data: Omit<RawCollectionData, "owner" | "songList"> & {
+    owner: components["schemas"]["RestUser"] | null;
+    songIds: string[];
+  };
 };
 
 /** Denormalized per-collection entry stored in the single index key. */
@@ -82,6 +87,7 @@ export type CollectionIndexEntry = {
   localModifiedAt: string | null;
   slug: string | null;
   name: string | null;
+  owner: components["schemas"]["RestUser"] | null;
 };
 
 export type CollectionIndex = Record<string, CollectionIndexEntry>;
@@ -90,6 +96,7 @@ export type ListedCollection = {
   id: string;
   slug: string;
   name: string;
+  owner: components["schemas"]["RestUser"] | null;
 };
 
 export type CollectionList = {

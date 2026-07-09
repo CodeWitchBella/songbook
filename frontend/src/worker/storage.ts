@@ -34,7 +34,10 @@ export async function readAllSongs(): Promise<SongRecord[]> {
   return all.filter(([key]) => key.startsWith("song:")).map(([, record]) => record);
 }
 
-const collectionIndexKey = "collectionIndex";
+// Bumped when the CollectionIndexEntry shape changes, so previously-cached
+// entries (missing new fields, e.g. owner) are treated as absent and
+// force a full resync instead of being served stale forever.
+const collectionIndexKey = "collectionIndex:v2";
 const collectionKey = (id: string) => `collection:${id}`;
 
 export async function readCollectionIndex(): Promise<CollectionIndex> {

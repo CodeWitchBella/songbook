@@ -367,22 +367,18 @@ const songStore: SongEntityStore = createEntityStore<SongQuery, SongIndex[string
 });
 
 type CollectionQuery = { slug: string } | { id: string };
-/** Bulk entry from POST /collections: unlike the song index, it already carries denormalized data. */
-type CollectionRemoteEntry = { id: string; lastModified?: string | null; data?: { slug: string; name: string } };
+type CollectionRemoteEntry = { id: string; modifiedAt: string };
 
-/**
- * Fetch a collection's full detail. Only a by-slug endpoint exists, so an
- * id-only query resolves through the index entry's known slug first.
- */
-function fetchCollection(
-  query: CollectionQuery,
-  entry: CollectionIndex[string] | undefined,
-): Promise<CollectionRecord | null> {
-  const slug = "slug" in query ? query.slug : entry?.slug;
-  if (slug === null || slug === undefined) return Promise.resolve(null);
+function fetchCollection(query: CollectionQuery): Promise<CollectionRecord | null> {
   return withRetry(async () => {
-    const res = await client.GET("/collection/by-slug/{slug}", { params: { path: { slug } } });
-    if (res.data) return res.data as CollectionRecord;
+    const res =
+      "id" in query
+        ? await client.GET("/collections/by-id/{id}", { params: { path: { id: query.id } } })
+        : await client.GET("/collections/by-slug/{slug}", { params: { path: { slug: query.slug } } });
+    if (res.data) {
+      const { songList, ...data } = res.data.data;
+      return { ...res.data, data: { ...data, songIds: songList.map(song => song.id) } };
+    }
     if (res.response.status === 404) return null;
     throw new Error(`Failed to fetch collection (status ${res.response.status})`);
   });
@@ -403,18 +399,19 @@ const collectionStore = createEntityStore<
     deleteRecord: deleteCollection,
   },
   fetchRemoteIndex: async () => {
-    const res = await client.POST("/collections", { body: {} });
-    if (!res.data?.data) throw new Error(`Failed to load collection index (status ${res.response.status})`);
-    return res.data.data.collections;
+    const res = await client.GET("/collections");
+    if (!res.data) throw new Error(`Failed to load collection index (status ${res.response.status})`);
+    return res.data.index;
   },
   remoteId: entry => entry.id,
-  remoteModifiedAt: entry => entry.lastModified ?? "",
-  createEntry: (id, remoteModifiedAt, remoteEntry) => ({
+  remoteModifiedAt: entry => entry.modifiedAt,
+  createEntry: (id, remoteModifiedAt) => ({
     id,
     remoteModifiedAt,
     localModifiedAt: null,
-    slug: remoteEntry.data?.slug ?? null,
-    name: remoteEntry.data?.name ?? null,
+    slug: null,
+    name: null,
+    owner: null,
   }),
   fetchRecord: fetchCollection,
   findEntry: (index, query) =>
@@ -425,6 +422,7 @@ const collectionStore = createEntityStore<
     localModifiedAt: record.lastModified ?? remoteModifiedAt ?? null,
     slug: record.data.slug,
     name: record.data.name,
+    owner: record.data.owner,
   }),
 });
 
@@ -434,7 +432,7 @@ const collectionApi: CollectionStoreApi = {
     const entries = Object.values(collectionStore.getIndex());
     const collections = entries
       .filter(entry => entry.slug !== null)
-      .map(entry => ({ id: entry.id, slug: entry.slug!, name: entry.name ?? "" }))
+      .map(entry => ({ id: entry.id, slug: entry.slug!, name: entry.name ?? "", owner: entry.owner }))
       .sort((a, b) => a.name.localeCompare(b.name, "cs"));
     return {
       collections,

@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useRevalidator } from "react-router";
 import SongList from "#/sections/song-list/song-list";
-import { usePagesNum } from "#/store/store";
 import { getCollectionStore, useCollectionStoreChange } from "#/worker/client";
 import type { CollectionRecord } from "#/worker/types";
 
@@ -22,10 +21,10 @@ export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData
 
 const emptyArray: never[] = [];
 function useCollectionWithSet(record: CollectionRecord | null) {
-  const songList = record ? record.data.songList : emptyArray;
+  const songList = record ? record.data.songIds : emptyArray;
   const set = useMemo(() => {
     const v = new Set<string>();
-    for (const song of songList) v.add(song.id);
+    for (const song of songList) v.add(song);
     return v;
   }, [songList]);
   if (!record) return null;
@@ -57,19 +56,16 @@ function CollectionRoute() {
       }
       slug={collection.slug}
       title={collection.name}
-      menu={<Stats set={set} songCount={collection.songList.length} />}
+      menu={<Stats songCount={collection.songIds.length} />}
     />
   );
 }
 
-function Stats({ set, songCount }: { set: Set<string> | undefined; songCount: number }) {
-  const pagesNum = usePagesNum(set || null);
+function Stats({ songCount }: { songCount: number }) {
   const { t } = useTranslation();
   return (
     <div className="mb-1 mt-4 flex flex-row items-center px-5">
-      <span className="text-lg text-black dark:text-white">
-        {t("count-pages-songs", { pagesNum: pagesNum ?? 0, songCount })}
-      </span>
+      <span className="text-lg text-black dark:text-white">{t("count-pages-songs_songs", { count: songCount })}</span>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { useQueryParam } from "#/components/use-router";
 import React, { useMemo } from "react";
 import type { WithMethods } from "#/store/generic-store";
 import { restAddToCollection, restRemoveFromCollection } from "#/store/api";
-import { useCollection, useCollectionList, usePagesNum, useSongList } from "#/store/store";
+import { useCollection, useCollectionList, useSongList } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 import { collectionCompare, collectionFullName } from "#/utils/utils";
 
@@ -120,19 +120,12 @@ function ActualDiff({ a: aSlug, b: bSlug, ban: banSlug }: { a: string; b: string
     return { added, removed, kept, neither, b: bSet, a: aSet, bad };
   }, [a, b, ban, songs]);
 
-  const pagesNumA = usePagesNum(sets?.a ?? null);
-  const pagesNumB = usePagesNum(sets?.b ?? null);
-
   if (!sets) return null;
   return (
     <>
       <div style={{ marginTop: 16 }}>
-        <div>
-          Pages in old: {pagesNumA}, songs: {sets.a.size}
-        </div>
-        <div>
-          Pages in new: {pagesNumB}, songs: {sets.b.size}
-        </div>
+        <div>Songs in old: {sets.a.size}</div>
+        <div>Songs in new: {sets.b.size}</div>
       </div>
       <div
         style={{
