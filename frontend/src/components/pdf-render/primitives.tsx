@@ -172,14 +172,30 @@ export function PDFBlobProvider({ children, document }: ComponentProps<typeof Re
   );
 }
 
-export const PDFProvider = React.lazy(
-  once(() =>
-    import("@react-pdf/renderer")
-      .then(pdf => pdfSetup(pdf))
-      .then(pdf => ({
-        default: ({ children }: PropsWithChildren<{}>) => <InPdfCtx.Provider value={pdf}>{children}</InPdfCtx.Provider>,
-      })),
-  ),
+let pdfRendererLoaded = false;
+const loadPDFRenderer = once(() =>
+  import("@react-pdf/renderer")
+    .then(pdf => pdfSetup(pdf))
+    .then(pdf => {
+      pdfRendererLoaded = true;
+      return pdf;
+    }),
+);
+
+/** Kicks off loading the (large) PDF renderer library ahead of time, without generating anything yet. */
+export function preloadPDFRenderer() {
+  return loadPDFRenderer();
+}
+
+/** Whether {@link preloadPDFRenderer} (or an actual render) has already finished loading the library. */
+export function isPDFRendererLoaded() {
+  return pdfRendererLoaded;
+}
+
+export const PDFProvider = React.lazy(() =>
+  loadPDFRenderer().then(pdf => ({
+    default: ({ children }: PropsWithChildren<{}>) => <InPdfCtx.Provider value={pdf}>{children}</InPdfCtx.Provider>,
+  })),
 );
 
 export function useIsInPDF() {

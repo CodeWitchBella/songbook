@@ -13,33 +13,10 @@ import React, { useCallback, useReducer, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useParams, useRevalidator } from "react-router";
-import type { User } from "#/store/api";
 import type { SongType } from "#/store/store-song";
-import { updateSong } from "#/store/store-song";
+import { toSongType, updateSong } from "#/store/store-song";
 import * as parser from "#/utils/song-parser/song-parser";
 import { getSongStore, useSongStoreChange } from "#/worker/client";
-import type { SongRecord } from "#/worker/types";
-
-function toSongType(record: SongRecord): SongType {
-  const { data } = record;
-  return {
-    id: record.id,
-    lastModified: record.lastModified ? DateTime.fromISO(record.lastModified) : DateTime.now(),
-    slug: data.slug,
-    author: data.author,
-    title: data.title,
-    text: data.text ?? "",
-    fontSize: data.fontSize ?? 0,
-    paragraphSpace: data.paragraphSpace ?? 0,
-    titleSpace: data.titleSpace ?? 0,
-    spotify: data.spotify,
-    pretranspose: data.pretranspose ?? 0,
-    extraSearchable: data.extraSearchable,
-    extraNonSearchable: data.extraNonSearchable,
-    editor: data.editor as unknown as User | null,
-    insertedAt: data.insertedAt ? DateTime.fromISO(data.insertedAt) : null,
-  };
-}
 
 type LoaderData = { song: SongType | null };
 
