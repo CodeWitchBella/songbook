@@ -30,6 +30,7 @@ const imports = {
   QuickSettings: once(() => import("./quick-settings")),
   Chords: once(() => import("./chords")),
   CollectionDiff: once(() => import("./collection-diff")),
+  CollectionPDF: once(() => import("./collection-pdf")),
 };
 
 const router = createBrowserRouter(
@@ -49,6 +50,8 @@ const router = createBrowserRouter(
           <Route path="about" lazy={imports.About} />
           <Route path="add-to-collection/:slug" lazy={imports.AddToCollection} />
           <Route path="collections" lazy={imports.CollectionList} />
+          <Route path="collections/:slug/:slug2/pdf" lazy={imports.CollectionPDF} />
+          <Route path="collections/:slug/pdf" lazy={imports.CollectionPDF} />
           <Route path="collections/:slug/:slug2" lazy={imports.Collection} />
           <Route path="collections/:slug" lazy={imports.Collection} />
           <Route path="song/:slug" lazy={imports.Song} />

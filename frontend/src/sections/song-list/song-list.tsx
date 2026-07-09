@@ -1,6 +1,5 @@
 import { BackArrow, BackButton } from "#/components/back-button";
 import { ListButton } from "#/components/interactive/list-button";
-import { DownloadPDF } from "#/components/pdf";
 import { SearchTextInput } from "#/components/search-text-input";
 import TopMenu from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
@@ -8,7 +7,6 @@ import type { PropsWithChildren, ReactNode } from "react";
 import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-import type { SongType } from "#/store/store-song";
 
 import { SongListLook } from "./song-list-look";
 import { buildList, compareListed, useWorkerSearch, useWorkerSongList } from "./worker-list";
@@ -83,13 +81,6 @@ export default function SongList({
     [byId, results, sorted, sortByAuthor, filter],
   );
 
-  // PDF over the listed (text-less) songs; the shared worker keeps song bodies
-  // out of the tab, so the whole-songbook PDF is degraded until it gets a path.
-  const pdfList = useMemo(
-    () => (filter ? sorted.filter(s => filter(s.id)) : sorted) as unknown as SongType[],
-    [sorted, filter],
-  );
-
   const location = useLocation();
   const navigate = useNavigate();
   const clearOnBackRef = useRef((location.state as any)?.clearOnBack);
@@ -134,13 +125,11 @@ export default function SongList({
               {sortByAuthor ? t("Sort by name") : t("Sort by interpret")}
             </ListButton>
             <Gap />
-            <DownloadPDF list={pdfList} slug={slug} title={title || "Zpěvník"}>
-              {(text, onClick) => (
-                <ListButton onPress={onClick} style={{ textAlign: "left" }}>
-                  {text}
-                </ListButton>
-              )}
-            </DownloadPDF>
+            {slug !== null && (
+              <ListButton to={`/collections/${slug}/pdf`} style={{ textAlign: "left" }}>
+                {t("pdf-gen.Download PDF")}
+              </ListButton>
+            )}
             {menu ?? null}
           </TopMenu>
         }
