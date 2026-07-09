@@ -37,7 +37,7 @@ export function registerCollections(api: Api) {
   api.openapi(
     {
       method: "get",
-      path: "/collections",
+      path: "/collection",
       responses: {
         200: { description: "Collection index", ...json(CollectionIndexResponse) },
       },

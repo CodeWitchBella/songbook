@@ -399,7 +399,7 @@ const collectionStore = createEntityStore<
     deleteRecord: deleteCollection,
   },
   fetchRemoteIndex: async () => {
-    const res = await client.GET("/collections");
+    const res = await client.GET("/collection");
     if (!res.data) throw new Error(`Failed to load collection index (status ${res.response.status})`);
     return res.data.index;
   },
