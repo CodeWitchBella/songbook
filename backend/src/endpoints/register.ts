@@ -1,30 +1,45 @@
-import { z } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 
 import { schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { createSession, hashPassword } from "#/lib/auth.ts";
 import { slugify } from "#/lib/utils.ts";
-import { RestUserSchema, restRoute, type Api } from "#/lib/openapi.ts";
+import { RestUserSchema, json, type Api } from "#/lib/openapi.ts";
 import { serializeUser } from "./serialize.ts";
 
 export function registerRegister(api: Api) {
-  restRoute(api, "register", {
-    summary: "Register a new user",
-    body: z
-      .object({
-        input: z.object({ email: z.string(), password: z.string(), name: z.string() }),
-      })
-      .openapi("RegisterVariables"),
-    data: z.object({
-      register: z.object({
-        __typename: z.string(),
-        message: z.string().optional(),
-        user: RestUserSchema.optional(),
-      }),
+  api.openapi(
+    createRoute({
+      method: "post",
+      path: "/register",
+      summary: "Register a new user",
+      request: {
+        body: json(
+          z
+            .object({
+              input: z.object({ email: z.string(), password: z.string(), name: z.string() }),
+            })
+            .openapi("RegisterVariables"),
+        ),
+      },
+      responses: {
+        200: {
+          description: "Registration result",
+          ...json(
+            z.object({
+              register: z.object({
+                __typename: z.string(),
+                message: z.string().optional(),
+                user: RestUserSchema.optional(),
+              }),
+            }),
+          ),
+        },
+      },
     }),
-    handler: register,
-  });
+    (async (c: any) => Response.json(await register(c.req.valid("json"), await c.var.makeContext()))) as any,
+  );
 }
 
 export async function register(vars: any, context: MyContext) {

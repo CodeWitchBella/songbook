@@ -9,14 +9,20 @@ import { randomID } from "#/lib/utils.ts";
 
 /**
  * An error whose message is safe to return to the client. Thrown by the REST
- * handlers (and shared auth helpers) and translated into a `{ errors: [...] }`
- * envelope by the `restRoute` wrapper in `#/app.ts`.
+ * handlers (and shared auth helpers) and translated into a `{ error }` JSON
+ * response with the given status code by the global handler in `#/app.ts`.
  */
-export class RestError extends Error {}
+export class RestError extends Error {
+  status: number;
+  constructor(message: string, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
 
 export async function getViewerCheck(context: MyContext) {
   const viewer = await getViewer(context);
-  if (!viewer) throw new RestError("Not logged in");
+  if (!viewer) throw new RestError("Not logged in", 401);
   return viewer;
 }
 

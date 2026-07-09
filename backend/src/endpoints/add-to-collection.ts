@@ -1,18 +1,28 @@
-import { z } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import { eq, or, sql } from "drizzle-orm";
 
 import { checkCode, schema } from "#/db/drizzle.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { RestError, getViewerCheck } from "#/lib/auth.ts";
-import { restRoute, type Api } from "#/lib/openapi.ts";
+import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
 
 export function registerAddToCollection(api: Api) {
-  restRoute(api, "add-to-collection", {
-    summary: "Add a song to a collection",
-    body: z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables"),
-    data: z.object({ addToCollection: z.string().nullable() }),
-    handler: addToCollection,
-  });
+  api.openapi(
+    createRoute({
+      method: "post",
+      path: "/add-to-collection",
+      summary: "Add a song to a collection",
+      request: {
+        body: json(z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables")),
+      },
+      responses: {
+        200: { description: "Added", ...json(z.object({ addToCollection: z.string() })) },
+        403: { description: "Not allowed to modify this collection", ...json(ErrorSchema) },
+        404: { description: "Collection or song not found", ...json(ErrorSchema) },
+      },
+    }),
+    (async (c: any) => Response.json(await addToCollection(c.req.valid("json"), await c.var.makeContext()))) as any,
+  );
 }
 
 export async function addToCollection(vars: any, context: MyContext) {
@@ -21,15 +31,15 @@ export async function addToCollection(vars: any, context: MyContext) {
   const collectionSnap = await context.db.query.collection.findFirst({
     where: or(eq(schema.collection.idString, collection), eq(schema.collection.slug, collection)),
   });
-  if (!collectionSnap) throw new RestError("Collection does not exist");
+  if (!collectionSnap) throw new RestError("Collection does not exist", 404);
   if (!(collectionSnap.owner === viewer.id || (!collectionSnap.owner && viewer.admin)))
-    throw new RestError("Not your collection");
-  if (collectionSnap.locked) throw new RestError("Collection is locked");
+    throw new RestError("Not your collection", 403);
+  if (collectionSnap.locked) throw new RestError("Collection is locked", 403);
 
   const songSnap = await context.db.query.song.findFirst({
     where: or(eq(schema.song.idString, song), eq(schema.song.slug, song)),
   });
-  if (!songSnap) throw new RestError("Song does not exist");
+  if (!songSnap) throw new RestError("Song does not exist", 404);
 
   try {
     await context.db.insert(schema.collectionSong).values({

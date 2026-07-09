@@ -14,21 +14,20 @@ function enqueue<T>(run: () => Promise<T>): Promise<T> {
 }
 
 /**
- * Run a GraphQL-proxy call: serialize it through {@link enqueue},
- * reject on transport or GraphQL errors, and return the `data` payload.
+ * Run an API call through {@link enqueue}, rejecting on transport/HTTP errors
+ * and returning the response body otherwise.
  */
-function call<D>(run: () => Promise<{ data?: { data?: D; errors?: unknown }; error?: unknown }>): Promise<D> {
+function call<D>(run: () => Promise<{ data?: D; error?: unknown }>): Promise<D> {
   const tmpe = new Error();
   return enqueue(async () => {
     const { data, error } = await run();
-    const envelope = error ?? data;
-    if (error || (envelope as { errors?: unknown } | undefined)?.errors) {
+    if (error) {
       const err = new Error("Network error: REST request failed");
-      (err as any).data = envelope;
+      (err as any).data = error;
       err.stack = tmpe.stack;
       throw err;
     }
-    return (data as { data: D }).data;
+    return data as D;
   });
 }
 

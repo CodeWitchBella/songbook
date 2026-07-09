@@ -14,6 +14,7 @@ import { registerRemoveFromCollection } from "#/endpoints/remove-from-collection
 import { registerSongs } from "#/endpoints/songs.ts";
 import { registerUpdateSong } from "#/endpoints/update-song.ts";
 import { forward } from "#/forward.ts";
+import { RestError } from "#/lib/auth.ts";
 import type { MyContext } from "#/lib/context.ts";
 import { contextPair } from "#/lib/context.ts";
 import type { Variables } from "#/lib/openapi.ts";
@@ -41,6 +42,12 @@ api.use("*", async (c, next) => {
   c.set("makeContext", () => (cached ??= createContext()));
   await next();
   if (c.res) finishContext(c.res);
+});
+
+/** Translate a thrown {@link RestError} into a `{ error }` JSON response with its status code. */
+api.onError((err, c) => {
+  if (err instanceof RestError) return c.json({ error: err.message }, err.status as any);
+  throw err;
 });
 
 // ---------------------------------------------------------------------------
