@@ -9,11 +9,11 @@ import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
 export function registerRemoveFromCollection(api: Api) {
   api.openapi(
     createRoute({
-      method: "post",
-      path: "/remove-from-collection",
+      method: "delete",
+      path: "/collections/by-id/{collection}/songs/by-id/{song}",
       summary: "Remove a song from a collection",
       request: {
-        body: json(z.object({ collection: z.string(), song: z.string() }).openapi("RemoveFromCollectionVariables")),
+        params: z.object({ collection: z.string(), song: z.string() }),
       },
       responses: {
         200: { description: "Removed", ...json(z.object({ removeFromCollection: z.string() })) },
@@ -22,7 +22,7 @@ export function registerRemoveFromCollection(api: Api) {
       },
     }),
     (async (c: any) =>
-      Response.json(await removeFromCollection(c.req.valid("json"), await c.var.makeContext()))) as any,
+      Response.json(await removeFromCollection(c.req.valid("param"), await c.var.makeContext()))) as any,
   );
 }
 

@@ -32,19 +32,23 @@ function call<D>(run: () => Promise<{ data?: D; error?: unknown }>): Promise<D> 
 }
 
 export function restUpdateSong(id: string, input: Record<string, unknown>) {
-  return call(() => client.POST("/update-song", { body: { id, input } }));
+  return call(() => client.PATCH("/song/by-id/{id}", { params: { path: { id } }, body: input }));
 }
 
 export function restAddToCollection(collection: string, song: string) {
-  return call(() => client.POST("/add-to-collection", { body: { collection, song } }));
+  return call(() =>
+    client.PUT("/collections/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
+  );
 }
 
 export function restRemoveFromCollection(collection: string, song: string) {
-  return call(() => client.POST("/remove-from-collection", { body: { collection, song } }));
+  return call(() =>
+    client.DELETE("/collections/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
+  );
 }
 
 export function restCreateCollection(name: string) {
-  return call(() => client.POST("/create-collection", { body: { name } }));
+  return call(() => client.POST("/collection", { body: { name } }));
 }
 
 export function restRegister(input: { email: string; password: string; name: string }) {

@@ -10,18 +10,22 @@ import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
 export function registerUpdateSong(api: Api) {
   api.openapi(
     createRoute({
-      method: "post",
-      path: "/update-song",
+      method: "patch",
+      path: "/song/by-id/{id}",
       summary: "Update a song",
       request: {
-        body: json(z.object({ id: z.string(), input: z.object({}).passthrough() }).openapi("UpdateSongVariables")),
+        params: z.object({ id: z.string() }),
+        body: json(z.object({}).passthrough().openapi("UpdateSongVariables")),
       },
       responses: {
         200: { description: "Updated", ...json(z.object({ updateSong: z.object({ id: z.string() }) })) },
         404: { description: "Song not found", ...json(ErrorSchema) },
       },
     }),
-    (async (c: any) => Response.json(await updateSong(c.req.valid("json"), await c.var.makeContext()))) as any,
+    (async (c: any) =>
+      Response.json(
+        await updateSong({ id: c.req.valid("param").id, input: c.req.valid("json") }, await c.var.makeContext()),
+      )) as any,
   );
 }
 

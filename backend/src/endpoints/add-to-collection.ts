@@ -9,11 +9,11 @@ import { ErrorSchema, json, type Api } from "#/lib/openapi.ts";
 export function registerAddToCollection(api: Api) {
   api.openapi(
     createRoute({
-      method: "post",
-      path: "/add-to-collection",
+      method: "put",
+      path: "/collections/by-id/{collection}/songs/by-id/{song}",
       summary: "Add a song to a collection",
       request: {
-        body: json(z.object({ collection: z.string(), song: z.string() }).openapi("AddToCollectionVariables")),
+        params: z.object({ collection: z.string(), song: z.string() }),
       },
       responses: {
         200: { description: "Added", ...json(z.object({ addToCollection: z.string() })) },
@@ -21,7 +21,7 @@ export function registerAddToCollection(api: Api) {
         404: { description: "Collection or song not found", ...json(ErrorSchema) },
       },
     }),
-    (async (c: any) => Response.json(await addToCollection(c.req.valid("json"), await c.var.makeContext()))) as any,
+    (async (c: any) => Response.json(await addToCollection(c.req.valid("param"), await c.var.makeContext()))) as any,
   );
 }
 

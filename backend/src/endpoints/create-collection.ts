@@ -11,7 +11,7 @@ export function registerCreateCollection(api: Api) {
   api.openapi(
     createRoute({
       method: "post",
-      path: "/create-collection",
+      path: "/collection",
       summary: "Create a new collection",
       request: {
         body: json(
