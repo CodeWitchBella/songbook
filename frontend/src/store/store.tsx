@@ -1,8 +1,6 @@
 import localForage from "localforage";
-import { DateTime } from "luxon";
 import type { PropsWithChildren } from "react";
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import xorshift from "xorshift";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 
 import { newSong } from "./fetchers";
 import type { GenericStore, MinItem } from "./generic-store";
@@ -102,42 +100,6 @@ export function useSongList() {
       },
     }),
     [songs, initing, loading, store],
-  );
-}
-
-export function useGetRandomSong() {
-  const { store } = useStoreContext();
-  return useCallback(
-    (currentSongId: string) => {
-      const nowReal = DateTime.utc();
-      const now = nowReal.get("hour") < 3 ? nowReal.minus({ day: 1 }) : nowReal;
-      const seed = [now.get("day"), now.get("month"), now.get("year"), 0];
-      const random = new xorshift.constructor(seed);
-      const songs = store.readAll();
-      const withRandom = [...songs]
-        .sort((a, b) => a.item.slug.localeCompare(b.item.slug))
-        .map(song => ({
-          song,
-          number: random.random(),
-        }));
-      const curRandom = withRandom.find(s => s.song.item.id === currentSongId);
-      if (!curRandom) return songs[Math.floor(Math.random() * songs.length)];
-      const next = withRandom.reduce(
-        (cur, t) => {
-          if (t.number < curRandom.number) return cur;
-          if (t.song.item.id === currentSongId) return cur;
-          if (!cur) return t;
-          return cur.number < t.number ? cur : t;
-        },
-        null as null | (typeof withRandom)[0],
-      );
-      if (next) return next.song;
-      return withRandom.reduce(
-        (a, b) => (a === null ? b : a.number < b.number ? a : b),
-        null as null | (typeof withRandom)[0],
-      )!.song;
-    },
-    [store],
   );
 }
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { LinkProps } from "react-router";
 import { Link, useLocation, useNavigate } from "react-router";
-import { useGetRandomSong } from "#/store/store";
+import { useGetRandomSong } from "#/sections/song-list/worker-list";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
 
@@ -125,17 +125,19 @@ export default function SongMenu({
             ) : null}
             <MenuButton
               onClick={() => {
-                const nextSong = getRandomSong(song.id);
-                const canGoBackRaw = (location.state as any)?.canGoBack;
-                let canGoBack = typeof canGoBackRaw === "number" ? canGoBackRaw : canGoBackRaw ? 1 : 0;
-                if (!canGoBack) {
-                  navigate("/all-songs", { replace: true });
-                  navigate(location.pathname + location.search + location.hash, { state: location.state });
-                  canGoBack = 1;
-                }
+                getRandomSong(song.id).then(nextSong => {
+                  if (!nextSong) return;
+                  const canGoBackRaw = (location.state as any)?.canGoBack;
+                  let canGoBack = typeof canGoBackRaw === "number" ? canGoBackRaw : canGoBackRaw ? 1 : 0;
+                  if (!canGoBack) {
+                    navigate("/all-songs", { replace: true });
+                    navigate(location.pathname + location.search + location.hash, { state: location.state });
+                    canGoBack = 1;
+                  }
 
-                navigate("/song/" + nextSong.item.slug, {
-                  state: { canGoBack: canGoBack + 1 },
+                  navigate("/song/" + nextSong.slug, {
+                    state: { canGoBack: canGoBack + 1 },
+                  });
                 });
               }}
             >

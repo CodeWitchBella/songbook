@@ -1,5 +1,7 @@
 import { notNull } from "@isbl/ts-utils";
-import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
+import { useCallback, useEffect, useState } from "react";
+import xorshift from "xorshift";
 
 import { getSongStore, onSongStoreChange } from "#/worker/client";
 import type { ListedSong, SearchResult, SongList, SongListStats } from "#/worker/types";
@@ -98,4 +100,39 @@ export function useWorkerSearch(q: string): SearchResult | null {
     };
   }, [q]);
   return results;
+}
+
+/**
+ * Same-day-stable "next random song": everyone gets the same shuffle order
+ * for a given calendar day (seeded off the date), so repeatedly hitting
+ * "random" walks forward through it instead of jumping around.
+ */
+export function useGetRandomSong() {
+  return useCallback(async (currentSongId: string): Promise<ListedSong | null> => {
+    const { songs } = await getSongStore().getSongList();
+    if (songs.length === 0) return null;
+    const nowReal = DateTime.utc();
+    const now = nowReal.get("hour") < 3 ? nowReal.minus({ day: 1 }) : nowReal;
+    const seed = [now.get("day"), now.get("month"), now.get("year"), 0];
+    const random = new xorshift.constructor(seed);
+    const withRandom = [...songs]
+      .sort((a, b) => a.slug.localeCompare(b.slug))
+      .map(song => ({ song, number: random.random() }));
+    const curRandom = withRandom.find(s => s.song.id === currentSongId);
+    if (!curRandom) return songs[Math.floor(Math.random() * songs.length)];
+    const next = withRandom.reduce(
+      (cur, t) => {
+        if (t.number < curRandom.number) return cur;
+        if (t.song.id === currentSongId) return cur;
+        if (!cur) return t;
+        return cur.number < t.number ? cur : t;
+      },
+      null as null | (typeof withRandom)[0],
+    );
+    if (next) return next.song;
+    return withRandom.reduce(
+      (a, b) => (a === null ? b : a.number < b.number ? a : b),
+      null as null | (typeof withRandom)[0],
+    )!.song;
+  }, []);
 }
