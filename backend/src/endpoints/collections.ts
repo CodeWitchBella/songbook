@@ -43,23 +43,6 @@ const CollectionIndexResponse = z
   })
   .openapi("CollectionIndexResponse");
 
-const CollectionDetailSchema = z
-  .object({
-    id: z.string(),
-    lastModified: z.string().nullable().optional(),
-    data: z
-      .object({
-        slug: z.string(),
-        name: z.string(),
-        owner: RestUserSchema.nullable(),
-        insertedAt: z.string().nullable(),
-        locked: z.boolean().nullable(),
-        songIds: z.array(z.string()),
-      })
-      .optional(),
-  })
-  .openapi("CollectionDetail");
-
 export function registerCollections(api: Api) {
   restRoute(api, "collections", {
     summary: "List collections modified after a given timestamp",
@@ -128,57 +111,6 @@ export function registerCollections(api: Api) {
 
   registerCollectionLookup("slug", "/collections/by-slug/{slug}", schema.collection.slug);
   registerCollectionLookup("id", "/collections/by-id/{id}", schema.collection.idString);
-
-  api.openapi(
-    {
-      method: "get",
-      path: "/collection/by-slug/{slug}",
-      request: {
-        params: z.object({ slug: z.string() }),
-      },
-      responses: {
-        200: { description: "The requested collection with its song list", ...json(CollectionDetailSchema) },
-        404: { description: "Collection not found", ...json(z.object({ error: z.string() })) },
-      },
-    },
-    async c => {
-      const context = await c.var.makeContext();
-      const slug = c.req.valid("param").slug;
-
-      const collectionRow = await context.db.query.collection.findFirst({
-        where: eq(schema.collection.slug, slug),
-      });
-      if (!collectionRow) {
-        return c.json({ error: "Collection not found" }, 404);
-      }
-
-      const list = await context.db
-        .select()
-        .from(schema.collectionSong)
-        .where(eq(schema.collectionSong.collection, collectionRow.id))
-        .innerJoin(schema.song, eq(schema.collectionSong.song, schema.song.id));
-
-      const owner = collectionRow.owner
-        ? await context.db.query.user.findFirst({ where: eq(schema.user.id, collectionRow.owner) })
-        : null;
-
-      return c.json(
-        {
-          id: collectionRow.idString,
-          lastModified: collectionRow.lastModified,
-          data: {
-            slug: collectionRow.slug,
-            name: collectionRow.name,
-            owner: owner ?? null,
-            insertedAt: collectionRow.insertedAt,
-            locked: collectionRow.locked,
-            songIds: list.map(l => l.song.idString),
-          },
-        },
-        200,
-      );
-    },
-  );
 }
 
 export async function collections(vars: any, context: MyContext) {
