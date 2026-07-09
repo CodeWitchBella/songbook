@@ -107,6 +107,26 @@ function translateStatus(saveStatus: SaveStatus, outputOnNoChange = false) {
   }[saveStatus];
 }
 
+const REFETCH_DEBOUNCE_MS = 2000;
+let refetchTimeout: ReturnType<typeof setTimeout> | null = null;
+let refetchWaiters: (() => void)[] = [];
+
+/** Coalesces bursts of saves (e.g. autosave-while-typing) into one worker refetch. */
+function debouncedTriggerRefetch(): Promise<void> {
+  return new Promise(resolve => {
+    refetchWaiters.push(resolve);
+    if (refetchTimeout) clearTimeout(refetchTimeout);
+    refetchTimeout = setTimeout(() => {
+      refetchTimeout = null;
+      const waiters = refetchWaiters;
+      refetchWaiters = [];
+      getSongStore()
+        .triggerRefetch()
+        .finally(() => waiters.forEach(waiter => waiter()));
+    }, REFETCH_DEBOUNCE_MS);
+  });
+}
+
 function safeParseFloat(text: string, fallback: number) {
   const res = Number.parseFloat(text);
   if (!Number.isFinite(res)) return fallback;
@@ -195,8 +215,10 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       extraNonSearchable: result.extraNonSearchable || "",
       pretranspose: result.pretranspose || 0,
     })
-      .then(() => props.refetch())
       .then(() => {
+        debouncedTriggerRefetch()
+          .then(() => props.refetch())
+          .catch(console.error);
         if (version === changeCounterRef.current) {
           setState({ saveStatus: "SAVED" });
         } else {
