@@ -6,12 +6,12 @@ import { newSong } from "./fetchers";
 import type { User } from "./api";
 import { getSongStore } from "#/worker/client";
 
-const settingsStorage = localForage.createInstance({ name: "settings" });
+const viewerStorage = localForage.createInstance({ name: "viewer" });
 
 const useViewerStore = create(
   persist(() => ({ viewer: null as User | null }), {
     name: "viewer",
-    storage: createJSONStorage(() => settingsStorage),
+    storage: createJSONStorage(() => viewerStorage),
   }),
 );
 
