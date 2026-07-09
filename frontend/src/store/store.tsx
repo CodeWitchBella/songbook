@@ -1,5 +1,6 @@
 import localForage from "localforage";
-import { useEffect, useState } from "react";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 import { newSong } from "./fetchers";
 import type { User } from "./api";
@@ -7,17 +8,12 @@ import { getSongStore } from "#/worker/client";
 
 const settingsStorage = localForage.createInstance({ name: "settings" });
 
-function useCachedState<T>(key: string, initial: T | null) {
-  const st = useState<T | null>(initial);
-  const [v, setV] = st;
-  useEffect(() => {
-    settingsStorage.getItem<T>(key).then(itm => setV(itm));
-  }, [key, setV]);
-  useEffect(() => {
-    settingsStorage.setItem<T | null>(key, v);
-  }, [key, v]);
-  return st;
-}
+const useViewerStore = create(
+  persist(() => ({ viewer: null as User | null }), {
+    name: "viewer",
+    storage: createJSONStorage(() => settingsStorage),
+  }),
+);
 
 export function useNewSong() {
   return async ({
@@ -37,9 +33,8 @@ export function useNewSong() {
   };
 }
 
-// Stubbed to work without StoreProvider (being phased out): keeps its own
-// cached state instead of going through the old store context.
 export function useViewer() {
-  const [viewer, setViewer] = useCachedState<User>("viewer", null);
-  return [viewer, setViewer] as const;
+  const v = useViewerStore(s => s.viewer);
+  const setViewer = (viewer: User | null) => useViewerStore.setState({ viewer });
+  return [v, setViewer] as const;
 }
