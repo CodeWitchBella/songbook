@@ -9,22 +9,29 @@ steps:
       - git log -1 --format=%ct > .commit-time
       - git log -1 --format=%H > .commit-sha
 
-  - name: backend checks
+  - name: install
     image: ghcr.io/pnpm/pnpm:11
     depends_on: []
     commands:
       - pnpm runtime set node 26 -g
       - pnpm i --frozen-lockfile
+
+  - name: backend checks
+    image: ghcr.io/pnpm/pnpm:11
+    depends_on:
+      - install
+    commands:
+      - pnpm runtime set node 26 -g
       - pnpm --filter songbook-backend run fmt:check
       - pnpm --filter songbook-backend run lint
       - pnpm --filter songbook-backend exec tsc --noEmit
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11
-    depends_on: []
+    depends_on:
+      - install
     commands:
       - pnpm runtime set node 26 -g
-      - pnpm i --frozen-lockfile
       - pnpm --filter songbook-frontend run gen:api
       - pnpm --filter songbook-frontend run types
       - pnpm --filter songbook-frontend run fmt:check
