@@ -38,7 +38,9 @@ export async function readAllSongs(): Promise<SongRecord[]> {
 // entries (missing new fields, e.g. owner) are treated as absent and
 // force a full resync instead of being served stale forever.
 const collectionIndexKey = "collectionIndex:v2";
-const collectionKey = (id: string) => `collection:${id}`;
+// Bumped alongside CollectionRecord shape changes (e.g. songIds added), so
+// stale cached records don't get served without the new fields.
+const collectionKey = (id: string) => `collection:v2:${id}`;
 
 export async function readCollectionIndex(): Promise<CollectionIndex> {
   return (await get<CollectionIndex>(collectionIndexKey, store)) ?? {};

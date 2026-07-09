@@ -227,7 +227,9 @@ export function useNewSong() {
   };
 }
 
+// Stubbed to work without StoreProvider (being phased out): keeps its own
+// cached state instead of going through the old store context.
 export function useViewer() {
-  const { viewer, setViewer } = useStoreContext();
+  const [viewer, setViewer] = useCachedState<User>("viewer", null);
   return [viewer, setViewer] as const;
 }

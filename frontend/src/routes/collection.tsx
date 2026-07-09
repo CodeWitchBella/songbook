@@ -21,7 +21,7 @@ export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData
 
 const emptyArray: never[] = [];
 function useCollectionWithSet(record: CollectionRecord | null) {
-  const songList = record ? record.data.songIds : emptyArray;
+  const songList = record ? (record.data.songIds ?? emptyArray) : emptyArray;
   const set = useMemo(() => {
     const v = new Set<string>();
     for (const song of songList) v.add(song);
@@ -56,7 +56,7 @@ function CollectionRoute() {
       }
       slug={collection.slug}
       title={collection.name}
-      menu={<Stats songCount={collection.songIds.length} />}
+      menu={<Stats songCount={collection.songIds?.length ?? 0} />}
     />
   );
 }
