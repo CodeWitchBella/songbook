@@ -32,16 +32,8 @@ function call<D>(run: () => Promise<{ data?: { data?: D; errors?: unknown }; err
   });
 }
 
-export function restSongs(variables: { modifiedAfter: string | null; deletedAfter: string; skipDeleted: boolean }) {
-  return call(() => client.POST("/songs", { body: variables }));
-}
-
 export function restUpdateSong(id: string, input: Record<string, unknown>) {
   return call(() => client.POST("/update-song", { body: { id, input } }));
-}
-
-export function restCollections(variables: { modifiedAfter: string | null }) {
-  return call(() => client.POST("/collections", { body: variables }));
 }
 
 export function restAddToCollection(collection: string, song: string) {
