@@ -10,7 +10,7 @@ export function registerAddToCollection(api: Api) {
   api.openapi(
     createRoute({
       method: "put",
-      path: "/collections/by-id/{collection}/songs/by-id/{song}",
+      path: "/collection/by-id/{collection}/songs/by-id/{song}",
       summary: "Add a song to a collection",
       request: {
         params: z.object({ collection: z.string(), song: z.string() }),

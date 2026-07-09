@@ -37,13 +37,13 @@ export function restUpdateSong(id: string, input: Record<string, unknown>) {
 
 export function restAddToCollection(collection: string, song: string) {
   return call(() =>
-    client.PUT("/collections/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
+    client.PUT("/collection/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
   );
 }
 
 export function restRemoveFromCollection(collection: string, song: string) {
   return call(() =>
-    client.DELETE("/collections/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
+    client.DELETE("/collection/by-id/{collection}/songs/by-id/{song}", { params: { path: { collection, song } } }),
   );
 }
 

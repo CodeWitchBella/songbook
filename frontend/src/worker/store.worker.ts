@@ -373,8 +373,8 @@ function fetchCollection(query: CollectionQuery): Promise<CollectionRecord | nul
   return withRetry(async () => {
     const res =
       "id" in query
-        ? await client.GET("/collections/by-id/{id}", { params: { path: { id: query.id } } })
-        : await client.GET("/collections/by-slug/{slug}", { params: { path: { slug: query.slug } } });
+        ? await client.GET("/collection/by-id/{id}", { params: { path: { id: query.id } } })
+        : await client.GET("/collection/by-slug/{slug}", { params: { path: { slug: query.slug } } });
     if (res.data) {
       const { songList, ...data } = res.data.data;
       return { ...res.data, data: { ...data, songIds: songList.map(song => song.id) } };

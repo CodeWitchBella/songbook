@@ -10,7 +10,7 @@ export function registerRemoveFromCollection(api: Api) {
   api.openapi(
     createRoute({
       method: "delete",
-      path: "/collections/by-id/{collection}/songs/by-id/{song}",
+      path: "/collection/by-id/{collection}/songs/by-id/{song}",
       summary: "Remove a song from a collection",
       request: {
         params: z.object({ collection: z.string(), song: z.string() }),

@@ -1,4 +1,4 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
 
 import { registerAddToCollection } from "#/endpoints/add-to-collection.ts";
@@ -49,22 +49,6 @@ api.onError((err, c) => {
   if (err instanceof RestError) return c.json({ error: err.message }, err.status as any);
   throw err;
 });
-
-// ---------------------------------------------------------------------------
-// /hello — health check
-// ---------------------------------------------------------------------------
-
-api.openapi(
-  createRoute({
-    method: "get",
-    path: "/hello",
-    summary: "Health check",
-    responses: {
-      200: { description: "Greeting", content: { "text/plain": { schema: z.string() } } },
-    },
-  }),
-  c => c.text("World"),
-);
 
 // ---------------------------------------------------------------------------
 // Endpoints — each registers its own route + schema.

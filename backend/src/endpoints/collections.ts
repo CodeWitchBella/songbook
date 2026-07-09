@@ -92,6 +92,6 @@ export function registerCollections(api: Api) {
     );
   };
 
-  registerCollectionLookup("slug", "/collections/by-slug/{slug}", schema.collection.slug);
-  registerCollectionLookup("id", "/collections/by-id/{id}", schema.collection.idString);
+  registerCollectionLookup("slug", "/collection/by-slug/{slug}", schema.collection.slug);
+  registerCollectionLookup("id", "/collection/by-id/{id}", schema.collection.idString);
 }
