@@ -45,7 +45,6 @@ const CollectionIndexResponse = z
 
 const CollectionDetailSchema = z
   .object({
-    __typename: z.string(),
     id: z.string(),
     lastModified: z.string().nullable().optional(),
     data: z
@@ -55,14 +54,7 @@ const CollectionDetailSchema = z
         owner: RestUserSchema.nullable(),
         insertedAt: z.string().nullable(),
         locked: z.boolean().nullable(),
-        songList: z.array(
-          z.object({
-            id: z.string(),
-            slug: z.string(),
-            title: z.string(),
-            author: z.string(),
-          }),
-        ),
+        songIds: z.array(z.string()),
       })
       .optional(),
   })
@@ -160,31 +152,27 @@ export function registerCollections(api: Api) {
         return c.json({ error: "Collection not found" }, 404);
       }
 
-      const record = await serializeCollectionRecord(collectionRow, context);
-
       const list = await context.db
         .select()
         .from(schema.collectionSong)
         .where(eq(schema.collectionSong.collection, collectionRow.id))
         .innerJoin(schema.song, eq(schema.collectionSong.song, schema.song.id));
 
+      const owner = collectionRow.owner
+        ? await context.db.query.user.findFirst({ where: eq(schema.user.id, collectionRow.owner) })
+        : null;
+
       return c.json(
         {
-          __typename: record.__typename,
-          id: record.id,
-          lastModified: record.lastModified,
+          id: collectionRow.idString,
+          lastModified: collectionRow.lastModified,
           data: {
-            slug: record.data!.slug,
-            name: record.data!.name,
-            owner: record.data!.owner,
-            insertedAt: record.data!.insertedAt,
-            locked: record.data!.locked,
-            songList: list.map(l => ({
-              id: l.song.idString,
-              slug: l.song.slug,
-              title: l.song.title,
-              author: l.song.author,
-            })),
+            slug: collectionRow.slug,
+            name: collectionRow.name,
+            owner: owner ?? null,
+            insertedAt: collectionRow.insertedAt,
+            locked: collectionRow.locked,
+            songIds: list.map(l => l.song.idString),
           },
         },
         200,

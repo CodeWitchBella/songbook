@@ -29,7 +29,6 @@ export const RestUserSchema = z
     name: z.string().nullable(),
     admin: z.boolean(),
     handle: z.string().nullable(),
-    picture: PictureSchema.nullable(),
   })
   .openapi("RestUser");
 
