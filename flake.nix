@@ -7,6 +7,7 @@
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -21,6 +22,7 @@
       perSystem = {
         config,
         pkgs,
+        system,
         lib,
         ...
       }: let
@@ -68,6 +70,36 @@
             [ -z "$files" ] && exit 0
             # shellcheck disable=SC2086
             treefmt --fail-on-change --no-cache $files
+          '';
+        };
+
+        cargo-fmt-pre-commit = pkgs.writeShellApplication {
+          name = "cargo-fmt-pre-commit";
+          runtimeInputs = [pkgs.git pkgs.cargo pkgs.rustc];
+          text = ''
+            root=$(git rev-parse --show-toplevel)
+            files=$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- 'renderer/*.rs' 'renderer/*Cargo.toml' 'renderer/*Cargo.lock')
+            [ -z "$files" ] && exit 0
+            cd "$root/renderer"
+            status=0
+            cargo fmt --all || status=$?
+            # shellcheck disable=SC2086
+            if ! git -C "$root" diff --quiet -- $files; then
+              echo "cargo fmt applied fixes (left unstaged); review and re-stage them." >&2
+              status=1
+            fi
+            exit $status
+          '';
+        };
+
+        cargo-check-pre-commit = pkgs.writeShellApplication {
+          name = "cargo-check-pre-commit";
+          runtimeInputs = [pkgs.git pkgs.cargo pkgs.rustc];
+          text = ''
+            root=$(git rev-parse --show-toplevel)
+            [ -z "$(git -C "$root" diff --cached --name-only --diff-filter=ACMR -- 'renderer/*.rs' 'renderer/*Cargo.toml' 'renderer/*Cargo.lock')" ] && exit 0
+            cd "$root/renderer"
+            exec cargo check --all-targets
           '';
         };
 
@@ -132,7 +164,11 @@
           }
         ];
         preCommitHooks =
-          {treefmt = lib.getExe treefmt-pre-commit;}
+          {
+            treefmt = lib.getExe treefmt-pre-commit;
+            cargo-fmt = lib.getExe cargo-fmt-pre-commit;
+            cargo-check = lib.getExe cargo-check-pre-commit;
+          }
           // lib.listToAttrs (lib.concatMap (workspace:
             map (t:
               lib.nameValuePair "${workspace}-${t.tool}"
@@ -140,6 +176,12 @@
             (workspaceTools workspace))
           ["frontend" "backend"]);
       in {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [inputs.rust-overlay.overlays.default];
+          config = {};
+        };
+
         treefmt.config = {
           projectRootFile = "flake.nix";
           package = pkgs.treefmt;
@@ -150,14 +192,23 @@
         };
 
         make-shells.default = {
-          packages = [
+          packages = with pkgs; [
             psql
-            pkgs.git # >= 2.54, for config-based hooks (hook.<name>.event/command)
-            pkgs.pnpm
-            pkgs.nodejs_26
+            git # >= 2.54, for config-based hooks (hook.<name>.event/command)
+            pnpm
+            nodejs_26
             playwright
             playwright-start
             playwright-stop
+            cargo-edit
+            cargo-watch
+            cargo
+            rustc
+            lld
+            wasm-pack
+            wasm-bindgen-cli
+            (pkgs.writeShellScriptBin "dev-build-canvas" ''cd "$(git rev-parse --show-toplevel)/renderer" && cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-canvas"'')
+            (pkgs.writeShellScriptBin "dev-build-html" ''cd "$(git rev-parse --show-toplevel)/renderer" && cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-html"'')
           ];
           inputsFrom = [
             config.flake-root.devShell
