@@ -32,7 +32,7 @@ steps:
       - pnpm --filter songbook-frontend exec tsc --noEmit
 
   - name: renderer checks
-    image: rust:1.88
+    image: rust:1.95.0
     depends_on: []
     commands:
       - rustup component add rustfmt
