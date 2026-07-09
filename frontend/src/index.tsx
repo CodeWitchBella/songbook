@@ -16,7 +16,7 @@ import { Routes } from "#/routes/routes";
 import { EverythingProvider } from "./everything-provider";
 
 Sentry.init({
-  dsn: "https://5f156148cd78093fb3416b2df2a5c553@o136476.ingest.us.sentry.io/4508608240615424",
+  dsn: "https://ead38a7c6f062497130ffe0e316681df@o4511707787821056.ingest.de.sentry.io/4511707795750992",
 });
 
 const app = document.getElementById("root")!;
