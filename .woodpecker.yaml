@@ -31,6 +31,15 @@ steps:
       - pnpm --filter songbook-frontend run lint
       - pnpm --filter songbook-frontend exec tsc --noEmit
 
+  - name: renderer checks
+    image: rust:1.88
+    depends_on: []
+    commands:
+      - rustup component add rustfmt
+      - cd renderer
+      - cargo fmt --all -- --check
+      - cargo check --all-targets
+
   - name: build and push
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
     depends_on:
@@ -54,6 +63,7 @@ steps:
     depends_on:
       - backend checks
       - frontend checks
+      - renderer checks
       - build and push
     environment:
       WOODPECKER_TOKEN:
