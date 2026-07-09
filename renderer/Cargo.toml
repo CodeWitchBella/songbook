@@ -1,0 +1,13 @@
+[workspace]
+resolver = "3"
+members = [
+    "songbook-grammar",
+    "songbook-layout",
+    "songbook-render-canvas",
+    "songbook-render-html",
+    "songbook-render-pdf",
+]
+
+[profile.release]
+lto = true
+opt-level = 's'

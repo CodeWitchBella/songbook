@@ -1,0 +1,35 @@
+[package]
+name = "songbook-render-canvas"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0.98"
+console_error_panic_hook = "0.1.7"
+js-sys = "0.3.77"
+piet = "0.8.0"
+piet-web = "0.8.0"
+wasm-bindgen = "0.2.100"
+songbook-grammar = {path="../songbook-grammar"}
+songbook-layout = {path="../songbook-layout"}
+bytes = "1.10.1"
+serde-wasm-bindgen = "0.6.5"
+serde = "1.0.219"
+parley = { version = "0.11.0", default-features = false, features = ["std"] }
+
+[dependencies.web-sys]
+version = "0.3.77"
+features = [
+    "console",
+    "CanvasRenderingContext2d",
+    "Window",
+    "Document",
+    "Element",
+    "HtmlElement",
+    "HtmlCanvasElement",
+    "Blob",
+    "FileReader",
+]

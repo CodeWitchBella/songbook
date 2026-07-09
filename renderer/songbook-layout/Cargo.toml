@@ -1,0 +1,10 @@
+[package]
+name = "songbook-layout"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+parley = { version = "0.11.0", default-features = false, features = ["std"] }
+songbook-grammar = {path="../songbook-grammar"}
+wuff = "0.2.5"
+serde = "1.0.219"
