@@ -33,6 +33,28 @@ export function collectionCompare(ai: { item: { name: string } }, bi: { item: { 
   return a.localeCompare(b);
 }
 
+/**
+ * Converts a collection data slug (`name` for global collections, `owner`
+ * for a user's default collection, or `owner/name` for a named collection
+ * owned by a user) into the `:user/:abc` route path segment, using `_` as
+ * the placeholder for the missing part.
+ */
+export function collectionSlugToPath(slug: string): string {
+  const slashIndex = slug.indexOf("/");
+  if (slashIndex === -1) return `_/${slug}`;
+  return `${slug.slice(0, slashIndex)}/${slug.slice(slashIndex + 1)}`;
+}
+
+/**
+ * Reverses {@link collectionSlugToPath}: turns the `:user`/`:abc` route
+ * params back into a collection data slug.
+ */
+export function collectionParamsToSlug(params: { user?: string; abc?: string }): string {
+  const user = params.user === "_" ? "" : (params.user ?? "");
+  const abc = params.abc === "_" ? "" : (params.abc ?? "");
+  return user ? (abc ? `${user}/${abc}` : user) : abc;
+}
+
 export function collectionFullName(collection: {
   slug: string;
   owner?: { handle?: string | null; name?: string | null } | null;

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLoaderData, useRevalidator } from "react-router";
 import { getCollectionStore, useCollectionStoreChange } from "#/worker/client";
 import type { ListedCollection } from "#/worker/types";
-import { collectionCompare, collectionFullName } from "#/utils/utils";
+import { collectionCompare, collectionFullName, collectionSlugToPath } from "#/utils/utils";
 
 let lastRefreshThisRefresh: DateTime | null = null;
 
@@ -43,7 +43,7 @@ export default function CollectionList() {
         <Link
           state={{ canGoBack: true }}
           key={collection.id}
-          to={`/collections/${collection.slug}`}
+          to={`/collection/${collectionSlugToPath(collection.slug)}`}
           className="hover:underline"
         >
           {collectionFullName(collection)}

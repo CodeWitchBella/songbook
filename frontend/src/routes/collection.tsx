@@ -3,17 +3,14 @@ import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useRevalidator } from "react-router";
 import SongList from "#/sections/song-list/song-list";
+import { collectionParamsToSlug } from "#/utils/utils";
 import { getCollectionStore, useCollectionStoreChange } from "#/worker/client";
 import type { CollectionRecord } from "#/worker/types";
-
-function slugFromParams(params: { slug?: string; slug2?: string }) {
-  return params.slug + (params.slug2 ? "/" + params.slug2 : "");
-}
 
 type LoaderData = { collection: CollectionRecord | null };
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData> {
-  const slug = slugFromParams(params);
+  const slug = collectionParamsToSlug(params);
   const collection = await getCollectionStore().getCollection({ slug });
   console.log(collection);
   return { collection };

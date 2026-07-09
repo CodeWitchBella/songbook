@@ -5,7 +5,7 @@ import { Component as Collection } from "./collection";
 const meta = {
   title: "Routes/Collection",
   component: Collection,
-  parameters: { route: "/collections/example", path: "collections/:slug" },
+  parameters: { route: "/collection/_/example", path: "collection/:user/:abc" },
 } satisfies Meta<typeof Collection>;
 
 export default meta;

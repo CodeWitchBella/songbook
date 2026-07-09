@@ -8,6 +8,7 @@ import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 
+import { collectionSlugToPath } from "#/utils/utils";
 import { SongListLook } from "./song-list-look";
 import { buildList, compareListed, useWorkerSearch, useWorkerSongList } from "./worker-list";
 
@@ -126,7 +127,7 @@ export default function SongList({
             </ListButton>
             <Gap />
             {slug !== null && (
-              <ListButton to={`/collections/${slug}/pdf`} style={{ textAlign: "left" }}>
+              <ListButton to={`/collection/${collectionSlugToPath(slug)}/pdf`} style={{ textAlign: "left" }}>
                 {t("pdf-gen.Download PDF")}
               </ListButton>
             )}

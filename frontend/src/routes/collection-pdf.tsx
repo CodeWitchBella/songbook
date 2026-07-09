@@ -8,15 +8,12 @@ import { DownloadPDF } from "#/components/pdf";
 import { getCollectionStore, useCollectionStoreChange } from "#/worker/client";
 import type { CollectionRecord } from "#/worker/types";
 import type { SongType } from "#/store/store-song";
-
-function slugFromParams(params: { slug?: string; slug2?: string }) {
-  return params.slug + (params.slug2 ? "/" + params.slug2 : "");
-}
+import { collectionParamsToSlug } from "#/utils/utils";
 
 type LoaderData = { collection: CollectionRecord | null };
 
 export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData> {
-  const slug = slugFromParams(params);
+  const slug = collectionParamsToSlug(params);
   const collection = await getCollectionStore().getCollection({ slug });
   return { collection };
 }

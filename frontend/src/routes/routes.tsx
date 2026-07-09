@@ -50,10 +50,8 @@ const router = createBrowserRouter(
           <Route path="about" lazy={imports.About} />
           <Route path="add-to-collection/:slug" lazy={imports.AddToCollection} />
           <Route path="collections" lazy={imports.CollectionList} />
-          <Route path="collections/:slug/:slug2/pdf" lazy={imports.CollectionPDF} />
-          <Route path="collections/:slug/pdf" lazy={imports.CollectionPDF} />
-          <Route path="collections/:slug/:slug2" lazy={imports.Collection} />
-          <Route path="collections/:slug" lazy={imports.Collection} />
+          <Route path="collection/:user/:abc/pdf" lazy={imports.CollectionPDF} />
+          <Route path="collection/:user/:abc" lazy={imports.Collection} />
           <Route path="song/:slug" lazy={imports.Song} />
           <Route path="new" lazy={imports.CreateSong} />
           <Route path="new/:type" lazy={imports.CreateSong} />
