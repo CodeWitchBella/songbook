@@ -26,10 +26,20 @@ steps:
       - pnpm --filter songbook-backend run lint
       - pnpm --filter songbook-backend exec tsc --noEmit
 
+  - name: build wasm
+    image: rust:1.95-slim-bookworm
+    depends_on: []
+    commands:
+      - apt-get update && apt-get install -y --no-install-recommends curl ca-certificates build-essential pkg-config
+      - rustup target add wasm32-unknown-unknown
+      - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - wasm-pack build --dev --no-pack --no-opt renderer/songbook-render-pdf --target bundler --out-dir ../../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf
+
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11
     depends_on:
       - install
+      - build wasm
     commands:
       - pnpm runtime set node 26 -g
       - pnpm --filter songbook-frontend run gen:api
@@ -71,6 +81,7 @@ steps:
       - backend checks
       - frontend checks
       - renderer checks
+      - build wasm
       - build and push
     environment:
       WOODPECKER_TOKEN:
