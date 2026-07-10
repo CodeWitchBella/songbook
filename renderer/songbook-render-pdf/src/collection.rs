@@ -42,9 +42,13 @@ struct CollectionSong {
 }
 
 fn main() -> ExitCode {
-    let mut args = std::env::args().skip(1);
+    let mut args = std::env::args().skip(1).peekable();
+    let toc_only = matches!(args.peek().map(String::as_str), Some("--toc-only"));
+    if toc_only {
+        args.next();
+    }
     let Some(input) = args.next() else {
-        eprintln!("usage: render-collection <collection.json>");
+        eprintln!("usage: render-collection [--toc-only] <collection.json>");
         return ExitCode::FAILURE;
     };
     let input = PathBuf::from(input);
@@ -116,15 +120,22 @@ fn main() -> ExitCode {
     let setup_elapsed = setup_start.elapsed();
 
     let render_start = Instant::now();
-    let pdf = render_collection_with(&songs, &fonts, &mut engine, |index, layout, render| {
-        eprintln!(
-            "  song {:>3}: layout {:>7.1?}, render {:>7.1?}  \"{}\"",
-            index + 1,
-            layout,
-            render,
-            collection.data.song_list[index].title,
-        );
-    });
+    let pdf = render_collection_with(
+        &collection.data.name,
+        &songs,
+        &fonts,
+        &mut engine,
+        toc_only,
+        |index, layout, render| {
+            eprintln!(
+                "  song {:>3}: layout {:>7.1?}, render {:>7.1?}  \"{}\"",
+                index + 1,
+                layout,
+                render,
+                collection.data.song_list[index].title,
+            );
+        },
+    );
     let render_elapsed = render_start.elapsed();
 
     let write_start = Instant::now();

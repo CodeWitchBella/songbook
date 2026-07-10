@@ -23,6 +23,7 @@ export function DownloadPDF({
   children,
   autoStart,
   wasm,
+  tocOnly,
   ...props
 }: PDFRenderMultipleSongsProps & {
   children: (status: string, onClick: () => void) => ReactNode;
@@ -30,6 +31,8 @@ export function DownloadPDF({
   autoStart?: boolean;
   /** Render via the Rust/WASM krilla renderer (renderer/songbook-render-pdf) instead of @react-pdf/renderer. */
   wasm?: boolean;
+  /** Debug: skip rendering song contents, only the title page and table of contents (wasm only). */
+  tocOnly?: boolean;
 }) {
   const { t } = useTranslation();
   const [preloading, setPreloading] = useState(!!autoStart && !(wasm ? false : isPDFRendererLoaded()));
@@ -57,7 +60,7 @@ export function DownloadPDF({
   useEffect(() => {
     if (!wasm || status !== "generating") return;
     let cancelled = false;
-    downloadCollectionPdfWasm(props.list, props.slug).then(
+    downloadCollectionPdfWasm(props.title, props.list, props.slug, tocOnly).then(
       () => {
         if (!cancelled) onDone();
       },

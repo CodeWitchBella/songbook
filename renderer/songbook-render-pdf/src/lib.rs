@@ -82,33 +82,155 @@ pub fn render_song(song: &Song, fonts: &Fonts, engine: &mut LayoutEngine) -> Vec
     render_layout(&layout, fonts)
 }
 
-/// Render a whole collection: each song is laid out independently and starts on
-/// a fresh page, and all their pages are concatenated into one PDF.
-pub fn render_collection(songs: &[Song], fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
-    render_collection_with(songs, fonts, engine, |_, _, _| {})
+/// Render a whole collection: a title page, then each song laid out
+/// independently and starting on a fresh page, followed by a table of
+/// contents.
+pub fn render_collection(
+    collection_title: &str,
+    songs: &[Song],
+    fonts: &Fonts,
+    engine: &mut LayoutEngine,
+) -> Vec<u8> {
+    render_collection_with(collection_title, songs, fonts, engine, false, |_, _, _| {})
 }
 
 /// Like [`render_collection`], but calls `on_song(index, layout_time, render_time)`
 /// after each song is laid out and rendered, so callers can report per-song timing.
+///
+/// If `skip_content` is set, song pages are not actually rendered into the
+/// document (only the title page and table of contents are) — the page
+/// count each song would have used is still computed, so the TOC page
+/// numbers come out the same. Useful for quickly debugging TOC layout.
 pub fn render_collection_with(
+    collection_title: &str,
     songs: &[Song],
     fonts: &Fonts,
     engine: &mut LayoutEngine,
+    skip_content: bool,
     mut on_song: impl FnMut(usize, std::time::Duration, std::time::Duration),
 ) -> Vec<u8> {
     let mut document = Document::new();
+
+    render_title_page(&mut document, collection_title, fonts);
+    let mut page_number = 1usize;
+
+    let mut toc_entries = Vec::with_capacity(songs.len());
     for (index, song) in songs.iter().enumerate() {
         let layout_start = web_time::Instant::now();
         let layout = layout_song(song, engine);
         let layout_elapsed = layout_start.elapsed();
 
         let render_start = web_time::Instant::now();
-        render_layout_into(&mut document, &layout, fonts);
+        let pages_used = if skip_content {
+            count_pages(&layout)
+        } else {
+            render_layout_into(&mut document, &layout, fonts)
+        };
         let render_elapsed = render_start.elapsed();
+
+        let (title, author) = song
+            .frontmatter
+            .as_ref()
+            .map(|f| (f.title.clone(), f.author.clone()))
+            .unwrap_or_default();
+        toc_entries.push((title, author, page_number));
+        page_number += pages_used;
 
         on_song(index, layout_elapsed, render_elapsed);
     }
+
+    render_toc_pages(&mut document, &toc_entries, fonts);
+
     document.finish().expect("failed to finish PDF")
+}
+
+/// Render a bare-bones title page with the collection name centered on it.
+fn render_title_page(document: &mut Document, collection_title: &str, fonts: &Fonts) {
+    let mut page = document.start_page_with(page_settings());
+    let mut surface = page.surface();
+
+    surface.set_fill(Some(Fill::default()));
+    surface.draw_text(
+        Point::from_xy(MARGIN, PAGE_HEIGHT / 2.0),
+        fonts.bold.clone(),
+        28.0,
+        collection_title,
+        false,
+        TextDirection::Auto,
+    );
+
+    surface.finish();
+    page.finish();
+}
+
+/// Render the table of contents in two columns: each song gets two rows (the
+/// bold title, then the author below it), with the page number to the left,
+/// flowing across as many pages as needed.
+fn render_toc_pages(document: &mut Document, entries: &[(String, String, usize)], fonts: &Fonts) {
+    const LINE_HEIGHT: f32 = 14.0;
+    const AUTHOR_LINE_HEIGHT: f32 = LINE_HEIGHT * 0.90;
+    const ENTRY_SPACING: f32 = LINE_HEIGHT / 4.0;
+    const ENTRY_HEIGHT: f32 = LINE_HEIGHT + AUTHOR_LINE_HEIGHT + ENTRY_SPACING;
+    const LINE_SIZE: f32 = 11.0;
+    const NUMBER_WIDTH: f32 = 24.0;
+    const COLUMN_GAP: f32 = 20.0;
+
+    let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
+    let column_width = (PAGE_WIDTH - 2.0 * MARGIN - COLUMN_GAP) / 2.0;
+    let columns = [MARGIN, MARGIN + column_width + COLUMN_GAP];
+
+    let mut page = document.start_page_with(page_settings());
+    let mut surface = page.surface();
+    surface.set_fill(Some(Fill::default()));
+
+    let mut column = 0usize;
+    let mut y = 0.0_f32;
+
+    for (title, author, page_number) in entries {
+        if y + ENTRY_HEIGHT > content_height {
+            column += 1;
+            y = 0.0;
+            if column >= columns.len() {
+                surface.finish();
+                page.finish();
+                page = document.start_page_with(page_settings());
+                surface = page.surface();
+                surface.set_fill(Some(Fill::default()));
+                column = 0;
+            }
+        }
+
+        let x = columns[column];
+
+        surface.draw_text(
+            Point::from_xy(x, y + MARGIN),
+            fonts.regular.clone(),
+            LINE_SIZE,
+            &page_number.to_string(),
+            false,
+            TextDirection::Auto,
+        );
+        surface.draw_text(
+            Point::from_xy(x + NUMBER_WIDTH, y + MARGIN),
+            fonts.bold.clone(),
+            LINE_SIZE,
+            title,
+            false,
+            TextDirection::Auto,
+        );
+        surface.draw_text(
+            Point::from_xy(x + NUMBER_WIDTH, y + MARGIN + AUTHOR_LINE_HEIGHT),
+            fonts.regular.clone(),
+            LINE_SIZE,
+            author,
+            false,
+            TextDirection::Auto,
+        );
+        y += ENTRY_HEIGHT;
+    }
+
+    surface.finish();
+    page.finish();
 }
 
 /// Lay out a single song against the A4 content area.
@@ -125,14 +247,38 @@ pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
     document.finish().expect("failed to finish PDF")
 }
 
+/// Compute how many A4 pages [`render_layout_into`] would use for `layout`,
+/// without actually drawing anything into a document.
+fn count_pages(layout: &Layout) -> usize {
+    let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
+    let mut page_top = 0.0_f32;
+    let mut page_count = 1usize;
+
+    for item in &layout.items {
+        if item.text.trim().is_empty() {
+            continue;
+        }
+
+        let y = item.pos.1;
+        while y - page_top > content_height {
+            page_top += content_height;
+            page_count += 1;
+        }
+    }
+
+    page_count
+}
+
 /// Append a laid-out song to `document`, starting it on a fresh page and
-/// flowing its items across as many A4 pages as needed.
-fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
+/// flowing its items across as many A4 pages as needed. Returns the number
+/// of pages it used.
+fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) -> usize {
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
 
     let mut page = document.start_page_with(page_settings());
     let mut surface = page.surface();
     let mut page_top = 0.0_f32;
+    let mut page_count = 1usize;
 
     for item in &layout.items {
         if item.text.trim().is_empty() {
@@ -148,6 +294,7 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
             page = document.start_page_with(page_settings());
             surface = page.surface();
             page_top += content_height;
+            page_count += 1;
         }
 
         let (font, fill) = match item.item_type {
@@ -171,6 +318,7 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
 
     surface.finish();
     page.finish();
+    page_count
 }
 
 fn page_settings() -> PageSettings {

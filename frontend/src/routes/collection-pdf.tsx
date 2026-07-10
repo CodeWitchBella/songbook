@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useRevalidator } from "react-router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { PageHeader } from "#/components/page-header";
 import { ListButton } from "#/components/interactive/list-button";
 import { DownloadPDF } from "#/components/pdf";
@@ -10,6 +10,7 @@ import type { CollectionRecord } from "#/worker/types";
 import type { SongType } from "#/store/store-song";
 import { toSongType } from "#/store/store-song";
 import { collectionParamsToSlug } from "#/utils/utils";
+import { compareListed } from "#/sections/song-list/worker-list";
 
 type LoaderData = { collection: CollectionRecord | null; songs: SongType[] };
 
@@ -20,7 +21,10 @@ export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData
 
   const songStore = getSongStore();
   const records = await Promise.all(collection.data.songIds.map(id => songStore.getSong({ id })));
-  const songs = records.filter(record => record !== null).map(toSongType);
+  const songs = records
+    .filter(record => record !== null)
+    .map(toSongType)
+    .sort(compareListed(false));
   return { collection, songs };
 }
 
@@ -30,6 +34,7 @@ function CollectionPDFRoute() {
   const revalidator = useRevalidator();
   const revalidate = useCallback(() => revalidator.revalidate(), [revalidator]);
   useCollectionStoreChange(revalidate);
+  const [tocOnly, setTocOnly] = useState(false);
 
   if (!record)
     return <div className="flex h-full items-center justify-center text-xl">Kolekce se načítá nebo neexistuje</div>;
@@ -45,7 +50,11 @@ function CollectionPDFRoute() {
         <span className="text-lg text-black dark:text-white">{t("count-pages-songs_songs", { count: songCount })}</span>
       </div>
       <div className="flex flex-col px-4">
-        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm>
+        <label className="mb-2 flex items-center gap-2 text-black dark:text-white">
+          <input type="checkbox" checked={tocOnly} onChange={e => setTocOnly(e.target.checked)} />
+          TOC only (debug)
+        </label>
+        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm tocOnly={tocOnly}>
           {(text, onClick) => <ListButton onPress={onClick}>{text}</ListButton>}
         </DownloadPDF>
       </div>
