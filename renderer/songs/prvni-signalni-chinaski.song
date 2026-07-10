@@ -1,7 +1,7 @@
 ---
 {
   "id": "mHbN6PVl_73H2yLTXzwD",
-  "lastModified": "2025-12-17T22:57:56.230+00:00",
+  "lastModified": "2026-07-10T04:13:32.160+00:00",
   "slug": "prvni-signalni-chinaski",
   "author": "Chinaski",
   "title": "První signální",
@@ -10,7 +10,7 @@
   "paragraphSpace": 1.2,
   "titleSpace": 0.6,
   "spotify": "https://www.youtube.com/watch?v=RuWfykUIlrY",
-  "pretranspose": 5,
+  "pretranspose": 0,
   "extraSearchable": "",
   "extraNonSearchable": "Capo 7 se dobře zpívá a zní hezky ",
   "insertedAt": null

@@ -1,11 +1,11 @@
 ---
 {
   "id": "sjXXlHkhf9oPRfjgUBDW",
-  "lastModified": "2026-01-05T18:36:47.106+00:00",
+  "lastModified": "2026-07-10T04:39:29.331+00:00",
   "slug": "karavana-mraku-karel-kryl",
   "author": "Karel Kryl",
   "title": "Karavana mraků",
-  "text": "capo 2 - D\nS: [C]Slunce je zlatou skobou [Ami]na vobloze přibitý, \n[F]pod sluncem [G]sedlo kože[C G7]ný,\n[C]pod sedlem kůň, pod koněm [Ami]moje boty rozbitý\n[F]a starý [G]ruce sedře[C C7]ný. \n\nR: Dopředu [F]jít s tou [G]karavanou [Ami]mraků, \nschovat svou [F]pleš pod [G]stetson děra[Ami]vý, \n|: jen kousek [Dmi]jít, jen [G7]chvíli, [Ami]do soumra[Dmi]ku, \naž tam, kde [Ami]svítí město, [E]město běla[Ami A7]vý. :|\n\nS: Vítr si tiše hvízdá po silnici spálený, \nv tom městě nikdo nezdraví, \nšerif i soudce - gangsteři, voba řádně zvolený, \na lidi strachem nezdravý. \n\nS: Sto cizejch zabíječů s pistolema skotačí \na zákon džungle panuje,\nprovazník plete smyčky, hrobař kopat nestačí\na truhlář rakve hobluje. \n\nR: V městě je řád a pro každého práce, \nbuď ještě rád, když huba voněmí, \n|: může tě hřát, že nejseš na voprátce \nnebo že neležíš pár inchů pod zemí. :|\n\nS:1\n\nR: Pryč odtud jít s tou karavanou mraků, \nkde tichej dům a pušky rezaví, \n|: orat a sít od rána do soumraku \na nechat zapomenout srdce bolavý. :|\n",
+  "text": "S: [C]Slunce je zlatou skobou [Ami]na vobloze přibitý, \n[F]pod sluncem [G]sedlo kože[C G7]ný,\n[C]pod sedlem kůň, pod koněm [Ami]moje boty rozbitý\n[F]a starý [G]ruce sedře[C C7]ný. \n\nR: Dopředu [F]jít s tou [G]karavanou [Ami]mraků, \nschovat svou [F]pleš pod [G]stetson děra[Ami]vý, \n|: jen kousek [Dmi]jít, jen [G7]chvíli, [Ami]do soumra[Dmi]ku, \naž tam, kde [Ami]svítí město, [E]město běla[Ami A7]vý. :|\n\nS: Vítr si tiše hvízdá po silnici spálený, \nv tom městě nikdo nezdraví, \nšerif i soudce - gangsteři, voba řádně zvolený, \na lidi strachem nezdravý. \n\nS: Sto cizejch zabíječů s pistolema skotačí \na zákon džungle panuje,\nprovazník plete smyčky, hrobař kopat nestačí\na truhlář rakve hobluje. \n\nR: V městě je řád a pro každého práce, \nbuď ještě rád, když huba voněmí, \n|: může tě hřát, že nejseš na voprátce \nnebo že neležíš pár inchů pod zemí. :|\n\n[*4.=1.] Slunce je...\n\nR: Pryč odtud jít s tou karavanou mraků, \nkde tichej dům a pušky rezaví, \n|: orat a sít od rána do soumraku \na nechat zapomenout srdce bolavý. :|\n",
   "fontSize": 1.08,
   "paragraphSpace": 1,
   "titleSpace": 0,
@@ -16,7 +16,6 @@
   "insertedAt": null
 }
 ---
-capo 2 - D
 S: [C]Slunce je zlatou skobou [Ami]na vobloze přibitý, 
 [F]pod sluncem [G]sedlo kože[C G7]ný,
 [C]pod sedlem kůň, pod koněm [Ami]moje boty rozbitý
@@ -42,7 +41,7 @@ buď ještě rád, když huba voněmí,
 |: může tě hřát, že nejseš na voprátce 
 nebo že neležíš pár inchů pod zemí. :|
 
-S:1
+[*4.=1.] Slunce je...
 
 R: Pryč odtud jít s tou karavanou mraků, 
 kde tichej dům a pušky rezaví, 

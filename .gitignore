@@ -2,7 +2,8 @@
 *.pgdump
 *.log
 *.pdf
-*.json
+/renderer/songs/*.json
+/renderer/collections/*.json
 /.commit-time
 /.commit-sha
 /data/*

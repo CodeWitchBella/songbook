@@ -285,19 +285,30 @@ pub fn render_collection_with(
     // title page took index 0.
     let mut page_index = 1usize;
 
-    let mut toc_entries = Vec::with_capacity(songs.len());
-    for (index, song) in songs.iter().enumerate() {
+    // Lay out every song up front so its page count is known before deciding
+    // render order (see `reorder_for_spreads`).
+    let mut layouts = Vec::with_capacity(songs.len());
+    let mut layout_times = Vec::with_capacity(songs.len());
+    for song in songs {
         let layout_start = web_time::Instant::now();
-        let layout = layout_song(song, engine, booklet);
-        let layout_elapsed = layout_start.elapsed();
+        layouts.push(layout_song(song, engine, booklet));
+        layout_times.push(layout_start.elapsed());
+    }
+    let pages_used: Vec<usize> = layouts.iter().map(count_pages).collect();
+    let order = reorder_for_spreads(&pages_used);
+
+    let mut toc_entries = Vec::with_capacity(songs.len());
+    for index in order {
+        let song = &songs[index];
+        let layout = &layouts[index];
 
         let render_start = web_time::Instant::now();
-        let pages_used = if skip_content {
-            count_pages(&layout)
+        let pages = if skip_content {
+            pages_used[index]
         } else {
             render_layout_into(
                 &mut document,
-                &layout,
+                layout,
                 fonts,
                 booklet,
                 page_index,
@@ -312,10 +323,10 @@ pub fn render_collection_with(
             .map(|f| (f.title.clone(), f.author.clone()))
             .unwrap_or_default();
         toc_entries.push((title, author, page_number));
-        page_number += pages_used;
-        page_index += pages_used;
+        page_number += pages;
+        page_index += pages;
 
-        on_song(index, layout_elapsed, render_elapsed);
+        on_song(index, layout_times[index], render_elapsed);
     }
 
     render_toc_pages(&mut document, &toc_entries, fonts, booklet, page_index);
@@ -449,6 +460,28 @@ fn count_pages(layout: &Layout) -> usize {
     page_count
 }
 
+/// Reorder song indices so a multi-page song doesn't start on the second
+/// half of a page spread (page numbers `2k-1` and `2k` face each other when
+/// the book is opened). A song starting on an even page number begins
+/// mid-spread, so its own pages never share a spread — pull a later
+/// single-page song forward to take that page instead, when one is
+/// available, so the multi-page song starts fresh at the next spread.
+fn reorder_for_spreads(pages_used: &[usize]) -> Vec<usize> {
+    let mut order: Vec<usize> = (0..pages_used.len()).collect();
+    let mut page_number = 1usize;
+    let mut i = 0;
+    while i < order.len() {
+        if pages_used[order[i]] > 1 && page_number % 2 == 0 {
+            if let Some(swap_with) = (i + 1..order.len()).find(|&j| pages_used[order[j]] == 1) {
+                order.swap(i, swap_with);
+            }
+        }
+        page_number += pages_used[order[i]];
+        i += 1;
+    }
+    order
+}
+
 /// Append a laid-out song to `document`, starting it on a fresh page and
 /// flowing its items across as many A4 pages as needed. Returns the number
 /// of pages it used.
@@ -537,3 +570,35 @@ mod title_page;
 mod wasm;
 pub use booklet::impose_booklet;
 pub use wasm::Renderer;
+
+#[cfg(test)]
+mod reorder_tests {
+    use super::reorder_for_spreads;
+
+    #[test]
+    fn keeps_order_when_nothing_splits_a_spread() {
+        // 1,1,1,1: every song starts on an odd page number already.
+        assert_eq!(reorder_for_spreads(&[1, 1, 1, 1]), vec![0, 1, 2, 3]);
+    }
+
+    #[test]
+    fn pulls_a_single_page_song_forward_to_avoid_a_split() {
+        // song0 (1 page) -> page 1. song1 (2 pages) would start at page 2
+        // (even), splitting itself across two spreads. song2 is single-page,
+        // so it should be pulled forward to take page 2, letting song1 start
+        // fresh at page 3.
+        assert_eq!(reorder_for_spreads(&[1, 2, 1]), vec![0, 2, 1]);
+    }
+
+    #[test]
+    fn leaves_split_when_no_single_page_song_is_available() {
+        assert_eq!(reorder_for_spreads(&[1, 2, 2]), vec![0, 1, 2]);
+    }
+
+    #[test]
+    fn matches_first_spread_example() {
+        // First two songs, both single-page, share the first spread (pages
+        // 1 and 2) without any reordering.
+        assert_eq!(reorder_for_spreads(&[1, 1, 3, 1]), vec![0, 1, 2, 3]);
+    }
+}
