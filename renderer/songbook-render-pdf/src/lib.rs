@@ -1,6 +1,6 @@
 use krilla::Document;
 use krilla::color::rgb;
-use krilla::geom::Point;
+use krilla::geom::{Point, Transform};
 use krilla::page::PageSettings;
 use krilla::paint::{Fill, Paint};
 use krilla::text::{Font, TextDirection};
@@ -96,6 +96,20 @@ fn left_margin(booklet: bool, page_index: usize) -> f32 {
     }
 }
 
+/// The right-edge margin for a page at (0-based) `page_index`, mirroring
+/// [`left_margin`] (the gutter/inner margin is always on the opposite side
+/// from the left one).
+fn right_margin(booklet: bool, page_index: usize) -> f32 {
+    if !booklet {
+        return MARGIN;
+    }
+    if page_index % 2 == 0 {
+        MARGIN_OUTER
+    } else {
+        MARGIN_INNER
+    }
+}
+
 fn chord_fill() -> Fill {
     Fill {
         paint: Paint::from(rgb::Color::new(0x99, 0x33, 0x00)),
@@ -106,6 +120,125 @@ fn chord_fill() -> Fill {
 pub fn render_song(song: &Song, fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
     let layout = layout_song(song, engine, false);
     render_layout(&layout, fonts)
+}
+
+const PAGE_NUMBER_SIZE: f32 = 20.0;
+/// Distance from the bottom edge of the sheet to the page number's baseline.
+const PAGE_NUMBER_BOTTOM: f32 = 30.0;
+/// Rough average digit width as a fraction of font size, used to center the
+/// page number without a real text-measurement pass (digits are close enough
+/// to equal-width in the lyric font that this looks centered).
+const DIGIT_WIDTH_RATIO: f32 = 0.56;
+
+/// Draw the page number in the bottom-right corner of the current page,
+/// right-aligned to the same margin the content uses on that side (which
+/// alternates in booklet mode).
+fn draw_page_number(
+    surface: &mut krilla::surface::Surface,
+    fonts: &Fonts,
+    booklet: bool,
+    page_index: usize,
+    number: usize,
+) {
+    let text = number.to_string();
+    let width = text.len() as f32 * PAGE_NUMBER_SIZE * DIGIT_WIDTH_RATIO;
+    let right_margin = right_margin(booklet, page_index);
+    surface.set_fill(Some(Fill::default()));
+    surface.draw_text(
+        Point::from_xy(
+            PAGE_WIDTH - right_margin - width,
+            PAGE_HEIGHT - PAGE_NUMBER_BOTTOM,
+        ),
+        fonts.regular.clone(),
+        PAGE_NUMBER_SIZE,
+        &text,
+        false,
+        TextDirection::Auto,
+    );
+}
+
+const SPINE_LABEL: &str = "Brehoni 2026";
+const SPINE_LABEL_SIZE: f32 = 12.0;
+/// Same rough equal-width approximation as [`DIGIT_WIDTH_RATIO`], tuned for
+/// the mix of letters in [`SPINE_LABEL`] rather than digits.
+const SPINE_LABEL_WIDTH_RATIO: f32 = 0.55;
+/// Minimum clearance (in points) required between the label's vertical band
+/// and the page-relative y position of any other item on the page, on top
+/// of the label's own text width, before we consider it "too close" and
+/// suppress the label.
+const SPINE_LABEL_MIN_GAP: f32 = 24.0;
+/// Minimum horizontal clearance (in points) an item's right edge must keep
+/// from the margin the label sits in, before it counts toward "too close".
+/// Items are laid out within the content width and normally never reach the
+/// margin at all, so this only catches ones that run unusually wide (e.g. a
+/// long header line).
+const SPINE_LABEL_HORIZONTAL_GAP: f32 = 20.0;
+
+/// Lazily loads and caches the Shantell Sans font used for the spine label,
+/// independent of the [`Fonts`] the rest of the document uses.
+fn spine_label_font() -> &'static Font {
+    static FONT: std::sync::OnceLock<Font> = std::sync::OnceLock::new();
+    FONT.get_or_init(|| {
+        let data: &[u8] = include_bytes!("../../songs/shantell-sans-regular.woff2");
+        load_font(data.to_vec())
+    })
+}
+
+/// Draw "Brehoni 2026" rotated 90 degrees clockwise, centered in the
+/// right-edge margin of a "left" page (odd page number) — unless another
+/// item on the page both falls close to the label's vertical band and
+/// reaches close to the margin horizontally, in which case it's skipped
+/// entirely rather than risk overlapping content.
+fn draw_spine_label(
+    surface: &mut krilla::surface::Surface,
+    booklet: bool,
+    page_index: usize,
+    page_number: usize,
+    items: &[(f32, f32)],
+) {
+    if page_number % 2 == 0 {
+        return;
+    }
+
+    let text_width = SPINE_LABEL.len() as f32 * SPINE_LABEL_SIZE * SPINE_LABEL_WIDTH_RATIO;
+    let half_span = text_width / 2.0;
+    let center_y = PAGE_HEIGHT / 2.0;
+    let band_top = center_y - half_span - SPINE_LABEL_MIN_GAP;
+    let band_bottom = center_y + half_span + SPINE_LABEL_MIN_GAP;
+
+    let right_margin = right_margin(booklet, page_index);
+    let margin_edge_x = PAGE_WIDTH - right_margin;
+
+    let too_close = items.iter().any(|&(y, right_edge_x)| {
+        let y = y + MARGIN;
+        let vertically_close = y >= band_top && y <= band_bottom;
+        let horizontally_close = right_edge_x >= margin_edge_x - SPINE_LABEL_HORIZONTAL_GAP;
+        vertically_close && horizontally_close
+    });
+    if too_close {
+        return;
+    }
+
+    // Flush with the same margin line the page's content is right-aligned
+    // to (like `draw_page_number`), rather than centered in the margin band.
+    let pivot_x = PAGE_WIDTH - right_margin - SPINE_LABEL_SIZE / 2.0;
+    // The pivot is the top (first-drawn) end of the label; text flows
+    // "downward" (toward the page bottom) after rotation, so offsetting it
+    // above center by half the label's width centers the whole label on the
+    // page.
+    let pivot_y = center_y - half_span;
+
+    surface.push_transform(&Transform::from_rotate_at(90.0, pivot_x, pivot_y));
+    surface.set_fill(Some(Fill::default()));
+    surface.draw_text(
+        Point::from_xy(pivot_x, pivot_y),
+        spine_label_font().clone(),
+        SPINE_LABEL_SIZE,
+        SPINE_LABEL,
+        false,
+        TextDirection::Auto,
+    );
+    surface.pop();
 }
 
 /// Render a whole collection: a title page, then each song laid out
@@ -162,7 +295,14 @@ pub fn render_collection_with(
         let pages_used = if skip_content {
             count_pages(&layout)
         } else {
-            render_layout_into(&mut document, &layout, fonts, booklet, page_index)
+            render_layout_into(
+                &mut document,
+                &layout,
+                fonts,
+                booklet,
+                page_index,
+                page_number,
+            )
         };
         let render_elapsed = render_start.elapsed();
 
@@ -283,7 +423,7 @@ fn layout_song(song: &Song, engine: &mut LayoutEngine, booklet: bool) -> Layout 
 /// Render an already computed [`Layout`] into PDF bytes across A4 pages.
 pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
     let mut document = Document::new();
-    render_layout_into(&mut document, layout, fonts, false, 0);
+    render_layout_into(&mut document, layout, fonts, false, 0, 1);
     document.finish().expect("failed to finish PDF")
 }
 
@@ -312,20 +452,29 @@ fn count_pages(layout: &Layout) -> usize {
 /// Append a laid-out song to `document`, starting it on a fresh page and
 /// flowing its items across as many A4 pages as needed. Returns the number
 /// of pages it used.
+///
+/// `first_page_number` is the number printed on the first page this call
+/// draws (it then counts up by one per page) — kept separate from
+/// `start_index` (which only drives margin alternation) since the two can
+/// diverge, e.g. the collection's unnumbered title page shifts them apart.
 fn render_layout_into(
     document: &mut Document,
     layout: &Layout,
     fonts: &Fonts,
     booklet: bool,
     start_index: usize,
+    first_page_number: usize,
 ) -> usize {
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
 
     let mut page_index = start_index;
+    let mut page_number = first_page_number;
     let mut page = document.start_page_with(page_settings());
     let mut surface = page.surface();
+    draw_page_number(&mut surface, fonts, booklet, page_index, page_number);
     let mut page_top = 0.0_f32;
     let mut page_count = 1usize;
+    let mut page_items: Vec<(f32, f32)> = Vec::new();
 
     for item in &layout.items {
         if item.text.trim().is_empty() {
@@ -336,14 +485,20 @@ fn render_layout_into(
 
         // Advance to the page this item's baseline lands on.
         while y - page_top > content_height {
+            draw_spine_label(&mut surface, booklet, page_index, page_number, &page_items);
             surface.finish();
             page.finish();
             page_index += 1;
+            page_number += 1;
             page = document.start_page_with(page_settings());
             surface = page.surface();
+            draw_page_number(&mut surface, fonts, booklet, page_index, page_number);
             page_top += content_height;
             page_count += 1;
+            page_items.clear();
         }
+        let right_edge_x = item.pos.0 + left_margin(booklet, page_index) + item.width;
+        page_items.push((y - page_top, right_edge_x));
 
         let (font, fill) = match item.item_type {
             ItemType::Chord => (fonts.chord_bold.clone(), chord_fill()),
@@ -367,6 +522,7 @@ fn render_layout_into(
         );
     }
 
+    draw_spine_label(&mut surface, booklet, page_index, page_number, &page_items);
     surface.finish();
     page.finish();
     page_count
