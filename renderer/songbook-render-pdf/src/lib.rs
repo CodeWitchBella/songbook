@@ -68,14 +68,14 @@ pub fn setup(
     (fonts, engine)
 }
 
-pub(crate) const MARGIN: f32 = 28.0;
+pub(crate) const MARGIN: f32 = 42.0;
 /// Horizontal margins for booklet mode: both bigger than the non-booklet
 /// `MARGIN` (so pages don't feel cramped after being scaled down and printed
 /// two-up), with the side that ends up at the center fold (the
 /// "inner"/gutter margin) bigger still, so text doesn't get lost in the
 /// binding.
 pub(crate) const MARGIN_OUTER: f32 = MARGIN;
-pub(crate) const MARGIN_INNER: f32 = MARGIN * 1.5;
+pub(crate) const MARGIN_INNER: f32 = MARGIN * 2.0;
 pub(crate) const PAGE_WIDTH: f32 = 595.28;
 pub(crate) const PAGE_HEIGHT: f32 = 841.89;
 
