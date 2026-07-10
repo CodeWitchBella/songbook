@@ -83,7 +83,7 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 /// single, unpaginated flow.
 ///
 /// When paginated with more than one page, and the last two pages' content
-/// would overflow a single page by less than 10% (counting the empty space
+/// would overflow a single page by less than 20% (counting the empty space
 /// already left on the second-to-last page), this also runs an anti-orphan
 /// search: it
 /// re-lays the song out with progressively tighter header/section spacing
@@ -137,7 +137,7 @@ pub fn layout_song(
     // sitting on the second-to-last page plus the sparse last page nearly add
     // up to one free page. `(prev_fill + last_fill) - 1.0` is that overflow.
     let combined_overflow = metrics.prev_fill_fraction + metrics.last_fill_fraction - 1.0;
-    if metrics.page_count <= 1 || combined_overflow >= 0.10 {
+    if metrics.page_count <= 1 || combined_overflow >= 0.20 {
         return natural_layout;
     }
 
