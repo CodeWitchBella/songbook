@@ -968,6 +968,7 @@ dependencies = [
  "krilla",
  "serde",
  "serde_json",
+ "skrifa 0.42.1",
  "songbook-grammar",
  "songbook-layout",
  "wasm-bindgen",

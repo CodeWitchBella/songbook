@@ -8,6 +8,8 @@ use krilla::text::{Font, TextDirection};
 use songbook_grammar::Song;
 use songbook_layout::{ItemType, Layout, LayoutEngine};
 
+use title_page::render_title_page;
+
 pub struct Fonts {
     regular: Font,
     bold: Font,
@@ -66,9 +68,9 @@ pub fn setup(
     (fonts, engine)
 }
 
-const MARGIN: f32 = 28.0;
-const PAGE_WIDTH: f32 = 595.28;
-const PAGE_HEIGHT: f32 = 841.89;
+pub(crate) const MARGIN: f32 = 28.0;
+pub(crate) const PAGE_WIDTH: f32 = 595.28;
+pub(crate) const PAGE_HEIGHT: f32 = 841.89;
 
 fn chord_fill() -> Fill {
     Fill {
@@ -142,25 +144,6 @@ pub fn render_collection_with(
     render_toc_pages(&mut document, &toc_entries, fonts);
 
     document.finish().expect("failed to finish PDF")
-}
-
-/// Render a bare-bones title page with the collection name centered on it.
-fn render_title_page(document: &mut Document, collection_title: &str, fonts: &Fonts) {
-    let mut page = document.start_page_with(page_settings());
-    let mut surface = page.surface();
-
-    surface.set_fill(Some(Fill::default()));
-    surface.draw_text(
-        Point::from_xy(MARGIN, PAGE_HEIGHT / 2.0),
-        fonts.bold.clone(),
-        28.0,
-        collection_title,
-        false,
-        TextDirection::Auto,
-    );
-
-    surface.finish();
-    page.finish();
 }
 
 /// Render the table of contents in two columns: each song gets two rows (the
@@ -321,9 +304,10 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) -
     page_count
 }
 
-fn page_settings() -> PageSettings {
+pub(crate) fn page_settings() -> PageSettings {
     PageSettings::from_wh(PAGE_WIDTH, PAGE_HEIGHT).unwrap()
 }
 
+mod title_page;
 mod wasm;
 pub use wasm::Renderer;
