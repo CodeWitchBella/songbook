@@ -98,11 +98,11 @@ pub fn render_collection_with(
 ) -> Vec<u8> {
     let mut document = Document::new();
     for (index, song) in songs.iter().enumerate() {
-        let layout_start = std::time::Instant::now();
+        let layout_start = web_time::Instant::now();
         let layout = layout_song(song, engine);
         let layout_elapsed = layout_start.elapsed();
 
-        let render_start = std::time::Instant::now();
+        let render_start = web_time::Instant::now();
         render_layout_into(&mut document, &layout, fonts);
         let render_elapsed = render_start.elapsed();
 
@@ -176,3 +176,6 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) {
 fn page_settings() -> PageSettings {
     PageSettings::from_wh(PAGE_WIDTH, PAGE_HEIGHT).unwrap()
 }
+
+mod wasm;
+pub use wasm::Renderer;

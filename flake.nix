@@ -281,12 +281,31 @@
                   backend-install.condition = "process_completed_successfully";
                 };
               };
+              # Builds the WASM PDF renderer the frontend imports from
+              # frontend/src/wasm/ (see frontend/package.json's build:wasm).
+              # `pnpm run dev`/`build` also do this via their predev/prebuild
+              # hooks, but those rely on cargo/wasm-pack being on PATH, which
+              # only holds inside `nix develop`, not for processes started by
+              # `nix run` - so it's run explicitly here with store paths, the
+              # same way postgres/backend reference `${pkgs.pnpm}/bin/pnpm`.
+              frontend-build-wasm = {
+                command = ''
+                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
+                  ${pkgs.pnpm}/bin/pnpm run build:wasm
+                '';
+                working_dir = "frontend";
+                depends_on.frontend-install.condition = "process_completed_successfully";
+              };
               frontend = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm run dev
                 '';
                 working_dir = "frontend";
-                depends_on.frontend-gen-api.condition = "process_completed_successfully";
+                availability.restart = "on_failure";
+                depends_on = {
+                  frontend-gen-api.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_completed_successfully";
+                };
               };
               frontend-types = {
                 command = ''
@@ -301,7 +320,10 @@
                   ${pkgs.pnpm}/bin/pnpm run storybook --ci
                 '';
                 working_dir = "frontend";
-                depends_on.frontend-gen-api.condition = "process_completed_successfully";
+                depends_on = {
+                  frontend-gen-api.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_completed_successfully";
+                };
               };
               # Runs the Storybook stories as Vitest browser tests against the
               # podman Playwright server. Disabled by default (it's a one-shot
@@ -317,7 +339,10 @@
                 '';
                 working_dir = "frontend";
                 availability.restart = "no";
-                depends_on.frontend-gen-api.condition = "process_completed_successfully";
+                depends_on = {
+                  frontend-gen-api.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_completed_successfully";
+                };
               };
             };
           };

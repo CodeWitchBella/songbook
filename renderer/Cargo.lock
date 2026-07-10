@@ -961,13 +961,17 @@ dependencies = [
 name = "songbook-render-pdf"
 version = "0.1.0"
 dependencies = [
+ "console_error_panic_hook",
  "icu_collator",
  "icu_locale_core",
+ "js-sys",
  "krilla",
  "serde",
  "serde_json",
  "songbook-grammar",
  "songbook-layout",
+ "wasm-bindgen",
+ "web-time",
 ]
 
 [[package]]
@@ -1196,6 +1200,16 @@ name = "web-sys"
 version = "0.3.103"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8622dcb61c0bcc9fffa6938bed81210af2da9a7e4a1a834b2e37a59b6dfb6141"
+dependencies = [
+ "js-sys",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "web-time"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
 dependencies = [
  "js-sys",
  "wasm-bindgen",

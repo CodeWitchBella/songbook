@@ -1,4 +1,5 @@
 *.sql
+*.pgdump
 *.log
 /.commit-time
 /.commit-sha

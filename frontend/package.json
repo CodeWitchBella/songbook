@@ -6,6 +6,9 @@
     "#/*": "./src/*"
   },
   "scripts": {
+    "build:wasm": "wasm-pack build ../renderer/songbook-render-pdf --target bundler --out-dir ../../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf",
+    "predev": "pnpm run build:wasm",
+    "prebuild": "pnpm run build:wasm",
     "build": "vite build",
     "build-ci": "node build-ci.js && vite build",
     "dev": "vite",
@@ -28,6 +31,7 @@
     "@fontsource/oswald": "^5.2.8",
     "@fontsource/shantell-sans": "^5.2.7",
     "@isbl/ts-utils": "^1.0.2",
+    "@lezer/common": "^1.2.3",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.1",
     "@react-pdf/renderer": "^4.5.1",

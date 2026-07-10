@@ -45,7 +45,7 @@ function CollectionPDFRoute() {
         <span className="text-lg text-black dark:text-white">{t("count-pages-songs_songs", { count: songCount })}</span>
       </div>
       <div className="flex flex-col px-4">
-        <DownloadPDF list={songs} slug={slug} title={name} autoStart>
+        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm>
           {(text, onClick) => <ListButton onPress={onClick}>{text}</ListButton>}
         </DownloadPDF>
       </div>
