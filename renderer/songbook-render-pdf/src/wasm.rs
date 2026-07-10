@@ -69,6 +69,7 @@ impl Renderer {
             &self.fonts,
             &mut self.engine,
             skip_content,
+            booklet,
             |_, _, _| {},
         );
         let pdf = if booklet { impose_booklet(pdf) } else { pdf };

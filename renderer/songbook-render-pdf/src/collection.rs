@@ -130,6 +130,7 @@ fn main() -> ExitCode {
         &fonts,
         &mut engine,
         toc_only,
+        booklet,
         |index, layout, render| {
             eprintln!(
                 "  song {:>3}: layout {:>7.1?}, render {:>7.1?}  \"{}\"",

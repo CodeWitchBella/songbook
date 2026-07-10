@@ -69,8 +69,32 @@ pub fn setup(
 }
 
 pub(crate) const MARGIN: f32 = 28.0;
+/// Horizontal margins for booklet mode: both bigger than the non-booklet
+/// `MARGIN` (so pages don't feel cramped after being scaled down and printed
+/// two-up), with the side that ends up at the center fold (the
+/// "inner"/gutter margin) bigger still, so text doesn't get lost in the
+/// binding.
+pub(crate) const MARGIN_OUTER: f32 = MARGIN;
+pub(crate) const MARGIN_INNER: f32 = MARGIN * 1.5;
 pub(crate) const PAGE_WIDTH: f32 = 595.28;
 pub(crate) const PAGE_HEIGHT: f32 = 841.89;
+
+/// The left-edge margin for a page at (0-based) `page_index` in the final
+/// document. In booklet mode, source page `page_index` ends up on the right
+/// half of a sheet (its left edge at the center fold) when `page_index` is
+/// even, and on the left half (its right edge at the fold) when odd — see
+/// `booklet::booklet_pairs`. So even pages get their bigger margin on the
+/// left, odd pages get it on the right (i.e. a smaller left margin).
+fn left_margin(booklet: bool, page_index: usize) -> f32 {
+    if !booklet {
+        return MARGIN;
+    }
+    if page_index % 2 == 0 {
+        MARGIN_INNER
+    } else {
+        MARGIN_OUTER
+    }
+}
 
 fn chord_fill() -> Fill {
     Fill {
@@ -80,7 +104,7 @@ fn chord_fill() -> Fill {
 }
 
 pub fn render_song(song: &Song, fonts: &Fonts, engine: &mut LayoutEngine) -> Vec<u8> {
-    let layout = layout_song(song, engine);
+    let layout = layout_song(song, engine, false);
     render_layout(&layout, fonts)
 }
 
@@ -93,7 +117,15 @@ pub fn render_collection(
     fonts: &Fonts,
     engine: &mut LayoutEngine,
 ) -> Vec<u8> {
-    render_collection_with(collection_title, songs, fonts, engine, false, |_, _, _| {})
+    render_collection_with(
+        collection_title,
+        songs,
+        fonts,
+        engine,
+        false,
+        false,
+        |_, _, _| {},
+    )
 }
 
 /// Like [`render_collection`], but calls `on_song(index, layout_time, render_time)`
@@ -109,24 +141,28 @@ pub fn render_collection_with(
     fonts: &Fonts,
     engine: &mut LayoutEngine,
     skip_content: bool,
+    booklet: bool,
     mut on_song: impl FnMut(usize, std::time::Duration, std::time::Duration),
 ) -> Vec<u8> {
     let mut document = Document::new();
 
     render_title_page(&mut document, collection_title, fonts);
     let mut page_number = 1usize;
+    // 0-based index of the next page to be rendered into `document`; the
+    // title page took index 0.
+    let mut page_index = 1usize;
 
     let mut toc_entries = Vec::with_capacity(songs.len());
     for (index, song) in songs.iter().enumerate() {
         let layout_start = web_time::Instant::now();
-        let layout = layout_song(song, engine);
+        let layout = layout_song(song, engine, booklet);
         let layout_elapsed = layout_start.elapsed();
 
         let render_start = web_time::Instant::now();
         let pages_used = if skip_content {
             count_pages(&layout)
         } else {
-            render_layout_into(&mut document, &layout, fonts)
+            render_layout_into(&mut document, &layout, fonts, booklet, page_index)
         };
         let render_elapsed = render_start.elapsed();
 
@@ -137,11 +173,12 @@ pub fn render_collection_with(
             .unwrap_or_default();
         toc_entries.push((title, author, page_number));
         page_number += pages_used;
+        page_index += pages_used;
 
         on_song(index, layout_elapsed, render_elapsed);
     }
 
-    render_toc_pages(&mut document, &toc_entries, fonts);
+    render_toc_pages(&mut document, &toc_entries, fonts, booklet, page_index);
 
     document.finish().expect("failed to finish PDF")
 }
@@ -149,7 +186,13 @@ pub fn render_collection_with(
 /// Render the table of contents in two columns: each song gets two rows (the
 /// bold title, then the author below it), with the page number to the left,
 /// flowing across as many pages as needed.
-fn render_toc_pages(document: &mut Document, entries: &[(String, String, usize)], fonts: &Fonts) {
+fn render_toc_pages(
+    document: &mut Document,
+    entries: &[(String, String, usize)],
+    fonts: &Fonts,
+    booklet: bool,
+    start_index: usize,
+) {
     const LINE_HEIGHT: f32 = 14.0;
     const AUTHOR_LINE_HEIGHT: f32 = LINE_HEIGHT * 0.90;
     const ENTRY_SPACING: f32 = LINE_HEIGHT / 4.0;
@@ -159,8 +202,16 @@ fn render_toc_pages(document: &mut Document, entries: &[(String, String, usize)]
     const COLUMN_GAP: f32 = 20.0;
 
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
-    let column_width = (PAGE_WIDTH - 2.0 * MARGIN - COLUMN_GAP) / 2.0;
-    let columns = [MARGIN, MARGIN + column_width + COLUMN_GAP];
+    let margins_sum = if booklet {
+        MARGIN_OUTER + MARGIN_INNER
+    } else {
+        2.0 * MARGIN
+    };
+    let column_width = (PAGE_WIDTH - margins_sum - COLUMN_GAP) / 2.0;
+
+    let mut page_index = start_index;
+    let columns_for = |left: f32| [left, left + column_width + COLUMN_GAP];
+    let mut columns = columns_for(left_margin(booklet, page_index));
 
     let mut page = document.start_page_with(page_settings());
     let mut surface = page.surface();
@@ -176,6 +227,8 @@ fn render_toc_pages(document: &mut Document, entries: &[(String, String, usize)]
             if column >= columns.len() {
                 surface.finish();
                 page.finish();
+                page_index += 1;
+                columns = columns_for(left_margin(booklet, page_index));
                 page = document.start_page_with(page_settings());
                 surface = page.surface();
                 surface.set_fill(Some(Fill::default()));
@@ -217,8 +270,12 @@ fn render_toc_pages(document: &mut Document, entries: &[(String, String, usize)]
 }
 
 /// Lay out a single song against the A4 content area.
-fn layout_song(song: &Song, engine: &mut LayoutEngine) -> Layout {
-    let content_width = (PAGE_WIDTH - 2.0 * MARGIN) as f64;
+fn layout_song(song: &Song, engine: &mut LayoutEngine, booklet: bool) -> Layout {
+    let content_width = if booklet {
+        PAGE_WIDTH - MARGIN_OUTER - MARGIN_INNER
+    } else {
+        PAGE_WIDTH - 2.0 * MARGIN
+    } as f64;
     let content_height = (PAGE_HEIGHT - 2.0 * MARGIN) as f64;
     engine.run(song, Some((content_width, content_height)))
 }
@@ -226,7 +283,7 @@ fn layout_song(song: &Song, engine: &mut LayoutEngine) -> Layout {
 /// Render an already computed [`Layout`] into PDF bytes across A4 pages.
 pub fn render_layout(layout: &Layout, fonts: &Fonts) -> Vec<u8> {
     let mut document = Document::new();
-    render_layout_into(&mut document, layout, fonts);
+    render_layout_into(&mut document, layout, fonts, false, 0);
     document.finish().expect("failed to finish PDF")
 }
 
@@ -255,9 +312,16 @@ fn count_pages(layout: &Layout) -> usize {
 /// Append a laid-out song to `document`, starting it on a fresh page and
 /// flowing its items across as many A4 pages as needed. Returns the number
 /// of pages it used.
-fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) -> usize {
+fn render_layout_into(
+    document: &mut Document,
+    layout: &Layout,
+    fonts: &Fonts,
+    booklet: bool,
+    start_index: usize,
+) -> usize {
     let content_height = PAGE_HEIGHT - 2.0 * MARGIN;
 
+    let mut page_index = start_index;
     let mut page = document.start_page_with(page_settings());
     let mut surface = page.surface();
     let mut page_top = 0.0_f32;
@@ -274,6 +338,7 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) -
         while y - page_top > content_height {
             surface.finish();
             page.finish();
+            page_index += 1;
             page = document.start_page_with(page_settings());
             surface = page.surface();
             page_top += content_height;
@@ -290,7 +355,10 @@ fn render_layout_into(document: &mut Document, layout: &Layout, fonts: &Fonts) -
 
         surface.set_fill(Some(fill));
         surface.draw_text(
-            Point::from_xy(item.pos.0 + MARGIN, y - page_top + MARGIN),
+            Point::from_xy(
+                item.pos.0 + left_margin(booklet, page_index),
+                y - page_top + MARGIN,
+            ),
             font,
             item.font_size,
             &item.text,
