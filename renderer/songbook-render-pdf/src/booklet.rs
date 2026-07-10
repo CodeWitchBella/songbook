@@ -15,9 +15,10 @@ use crate::{PAGE_HEIGHT, PAGE_WIDTH};
 
 /// Re-impose `pdf_bytes` (a PDF this crate rendered) as a booklet.
 ///
-/// Each output page is `PAGE_WIDTH` wide and `PAGE_HEIGHT / 2` tall, holding
-/// two source pages scaled down by half and placed left/right with no
-/// padding or margin. Print double-sided with "flip on short edge" (the
+/// Each output page is a full A4 sheet in landscape (`PAGE_HEIGHT` wide,
+/// `PAGE_WIDTH` tall), holding two source pages scaled down by half and
+/// placed left/right with no padding or margin. Print double-sided with
+/// "flip on short edge" (the
 /// usual duplex setting for landscape booklet imposition) and fold the
 /// whole stack in half down the middle; the nested sheets come out in
 /// reading order.
@@ -26,8 +27,11 @@ pub fn impose_booklet(pdf_bytes: Vec<u8>) -> Vec<u8> {
     let page_count = pdf.pages().len();
     let source = PdfDocument::new(pdf);
 
-    let sheet_width = PAGE_WIDTH;
-    let sheet_height = PAGE_HEIGHT / 2.0;
+    // The sheet is a full A4 (landscape): its long edge (`PAGE_HEIGHT`, the
+    // source page's height) becomes the sheet's width, split in two so each
+    // half keeps the source page's aspect ratio and comes out A5-sized.
+    let sheet_width = PAGE_HEIGHT;
+    let sheet_height = PAGE_WIDTH;
     let half_size = Size::from_wh(sheet_width / 2.0, sheet_height).expect("non-zero half size");
 
     let mut document = Document::new();

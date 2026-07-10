@@ -268,8 +268,14 @@ pub(crate) fn render_title_page(document: &mut Document, _collection_title: &str
     // (regular) weight since krilla doesn't support picking a named
     // instance.
     let nunito_font_data: &[u8] = include_bytes!("../../songs/nunito-variable.ttf");
-    let nunito_font =
-        Font::new(nunito_font_data.to_vec().into(), 0).expect("failed to parse Nunito");
+    // Bold weight for everything set in Nunito on this page (the display
+    // headings "Zpěvník"/"Velmor" use Almendra SC and are left untouched).
+    let nunito_font = Font::new_variable(
+        nunito_font_data.to_vec().into(),
+        0,
+        &[(krilla::text::Tag::new(b"wght"), 700.0)],
+    )
+    .expect("failed to parse Nunito");
 
     // Scale factors from the mock's 559x794 reference canvas to our A4 page.
     let sx = PAGE_WIDTH / 559.0;
@@ -515,7 +521,11 @@ pub(crate) fn render_title_page(document: &mut Document, _collection_title: &str
     // traced directly from the SVG's path data below.
     let logo_size = px(44.0);
     let logo_x = px(498.5);
-    let logo_y = py(729.0);
+    // Keep the logo's margin from the right edge equal to its margin from
+    // the bottom edge (the mock's own layout has an uneven 17.6pt/22.1pt
+    // gap here).
+    let logo_margin = PAGE_WIDTH - (logo_x + logo_size);
+    let logo_y = PAGE_HEIGHT - logo_size - logo_margin;
     let logo_navy = (0x26, 0x3a, 0x78);
     let logo_scale = logo_size / 100.0;
 
