@@ -308,6 +308,8 @@ pub(crate) fn page_settings() -> PageSettings {
     PageSettings::from_wh(PAGE_WIDTH, PAGE_HEIGHT).unwrap()
 }
 
+mod booklet;
 mod title_page;
 mod wasm;
+pub use booklet::impose_booklet;
 pub use wasm::Renderer;

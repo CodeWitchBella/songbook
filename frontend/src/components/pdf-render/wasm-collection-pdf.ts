@@ -66,9 +66,14 @@ function songToParsedJson(song: SongType): string {
   return JSON.stringify(parsed);
 }
 
-export async function renderCollectionPdfWasm(title: string, list: SongType[], tocOnly = false): Promise<Uint8Array> {
+export async function renderCollectionPdfWasm(
+  title: string,
+  list: SongType[],
+  tocOnly = false,
+  booklet = false,
+): Promise<Uint8Array> {
   const renderer = await getRenderer();
-  return renderer.renderCollection(title, list.map(songToParsedJson), tocOnly);
+  return renderer.renderCollection(title, list.map(songToParsedJson), tocOnly, booklet);
 }
 
 export async function downloadCollectionPdfWasm(
@@ -76,7 +81,8 @@ export async function downloadCollectionPdfWasm(
   list: SongType[],
   slug: string | null,
   tocOnly = false,
+  booklet = false,
 ): Promise<void> {
-  const pdf = await renderCollectionPdfWasm(title, list, tocOnly);
+  const pdf = await renderCollectionPdfWasm(title, list, tocOnly, booklet);
   saveAs(new Blob([pdf as BlobPart], { type: "application/pdf" }), `zpevnik${slug ? "-" + slug : ""}.pdf`);
 }

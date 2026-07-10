@@ -6,7 +6,7 @@ use wasm_bindgen::prelude::*;
 
 use songbook_grammar::Song;
 
-use crate::{Fonts, render_collection_with, setup};
+use crate::{Fonts, impose_booklet, render_collection_with, setup};
 use songbook_layout::LayoutEngine;
 
 #[wasm_bindgen]
@@ -45,12 +45,18 @@ impl Renderer {
     /// If `skipContent` is set, song pages are skipped (only the title page
     /// and table of contents are rendered, with the same page numbers) —
     /// useful for quickly debugging the TOC layout.
+    ///
+    /// If `booklet` is set, the rendered PDF is re-imposed with
+    /// [`impose_booklet`]: each output page holds two source pages side by
+    /// side at half scale, ordered so folding the printed stack in half
+    /// produces the pages in reading order.
     #[wasm_bindgen(js_name = renderCollection)]
     pub fn render_collection(
         &mut self,
         title: String,
         songs: Vec<String>,
         skip_content: bool,
+        booklet: bool,
     ) -> Result<js_sys::Uint8Array, JsError> {
         let songs = songs
             .iter()
@@ -65,6 +71,7 @@ impl Renderer {
             skip_content,
             |_, _, _| {},
         );
+        let pdf = if booklet { impose_booklet(pdf) } else { pdf };
         Ok(js_sys::Uint8Array::from(pdf.as_slice()))
     }
 }

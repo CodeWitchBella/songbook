@@ -35,6 +35,7 @@ function CollectionPDFRoute() {
   const revalidate = useCallback(() => revalidator.revalidate(), [revalidator]);
   useCollectionStoreChange(revalidate);
   const [tocOnly, setTocOnly] = useState(false);
+  const [booklet, setBooklet] = useState(false);
 
   if (!record)
     return <div className="flex h-full items-center justify-center text-xl">Kolekce se načítá nebo neexistuje</div>;
@@ -54,7 +55,11 @@ function CollectionPDFRoute() {
           <input type="checkbox" checked={tocOnly} onChange={e => setTocOnly(e.target.checked)} />
           TOC only (debug)
         </label>
-        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm tocOnly={tocOnly}>
+        <label className="mb-2 flex items-center gap-2 text-black dark:text-white">
+          <input type="checkbox" checked={booklet} onChange={e => setBooklet(e.target.checked)} />
+          Booklet (fold in half)
+        </label>
+        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm tocOnly={tocOnly} booklet={booklet}>
           {(text, onClick) => <ListButton onPress={onClick}>{text}</ListButton>}
         </DownloadPDF>
       </div>

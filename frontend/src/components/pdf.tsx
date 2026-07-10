@@ -24,6 +24,7 @@ export function DownloadPDF({
   autoStart,
   wasm,
   tocOnly,
+  booklet,
   ...props
 }: PDFRenderMultipleSongsProps & {
   children: (status: string, onClick: () => void) => ReactNode;
@@ -33,6 +34,8 @@ export function DownloadPDF({
   wasm?: boolean;
   /** Debug: skip rendering song contents, only the title page and table of contents (wasm only). */
   tocOnly?: boolean;
+  /** Re-impose the rendered PDF as a foldable booklet, two pages per sheet (wasm only). */
+  booklet?: boolean;
 }) {
   const { t } = useTranslation();
   const [preloading, setPreloading] = useState(!!autoStart && !(wasm ? false : isPDFRendererLoaded()));
@@ -60,7 +63,7 @@ export function DownloadPDF({
   useEffect(() => {
     if (!wasm || status !== "generating") return;
     let cancelled = false;
-    downloadCollectionPdfWasm(props.title, props.list, props.slug, tocOnly).then(
+    downloadCollectionPdfWasm(props.title, props.list, props.slug, tocOnly, booklet).then(
       () => {
         if (!cancelled) onDone();
       },

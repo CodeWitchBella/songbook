@@ -17,7 +17,7 @@ use icu_locale_core::locale;
 use serde::Deserialize;
 
 use songbook_grammar::Song;
-use songbook_render_pdf::{render_collection_with, setup};
+use songbook_render_pdf::{impose_booklet, render_collection_with, setup};
 
 /// Directory holding the fonts and per-song JSON, relative to the crate.
 const SONGS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../songs");
@@ -47,8 +47,12 @@ fn main() -> ExitCode {
     if toc_only {
         args.next();
     }
+    let booklet = matches!(args.peek().map(String::as_str), Some("--booklet"));
+    if booklet {
+        args.next();
+    }
     let Some(input) = args.next() else {
-        eprintln!("usage: render-collection [--toc-only] <collection.json>");
+        eprintln!("usage: render-collection [--toc-only] [--booklet] <collection.json>");
         return ExitCode::FAILURE;
     };
     let input = PathBuf::from(input);
@@ -137,6 +141,8 @@ fn main() -> ExitCode {
         },
     );
     let render_elapsed = render_start.elapsed();
+
+    let pdf = if booklet { impose_booklet(pdf) } else { pdf };
 
     let write_start = Instant::now();
     if let Err(err) = std::fs::write(&output, pdf) {
