@@ -104,15 +104,18 @@ export function WasmSongLook({
     if (!el) return;
 
     let renderedWidth = -1;
+    let renderedHeight = -1;
     let cleanup = () => {};
     getRenderer().then(renderer => {
       if (cancelled) return;
-      const render = (width: number) => {
-        if (cancelled || width <= 0 || width === renderedWidth) return;
+      const render = (width: number, height: number) => {
+        if (cancelled || width <= 0 || height <= 0) return;
+        if (width === renderedWidth && height === renderedHeight) return;
         renderedWidth = width;
+        renderedHeight = height;
         const json = songToParsedJson(song, transposition);
-        const html = renderer.htmlify(json, width);
-        const layout = renderer.jsonify(json, width) as Layout;
+        const html = renderer.htmlify(json, width, height);
+        const layout = renderer.jsonify(json, width, height) as Layout;
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
         // Items are absolutely positioned, so they don't contribute to the
@@ -123,11 +126,25 @@ export function WasmSongLook({
           const target = event.target as HTMLElement | null;
           if (target?.nodeName === "BUTTON") onChordPressRef.current?.(target.innerText);
         });
+
+        // The layout engine (given a height) breaks the song into pages of
+        // exactly `height` px each, stacked in the same continuous y
+        // coordinate as the items above. Drop an invisible snap target at
+        // the top of each page so scrolling snaps to page boundaries.
+        for (let y = 0; y < maxY; y += height) {
+          const marker = document.createElement("div");
+          marker.style.cssText = `position:absolute;top:${y}px;left:0;width:1px;height:1px;scroll-snap-align:start;`;
+          el.appendChild(marker);
+        }
       };
 
-      render(el.clientWidth);
+      render(el.clientWidth, el.clientHeight);
       const observer = new ResizeObserver(([entry]) => {
-        if (entry) render(entry.contentBoxSize[0]?.inlineSize ?? entry.contentRect.width);
+        if (entry) {
+          const width = entry.contentBoxSize[0]?.inlineSize ?? entry.contentRect.width;
+          const height = entry.contentBoxSize[0]?.blockSize ?? entry.contentRect.height;
+          render(width, height);
+        }
       });
       observer.observe(el);
       cleanup = () => observer.disconnect();
@@ -138,5 +155,10 @@ export function WasmSongLook({
     };
   }, [song, transposition]);
 
-  return <div ref={containerRef} className="mx-auto w-full max-w-[65ch]" />;
+  return (
+    <div
+      ref={containerRef}
+      className="relative mx-auto h-dvh w-full max-w-[65ch] snap-y snap-mandatory overflow-y-auto"
+    />
+  );
 }
