@@ -135,6 +135,12 @@ export function WasmSongLook({
           const marker = document.createElement("div");
           marker.style.cssText = `position:absolute;top:${y}px;left:0;width:1px;height:1px;scroll-snap-align:start;`;
           el.appendChild(marker);
+
+          if (y > 0) {
+            const line = document.createElement("div");
+            line.style.cssText = `position:absolute;top:${y}px;left:0;width:100%;border-top:1px dashed rgba(255,0,0,0.3);pointer-events:none;`;
+            el.appendChild(line);
+          }
         }
       };
 
