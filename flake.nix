@@ -208,6 +208,7 @@
             just
             wasm-pack
             wasm-bindgen-cli
+            binaryen # provides wasm-opt, used by `wasm-pack build` (prod recipes)
             (pkgs.writeShellScriptBin "dev-build-canvas" ''cd "$(git rev-parse --show-toplevel)/renderer" && cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-canvas"'')
             (pkgs.writeShellScriptBin "dev-build-html" ''cd "$(git rev-parse --show-toplevel)/renderer" && cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-html"'')
           ];
@@ -292,7 +293,7 @@
               # same way postgres/backend reference `${pkgs.pnpm}/bin/pnpm`.
               frontend-build-wasm-pdf = {
                 command = ''
-                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
+                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:${pkgs.binaryen}/bin:$PATH"
                   exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-pdf -s "${pkgs.just}/bin/just build-wasm-pdf"
                 '';
                 working_dir = "renderer";
@@ -309,7 +310,7 @@
               # recipe). Mirrors frontend-build-wasm-pdf above.
               frontend-build-wasm-html = {
                 command = ''
-                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
+                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:${pkgs.binaryen}/bin:$PATH"
                   exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-html -s "${pkgs.just}/bin/just build-wasm-html"
                 '';
                 working_dir = "renderer";
