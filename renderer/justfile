@@ -1,0 +1,2 @@
+build-wasm:
+    wasm-pack build --dev --no-pack --no-opt songbook-render-pdf --target bundler --out-dir ../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf

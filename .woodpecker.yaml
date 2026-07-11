@@ -33,7 +33,9 @@ steps:
       - apt-get update && apt-get install -y --no-install-recommends curl ca-certificates build-essential pkg-config
       - rustup target add wasm32-unknown-unknown
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - wasm-pack build --dev --no-pack --no-opt renderer/songbook-render-pdf --target bundler --out-dir ../../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf
+      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+      - cd renderer
+      - just build-wasm
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11

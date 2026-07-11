@@ -6,9 +6,6 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "build:wasm": "wasm-pack build --dev --no-pack --no-opt ../renderer/songbook-render-pdf --target bundler --out-dir ../../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf",
-    "predev": "pnpm run build:wasm",
-    "prebuild": "pnpm run build:wasm",
     "build": "vite build",
     "build-ci": "node build-ci.js && vite build",
     "dev": "vite",

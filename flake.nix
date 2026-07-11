@@ -205,6 +205,7 @@
             cargo
             rustc
             lld
+            just
             wasm-pack
             wasm-bindgen-cli
             (pkgs.writeShellScriptBin "dev-build-canvas" ''cd "$(git rev-parse --show-toplevel)/renderer" && cargo watch -s "wasm-pack build --dev --no-pack --no-opt -t web songbook-render-canvas"'')
@@ -233,7 +234,9 @@
 
         process-compose.default = {
           cli.options.keep-project = true;
-          cli.options.no-server = true;
+          # Keep the HTTP/RPC server on (default) so agents can inspect process
+          # state via `process-compose` client commands against a running instance.
+          cli.options.no-server = false;
           cli.preHook = ''
             cd "$(${lib.getExe config.flake-root.package})"
           '';
@@ -282,19 +285,24 @@
                 };
               };
               # Builds the WASM PDF renderer the frontend imports from
-              # frontend/src/wasm/ (see frontend/package.json's build:wasm).
-              # `pnpm run dev`/`build` also do this via their predev/prebuild
-              # hooks, but those rely on cargo/wasm-pack being on PATH, which
-              # only holds inside `nix develop`, not for processes started by
-              # `nix run` - so it's run explicitly here with store paths, the
+              # frontend/src/wasm/ (see renderer/justfile's build-wasm recipe).
+              # Run explicitly here with store paths rather than relying on
+              # cargo/wasm-pack/just being on PATH, which only holds inside
+              # `nix develop`, not for processes started by `nix run` - the
               # same way postgres/backend reference `${pkgs.pnpm}/bin/pnpm`.
               frontend-build-wasm = {
                 command = ''
                   export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
-                  ${pkgs.pnpm}/bin/pnpm run build:wasm
+                  exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-pdf -s "${pkgs.just}/bin/just build-wasm"
                 '';
-                working_dir = "frontend";
-                depends_on.frontend-install.condition = "process_completed_successfully";
+                working_dir = "renderer";
+                # cargo-watch never exits, so downstream processes wait for the
+                # first build to land the wasm output rather than for completion.
+                readiness_probe = {
+                  exec.command = "test -f ../frontend/src/wasm/songbook-render-pdf/songbook_render_pdf.js";
+                  initial_delay_seconds = 1;
+                  period_seconds = 2;
+                };
               };
               frontend = {
                 command = ''
@@ -304,7 +312,7 @@
                 availability.restart = "on_failure";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_healthy";
                 };
               };
               frontend-types = {
@@ -322,7 +330,7 @@
                 working_dir = "frontend";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_healthy";
                 };
               };
               # Runs the Storybook stories as Vitest browser tests against the
@@ -341,7 +349,7 @@
                 availability.restart = "no";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_completed_successfully";
+                  frontend-build-wasm.condition = "process_healthy";
                 };
               };
             };
