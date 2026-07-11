@@ -23,9 +23,14 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
         } else {
             "normal"
         };
+        let font_family = if interactive {
+            "Atkinson Hyperlegible"
+        } else {
+            "Cantarell"
+        };
         out.push_str(&format!(
-            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};">"#,
-            item.pos.0, item.pos.1, item.font_size, weight
+            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};font-family:'{}';">"#,
+            item.pos.0, item.pos.1, item.font_size, weight, font_family
         ));
         out.push_str(&item.text);
         if interactive {

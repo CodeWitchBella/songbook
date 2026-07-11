@@ -19,6 +19,18 @@ async function fetchBytes(url: string): Promise<Uint8Array> {
   return new Uint8Array(await res.arrayBuffer());
 }
 
+function registerWebFonts() {
+  const style = document.createElement("style");
+  style.textContent = `
+    @font-face { font-family: "Cantarell"; src: url("${cantarellRegularUrl}") format("woff2"); font-weight: normal; }
+    @font-face { font-family: "Cantarell"; src: url("${cantarellBoldUrl}") format("woff2"); font-weight: bold; }
+    @font-face { font-family: "Atkinson Hyperlegible"; src: url("${atkinsonRegularUrl}") format("woff2"); font-weight: normal; }
+    @font-face { font-family: "Atkinson Hyperlegible"; src: url("${atkinsonBoldUrl}") format("woff2"); font-weight: bold; }
+  `;
+  document.head.appendChild(style);
+  return document.fonts.ready;
+}
+
 async function loadRenderer() {
   const [{ Renderer, hook }, regular, bold, chordRegular, chordBold] = await Promise.all([
     import("#/wasm/songbook-render-html/songbook_render_html.js"),
@@ -26,6 +38,7 @@ async function loadRenderer() {
     fetchBytes(cantarellBoldUrl),
     fetchBytes(atkinsonRegularUrl),
     fetchBytes(atkinsonBoldUrl),
+    registerWebFonts(),
   ]);
   hook();
   const renderer = new Renderer();
