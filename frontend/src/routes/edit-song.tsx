@@ -3,7 +3,6 @@ import { NotFound } from "#/components/error-page";
 import Input from "#/components/input";
 import { ListButton } from "#/components/interactive/list-button";
 import { PageHeader } from "#/components/page-header";
-import PDF from "#/components/pdf";
 import { SongTextEditor } from "#/components/song-editor/song-text-editor";
 import { WasmSongLook } from "#/components/song-look/wasm-song-look";
 import { TH2, TH3, TP, TText } from "#/components/themed";
@@ -65,7 +64,6 @@ type State = {
   pretranspose: string;
   advanced: boolean;
   preview: boolean;
-  pdfPreview: boolean;
   simpleEditor: boolean;
   extraSearchable: string | null;
   extraNonSearchable: string | null;
@@ -154,7 +152,6 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
     titleSpace: props.song.titleSpace.toFixed(2),
     advanced: false,
     preview: false,
-    pdfPreview: false,
     simpleEditor: window.screen.width < 980,
     saveStatus: "NO_CHANGES",
     continuousMode: false,
@@ -256,7 +253,6 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
   const advancedChange = (value: boolean) => setState({ advanced: value });
   const simpleEditorChange = (value: boolean) => setState({ simpleEditor: value });
   const previewChange = (value: boolean) => setState({ preview: value });
-  const pdfPreviewChange = (value: boolean) => setState({ pdfPreview: value });
   const continuousModeChange = (value: boolean) => setState({ continuousMode: value });
 
   const editor = (lang: "song" | "none", value: string, onChange: (v: string) => void) =>
@@ -277,14 +273,11 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           <div className="mb-0.5">
             <Checkbox label={t("edit.Show preview")} checked={state.preview} onChange={previewChange} />
             {state.preview ? (
-              <>
-                <Checkbox label={t("edit.PDF preview")} checked={state.pdfPreview} onChange={pdfPreviewChange} />
-                <Checkbox
-                  label={t("edit.Continuous mode")}
-                  checked={state.continuousMode}
-                  onChange={continuousModeChange}
-                />
-              </>
+              <Checkbox
+                label={t("edit.Continuous mode")}
+                checked={state.continuousMode}
+                onChange={continuousModeChange}
+              />
             ) : null}
           </div>
           <Checkbox
@@ -372,11 +365,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       </div>
       {state.preview && (
         <div className="max-h-full overflow-hidden">
-          {state.pdfPreview ? (
-            <PDF song={getResult(props.song, state)} />
-          ) : (
-            <WasmSongLook song={getResult(props.song, state)} />
-          )}
+          <WasmSongLook song={getResult(props.song, state)} />
         </div>
       )}
     </Columns>

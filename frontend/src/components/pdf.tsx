@@ -1,51 +1,38 @@
 import type { ReactNode } from "react";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { PDFRenderMultipleSongsProps } from "./pdf-render/pdf-render";
-import PDF, { PDFDownload } from "./pdf-render/pdf-render";
-import { isPDFRendererLoaded, preloadPDFRenderer } from "./pdf-render/primitives";
-import { downloadCollectionPdfWasm, preloadWasmRenderer } from "./pdf-render/wasm-collection-pdf";
-
-export default PDF;
-
-function useDelayed<T>(v: T): T {
-  const [state, setState] = useState(v);
-  useEffect(() => {
-    Promise.resolve().then(() => {
-      setState(v);
-    });
-  }, [v]);
-  return state;
-}
+import type { SongType } from "#/store/store-song";
+import { downloadCollectionPdfWasm, preloadWasmRenderer } from "./wasm-collection-pdf";
 
 export function DownloadPDF({
   children,
   autoStart,
-  wasm,
   tocOnly,
   booklet,
-  ...props
-}: PDFRenderMultipleSongsProps & {
+  list,
+  slug,
+  title,
+}: {
+  list: SongType[];
+  slug: string | null;
+  title: string;
   children: (status: string, onClick: () => void) => ReactNode;
-  /** Preload the (large) PDF renderer library as soon as this mounts; actual generation still only starts on click. */
+  /** Preload the (large) wasm renderer as soon as this mounts; actual generation still only starts on click. */
   autoStart?: boolean;
-  /** Render via the Rust/WASM krilla renderer (renderer/songbook-render-pdf) instead of @react-pdf/renderer. */
-  wasm?: boolean;
-  /** Debug: skip rendering song contents, only the title page and table of contents (wasm only). */
+  /** Debug: skip rendering song contents, only the title page and table of contents. */
   tocOnly?: boolean;
-  /** Re-impose the rendered PDF as a foldable booklet, two pages per sheet (wasm only). */
+  /** Re-impose the rendered PDF as a foldable booklet, two pages per sheet. */
   booklet?: boolean;
 }) {
   const { t } = useTranslation();
-  const [preloading, setPreloading] = useState(!!autoStart && !(wasm ? false : isPDFRendererLoaded()));
+  const [preloading, setPreloading] = useState(!!autoStart);
   const [status, setStatus] = useState<"idle" | "generating" | "generated" | "error">("idle");
-  const onDone = useCallback(() => setStatus("generated"), []);
 
   useEffect(() => {
     if (!autoStart) return;
     let cancelled = false;
-    (wasm ? preloadWasmRenderer() : preloadPDFRenderer()).then(
+    preloadWasmRenderer().then(
       () => {
         if (!cancelled) setPreloading(false);
       },
@@ -58,14 +45,14 @@ export function DownloadPDF({
     return () => {
       cancelled = true;
     };
-  }, [autoStart, wasm]);
+  }, [autoStart]);
 
   useEffect(() => {
-    if (!wasm || status !== "generating") return;
+    if (status !== "generating") return;
     let cancelled = false;
-    downloadCollectionPdfWasm(props.title, props.list, props.slug, tocOnly, booklet).then(
+    downloadCollectionPdfWasm(title, list, slug, tocOnly, booklet).then(
       () => {
-        if (!cancelled) onDone();
+        if (!cancelled) setStatus("generated");
       },
       () => {
         if (!cancelled) setStatus("error");
@@ -75,15 +62,12 @@ export function DownloadPDF({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasm, status]);
-
-  const delayedStatus = useDelayed(status);
+  }, [status]);
 
   if (preloading) return <>{t("pdf-gen.Loading")}</>;
 
   return (
-    <Suspense fallback={children(t("pdf-gen.Loading"), () => {})}>
-      {delayedStatus === "generating" && !wasm ? <PDFDownload {...props} onDone={onDone} /> : null}
+    <>
       {children(
         status === "idle"
           ? t("pdf-gen.Download PDF")
@@ -97,6 +81,6 @@ export function DownloadPDF({
           setStatus("generating");
         },
       )}
-    </Suspense>
+    </>
   );
 }

@@ -59,7 +59,7 @@ function CollectionPDFRoute() {
           <input type="checkbox" checked={booklet} onChange={e => setBooklet(e.target.checked)} />
           Booklet (fold in half)
         </label>
-        <DownloadPDF list={songs} slug={slug} title={name} autoStart wasm tocOnly={tocOnly} booklet={booklet}>
+        <DownloadPDF list={songs} slug={slug} title={name} autoStart tocOnly={tocOnly} booklet={booklet}>
           {(text, onClick) => <ListButton onPress={onClick}>{text}</ListButton>}
         </DownloadPDF>
       </div>

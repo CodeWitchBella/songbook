@@ -25,8 +25,7 @@ const optimizeDepsInclude = [
       // workbox-window which the app uses to register the service worker.
       (!dep.startsWith("workbox-") || dep === "workbox-window") &&
       !dep.startsWith("@types/") &&
-      !dep.startsWith("@fontsource") && // css/font side-effect imports
-      !dep.startsWith("@react-pdf/types"), // types only
+      !dep.startsWith("@fontsource"), // css/font side-effect imports
   ),
   ...optimizeDepsSubpaths,
 ];
@@ -71,7 +70,6 @@ export default defineConfig({
         find: /^(utils|store|routes|containers|sections|components)\//,
         replacement: "/src/$1/",
       },
-      { find: "react-native", replacement: "react-native-web" },
     ],
   },
 });

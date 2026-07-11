@@ -3,7 +3,6 @@ import { InlineLink } from "#/components/interactive/inline-link";
 import { PrimaryButton } from "#/components/interactive/primary-button";
 import { LoginDone } from "#/components/login-done";
 import { PageHeader } from "#/components/page-header";
-import { View } from "#/components/pdf-render/primitives";
 import { TText } from "#/components/themed";
 import { useLogin } from "#/components/use-login";
 import { useState } from "react";
@@ -87,13 +86,13 @@ export default function Register() {
             {t("Create account")}
           </PrimaryButton>
           <button style={{ display: "none" }} />
-          <View style={{ marginTop: 16, alignItems: "flex-end" }}>
+          <div className="mt-4 flex items-end">
             <TText style={{ fontSize: 16 }}>
               <Trans>
                 I already have account, <InlineLink to="/login">log in</InlineLink>
               </Trans>
             </TText>
-          </View>
+          </div>
         </>
       )}
     </form>
