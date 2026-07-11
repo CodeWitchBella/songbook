@@ -9,7 +9,12 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
     let mut out: String = Default::default();
     out.push_str(r#"<div style="width:100%;max-width:65ch;height:100%;position:relative;font-family:Cantarell">"#);
     out.push_str(r#"<template shadowrootmode="open">"#);
-    out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset}</style>"#);
+    // Chord color comes from the `--chord-color` custom property (set in
+    // frontend/src/index.css), which inherits across the shadow boundary in
+    // every browser; light mode matches songbook-render-pdf's chord_fill()
+    // (`#993300`), dark mode matches origin/main's PDF dark chord color, from
+    // frontend/src/components/themed.tsx (`#EE0`).
+    out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset;color:var(--chord-color,#930)}</style>"#);
     for item in song.items.iter() {
         // Chords stay interactive (buttons); everything else is a plain div.
         let interactive = matches!(item.item_type, ItemType::Chord | ItemType::ChordNormal);

@@ -41,6 +41,16 @@ body,
   }
 }
 
+/* Chord color for the wasm HTML song renderer (render_song_html.rs); it
+   reads this custom property, which inherits across the shadow boundary in
+   every browser (unlike `:host-context`, which Firefox doesn't support). */
+html {
+  --chord-color: #930;
+}
+html.dark {
+  --chord-color: #ee0;
+}
+
 /* When a multi-page song is displayed with continuous mode off, snap scrolling
    to each page so pages line up with the viewport. The class is toggled onto
    <html> by the song view; the pages themselves opt in as snap targets via the
