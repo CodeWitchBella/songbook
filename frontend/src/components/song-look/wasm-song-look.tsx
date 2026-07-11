@@ -15,6 +15,9 @@ import { processNode, type Frontmatter, type ParsedSong } from "#/wasm/grammar/s
 // than one. Column widths themselves are derived from content (see below).
 const COLUMN_GAP_PX = 48;
 
+// Horizontal breathing room so text doesn't run edge-to-edge in the container.
+const PAGE_PADDING_PX = 16; // matches tailwind's px-4
+
 async function fetchBytes(url: string): Promise<Uint8Array> {
   const res = await fetch(url);
   return new Uint8Array(await res.arrayBuffer());
@@ -109,12 +112,13 @@ export function WasmSongLook({
     let cleanup = () => {};
     getRenderer().then(renderer => {
       if (cancelled) return;
-      const render = (width: number, height: number) => {
-        if (cancelled || width <= 0 || height <= 0) return;
-        if (width === renderedWidth && height === renderedHeight) return;
-        renderedWidth = width;
+      const render = (fullWidth: number, height: number) => {
+        if (cancelled || fullWidth <= 0 || height <= 0) return;
+        if (fullWidth === renderedWidth && height === renderedHeight) return;
+        renderedWidth = fullWidth;
         renderedHeight = height;
 
+        const width = Math.max(fullWidth - PAGE_PADDING_PX * 2, 1);
         const json = songToParsedJson(song, transposition);
         // Render at the full container width first: since that's the most
         // any single column could ever be, lines don't wrap any tighter than
@@ -196,7 +200,7 @@ export function WasmSongLook({
           const colX = pageColX.get(cell.page) ?? 0;
           const rowY = pageRowY.get(cell.page) ?? 0;
           const newTop = cell.top - cell.page * height + rowY;
-          const newLeft = cell.left + colX;
+          const newLeft = cell.left + colX + PAGE_PADDING_PX;
           cell.el.style.top = `${newTop}px`;
           cell.el.style.left = `${newLeft}px`;
           maxY = Math.max(maxY, newTop + cell.lineHeight);
@@ -239,7 +243,7 @@ export function WasmSongLook({
 
   return (
     <div className="mx-auto flex h-dvh w-full flex-col">
-      <div className="flex justify-between px-4 pt-3 font-['Cantarell'] text-xl font-bold">
+      <div className="flex justify-between px-4 py-3 font-['Cantarell'] text-xl font-bold">
         <span>{song.title}</span>
         <span>{song.author}</span>
       </div>
