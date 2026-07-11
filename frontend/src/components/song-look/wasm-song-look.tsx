@@ -100,27 +100,41 @@ export function WasmSongLook({
 
   useEffect(() => {
     let cancelled = false;
+    const el = containerRef.current;
+    if (!el) return;
+
+    let renderedWidth = -1;
+    let cleanup = () => {};
     getRenderer().then(renderer => {
       if (cancelled) return;
-      const el = containerRef.current;
-      if (!el) return;
-      const json = songToParsedJson(song, transposition);
-      const width = el.clientWidth;
-      const html = renderer.htmlify(json, width);
-      const layout = renderer.jsonify(json, width) as Layout;
-      el.setHTMLUnsafe(html);
-      const wrapper = el.firstElementChild as HTMLElement | null;
-      // Items are absolutely positioned, so they don't contribute to the
-      // wrapper's height on their own; size it from the layout's own extent.
-      const maxY = layout.items.reduce((m, item) => Math.max(m, item.pos[1] + item.font_size), 0);
-      if (wrapper) wrapper.style.height = `${maxY + 32}px`;
-      wrapper?.shadowRoot?.addEventListener("click", event => {
-        const target = event.target as HTMLElement | null;
-        if (target?.nodeName === "BUTTON") onChordPressRef.current?.(target.innerText);
+      const render = (width: number) => {
+        if (cancelled || width <= 0 || width === renderedWidth) return;
+        renderedWidth = width;
+        const json = songToParsedJson(song, transposition);
+        const html = renderer.htmlify(json, width);
+        const layout = renderer.jsonify(json, width) as Layout;
+        el.setHTMLUnsafe(html);
+        const wrapper = el.firstElementChild as HTMLElement | null;
+        // Items are absolutely positioned, so they don't contribute to the
+        // wrapper's height on their own; size it from the layout's own extent.
+        const maxY = layout.items.reduce((m, item) => Math.max(m, item.pos[1] + item.font_size), 0);
+        if (wrapper) wrapper.style.height = `${maxY + 32}px`;
+        wrapper?.shadowRoot?.addEventListener("click", event => {
+          const target = event.target as HTMLElement | null;
+          if (target?.nodeName === "BUTTON") onChordPressRef.current?.(target.innerText);
+        });
+      };
+
+      render(el.clientWidth);
+      const observer = new ResizeObserver(([entry]) => {
+        if (entry) render(entry.contentBoxSize[0]?.inlineSize ?? entry.contentRect.width);
       });
+      observer.observe(el);
+      cleanup = () => observer.disconnect();
     });
     return () => {
       cancelled = true;
+      cleanup();
     };
   }, [song, transposition]);
 
