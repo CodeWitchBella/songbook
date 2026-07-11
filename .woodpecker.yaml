@@ -35,7 +35,8 @@ steps:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
       - cd renderer
-      - just build-wasm
+      - just build-wasm-pdf
+      - just build-wasm-html
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11

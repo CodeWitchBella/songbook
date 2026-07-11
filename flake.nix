@@ -285,21 +285,36 @@
                 };
               };
               # Builds the WASM PDF renderer the frontend imports from
-              # frontend/src/wasm/ (see renderer/justfile's build-wasm recipe).
+              # frontend/src/wasm/ (see renderer/justfile's build-wasm-pdf recipe).
               # Run explicitly here with store paths rather than relying on
               # cargo/wasm-pack/just being on PATH, which only holds inside
               # `nix develop`, not for processes started by `nix run` - the
               # same way postgres/backend reference `${pkgs.pnpm}/bin/pnpm`.
-              frontend-build-wasm = {
+              frontend-build-wasm-pdf = {
                 command = ''
                   export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
-                  exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-pdf -s "${pkgs.just}/bin/just build-wasm"
+                  exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-pdf -s "${pkgs.just}/bin/just build-wasm-pdf"
                 '';
                 working_dir = "renderer";
                 # cargo-watch never exits, so downstream processes wait for the
                 # first build to land the wasm output rather than for completion.
                 readiness_probe = {
                   exec.command = "test -f ../frontend/src/wasm/songbook-render-pdf/songbook_render_pdf.js";
+                  initial_delay_seconds = 1;
+                  period_seconds = 2;
+                };
+              };
+              # Builds the WASM HTML renderer the frontend imports from
+              # frontend/src/wasm/ (see renderer/justfile's build-wasm-html
+              # recipe). Mirrors frontend-build-wasm-pdf above.
+              frontend-build-wasm-html = {
+                command = ''
+                  export PATH="${pkgs.cargo}/bin:${pkgs.rustc}/bin:${pkgs.lld}/bin:${pkgs.wasm-pack}/bin:${pkgs.wasm-bindgen-cli}/bin:$PATH"
+                  exec ${pkgs.cargo-watch}/bin/cargo-watch -w songbook-render-html -s "${pkgs.just}/bin/just build-wasm-html"
+                '';
+                working_dir = "renderer";
+                readiness_probe = {
+                  exec.command = "test -f ../frontend/src/wasm/songbook-render-html/songbook_render_html.js";
                   initial_delay_seconds = 1;
                   period_seconds = 2;
                 };
@@ -312,7 +327,8 @@
                 availability.restart = "on_failure";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_healthy";
+                  frontend-build-wasm-pdf.condition = "process_healthy";
+                  frontend-build-wasm-html.condition = "process_healthy";
                 };
               };
               frontend-types = {
@@ -330,7 +346,8 @@
                 working_dir = "frontend";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_healthy";
+                  frontend-build-wasm-pdf.condition = "process_healthy";
+                  frontend-build-wasm-html.condition = "process_healthy";
                 };
               };
               # Runs the Storybook stories as Vitest browser tests against the
@@ -349,7 +366,8 @@
                 availability.restart = "no";
                 depends_on = {
                   frontend-gen-api.condition = "process_completed_successfully";
-                  frontend-build-wasm.condition = "process_healthy";
+                  frontend-build-wasm-pdf.condition = "process_healthy";
+                  frontend-build-wasm-html.condition = "process_healthy";
                 };
               };
             };

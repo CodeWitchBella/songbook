@@ -1,2 +1,11 @@
-build-wasm:
+build-wasm-pdf:
     wasm-pack build --dev --no-pack --no-opt songbook-render-pdf --target bundler --out-dir ../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf
+
+build-wasm-pdf-prod:
+    wasm-pack build songbook-render-pdf --target bundler --out-dir ../frontend/src/wasm/songbook-render-pdf --out-name songbook_render_pdf
+
+build-wasm-html:
+    wasm-pack build --dev --no-pack --no-opt songbook-render-html --target bundler --out-dir ../frontend/src/wasm/songbook-render-html --out-name songbook_render_html
+
+build-wasm-html-prod:
+    wasm-pack build songbook-render-html --target bundler --out-dir ../frontend/src/wasm/songbook-render-html --out-name songbook_render_html
