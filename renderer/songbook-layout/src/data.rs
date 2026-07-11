@@ -42,6 +42,16 @@ pub struct Item {
     /// [`Item::pos`]. Used to know the item's right extent.
     pub width: f32,
 
+    /// This item's own font ascent and descent (distance from the glyph's
+    /// natural top/bottom to the baseline at `pos.1`), at its rendered font,
+    /// size and weight. `canvas`/`pdf` renderers draw directly at the
+    /// baseline and don't need this; the HTML renderer's `<div>`s are
+    /// top-anchored, so it uses these to convert `pos.1` (a baseline) into a
+    /// CSS `top` and matching `line-height` that puts the glyph baseline back
+    /// at `pos.1` instead of at the div's top edge.
+    pub ascent: f32,
+    pub descent: f32,
+
     /// Signifies the position of the text on the page.
     ///
     /// The coordinate system is in screenspace - topleft is (0,0)
@@ -89,6 +99,8 @@ impl Layout {
                     item_type: ItemType::Text,
                     font_size: 16.,
                     width: 0.,
+                    ascent: 13.,
+                    descent: 3.,
                     pos: (0., 32.0),
                 },
                 Item {
@@ -96,6 +108,8 @@ impl Layout {
                     item_type: ItemType::Chord,
                     font_size: 16.,
                     width: 0.,
+                    ascent: 13.,
+                    descent: 3.,
                     pos: (6., 16.0),
                 },
                 Item {
@@ -103,6 +117,8 @@ impl Layout {
                     item_type: ItemType::Text,
                     font_size: 16.,
                     width: 0.,
+                    ascent: 13.,
+                    descent: 3.,
                     pos: (16., 48.0),
                 },
             ],

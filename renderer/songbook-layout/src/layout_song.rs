@@ -194,12 +194,15 @@ fn measure_header(
     };
     // Baseline sits below the top margin by roughly the ascent.
     let header_baseline = HEADER_TOP_MARGIN * EM + header_px;
+    let (header_ascent, header_descent) = font_metrics(header_px, true, LYRIC_FONT_FAMILY, font_cx);
     [
         Item {
             text: title.to_owned(),
             item_type: ItemType::Header,
             font_size: header_px,
             width: title_width,
+            ascent: header_ascent,
+            descent: header_descent,
             pos: (0., header_baseline),
         },
         Item {
@@ -207,6 +210,8 @@ fn measure_header(
             item_type: ItemType::Header,
             font_size: header_px,
             width: author_width,
+            ascent: header_ascent,
+            descent: header_descent,
             pos: (author_x, header_baseline),
         },
     ]
@@ -715,6 +720,8 @@ fn measure_line(
                         },
                         font_size: font_px,
                         width: glyph_run.advance(),
+                        ascent: baseline,
+                        descent,
                         pos: (glyph_run.offset() + tag_width, text_baseline_offset),
                         text: complete_text[range].to_owned(),
                     });
@@ -731,6 +738,8 @@ fn measure_line(
         if chord.text.is_empty() {
             continue;
         }
+        let (chord_ascent, chord_descent) =
+            font_metrics(font_px, !chord.normal_weight, CHORD_FONT_FAMILY, font_cx);
         out.push(Item {
             item_type: if chord.normal_weight {
                 ItemType::ChordNormal
@@ -739,6 +748,8 @@ fn measure_line(
             },
             font_size: font_px,
             width: chord.width,
+            ascent: chord_ascent,
+            descent: chord_descent,
             pos: (chord_x[i] + tag_width, chord_baseline_offset),
             text: chord.text.clone(),
         });
@@ -750,6 +761,8 @@ fn measure_line(
             item_type: ItemType::Tag,
             font_size: font_px,
             width: tag_width,
+            ascent: baseline,
+            descent,
             pos: (0.0, text_baseline_offset),
             text: tag_text.trim_end().to_owned(),
         });
@@ -906,7 +919,8 @@ fn transform_tag(label: &str, verse_counter: &mut u32) -> Option<String> {
     }
 }
 
-/// Baseline offset and natural line height of a plain text line.
+/// Baseline offset and natural line height of a plain text line, in the lyric
+/// font.
 fn line_metrics(text: &str, font_px: f32, font_cx: &mut parley::FontContext) -> (f32, f32) {
     let mut layout_cx = parley::LayoutContext::new();
     let measured = if text.is_empty() { " " } else { text };
@@ -926,5 +940,31 @@ fn line_metrics(text: &str, font_px: f32, font_cx: &mut parley::FontContext) -> 
             (m.baseline, m.line_height)
         }
         None => (font_px, font_px * 1.3),
+    }
+}
+
+/// An item's own ascent/descent (distance from its baseline to its natural
+/// top/bottom) at a given font size, weight and family — a pure font metric,
+/// independent of the text content shaped in it. See [`Item::ascent`].
+fn font_metrics(
+    font_px: f32,
+    bold: bool,
+    family: &str,
+    font_cx: &mut parley::FontContext,
+) -> (f32, f32) {
+    let mut layout_cx = parley::LayoutContext::new();
+    let text = " ";
+    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, font_px, family, 1.0);
+    if bold {
+        builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(700.0)));
+    }
+    let mut layout: parley::Layout<()> = builder.build(text);
+    layout.break_all_lines(None);
+    match layout.lines().next() {
+        Some(line) => {
+            let m = line.metrics();
+            (m.baseline, (m.line_height - m.baseline).max(0.0))
+        }
+        None => (font_px, font_px * 0.3),
     }
 }

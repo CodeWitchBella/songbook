@@ -33,9 +33,21 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
         } else {
             "Cantarell"
         };
+        // `item.pos.1` is the text baseline (see `Item::pos`'s doc comment),
+        // but a `<div>`/`<button>` is anchored at its own top edge, with the
+        // baseline sitting `ascent` below that. Shift `top` up by `ascent` and
+        // pin `line-height` to the item's own natural ascent+descent (rather
+        // than inheriting the host page's line-height, which crosses the
+        // shadow boundary since it's an inherited CSS property) so the glyph
+        // baseline lands back exactly at `item.pos.1`.
         out.push_str(&format!(
-            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};font-family:'{}';white-space:pre;">"#,
-            item.pos.0, item.pos.1, item.font_size, weight, font_family
+            r#"position:absolute;left:{}px;top:{}px;line-height:{}px;font-size:{}px;font-weight:{};font-family:'{}';white-space:pre;">"#,
+            item.pos.0,
+            item.pos.1 - item.ascent,
+            item.ascent + item.descent,
+            item.font_size,
+            weight,
+            font_family
         ));
         out.push_str(&item.text);
         if interactive {
