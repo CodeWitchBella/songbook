@@ -8,6 +8,7 @@ import type { User } from "#/store/api";
 import type { SongType } from "#/store/store-song";
 import { getSongStore, useSongStoreChange } from "#/worker/client";
 import type { SongRecord } from "#/worker/types";
+import { preloadWasmSongRenderer } from "#/components/song-look/wasm-song-look";
 
 function toSongType(record: SongRecord): SongType {
   const { data } = record;
@@ -35,7 +36,9 @@ type LoaderData = { song: SongType | null };
 export async function loader({ params }: LoaderFunctionArgs): Promise<LoaderData> {
   const slug = params.slug;
   if (!slug) return { song: null };
+  const renderer = preloadWasmSongRenderer();
   const record = await getSongStore().getSong({ slug });
+  await renderer;
   return { song: record ? toSongType(record) : null };
 }
 
