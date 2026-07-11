@@ -1,4 +1,5 @@
 import Checkbox from "#/components/checkbox";
+import { ChordHelp } from "#/components/chord-help";
 import { NotFound } from "#/components/error-page";
 import Input from "#/components/input";
 import { ListButton } from "#/components/interactive/list-button";
@@ -139,6 +140,7 @@ const getResult = (propsSong: SongType, theState: State): SongType => {
 
 function EditSong(props: { song: SongType; refetch: () => void }) {
   const { t } = useTranslation();
+  const [chordHelp, setChordHelp] = useState("");
   const initialState: State = {
     author: props.song.author,
     title: props.song.title,
@@ -365,9 +367,10 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
       </div>
       {state.preview && (
         <div className="max-h-full overflow-hidden">
-          <WasmSongLook song={getResult(props.song, state)} />
+          <WasmSongLook song={getResult(props.song, state)} onChordPress={setChordHelp} />
         </div>
       )}
+      {chordHelp ? <ChordHelp chord={chordHelp} close={() => setChordHelp("")} /> : null}
     </Columns>
   );
 }
