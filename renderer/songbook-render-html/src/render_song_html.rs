@@ -29,7 +29,7 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
             "Cantarell"
         };
         out.push_str(&format!(
-            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};font-family:'{}';">"#,
+            r#"position:absolute;left:{}px;top:{}px;font-size:{}px;font-weight:{};font-family:'{}';white-space:pre;">"#,
             item.pos.0, item.pos.1, item.font_size, weight, font_family
         ));
         out.push_str(&item.text);
