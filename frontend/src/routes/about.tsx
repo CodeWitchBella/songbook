@@ -8,7 +8,7 @@ import { useLogin } from "#/components/use-login";
 import { Version } from "#/components/version";
 import { Trans, useTranslation } from "react-i18next";
 
-const googleDoc = "https://docs.google.com/document/d/1SVadEFoM9ppFI6tOhOQskMs53UxHK1EWYZ7Lr4rAFoc/edit?usp=sharing";
+const wiki = "https://outline.isbl.cz/s/f7cb675c-bbe5-48ea-b1bb-7a4a9a8f1bb6";
 
 export default function About() {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ export default function About() {
       <Gap />
       <ListButton to="/changelog">{t("Changelog")}</ListButton>
       <Gap />
-      <ListButton to={googleDoc}>{t("Suggestions")}</ListButton>
+      <ListButton to={wiki}>{t("Roadmap")}</ListButton>
       <TH2>{t("My account")}</TH2>
       <User />
       <TH2>{t("Appearance")}</TH2>
