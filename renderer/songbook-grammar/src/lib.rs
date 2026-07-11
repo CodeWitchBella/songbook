@@ -51,7 +51,6 @@ impl Song {
 #[derive(Debug)]
 pub enum FilePortion {
     Section(Vec<Line>),
-    PageBreak,
 }
 
 impl FilePortion {
@@ -67,7 +66,6 @@ impl FilePortion {
                     })
                     .collect::<Result<Vec<Line>>>()?,
             )),
-            grammar_src::FilePortion::PageBreak(_) => Ok(Self::PageBreak),
         }
     }
 }

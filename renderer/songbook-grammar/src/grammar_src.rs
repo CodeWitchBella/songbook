@@ -21,7 +21,6 @@ pub(super) enum File {
 #[derive(Deserialize)]
 pub(super) enum FilePortion {
     Section(Vec<SectionPortion>),
-    PageBreak(String),
 }
 
 #[derive(Deserialize)]

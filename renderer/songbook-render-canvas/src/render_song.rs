@@ -100,7 +100,6 @@ fn render_text(song: &Song) {
                     }
                 }
             }
-            songbook_grammar::FilePortion::PageBreak => {}
         }
     }
 

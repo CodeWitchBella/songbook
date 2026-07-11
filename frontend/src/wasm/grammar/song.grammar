@@ -3,7 +3,7 @@
 @top File {
   "\n"*
   (
-    (Section |  PageBreak)
+    Section
     ("\n"+ | eof)
   )+
 }
@@ -35,8 +35,6 @@ CommandLead {
 Section {
   Line+
 }
-
-PageBreak { @specialize<Text, "--- page break ---"> }
 
 @tokens {
   LineLabel { $[SR] $[0-9]? ":" " "? }

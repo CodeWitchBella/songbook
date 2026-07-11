@@ -14,7 +14,6 @@ const t = {
   SectionStart: Tag.define(),
   File: Tag.define(),
   Chord: Tag.define(),
-  PageBreak: Tag.define(),
 };
 
 const mkTheme = (dark: boolean) =>
@@ -36,10 +35,6 @@ const mkTheme = (dark: boolean) =>
     styles: [
       {
         tag: t.SectionStart,
-        class: dark ? "text-green-300 font-black" : "text-green-800 font-black",
-      },
-      {
-        tag: t.PageBreak,
         class: dark ? "text-green-300 font-black" : "text-green-800 font-black",
       },
       {

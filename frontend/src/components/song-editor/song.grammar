@@ -1,4 +1,4 @@
-@top File { (Line | PageBreak)+ }
+@top File { Line+ }
 
 Chord { chordStart chordContent chordEnd }
 
@@ -21,7 +21,6 @@ SectionStart {
   chordEnd { "]" }
   chordContent { ![\n\]]+ }
   text { ![\n\[]+ }
-  PageBreak { "--- page break ---\n" }
   EOF { @eof }
   @precedence { digit, text }
 }

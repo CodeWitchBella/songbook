@@ -275,10 +275,7 @@ fn measure_song(
     let mut variant = Variant::Both;
 
     for portion in &song.portions {
-        let songbook_grammar::FilePortion::Section(lines) = portion else {
-            // `PageBreak`: this renderer lays the song out as a single flow.
-            continue;
-        };
+        let songbook_grammar::FilePortion::Section(lines) = portion;
 
         // A paragraph made up entirely of `>`-commands sets state and is not
         // itself rendered (and contributes no section gap).
