@@ -15,6 +15,10 @@ pub fn draw(song: &Layout) -> anyhow::Result<String> {
     // (`#993300`), dark mode matches origin/main's PDF dark chord color, from
     // frontend/src/components/themed.tsx (`#EE0`).
     out.push_str(r#"<style>button{font-weight:bold;user-select:none;cursor:pointer;padding:0;background:unset;border:unset;color:var(--chord-color,#930)}</style>"#);
+    // Callers that pass `show_header: false` to `LayoutEngine::run` get a
+    // layout with no header items at all, so this loop never sees
+    // `ItemType::Header` in that case; they draw their own title/author
+    // header separately (see WasmSongLook).
     for item in song.items.iter() {
         // Chords stay interactive (buttons); everything else is a plain div.
         let interactive = matches!(item.item_type, ItemType::Chord | ItemType::ChordNormal);

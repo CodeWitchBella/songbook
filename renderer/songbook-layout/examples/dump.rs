@@ -21,7 +21,7 @@ fn main() {
         engine.register_fonts(data, family);
     }
 
-    let layout = engine.run(&song, Some((363.53, 539.28)));
+    let layout = engine.run(&song, Some((363.53, 539.28)), true);
     for item in &layout.items {
         println!(
             "{:>8.1},{:>7.1}  {:<12} {:?}",

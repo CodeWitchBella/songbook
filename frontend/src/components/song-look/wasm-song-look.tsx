@@ -122,7 +122,11 @@ export function WasmSongLook({
         // line already too long for the container wraps, same as before).
         // Page breaks only depend on `height`, so this doesn't change which
         // items land on which page.
-        const html = renderer.htmlify(json, width, height);
+        // `show_header: false` — the title/author heading is drawn as an
+        // ordinary React element above the container (see the JSX below)
+        // rather than by the layout algorithm, so no space is reserved for
+        // it here.
+        const html = renderer.htmlify(json, width, height, false);
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
         if (wrapper) {
@@ -130,6 +134,7 @@ export function WasmSongLook({
           // override it now that we're placing columns ourselves.
           wrapper.style.maxWidth = "none";
         }
+
         wrapper?.shadowRoot?.addEventListener("click", event => {
           const target = event.target as HTMLElement | null;
           if (target?.nodeName === "BUTTON") onChordPressRef.current?.(target.innerText);
@@ -232,5 +237,13 @@ export function WasmSongLook({
     };
   }, [song, transposition]);
 
-  return <div ref={containerRef} className="relative mx-auto h-dvh w-full snap-y snap-mandatory overflow-y-auto" />;
+  return (
+    <div className="mx-auto flex h-dvh w-full flex-col">
+      <div className="flex justify-between px-4 pt-3 font-['Cantarell'] text-xl font-bold">
+        <span>{song.title}</span>
+        <span>{song.author}</span>
+      </div>
+      <div ref={containerRef} className="relative mx-auto w-full flex-1 snap-y snap-mandatory overflow-y-auto" />
+    </div>
+  );
 }

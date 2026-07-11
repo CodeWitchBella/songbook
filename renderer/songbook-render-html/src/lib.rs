@@ -33,16 +33,32 @@ impl Renderer {
     }
 
     #[wasm_bindgen]
-    pub fn jsonify(self: &mut Self, song: &str, width: f64, height: f64) -> JsValue {
+    pub fn jsonify(
+        self: &mut Self,
+        song: &str,
+        width: f64,
+        height: f64,
+        show_header: bool,
+    ) -> JsValue {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout = self.layout_engine.run(&parsed, Some((width, height)));
+        let layout = self
+            .layout_engine
+            .run(&parsed, Some((width, height)), show_header);
         serde_wasm_bindgen::to_value(&layout).unwrap()
     }
 
     #[wasm_bindgen]
-    pub fn htmlify(self: &mut Self, song: &str, width: f64, height: f64) -> String {
+    pub fn htmlify(
+        self: &mut Self,
+        song: &str,
+        width: f64,
+        height: f64,
+        show_header: bool,
+    ) -> String {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout = self.layout_engine.run(&parsed, Some((width, height)));
+        let layout = self
+            .layout_engine
+            .run(&parsed, Some((width, height)), show_header);
         let html = render_song_html::draw(&layout)
             .context("render_song_html::draw failed")
             .unwrap();

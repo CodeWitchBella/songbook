@@ -2,7 +2,7 @@
 
 use serde::Serialize;
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub enum ItemType {
     /// Lyric text, drawn in the normal weight.
     Text,

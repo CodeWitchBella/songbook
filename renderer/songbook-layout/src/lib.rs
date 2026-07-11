@@ -35,9 +35,17 @@ impl LayoutEngine {
     }
 
     /// Lay out the song. `viewport` is the usable content area of the target
-    /// page; pass `None` for renderers without a fixed page size.
-    pub fn run(self: &mut Self, parsed: &Song, viewport: Option<(f64, f64)>) -> Layout {
-        let layout = layout_song::layout_song(&parsed, &mut self.font_cx, viewport);
+    /// page; pass `None` for renderers without a fixed page size. `show_header`
+    /// controls whether space is reserved for a title/author header at all;
+    /// pass `false` for renderers that draw their own header outside the
+    /// layout.
+    pub fn run(
+        self: &mut Self,
+        parsed: &Song,
+        viewport: Option<(f64, f64)>,
+        show_header: bool,
+    ) -> Layout {
+        let layout = layout_song::layout_song(&parsed, &mut self.font_cx, viewport, show_header);
         layout
     }
 

@@ -94,6 +94,7 @@ pub fn layout_song(
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
     viewport: Option<(f64, f64)>,
+    show_header: bool,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
     // The per-song `fontSize` frontmatter is intentionally ignored; every song
@@ -106,7 +107,13 @@ pub fn layout_song(
 
     // The header is set at a fixed size regardless of compression (the body
     // font is the only one ever scaled down), so it only needs shaping once.
-    let header_items = measure_header(title, author, viewport, font_cx);
+    // When `show_header` is false, no space is reserved for it at all (used by
+    // renderers that draw their own title/author header outside the layout).
+    let header_items = if show_header {
+        measure_header(title, author, viewport, font_cx)
+    } else {
+        vec![]
+    };
 
     // Text shaping (parley) only depends on the body font size, which only
     // moves in the last quarter of the compression search below; every other
@@ -183,7 +190,7 @@ fn measure_header(
     author: &str,
     viewport: Option<(f64, f64)>,
     font_cx: &mut parley::FontContext,
-) -> [Item; 2] {
+) -> Vec<Item> {
     let content_width = viewport.map(|(width, _)| width);
     let header_px = HEADER_EM * EM;
     let title_width = measure(title, header_px, true, font_cx);
@@ -195,7 +202,7 @@ fn measure_header(
     // Baseline sits below the top margin by roughly the ascent.
     let header_baseline = HEADER_TOP_MARGIN * EM + header_px;
     let (header_ascent, header_descent) = font_metrics(header_px, true, LYRIC_FONT_FAMILY, font_cx);
-    [
+    vec![
         Item {
             text: title.to_owned(),
             item_type: ItemType::Header,
@@ -331,7 +338,7 @@ fn measure_song(
 /// it's cheap to call once per anti-orphan compression step.
 fn assemble(
     measured_paragraphs: &[MeasuredParagraph],
-    header_items: &[Item; 2],
+    header_items: &[Item],
     viewport: Option<(f64, f64)>,
     font_px: f32,
     t_header: f32,
@@ -382,8 +389,13 @@ fn assemble(
     };
     let header_space = lerp(header_space_base, HEADER_SPACE_FLOOR_EM, t_header) * EM;
     // Space consumed by the header before the body starts: the header line box
-    // plus the (compressible) space below it.
-    let header_height = HEADER_TOP_MARGIN * EM + header_px * 1.3 + header_space;
+    // plus the (compressible) space below it. No header items means the
+    // caller opted out of the header entirely, so no space is reserved.
+    let header_height = if header_items.is_empty() {
+        0.0
+    } else {
+        HEADER_TOP_MARGIN * EM + header_px * 1.3 + header_space
+    };
 
     let mut body_items: Vec<Item> = vec![];
     let mut y = 0.0f32;
