@@ -164,7 +164,7 @@ export function WasmSongLook({
   return (
     <div
       ref={containerRef}
-      className="relative mx-auto h-dvh w-full max-w-[65ch] snap-y snap-mandatory overflow-y-auto"
+      className="relative mx-auto h-dvh w-full snap-y snap-mandatory overflow-y-auto"
     />
   );
 }
