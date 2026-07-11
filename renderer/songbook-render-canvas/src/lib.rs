@@ -45,7 +45,7 @@ impl Renderer {
     #[wasm_bindgen]
     pub fn run(self: &mut Self, song: &str) -> Result<(), wasm_bindgen::JsError> {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout = self.layout_engine.run(&parsed, None, true);
+        let layout = self.layout_engine.run(&parsed, None, true, false);
         Ok(run_anyhow(song, self, &layout).unwrap())
     }
 

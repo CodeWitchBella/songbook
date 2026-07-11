@@ -39,11 +39,12 @@ impl Renderer {
         width: f64,
         height: f64,
         show_header: bool,
+        continuous: bool,
     ) -> JsValue {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout = self
-            .layout_engine
-            .run(&parsed, Some((width, height)), show_header);
+        let layout =
+            self.layout_engine
+                .run(&parsed, Some((width, height)), show_header, continuous);
         serde_wasm_bindgen::to_value(&layout).unwrap()
     }
 
@@ -54,11 +55,12 @@ impl Renderer {
         width: f64,
         height: f64,
         show_header: bool,
+        continuous: bool,
     ) -> String {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout = self
-            .layout_engine
-            .run(&parsed, Some((width, height)), show_header);
+        let layout =
+            self.layout_engine
+                .run(&parsed, Some((width, height)), show_header, continuous);
         let html = render_song_html::draw(&layout)
             .context("render_song_html::draw failed")
             .unwrap();

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import { useContinuousModeSetting } from "#/components/continuous-mode";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
 import atkinsonRegularUrl from "#/wasm/fonts/atkinson-hyperlegible-regular.woff2?url";
@@ -101,6 +102,7 @@ export function WasmSongLook({
   const containerRef = useRef<HTMLDivElement>(null);
   const onChordPressRef = useRef(onChordPress);
   onChordPressRef.current = onChordPress;
+  const [continuousSetting] = useContinuousModeSetting();
 
   useEffect(() => {
     let cancelled = false;
@@ -120,6 +122,21 @@ export function WasmSongLook({
 
         const width = Math.max(fullWidth - PAGE_PADDING_PX * 2, 1);
         const json = songToParsedJson(song, transposition);
+
+        // "multipage" only enables continuous chords when the song actually
+        // spans more than one page, which isn't known up front — lay it out
+        // once normally (cheap: no HTML string building) to count pages, then
+        // decide.
+        let continuous = continuousSetting === "always";
+        if (continuousSetting === "multipage") {
+          const layout = renderer.jsonify(json, width, height, false, false) as {
+            items: { pos: [number, number] }[];
+          };
+          const maxTop = layout.items.reduce((max, item) => Math.max(max, item.pos[1]), 0);
+          const pageCount = Math.floor(maxTop / height) + 1;
+          continuous = pageCount > 1;
+        }
+
         // Render at the full container width first: since that's the most
         // any single column could ever be, lines don't wrap any tighter than
         // their natural extent (short lines stay their natural width; only a
@@ -130,7 +147,7 @@ export function WasmSongLook({
         // ordinary React element above the container (see the JSX below)
         // rather than by the layout algorithm, so no space is reserved for
         // it here.
-        const html = renderer.htmlify(json, width, height, false);
+        const html = renderer.htmlify(json, width, height, false, continuous);
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
         if (wrapper) {
@@ -239,7 +256,7 @@ export function WasmSongLook({
       cancelled = true;
       cleanup();
     };
-  }, [song, transposition]);
+  }, [song, transposition, continuousSetting]);
 
   return (
     <div className="mx-auto flex h-dvh w-full flex-col">

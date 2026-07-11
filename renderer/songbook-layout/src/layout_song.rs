@@ -95,6 +95,7 @@ pub fn layout_song(
     font_cx: &mut parley::FontContext,
     viewport: Option<(f64, f64)>,
     show_header: bool,
+    continuous: bool,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
     // The per-song `fontSize` frontmatter is intentionally ignored; every song
@@ -122,7 +123,14 @@ pub fn layout_song(
     let mut measured_cache: Vec<(u32, Vec<MeasuredParagraph>)> = vec![];
 
     let (natural_layout, natural_metrics) = {
-        let measured = get_measured(&mut measured_cache, song, font_cx, font_px_base, transpose);
+        let measured = get_measured(
+            &mut measured_cache,
+            song,
+            font_cx,
+            font_px_base,
+            transpose,
+            continuous,
+        );
         assemble(
             measured,
             &header_items,
@@ -162,7 +170,14 @@ pub fn layout_song(
         let t_font = ((progress - 0.75) / 0.25).clamp(0.0, 1.0);
         let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
 
-        let measured = get_measured(&mut measured_cache, song, font_cx, font_px, transpose);
+        let measured = get_measured(
+            &mut measured_cache,
+            song,
+            font_cx,
+            font_px,
+            transpose,
+            continuous,
+        );
         let (candidate, candidate_metrics) = assemble(
             measured,
             &header_items,
@@ -243,12 +258,13 @@ fn get_measured<'a>(
     font_cx: &mut parley::FontContext,
     font_px: f32,
     transpose: i32,
+    continuous: bool,
 ) -> &'a [MeasuredParagraph] {
     let key = font_px.to_bits();
     if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
         return &cache[pos].1;
     }
-    let measured = measure_song(song, font_cx, font_px, transpose);
+    let measured = measure_song(song, font_cx, font_px, transpose, continuous);
     cache.push((key, measured));
     &cache.last().unwrap().1
 }
@@ -262,6 +278,7 @@ fn measure_song(
     font_cx: &mut parley::FontContext,
     font_px: f32,
     transpose: i32,
+    continuous: bool,
 ) -> Vec<MeasuredParagraph> {
     let mut paragraphs: Vec<MeasuredParagraph> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
@@ -282,7 +299,9 @@ fn measure_song(
         if let Some(commands) = command_block(lines) {
             for (cmd, args) in commands {
                 match cmd {
-                    "chords" => match args {
+                    // In continuous mode, chords are shown over every verse,
+                    // so `[> chords off]` is ignored.
+                    "chords" if !continuous => match args {
                         "off" => chords_off = true,
                         "on" => chords_off = false,
                         _ => {}
