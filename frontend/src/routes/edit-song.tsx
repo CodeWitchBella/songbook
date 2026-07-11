@@ -5,7 +5,7 @@ import { ListButton } from "#/components/interactive/list-button";
 import { PageHeader } from "#/components/page-header";
 import PDF from "#/components/pdf";
 import { SongTextEditor } from "#/components/song-editor/song-text-editor";
-import { SongLook } from "#/components/song-look/song-look";
+import { WasmSongLook } from "#/components/song-look/wasm-song-look";
 import { TH2, TH3, TP, TText } from "#/components/themed";
 import { DateTime } from "luxon";
 import type { PropsWithChildren } from "react";
@@ -15,7 +15,6 @@ import type { LoaderFunctionArgs } from "react-router";
 import { useLoaderData, useParams, useRevalidator } from "react-router";
 import type { SongType } from "#/store/store-song";
 import { toSongType, updateSong } from "#/store/store-song";
-import * as parser from "#/utils/song-parser/song-parser";
 import { getSongStore, useSongStoreChange } from "#/worker/client";
 
 type LoaderData = { song: SongType | null };
@@ -376,13 +375,7 @@ function EditSong(props: { song: SongType; refetch: () => void }) {
           {state.pdfPreview ? (
             <PDF song={getResult(props.song, state)} />
           ) : (
-            <SongLook
-              song={getResult(props.song, state)}
-              parsed={parser.parseSong("my", state.textWithChords, {
-                continuous: state.continuousMode ? "always" : "never",
-              })}
-              noBack
-            />
+            <WasmSongLook song={getResult(props.song, state)} />
           )}
         </div>
       )}
