@@ -46,7 +46,7 @@ const parsed = JSON.stringify(parseSong(parser as LRParser, song), null, 2);
 // renderer.parse(parsed);
 
 if('htmlify' in renderer) {
-  document.body.setHTMLUnsafe(renderer.htmlify(parsed))
+  document.body.setHTMLUnsafe(renderer.htmlify(parsed, 600))
   document.body.querySelector("div")?.shadowRoot?.addEventListener('click', ({ target })=> {
     if(target && 'nodeName' in target && target.nodeName === 'BUTTON' && 'innerText' in target) {
       console.log(target.innerText)

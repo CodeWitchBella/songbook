@@ -105,8 +105,9 @@ export function WasmSongLook({
       const el = containerRef.current;
       if (!el) return;
       const json = songToParsedJson(song, transposition);
-      const html = renderer.htmlify(json);
-      const layout = renderer.jsonify(json) as Layout;
+      const width = el.clientWidth;
+      const html = renderer.htmlify(json, width);
+      const layout = renderer.jsonify(json, width) as Layout;
       el.setHTMLUnsafe(html);
       const wrapper = el.firstElementChild as HTMLElement | null;
       // Items are absolutely positioned, so they don't contribute to the
