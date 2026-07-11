@@ -11,8 +11,9 @@ import cantarellRegularUrl from "#/wasm/fonts/cantarell-regular.woff2?url";
 import { parser } from "#/wasm/grammar/song.grammar";
 import { processNode, type Frontmatter, type ParsedSong } from "#/wasm/grammar/song-parse";
 
-type LayoutItem = { pos: [number, number]; font_size: number };
-type Layout = { items: LayoutItem[] };
+// Gutter left between columns when the container is wide enough to fit more
+// than one. Column widths themselves are derived from content (see below).
+const COLUMN_GAP_PX = 48;
 
 async function fetchBytes(url: string): Promise<Uint8Array> {
   const res = await fetch(url);
@@ -113,27 +114,97 @@ export function WasmSongLook({
         if (width === renderedWidth && height === renderedHeight) return;
         renderedWidth = width;
         renderedHeight = height;
+
         const json = songToParsedJson(song, transposition);
+        // Render at the full container width first: since that's the most
+        // any single column could ever be, lines don't wrap any tighter than
+        // their natural extent (short lines stay their natural width; only a
+        // line already too long for the container wraps, same as before).
+        // Page breaks only depend on `height`, so this doesn't change which
+        // items land on which page.
         const html = renderer.htmlify(json, width, height);
-        const layout = renderer.jsonify(json, width, height) as Layout;
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
-        // Items are absolutely positioned, so they don't contribute to the
-        // wrapper's height on their own; size it from the layout's own extent.
-        const maxY = layout.items.reduce((m, item) => Math.max(m, item.pos[1] + item.font_size), 0);
-        if (wrapper) wrapper.style.height = `${maxY + 32}px`;
+        if (wrapper) {
+          // The renderer bakes in a 65ch max-width meant for a single page;
+          // override it now that we're placing columns ourselves.
+          wrapper.style.maxWidth = "none";
+        }
         wrapper?.shadowRoot?.addEventListener("click", event => {
           const target = event.target as HTMLElement | null;
           if (target?.nodeName === "BUTTON") onChordPressRef.current?.(target.innerText);
         });
 
-        // The layout engine (given a height) breaks the song into pages of
-        // exactly `height` px each, stacked in the same continuous y
-        // coordinate as the items above. Drop an invisible snap target at
-        // the top of each page so scrolling snaps to page boundaries.
+        // Every item is positioned as if pages were stacked in one continuous
+        // column (`page = floor(top / height)`). Measure each page's natural
+        // width (its widest line, chords included) so a page's column is
+        // exactly as wide as its content needs, then greedily pack pages left
+        // to right into rows that fit the container's width.
+        type Cell = { el: HTMLElement; top: number; left: number; lineHeight: number; page: number };
+        const cells: Cell[] = [];
+        const pageExtent = new Map<number, number>();
+        let maxPage = -1;
+        for (const child of wrapper?.shadowRoot?.children ?? []) {
+          if (!(child instanceof HTMLElement) || child.tagName === "STYLE") continue;
+          const top = Number.parseFloat(child.style.top);
+          const left = Number.parseFloat(child.style.left);
+          const lineHeight = Number.parseFloat(child.style.lineHeight) || 0;
+          if (Number.isNaN(top) || Number.isNaN(left)) continue;
+          const page = Math.floor(top / height);
+          const right = left + child.getBoundingClientRect().width;
+          pageExtent.set(page, Math.max(pageExtent.get(page) ?? 0, right));
+          cells.push({ el: child, top, left, lineHeight, page });
+          maxPage = Math.max(maxPage, page);
+        }
+        // A page's column can never exceed the container's width outright.
+        const pageWidth = (page: number) => Math.min(width, Math.max(pageExtent.get(page) ?? 0, 1));
+
+        const rows: number[][] = [];
+        let currentRow: number[] = [];
+        let currentRowWidth = 0;
+        for (let page = 0; page <= maxPage; page++) {
+          const w = pageWidth(page);
+          const needed = currentRowWidth + (currentRow.length > 0 ? COLUMN_GAP_PX : 0) + w;
+          if (currentRow.length > 0 && needed > width) {
+            rows.push(currentRow);
+            currentRow = [];
+            currentRowWidth = 0;
+          }
+          currentRow.push(page);
+          currentRowWidth += (currentRow.length > 1 ? COLUMN_GAP_PX : 0) + w;
+        }
+        if (currentRow.length > 0) rows.push(currentRow);
+
+        const pageColX = new Map<number, number>();
+        const pageRowY = new Map<number, number>();
+        rows.forEach((row, rowIndex) => {
+          let x = 0;
+          for (const page of row) {
+            pageColX.set(page, x);
+            x += pageWidth(page) + COLUMN_GAP_PX;
+          }
+          for (const page of row) pageRowY.set(page, rowIndex * height);
+        });
+
+        let maxY = 0;
+        for (const cell of cells) {
+          const colX = pageColX.get(cell.page) ?? 0;
+          const rowY = pageRowY.get(cell.page) ?? 0;
+          const newTop = cell.top - cell.page * height + rowY;
+          const newLeft = cell.left + colX;
+          cell.el.style.top = `${newTop}px`;
+          cell.el.style.left = `${newLeft}px`;
+          maxY = Math.max(maxY, newTop + cell.lineHeight);
+        }
+        // Items are absolutely positioned, so they don't contribute to the
+        // wrapper's height on their own; size it from their extent instead.
+        if (wrapper) wrapper.style.height = `${maxY + 32}px`;
+
+        // Each row of columns spans exactly `height` px. Drop an invisible
+        // snap target at the top of each row so scrolling snaps there.
         for (let y = 0; y < maxY; y += height) {
           const marker = document.createElement("div");
-          marker.style.cssText = `position:absolute;top:${y}px;left:0;width:1px;height:1px;scroll-snap-align:start;`;
+          marker.style.cssText = `position:absolute;top:${y}px;left:0;width:1px;height:1px;scroll-snap-align:start;scroll-snap-stop:always;`;
           el.appendChild(marker);
 
           if (y > 0) {
@@ -161,10 +232,5 @@ export function WasmSongLook({
     };
   }, [song, transposition]);
 
-  return (
-    <div
-      ref={containerRef}
-      className="relative mx-auto h-dvh w-full snap-y snap-mandatory overflow-y-auto"
-    />
-  );
+  return <div ref={containerRef} className="relative mx-auto h-dvh w-full snap-y snap-mandatory overflow-y-auto" />;
 }
