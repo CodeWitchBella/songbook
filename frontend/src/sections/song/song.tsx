@@ -1,11 +1,9 @@
 import { ChordHelp } from "#/components/chord-help";
-import { useContinuousModeSetting } from "#/components/continuous-mode";
-import { SongLook } from "#/components/song-look/song-look";
 import SongMenu from "#/components/song-look/song-menu";
+import { WasmSongLook } from "#/components/song-look/wasm-song-look";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import type { SongType } from "#/store/store-song";
-import * as parser from "#/utils/song-parser/song-parser";
 
 function queryJoin(path: string, query: string) {
   if (!query || query.startsWith("?")) return path + query;
@@ -15,20 +13,15 @@ function queryJoin(path: string, query: string) {
 export default function SongSection({
   song,
   enableMenu = false,
-  embed = false,
+  embed: _ = false,
 }: {
   song: SongType;
   enableMenu?: boolean;
   embed?: boolean;
 }) {
-  const [continuous] = useContinuousModeSetting();
-  const parsed = parser.parseSong("my", song.text, { continuous });
-
   const location = useLocation();
   const navigate = useNavigate();
   const [chordHelp, setChordHelp] = useState("");
-
-  if (!parsed) return null;
 
   const query = new URLSearchParams(location.search);
   const tr = query.get("transposition");
@@ -37,13 +30,7 @@ export default function SongSection({
   return (
     <React.Fragment>
       <div className="flex flex-wrap justify-center">
-        <SongLook
-          song={song}
-          parsed={parsed}
-          transposition={transposition}
-          onChordPress={setChordHelp}
-          noBack={embed}
-        />
+        <WasmSongLook song={song} transposition={transposition} onChordPress={setChordHelp} />
       </div>
       {enableMenu && (
         <SongMenu
