@@ -396,6 +396,21 @@ fn assemble(
     } else {
         HEADER_TOP_MARGIN * EM + header_px * 1.3 + header_space
     };
+    // A chord sits `font_px` above its lyric's baseline, which can carry its
+    // *rendered* box above the paragraph's nominal (local_y = 0) top — no
+    // section gap or header space is reserved above a paragraph that opens a
+    // page, so that overhang would otherwise poke above y = 0 (or above the
+    // page-break boundary for later pages), landing it visually at the
+    // bottom of the previous page. Pad the space above any paragraph that
+    // starts a page by however far its own items reach above its local top.
+    let top_overhang = |paragraph: &Paragraph| -> f32 {
+        paragraph
+            .items
+            .iter()
+            .map(|item| item.ascent - item.pos.1)
+            .fold(0.0f32, f32::max)
+    };
+    let header_height = header_height + paragraphs.first().map(top_overhang).unwrap_or(0.0);
 
     let mut body_items: Vec<Item> = vec![];
     let mut y = 0.0f32;
@@ -420,7 +435,7 @@ fn assemble(
         // item-level page splitting still keeps it from being lost.
         if let (Some(end), Some(page_height)) = (page_end, content_height) {
             if y + paragraph_height > end && paragraph_height <= page_height {
-                y = end;
+                y = end + top_overhang(&paragraphs[i]);
                 page_end = Some(end + page_height);
             }
         }

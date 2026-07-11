@@ -155,12 +155,7 @@ export function WasmSongLook({
           const left = Number.parseFloat(child.style.left);
           const lineHeight = Number.parseFloat(child.style.lineHeight) || 0;
           if (Number.isNaN(top) || Number.isNaN(left)) continue;
-          // Chords sit slightly above their lyric line's baseline, so the very
-          // first line's chord row can land a hair above y=0 (no header space
-          // reserves room for it when `show_header` is false). Clamp so that
-          // sliver doesn't floor-divide into page -1 and wrap to the bottom of
-          // the page after.
-          const page = Math.max(0, Math.floor(top / height));
+          const page = Math.floor(top / height);
           const right = left + child.getBoundingClientRect().width;
           pageExtent.set(page, Math.max(pageExtent.get(page) ?? 0, right));
           cells.push({ el: child, top, left, lineHeight, page });
