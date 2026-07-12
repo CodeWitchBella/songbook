@@ -37,17 +37,19 @@ export function SongListLook({ list }: { list: SongListItem[] }) {
 
   const initialScroll = useRef(Number.parseFloat(sessionStorage.getItem(`scroll:${location.key}`) || "0"));
   return (
-    <div className="max-h-full w-full overflow-y-scroll">
+    <div
+      className="max-h-full w-full overflow-y-scroll"
+      ref={r => {
+        if (r) {
+          bigScrollRef.current = r;
+          r.scrollTo(0, initialScroll.current);
+        }
+      }}
+    >
       <div
         style={{
           columnWidth: 400,
           columnCount: "auto",
-        }}
-        ref={r => {
-          if (r) {
-            bigScrollRef.current = r;
-            r.scrollTo(0, initialScroll.current);
-          }
         }}
       >
         {list.map((item, index) => {
