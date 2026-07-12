@@ -176,7 +176,12 @@ export function WasmSongLook({
           const left = Number.parseFloat(child.style.left);
           const lineHeight = Number.parseFloat(child.style.lineHeight) || 0;
           if (Number.isNaN(top) || Number.isNaN(left)) continue;
-          const page = Math.floor(top / height);
+          // A fresh page's first item is guaranteed by the Rust layout to land at
+          // `top >= page * height` (never below), but float32 accumulation there
+          // vs float64 division here can put it a hair under the true boundary,
+          // flipping `floor` down a page. Nudge by a sub-pixel epsilon to absorb
+          // that noise without risking merging genuinely distinct pages.
+          const page = Math.floor((top + 0.01) / height);
           const right = left + child.getBoundingClientRect().width;
           pageExtent.set(page, Math.max(pageExtent.get(page) ?? 0, right));
           cells.push({ el: child, top, left, lineHeight, page });
