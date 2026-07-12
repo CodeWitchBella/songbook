@@ -744,12 +744,22 @@ fn measure_line(
             range.clone(),
         );
     }
+    // Only spacer chords get a real inline box: they need to push the lyric
+    // flow right by their own width. A zero-width box for an ordinary chord
+    // would still give parley a break opportunity right after it (but not
+    // before it), so a long following word can strand the chord at the end
+    // of the earlier line instead of carrying it down to the word it's
+    // anchored to. Ordinary chords are instead placed afterwards by locating
+    // their anchor directly in the wrapped glyph runs (see below).
     for (i, chord) in chords.iter().enumerate() {
+        if !chord.spacer {
+            continue;
+        }
         builder.push_inline_box(parley::InlineBox {
             id: i as u64,
             kind: parley::InlineBoxKind::InFlow,
             index: chord.index.min(complete_text.len()),
-            width: if chord.spacer { chord.width } else { 0.0 },
+            width: chord.width,
             height: 0.0,
         });
     }
@@ -761,7 +771,8 @@ fn measure_line(
     text_layout.break_all_lines(wrap_width);
 
     // Where each chord is anchored: which visual (wrapped) line it landed on,
-    // and its x within that line.
+    // and its x within that line (raw box-local x, before the tag/line
+    // `x_offset` folded in when items are emitted below).
     let mut chord_x = vec![0.0f32; chords.len()];
     let mut chord_line = vec![0usize; chords.len()];
     // One entry per visual line produced by wrapping.
@@ -802,6 +813,43 @@ fn measure_line(
     }
     if line_items.is_empty() {
         line_items.push(vec![]);
+    }
+
+    // Place ordinary (non-spacer) chords by locating their anchor byte offset
+    // as an actual text cluster: a chord anchored at (or right before) a
+    // cluster glues to that cluster's line and exact visual x, so it always
+    // travels with whichever word it precedes rather than being left behind
+    // on the line above, and lands exactly at the start of that word (no
+    // re-shaping a substring in isolation, which can drift from the real
+    // shaped position by a subpixel or two due to kerning/context).
+    for (i, chord) in chords.iter().enumerate() {
+        if chord.spacer || chord.text.is_empty() {
+            continue;
+        }
+        let idx = chord.index.min(complete_text.len());
+        // Prefer the cluster starting at (or containing) idx, so the chord
+        // sits at the start of the word it precedes. If idx is past the end
+        // of the text (nothing follows the chord), anchor right after the
+        // last cluster instead.
+        let placement = parley::Cluster::from_byte_index(&text_layout, idx)
+            .map(|cluster| {
+                (
+                    cluster.path().line_index(),
+                    cluster.visual_offset().unwrap_or(0.0),
+                )
+            })
+            .or_else(|| {
+                idx.checked_sub(1)
+                    .and_then(|prev| parley::Cluster::from_byte_index(&text_layout, prev))
+                    .map(|cluster| {
+                        let x = cluster.visual_offset().unwrap_or(0.0) + cluster.advance();
+                        (cluster.path().line_index(), x)
+                    })
+            });
+        if let Some((line_index, x)) = placement {
+            chord_line[i] = line_index;
+            chord_x[i] = x;
+        }
     }
 
     // Emit each visible chord above the lyrics, on whichever visual line its
