@@ -122,6 +122,8 @@ pub fn layout_song(
     // skip re-shaping the whole song.
     let mut measured_cache: Vec<(u32, Vec<MeasuredParagraph>)> = vec![];
 
+    let content_width = viewport.map(|(width, _)| width as f32);
+
     let (natural_layout, natural_metrics) = {
         let measured = get_measured(
             &mut measured_cache,
@@ -130,6 +132,7 @@ pub fn layout_song(
             font_px_base,
             transpose,
             continuous,
+            content_width,
         );
         assemble(
             measured,
@@ -177,6 +180,7 @@ pub fn layout_song(
             font_px,
             transpose,
             continuous,
+            content_width,
         );
         let (candidate, candidate_metrics) = assemble(
             measured,
@@ -259,12 +263,13 @@ fn get_measured<'a>(
     font_px: f32,
     transpose: i32,
     continuous: bool,
+    content_width: Option<f32>,
 ) -> &'a [MeasuredParagraph] {
     let key = font_px.to_bits();
     if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
         return &cache[pos].1;
     }
-    let measured = measure_song(song, font_cx, font_px, transpose, continuous);
+    let measured = measure_song(song, font_cx, font_px, transpose, continuous, content_width);
     cache.push((key, measured));
     &cache.last().unwrap().1
 }
@@ -279,6 +284,7 @@ fn measure_song(
     font_px: f32,
     transpose: i32,
     continuous: bool,
+    content_width: Option<f32>,
 ) -> Vec<MeasuredParagraph> {
     let mut paragraphs: Vec<MeasuredParagraph> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
@@ -328,11 +334,19 @@ fn measure_song(
             if hidden {
                 continue;
             }
-            let measured = measure_line(line, tag, font_px, transpose, chords_off, font_cx);
+            let measured = measure_line(
+                line,
+                tag,
+                font_px,
+                transpose,
+                chords_off,
+                content_width,
+                font_cx,
+            );
             if first_line_has_chord.is_none() {
-                first_line_has_chord = Some(measured.has_chord);
+                first_line_has_chord = measured.first().map(|l| l.has_chord);
             }
-            measured_lines.push(measured);
+            measured_lines.extend(measured);
         }
 
         if hidden {
@@ -645,8 +659,9 @@ fn measure_line(
     font_px: f32,
     transpose: i32,
     hide_chords: bool,
+    content_width: Option<f32>,
     font_cx: &mut parley::FontContext,
-) -> MeasuredLine {
+) -> Vec<MeasuredLine> {
     // Build the lyric flow text and collect chords in a single pass. `[*…]`
     // commands are bold inline lyric text (not chords), so they join the flow
     // and survive `chords off`; `_`/`^` leads mark spacers and normal-weight
@@ -703,17 +718,14 @@ fn measure_line(
         .map(|t| measure_trailing(t, font_px, true, LYRIC_FONT_FAMILY, font_cx))
         .unwrap_or(0.0);
 
-    let has_chord = chords.iter().any(|c| !c.text.is_empty());
-
-    // Metrics of the plain lyric line, used to place the baseline.
+    // Metrics of the plain lyric line, used to place every wrapped visual
+    // line's baseline (constant across wraps: same font/size throughout).
     let (baseline, natural_height) = line_metrics(&complete_text, font_px, font_cx);
     let descent = (natural_height - baseline).max(0.0);
     // Text/tag items are anchored at the text baseline (offset 0); chords
     // always sit exactly one em above it.
     let text_baseline_offset = 0.0f32;
     let chord_baseline_offset = -font_px;
-
-    let mut out: Vec<Item> = vec![];
 
     // Lay out the lyric text, inserting zero-width (or spacer-width) inline
     // boxes so parley reports the x anchor of each chord.
@@ -742,11 +754,22 @@ fn measure_line(
         });
     }
     let mut text_layout: parley::Layout<()> = builder.build(&complete_text);
-    text_layout.break_all_lines(None);
+    // Constrain to the available width (minus the tag reserved on the first
+    // visual line) so long lines wrap instead of overflowing the page. With
+    // no known width (unpaginated callers), keep the line unconstrained.
+    let wrap_width = content_width.map(|w| (w - tag_width).max(font_px));
+    text_layout.break_all_lines(wrap_width);
 
-    // Where each chord is anchored horizontally.
+    // Where each chord is anchored: which visual (wrapped) line it landed on,
+    // and its x within that line.
     let mut chord_x = vec![0.0f32; chords.len()];
-    for pline in text_layout.lines() {
+    let mut chord_line = vec![0usize; chords.len()];
+    // One entry per visual line produced by wrapping.
+    let mut line_items: Vec<Vec<Item>> = vec![];
+    for (li, pline) in text_layout.lines().enumerate() {
+        let mut items: Vec<Item> = vec![];
+        // Only the first visual line has the tag reserving space before it.
+        let x_offset = if li == 0 { tag_width } else { 0.0 };
         for item in pline.items() {
             match item {
                 parley::PositionedLayoutItem::GlyphRun(glyph_run) => {
@@ -755,7 +778,7 @@ fn measure_line(
                     let bold = bold_ranges
                         .iter()
                         .any(|r| r.start <= range.start && range.end <= r.end);
-                    out.push(Item {
+                    items.push(Item {
                         item_type: if bold {
                             ItemType::BoldText
                         } else {
@@ -765,25 +788,33 @@ fn measure_line(
                         width: glyph_run.advance(),
                         ascent: baseline,
                         descent,
-                        pos: (glyph_run.offset() + tag_width, text_baseline_offset),
+                        pos: (glyph_run.offset() + x_offset, text_baseline_offset),
                         text: complete_text[range].to_owned(),
                     });
                 }
                 parley::PositionedLayoutItem::InlineBox(inline_box) => {
                     chord_x[inline_box.id as usize] = inline_box.x;
+                    chord_line[inline_box.id as usize] = li;
                 }
             }
         }
+        line_items.push(items);
+    }
+    if line_items.is_empty() {
+        line_items.push(vec![]);
     }
 
-    // Emit the visible chords above the lyrics.
+    // Emit each visible chord above the lyrics, on whichever visual line its
+    // anchor word ended up wrapped to.
     for (i, chord) in chords.iter().enumerate() {
         if chord.text.is_empty() {
             continue;
         }
         let (chord_ascent, chord_descent) =
             font_metrics(font_px, !chord.normal_weight, CHORD_FONT_FAMILY, font_cx);
-        out.push(Item {
+        let li = chord_line[i];
+        let x_offset = if li == 0 { tag_width } else { 0.0 };
+        line_items[li].push(Item {
             item_type: if chord.normal_weight {
                 ItemType::ChordNormal
             } else {
@@ -793,14 +824,15 @@ fn measure_line(
             width: chord.width,
             ascent: chord_ascent,
             descent: chord_descent,
-            pos: (chord_x[i] + tag_width, chord_baseline_offset),
+            pos: (chord_x[i] + x_offset, chord_baseline_offset),
             text: chord.text.clone(),
         });
     }
 
-    // Emit the tag last so it draws over the (empty) left margin.
+    // Emit the tag last (on the first visual line only) so it draws over the
+    // (empty) left margin.
     if let Some(tag_text) = tag_text {
-        out.push(Item {
+        line_items[0].push(Item {
             item_type: ItemType::Tag,
             font_size: font_px,
             width: tag_width,
@@ -811,12 +843,25 @@ fn measure_line(
         });
     }
 
-    MeasuredLine {
-        items: out,
-        baseline,
-        descent,
-        has_chord,
+    // Whether each visual line carries at least one visible chord (a wrapped
+    // continuation may or may not, depending on where its chords landed).
+    let mut has_chord_per_line = vec![false; line_items.len()];
+    for (i, chord) in chords.iter().enumerate() {
+        if !chord.text.is_empty() {
+            has_chord_per_line[chord_line[i]] = true;
+        }
     }
+
+    line_items
+        .into_iter()
+        .zip(has_chord_per_line)
+        .map(|(items, has_chord)| MeasuredLine {
+            items,
+            baseline,
+            descent,
+            has_chord,
+        })
+        .collect()
 }
 
 /// Turn a shaped line's baseline-relative item offsets into absolute
