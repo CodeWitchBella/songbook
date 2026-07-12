@@ -23,8 +23,8 @@ function prefixLength(a: string, b: string) {
  * in reverse order
  */
 export function collectionCompare(
-  ai: { item: { name: string; owner?: { name?: string } } },
-  bi: { item: { name: string; owner?: { name?: string } } },
+  ai: { item: { name: string; owner?: { name?: string | null } | null } },
+  bi: { item: { name: string; owner?: { name?: string | null } | null } },
 ) {
   // sort by owner first, then by name
   const ownerA = ai.item.owner?.name ?? "";
