@@ -303,6 +303,7 @@
                   exec.command = "test -f ../frontend/src/wasm/songbook-render-pdf/songbook_render_pdf.js";
                   initial_delay_seconds = 1;
                   period_seconds = 2;
+                  failure_threshold = 300;
                 };
               };
               # Builds the WASM HTML renderer the frontend imports from
@@ -318,6 +319,7 @@
                   exec.command = "test -f ../frontend/src/wasm/songbook-render-html/songbook_render_html.js";
                   initial_delay_seconds = 1;
                   period_seconds = 2;
+                  failure_threshold = 300;
                 };
               };
               frontend = {
