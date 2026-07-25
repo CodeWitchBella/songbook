@@ -28,5 +28,10 @@ export async function getViewer(context: MyContext) {
       })
       .where(eq(schema.session.id, session.session.id));
   }
+  // Only write when the date actually changes, so repeat requests in the same day don't hit the DB.
+  const today = DateTime.utc().toISODate();
+  if (session.user.lastAccessedAt !== today) {
+    await context.db.update(schema.user).set({ lastAccessedAt: today }).where(eq(schema.user.id, session.user.id));
+  }
   return { viewer: session.user, session: session.session };
 }

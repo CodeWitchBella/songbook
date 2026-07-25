@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   char,
+  date,
   integer,
   pgTable,
   real,
@@ -25,6 +26,8 @@ export const user = pgTable("user", {
   registeredAt: timestamp("registered_at", timestampCfg)
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
+  // date-only (not timestamp) so repeated same-day activity doesn't require a write
+  lastAccessedAt: date("last_accessed_at"),
 });
 
 export const song = pgTable("song", {
