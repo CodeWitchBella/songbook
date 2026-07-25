@@ -50,6 +50,9 @@ impl Renderer {
     /// [`impose_booklet`]: each output page holds two source pages side by
     /// side at half scale, ordered so folding the printed stack in half
     /// produces the pages in reading order.
+    ///
+    /// If `title_page` is false, the title page is omitted. If `toc` is
+    /// false, the table of contents is omitted.
     #[wasm_bindgen(js_name = renderCollection)]
     pub fn render_collection(
         &mut self,
@@ -57,6 +60,8 @@ impl Renderer {
         songs: Vec<String>,
         skip_content: bool,
         booklet: bool,
+        title_page: bool,
+        toc: bool,
     ) -> Result<js_sys::Uint8Array, JsError> {
         let songs = songs
             .iter()
@@ -70,6 +75,8 @@ impl Renderer {
             &mut self.engine,
             skip_content,
             booklet,
+            title_page,
+            toc,
             |_, _, _| {},
         );
         let pdf = if booklet { impose_booklet(pdf) } else { pdf };

@@ -257,6 +257,8 @@ pub fn render_collection(
         engine,
         false,
         false,
+        true,
+        true,
         |_, _, _| {},
     )
 }
@@ -268,6 +270,9 @@ pub fn render_collection(
 /// document (only the title page and table of contents are) — the page
 /// count each song would have used is still computed, so the TOC page
 /// numbers come out the same. Useful for quickly debugging TOC layout.
+///
+/// `title_page` and `toc` independently control whether the title page and
+/// the table of contents are included in the document.
 pub fn render_collection_with(
     collection_title: &str,
     songs: &[Song],
@@ -275,15 +280,19 @@ pub fn render_collection_with(
     engine: &mut LayoutEngine,
     skip_content: bool,
     booklet: bool,
+    title_page: bool,
+    toc: bool,
     mut on_song: impl FnMut(usize, std::time::Duration, std::time::Duration),
 ) -> Vec<u8> {
     let mut document = Document::new();
 
-    render_title_page(&mut document, collection_title, fonts);
     let mut page_number = 1usize;
-    // 0-based index of the next page to be rendered into `document`; the
-    // title page took index 0.
-    let mut page_index = 1usize;
+    // 0-based index of the next page to be rendered into `document`.
+    let mut page_index = 0usize;
+    if title_page {
+        render_title_page(&mut document, collection_title, fonts);
+        page_index += 1;
+    }
 
     // Lay out every song up front so its page count is known before deciding
     // render order (see `reorder_for_spreads`).
@@ -329,7 +338,9 @@ pub fn render_collection_with(
         on_song(index, layout_times[index], render_elapsed);
     }
 
-    render_toc_pages(&mut document, &toc_entries, fonts, booklet, page_index);
+    if toc {
+        render_toc_pages(&mut document, &toc_entries, fonts, booklet, page_index);
+    }
 
     document.finish().expect("failed to finish PDF")
 }

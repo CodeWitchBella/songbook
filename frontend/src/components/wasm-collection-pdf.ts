@@ -71,9 +71,11 @@ export async function renderCollectionPdfWasm(
   list: SongType[],
   tocOnly = false,
   booklet = false,
+  titlePage = true,
+  toc = true,
 ): Promise<Uint8Array> {
   const renderer = await getRenderer();
-  return renderer.renderCollection(title, list.map(songToParsedJson), tocOnly, booklet);
+  return renderer.renderCollection(title, list.map(songToParsedJson), tocOnly, booklet, titlePage, toc);
 }
 
 export async function downloadCollectionPdfWasm(
@@ -82,7 +84,9 @@ export async function downloadCollectionPdfWasm(
   slug: string | null,
   tocOnly = false,
   booklet = false,
+  titlePage = true,
+  toc = true,
 ): Promise<void> {
-  const pdf = await renderCollectionPdfWasm(title, list, tocOnly, booklet);
+  const pdf = await renderCollectionPdfWasm(title, list, tocOnly, booklet, titlePage, toc);
   saveAs(new Blob([pdf as BlobPart], { type: "application/pdf" }), `zpevnik${slug ? "-" + slug : ""}.pdf`);
 }

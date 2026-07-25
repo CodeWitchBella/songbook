@@ -36,6 +36,8 @@ function CollectionPDFRoute() {
   useCollectionStoreChange(revalidate);
   const [tocOnly, setTocOnly] = useState(false);
   const [booklet, setBooklet] = useState(false);
+  const [titlePage, setTitlePage] = useState(true);
+  const [toc, setToc] = useState(true);
 
   if (!record)
     return <div className="flex h-full items-center justify-center text-xl">Kolekce se načítá nebo neexistuje</div>;
@@ -59,7 +61,24 @@ function CollectionPDFRoute() {
           <input type="checkbox" checked={booklet} onChange={e => setBooklet(e.target.checked)} />
           Booklet (fold in half)
         </label>
-        <DownloadPDF list={songs} slug={slug} title={name} autoStart tocOnly={tocOnly} booklet={booklet}>
+        <label className="mb-2 flex items-center gap-2 text-black dark:text-white">
+          <input type="checkbox" checked={titlePage} onChange={e => setTitlePage(e.target.checked)} />
+          Title page
+        </label>
+        <label className="mb-2 flex items-center gap-2 text-black dark:text-white">
+          <input type="checkbox" checked={toc} onChange={e => setToc(e.target.checked)} />
+          Table of contents
+        </label>
+        <DownloadPDF
+          list={songs}
+          slug={slug}
+          title={name}
+          autoStart
+          tocOnly={tocOnly}
+          booklet={booklet}
+          titlePage={titlePage}
+          toc={toc}
+        >
           {(text, onClick) => <ListButton onPress={onClick}>{text}</ListButton>}
         </DownloadPDF>
       </div>

@@ -51,8 +51,18 @@ fn main() -> ExitCode {
     if booklet {
         args.next();
     }
+    let no_title_page = matches!(args.peek().map(String::as_str), Some("--no-title-page"));
+    if no_title_page {
+        args.next();
+    }
+    let no_toc = matches!(args.peek().map(String::as_str), Some("--no-toc"));
+    if no_toc {
+        args.next();
+    }
     let Some(input) = args.next() else {
-        eprintln!("usage: render-collection [--toc-only] [--booklet] <collection.json>");
+        eprintln!(
+            "usage: render-collection [--toc-only] [--booklet] [--no-title-page] [--no-toc] <collection.json>"
+        );
         return ExitCode::FAILURE;
     };
     let input = PathBuf::from(input);
@@ -131,6 +141,8 @@ fn main() -> ExitCode {
         &mut engine,
         toc_only,
         booklet,
+        !no_title_page,
+        !no_toc,
         |index, layout, render| {
             eprintln!(
                 "  song {:>3}: layout {:>7.1?}, render {:>7.1?}  \"{}\"",

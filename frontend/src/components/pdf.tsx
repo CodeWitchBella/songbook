@@ -10,6 +10,8 @@ export function DownloadPDF({
   autoStart,
   tocOnly,
   booklet,
+  titlePage = true,
+  toc = true,
   list,
   slug,
   title,
@@ -24,6 +26,10 @@ export function DownloadPDF({
   tocOnly?: boolean;
   /** Re-impose the rendered PDF as a foldable booklet, two pages per sheet. */
   booklet?: boolean;
+  /** Include the title page. */
+  titlePage?: boolean;
+  /** Include the table of contents. */
+  toc?: boolean;
 }) {
   const { t } = useTranslation();
   const [preloading, setPreloading] = useState(!!autoStart);
@@ -50,7 +56,7 @@ export function DownloadPDF({
   useEffect(() => {
     if (status !== "generating") return;
     let cancelled = false;
-    downloadCollectionPdfWasm(title, list, slug, tocOnly, booklet).then(
+    downloadCollectionPdfWasm(title, list, slug, tocOnly, booklet, titlePage, toc).then(
       () => {
         if (!cancelled) setStatus("generated");
       },
