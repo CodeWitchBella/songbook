@@ -30,7 +30,7 @@ export default function SongSection({
   return (
     <React.Fragment>
       <div className="flex flex-wrap justify-center">
-        <WasmSongLook song={song} transposition={transposition} onChordPress={setChordHelp} />
+        <WasmSongLook song={song} transposition={transposition} onChordPress={setChordHelp} showBack={enableMenu} />
       </div>
       {enableMenu && (
         <SongMenu

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 
+import { BackArrow, BackButton } from "#/components/back-button";
 import { useContinuousModeSetting } from "#/components/continuous-mode";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
@@ -94,10 +95,12 @@ export function WasmSongLook({
   song,
   transposition = 0,
   onChordPress,
+  showBack = false,
 }: {
   song: SongType;
   transposition?: number;
   onChordPress?: (chord: string) => void;
+  showBack?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onChordPressRef = useRef(onChordPress);
@@ -265,8 +268,15 @@ export function WasmSongLook({
 
   return (
     <div className="mx-auto flex h-dvh w-full flex-col">
-      <div className="flex justify-between px-4 py-3 font-['Cantarell'] text-xl font-bold">
-        <span>{song.title}</span>
+      <div className="flex items-center justify-between px-4 py-3 font-['Cantarell'] text-xl font-bold">
+        <div className="flex items-center">
+          {showBack && (
+            <BackButton className="pr-2">
+              <BackArrow />
+            </BackButton>
+          )}
+          <span>{song.title}</span>
+        </div>
         <span>{song.author}</span>
       </div>
       <div ref={containerRef} className="relative mx-auto w-full flex-1 snap-y snap-mandatory overflow-y-auto" />
