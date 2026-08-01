@@ -1,6 +1,5 @@
 when:
-  - branch: main
-    event: [push, manual]
+  - event: [push, manual]
 steps:
   - name: commit time
     image: alpine/git
@@ -64,6 +63,9 @@ steps:
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
     depends_on:
       - commit time
+    when:
+      - branch: main
+        event: [push, manual]
     settings:
       registry: forgejo.isbl.cz
       repo: forgejo.isbl.cz/isabella/songbook
@@ -86,6 +88,9 @@ steps:
       - renderer checks
       - build wasm
       - build and push
+    when:
+      - branch: main
+        event: [push, manual]
     environment:
       WOODPECKER_TOKEN:
         from_secret: woodpecker_token
