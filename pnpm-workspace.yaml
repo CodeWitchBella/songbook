@@ -10,14 +10,18 @@ allowBuilds:
   canvas: true
   esbuild: true
 catalog:
-  react: "^19.2.7"
-  react-dom: "^19.2.7"
+  react: "^19.2.8"
+  react-dom: "^19.2.8"
 overrides:
   # react-chords declares react/react-dom as hard deps (^16), which makes pnpm
   # install a second React and triggers the "multiple React versions" error when
   # rendering a chord. It's a pure SVG component, so pin it to the workspace React.
   "@tombatossals/react-chords>react": "catalog:"
   "@tombatossals/react-chords>react-dom": "catalog:"
+  # @codemirror/commands still resolves an older @codemirror/view than
+  # @codemirror/language does, which gives two EditorView types (and two
+  # runtime instances, which CodeMirror does not support). Keep it single.
+  "@codemirror/view": "^6.43.6"
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - "@isbl/ts-utils"

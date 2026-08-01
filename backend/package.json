@@ -18,14 +18,14 @@
     "fmt:check": "oxfmt --check"
   },
   "dependencies": {
-    "@hono/node-server": "^2.0.6",
+    "@hono/node-server": "^2.0.11",
     "@hono/swagger-ui": "^0.6.1",
-    "@hono/zod-openapi": "^1.4.0",
+    "@hono/zod-openapi": "^1.5.1",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "^0.45.2",
-    "hono": "^4.12.27",
+    "hono": "^4.12.32",
     "latinize": "^2.0.0",
     "luxon": "^3.5.0",
     "parse5": "^8.0.1",
@@ -35,10 +35,10 @@
   "devDependencies": {
     "@types/latinize": "^0.2.18",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^26.0.1",
-    "oxfmt": "^0.56.0",
-    "oxlint": "^1.71.0",
-    "typescript": "^6.0.3"
+    "@types/node": "^26.1.1",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
+    "typescript": "^7.0.2"
   },
   "devEngines": {
     "packageManager": {
