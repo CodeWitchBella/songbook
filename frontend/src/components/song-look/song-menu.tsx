@@ -1,5 +1,6 @@
 import { DumbModal } from "#/components/dumb-modal";
 import { useLanguage } from "#/components/localisation";
+import { BadgeQuestionMark, PencilLine, Shuffle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { LinkProps } from "react-router";
@@ -8,15 +9,7 @@ import { useGetRandomSong } from "#/sections/song-list/worker-list";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
 
-import {
-  AddToCollection,
-  Burger,
-  EditButton,
-  InfoButton,
-  PlayButton,
-  QuickSettings,
-  RandomButton,
-} from "./song-menu-icons";
+import { AddToCollection, Burger, PlayButton, QuickSettings } from "./song-menu-icons";
 
 function MenuButton(props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
   return (
@@ -113,10 +106,10 @@ export default function SongMenu({
             <MenuButton onClick={() => setTransposition(transposition + 1)}>+1</MenuButton>
             <MenuButton onClick={() => setTransposition(transposition - 1)}>-1</MenuButton>
             <MenuLink to={`/edit/${slug}`}>
-              <EditButton />
+              <PencilLine size={32} />
             </MenuLink>
             <MenuButton onClick={() => setInfo(o => !o)}>
-              <InfoButton />
+              <BadgeQuestionMark size={32} />
             </MenuButton>
             {song.spotify ? (
               <MenuAnchor href={song.spotify} target="_blank" rel="noopener noreferrer">
@@ -141,7 +134,7 @@ export default function SongMenu({
                 });
               }}
             >
-              <RandomButton />
+              <Shuffle size={32} />
             </MenuButton>
             <MenuLink to={"/add-to-collection/" + slug}>
               <AddToCollection />

@@ -45,6 +45,7 @@
     "i18next": "^26.3.6",
     "idb-keyval": "^6.3.0",
     "localforage": "^1.10.0",
+    "lucide-react": "^1.26.0",
     "luxon": "^3.4.4",
     "openapi-fetch": "^0.17.0",
     "p-queue": "^9.3.3",
