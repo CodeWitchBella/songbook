@@ -5,7 +5,7 @@ import CollectionList from "./collection-list";
 const meta = {
   title: "Routes/CollectionList",
   component: CollectionList,
-  parameters: { route: "/collections" },
+  parameters: { route: "/collections", loader: () => ({ collections: [] }) },
 } satisfies Meta<typeof CollectionList>;
 
 export default meta;

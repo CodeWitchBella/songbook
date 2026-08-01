@@ -4,14 +4,13 @@ import { DarkModeProvider } from "#/components/dark-mode";
 import { InstallProvider } from "#/components/install";
 import { LanguageProvider } from "#/components/localisation";
 import { ServiceWorkerStatusProvider } from "#/components/service-worker-status";
-import { StoreProvider } from "#/store/store";
 import OutlineHandler from "#/utils/outline-handler";
 import { getColors } from "#/components/themed";
 import type { Preview } from "@storybook/react-vite";
 import i18n from "i18next";
 import type { ReactNode } from "react";
 import { Suspense, useEffect, useLayoutEffect } from "react";
-import { MemoryRouter, Route, Routes } from "react-router";
+import { createMemoryRouter, RouterProvider } from "react-router";
 
 const preview: Preview = {
   parameters: {
@@ -58,26 +57,38 @@ const preview: Preview = {
         {Story()}
       </ThemeFrame>
     ),
-    (Story, context) => (
-      <ServiceWorkerStatusProvider register={() => {}}>
-        <DarkModeProvider>
-          <LanguageProvider>
-            <OutlineHandler />
-            <StoreProvider>
+    (Story, context) => {
+      // Route components use `useLoaderData`, which throws outside a data
+      // router — build a one-route data router around the story rather than
+      // the plain `MemoryRouter` this used to use.
+      const router = createMemoryRouter(
+        [
+          {
+            path: context.parameters.path ?? "*",
+            element: <Story />,
+            // Route components destructure fields straight off useLoaderData(),
+            // so an absent loader (no story supplies one) must still resolve to
+            // an object rather than undefined.
+            loader: context.parameters.loader ?? (() => ({})),
+          },
+        ],
+        { initialEntries: [context.parameters.route ?? "/"] },
+      );
+      return (
+        <ServiceWorkerStatusProvider register={() => {}}>
+          <DarkModeProvider>
+            <LanguageProvider>
+              <OutlineHandler />
               <InstallProvider>
-                <MemoryRouter initialEntries={[context.parameters.route ?? "/"]}>
-                  <Suspense fallback={<div className="p-4">Načítám…</div>}>
-                    <Routes>
-                      <Route path={context.parameters.path ?? "*"} element={<Story />} />
-                    </Routes>
-                  </Suspense>
-                </MemoryRouter>
+                <Suspense fallback={<div className="p-4">Načítám…</div>}>
+                  <RouterProvider router={router} />
+                </Suspense>
               </InstallProvider>
-            </StoreProvider>
-          </LanguageProvider>
-        </DarkModeProvider>
-      </ServiceWorkerStatusProvider>
-    ),
+            </LanguageProvider>
+          </DarkModeProvider>
+        </ServiceWorkerStatusProvider>
+      );
+    },
   ],
 };
 

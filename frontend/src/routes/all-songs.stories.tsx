@@ -5,7 +5,10 @@ import { Component as AllSongs } from "./all-songs";
 const meta = {
   title: "Routes/AllSongs",
   component: AllSongs,
-  parameters: { route: "/all-songs" },
+  parameters: {
+    route: "/all-songs",
+    loader: () => ({ songs: [], stats: { total: 0, unfetched: 0, outdated: 0 }, q: "", results: null }),
+  },
 } satisfies Meta<typeof AllSongs>;
 
 export default meta;
