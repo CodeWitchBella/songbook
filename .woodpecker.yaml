@@ -34,8 +34,10 @@ steps:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/local/bin
       - cd renderer
-      - just build-wasm-pdf
-      - just build-wasm-html
+      # Optimized builds: these artifacts land in frontend/src/wasm/ and are
+      # consumed both by the frontend checks below and by the image build.
+      - just build-wasm-pdf-prod
+      - just build-wasm-html-prod
 
   - name: frontend checks
     image: ghcr.io/pnpm/pnpm:11
@@ -63,6 +65,7 @@ steps:
     image: woodpeckerci/plugin-docker-buildx@sha256:e8df33f35247d448d21aa2c4b500e3809c117b9fb64233eadcf640ba00d8690b
     depends_on:
       - commit time
+      - build wasm
     when:
       - branch: main
         event: [push, manual]
