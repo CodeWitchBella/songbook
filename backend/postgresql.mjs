@@ -5,16 +5,16 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "child_process";
 import fs from "fs";
 
+// The local database server itself is run by podman via the `postgres`,
+// `postgres-start` and `postgres-stop` commands from the dev shell (see
+// flake.nix). This script only deals with prod data: `pull` dumps it and
+// `restore` loads that dump into the local database (POSTGRESQL_URL).
 const dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cmds = {
-  init,
-  start,
-  stop,
-  run,
   pull,
+  restore,
 };
 
-// eslint-disable-next-line no-undef
 const cmd = process.argv[2];
 if (!cmd) throw new Error("Missing command");
 if (!cmds[cmd]) throw new Error(`Unknown command ${cmd}`);
@@ -25,53 +25,8 @@ Promise.resolve()
   .then(cmds[cmd])
   .catch(err => {
     console.error(err);
-    stop();
     process.exit(1);
   });
-
-async function init() {
-  // Create a database with the data stored in the current directory
-  runSync("initdb", ["-D", ".tmp/songbook", "--no-locale", "--encoding=UTF8"]);
-
-  start();
-
-  // Create a database
-  runSync("createdb", ["-h", path.join(dirname, ".tmp"), "songbook"]);
-
-  runSync("pnpm", ["run", "db-push"], path.join(dirname, "backend"));
-
-  //await restore()
-  console.log("Skipping restore");
-
-  stop();
-}
-
-function start() {
-  // Start PostgreSQL running as the current user
-  // and with the Unix socket in the current directory
-  runSync("pg_ctl", [
-    "-D",
-    ".tmp/songbook",
-    "-l",
-    ".tmp/logfile",
-    "-o",
-    "--unix_socket_directories=" + path.join(dirname, ".tmp"),
-    "start",
-  ]);
-}
-
-async function run() {
-  if (!fs.existsSync(path.join(dirname, ".tmp/songbook"))) {
-    await init();
-  }
-  // Start PostgreSQL running as the current user
-  // and with the Unix socket in the current directory
-  runSync("postgres", ["-D", ".tmp/songbook", "--unix_socket_directories=" + path.join(dirname, ".tmp")]);
-}
-
-function stop() {
-  runSync("pg_ctl", ["-D", ".tmp/songbook", "stop"]);
-}
 
 async function pull() {
   console.log("Pulling database data...");
@@ -86,16 +41,14 @@ async function pull() {
 }
 
 async function restore() {
-  const url = await readDbUrl();
-  if (url) {
-    if (!fs.existsSync(path.join(dirname, ".tmp", "prod.pgdump"))) {
-      await pull();
-    }
+  if (!fs.existsSync(path.join(dirname, ".tmp", "prod.pgdump"))) {
+    await pull();
   }
+  const url = process.env.POSTGRESQL_URL;
+  if (!url) throw new Error("Missing POSTGRESQL_URL env");
   console.log("Restoring database data...");
   runSync("pg_restore", [
-    "--host=localhost",
-    "--dbname=songbook",
+    `--dbname=${url}`,
     "--no-acl",
     "--no-owner",
     "--clean",

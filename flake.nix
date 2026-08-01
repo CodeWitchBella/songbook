@@ -27,6 +27,106 @@
         ...
       }: let
         psql = pkgs.postgresql_18;
+        # Client tools only: the full package's `postgres` binary would shadow
+        # the `postgres` wrapper below on the dev shell PATH.
+        psql-client = pkgs.runCommand "postgresql-client-tools" {} ''
+          mkdir -p $out/bin
+          for tool in psql pg_dump pg_dumpall pg_restore pg_isready createdb dropdb; do
+            ln -s ${psql}/bin/$tool $out/bin/$tool
+          done
+        '';
+
+        # PostgreSQL runs in a podman container, with its data in `.tmp/pgdata`
+        # and its unix socket in `.tmp/pgsock` of this checkout, so every
+        # worktree gets its own instance without any shared port. The container
+        # name is derived from the checkout path to keep worktrees apart.
+        pgImage = "docker.io/library/postgres:18-alpine";
+        pgCommon = ''
+          root=$(${lib.getExe config.flake-root.package})
+          pghash=$(printf '%s' "$root" | cksum | cut -d' ' -f1)
+          # shellcheck disable=SC2034 # not every caller uses all of these
+          pgdata="$root/.tmp/pgdata"
+          pgsock="$root/.tmp/pgsock"
+          # shellcheck disable=SC2034
+          pgname="songbook-postgres-$pghash"
+          mkdir -p "$pgdata" "$pgsock"
+        '';
+        # `extraArgs` tune how the container is run (e.g. `-d` to detach).
+        # --userns=keep-id + --user makes the data and socket files owned by the
+        # host user; :Z relabels the bind mounts for SELinux. No port is
+        # published: the socket directory is the only way in.
+        pgPodman = extraArgs: redirect: ''
+          podman run --replace --name "$pgname" ${extraArgs} \
+            --userns=keep-id --user "$(id -u):$(id -g)" \
+            -e POSTGRES_HOST_AUTH_METHOD=trust \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_DB=songbook \
+            -v "$pgdata:/var/lib/postgresql:Z" \
+            -v "$pgsock:/var/run/postgresql:Z" \
+            ${pgImage} -c listen_addresses= ${redirect}
+        '';
+
+        # Prints this checkout's socket directory, so anything that needs to
+        # connect (dev shell, process-compose) agrees on where the socket is.
+        postgres-socket = pkgs.writeShellApplication {
+          name = "postgres-socket";
+          runtimeInputs = [pkgs.coreutils];
+          text = ''
+            ${pgCommon}
+            echo "$pgsock"
+          '';
+        };
+
+        # Connection environment for clients. The URL carries no host on
+        # purpose: postgres.js (and therefore drizzle-kit) only honours a unix
+        # socket path through PGHOST, not through a `?host=` URL parameter.
+        pgEnv = ''
+          export PGHOST="$(${lib.getExe postgres-socket})"
+          export PGUSER="postgres"
+          export PGDATABASE="songbook"
+          export POSTGRESQL_URL="postgresql:///songbook"
+        '';
+
+        postgres = pkgs.writeShellApplication {
+          name = "postgres";
+          runtimeInputs = [pkgs.podman pkgs.coreutils];
+          text = ''
+            ${pgCommon}
+            exec ${pgPodman "--rm -it --init" ""}
+          '';
+        };
+
+        postgres-start = pkgs.writeShellApplication {
+          name = "postgres-start";
+          runtimeInputs = [pkgs.podman pkgs.coreutils psql];
+          text = ''
+            ${pgCommon}
+            ${pgPodman "-d" ">/dev/null"}
+            for _ in $(seq 60); do
+              if pg_isready -h "$pgsock" -q; then break; fi
+              sleep 1
+            done
+            echo "PostgreSQL ($pgname) listening on $pgsock"
+          '';
+        };
+
+        postgres-ready = pkgs.writeShellApplication {
+          name = "postgres-ready";
+          runtimeInputs = [pkgs.coreutils psql];
+          text = ''
+            ${pgCommon}
+            exec pg_isready -h "$pgsock" -q
+          '';
+        };
+
+        postgres-stop = pkgs.writeShellApplication {
+          name = "postgres-stop";
+          runtimeInputs = [pkgs.podman pkgs.coreutils];
+          text = ''
+            ${pgCommon}
+            podman rm -f "$pgname"
+          '';
+        };
 
         # Run the Playwright server inside podman, pinned to the version declared
         # in frontend/package.json so the client library and server always match.
@@ -193,8 +293,12 @@
 
         make-shells.default = {
           packages = with pkgs; [
-            psql
-            git # >= 2.54, for config-based hooks (hook.<name>.event/command)
+            psql-client # psql, pg_dump, ...; the server runs in podman
+            postgres
+            postgres-start
+            postgres-stop
+            postgres-socket
+            git #>= 2.54, for config-based hooks (hook.<name>.event/command)
             pnpm
             nodejs_26
             playwright
@@ -222,9 +326,7 @@
               ${pkgs.git}/bin/git config --local hook.${name}.event pre-commit
               ${pkgs.git}/bin/git config --local hook.${name}.command "${command}"'')
             preCommitHooks)}
-            export PGHOST="$(${lib.getExe config.flake-root.package})/.tmp"
-            export PGDATABASE="songbook"
-            export POSTGRESQL_URL="postgresql://localhost/songbook?host=$PGHOST"
+            ${pgEnv}
             export API_PROXY_TARGET="http://127.0.0.1:5512"
             # Point the Storybook Vitest project at the podman Playwright server
             # (`playwright-start`); run tests with `pnpm run test-storybook`.
@@ -242,16 +344,25 @@
             cd "$(${lib.getExe config.flake-root.package})"
           '';
           settings = {
+            # The database connection is not configured globally: the socket
+            # path depends on the checkout path, so processes that talk to
+            # PostgreSQL set it up themselves (see pgEnv).
             environment = {
-              POSTGRESQL_URL = "postgresql://localhost/songbook";
               PLAYWRIGHT_WS_ENDPOINT = playwrightWsEndpoint;
               API_PROXY_TARGET = "http://127.0.0.1:5512";
             };
             processes = {
-              postgres.command = ''
-                cd backend
-                ${pkgs.pnpm}/bin/pnpm node postgresql.mjs run
-              '';
+              postgres = {
+                command = ''
+                  exec ${lib.getExe postgres}
+                '';
+                readiness_probe = {
+                  exec.command = lib.getExe postgres-ready;
+                  initial_delay_seconds = 2;
+                  period_seconds = 2;
+                  failure_threshold = 60;
+                };
+              };
               backend-install = {
                 command = ''
                   ${pkgs.pnpm}/bin/pnpm i --frozen-lockfile
@@ -260,10 +371,12 @@
               };
               backend = {
                 command = ''
+                  ${pgEnv}
                   ${pkgs.pnpm}/bin/pnpm node --watch src/index.ts
                 '';
                 working_dir = "backend";
                 depends_on.backend-install.condition = "process_completed_successfully";
+                depends_on.postgres.condition = "process_healthy";
                 availability.restart = "on_failure";
               };
               frontend-install = {
@@ -277,6 +390,7 @@
               # this before the dev server can resolve them.
               frontend-gen-api = {
                 command = ''
+                  ${pgEnv}
                   ${pkgs.pnpm}/bin/pnpm run gen:api
                 '';
                 working_dir = "frontend";
