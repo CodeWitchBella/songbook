@@ -1,8 +1,9 @@
-import { BackArrow, BackButton } from "#/components/back-button";
+import { BackButton } from "#/components/back-button";
 import { ListButton } from "#/components/interactive/list-button";
 import { SearchTextInput } from "#/components/search-text-input";
 import TopMenu from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
+import { ArrowLeftIcon } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,7 +38,7 @@ function Search({
       {children}
       <div className="relative my-2 flex items-stretch px-1">
         <BackButton className="py-2 pr-2">
-          <BackArrow />
+          <ArrowLeftIcon size={24} />
         </BackButton>
         <SearchTextInput value={text} onChange={onChange} />
         {topMenu}

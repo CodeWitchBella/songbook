@@ -1,6 +1,14 @@
 import { DumbModal } from "#/components/dumb-modal";
 import { useLanguage } from "#/components/localisation";
-import { BadgeQuestionMark, PencilLine, Shuffle } from "lucide-react";
+import {
+  BadgeQuestionMarkIcon,
+  CombineIcon,
+  EllipsisVerticalIcon,
+  PencilLineIcon,
+  PlayIcon,
+  SettingsIcon,
+  ShuffleIcon,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { LinkProps } from "react-router";
@@ -8,8 +16,6 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useGetRandomSong } from "#/sections/song-list/worker-list";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
-
-import { AddToCollection, Burger, PlayButton, QuickSettings } from "./song-menu-icons";
 
 function MenuButton(props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
   return (
@@ -106,14 +112,14 @@ export default function SongMenu({
             <MenuButton onClick={() => setTransposition(transposition + 1)}>+1</MenuButton>
             <MenuButton onClick={() => setTransposition(transposition - 1)}>-1</MenuButton>
             <MenuLink to={`/edit/${slug}`}>
-              <PencilLine size={32} />
+              <PencilLineIcon size={32} />
             </MenuLink>
             <MenuButton onClick={() => setInfo(o => !o)}>
-              <BadgeQuestionMark size={32} />
+              <BadgeQuestionMarkIcon size={32} />
             </MenuButton>
             {song.spotify ? (
               <MenuAnchor href={song.spotify} target="_blank" rel="noopener noreferrer">
-                <PlayButton />
+                <PlayIcon size={32} />
               </MenuAnchor>
             ) : null}
             <MenuButton
@@ -134,18 +140,18 @@ export default function SongMenu({
                 });
               }}
             >
-              <Shuffle size={32} />
+              <ShuffleIcon size={32} />
             </MenuButton>
             <MenuLink to={"/add-to-collection/" + slug}>
-              <AddToCollection />
+              <CombineIcon size={32} />
             </MenuLink>
             <MenuLink to="/quick-settings">
-              <QuickSettings />
+              <SettingsIcon size={32} />
             </MenuLink>
           </>
         ) : null}
         <MenuButton onClick={() => setOpen(o => !o)}>
-          <Burger />
+          <EllipsisVerticalIcon size={32} />
         </MenuButton>
       </ul>
       {info && <Info song={song} close={() => setInfo(false)} />}

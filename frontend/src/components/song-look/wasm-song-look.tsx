@@ -1,6 +1,7 @@
+import { ArrowLeftIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-import { BackArrow, BackButton } from "#/components/back-button";
+import { BackButton } from "#/components/back-button";
 import { useContinuousModeSetting } from "#/components/continuous-mode";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
@@ -272,7 +273,7 @@ export function WasmSongLook({
         <div className="flex items-center">
           {showBack && (
             <BackButton className="pr-2">
-              <BackArrow />
+              <ArrowLeftIcon size={24} />
             </BackButton>
           )}
           <span>{song.title}</span>

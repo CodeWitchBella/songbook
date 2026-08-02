@@ -1,9 +1,10 @@
-import { BackArrow, BackButton } from "#/components/back-button";
+import { BackButton } from "#/components/back-button";
 import { ListButton } from "#/components/interactive/list-button";
 import { DownloadPDF } from "#/components/pdf";
 import { SearchTextInput } from "#/components/search-text-input";
 import TopMenu from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
+import { ArrowLeftIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
@@ -82,7 +83,7 @@ export function Component() {
         <div className="relative mx-auto max-w-md" style={{ width: "calc(100% - 22px)" }}>
           <div className="relative my-2 flex items-stretch px-1">
             <BackButton className="py-2 pr-2">
-              <BackArrow />
+              <ArrowLeftIcon size={24} />
             </BackButton>
             <SearchTextInput value={q} onChange={onChangeSearch} />
             <TopMenu>

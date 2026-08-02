@@ -25,7 +25,6 @@ const imports = {
   Changelog: once(() => import("./changelog")),
   Login: once(() => import("./login")),
   Register: once(() => import("./register")),
-  Credits: once(() => import("./credits")),
   About: once(() => import("./about")),
   QuickSettings: once(() => import("./quick-settings")),
   Chords: once(() => import("./chords")),
@@ -45,7 +44,6 @@ const router = createBrowserRouter(
           <Route path="login" lazy={imports.Login} />
           <Route path="register" lazy={imports.Register} />
           <Route path="all-songs" lazy={imports.AllSongs} />
-          <Route path="credits" lazy={imports.Credits} />
           <Route path="quick-settings" lazy={imports.QuickSettings} />
           <Route path="about" lazy={imports.About} />
           <Route path="add-to-collection/:slug" lazy={imports.AddToCollection} />

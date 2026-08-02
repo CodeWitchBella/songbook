@@ -1,8 +1,9 @@
-import { BackArrow, BackButton, useGoBack } from "#/components/back-button";
+import { BackButton, useGoBack } from "#/components/back-button";
 import { ErrorPage } from "#/components/error-page";
 import { LargeInput } from "#/components/input";
 import { BasicButton } from "#/components/interactive/basic-button";
 import { ListButton } from "#/components/interactive/list-button";
+import { ArrowLeftIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
@@ -145,7 +146,7 @@ function Title({ first, text, error }: { first: boolean; text: string; error?: s
       <div className="mt-8 flex items-center">
         {first ? (
           <BackButton className="px-2 py-4">
-            <BackArrow />
+            <ArrowLeftIcon size={24} />
           </BackButton>
         ) : null}
         <span className="text-2xl text-black dark:text-white">{text}</span>

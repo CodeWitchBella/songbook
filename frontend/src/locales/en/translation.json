@@ -3,7 +3,6 @@
   "Add song": "Add song",
   "All songs": "All songs",
   "Appearance": "Appearance",
-  "Asset credits": "Asset credits",
   "Automatic": "Automatic",
   "Changelog": "Changelog",
   "Clear search": "Clear search",
@@ -24,7 +23,6 @@
     "multipage": "Only on songs with multiple pages",
     "never": "Never"
   },
-  "count-pages-songs": "$t(count-pages-songs_songs, {\"count\": {{songCount}} }) and $t(count-pages-songs_pages, {\"count\": {{pagesNum}} })",
   "count-pages-songs_pages_one": "{{count}} page",
   "count-pages-songs_pages_other": "{{count}} pages",
   "count-pages-songs_songs_one": "{{count}} song",
@@ -46,7 +44,6 @@
   },
   "Create account": "Create account",
   "Created by <1>Isabella Skořepová</1>": "Created by <1>Isabella Skořepová</1>",
-  "credits-blurp <1>author</1>": "Most songbook functionality including, but not limited to PDF export, song editing, song display and transposition was implemented by <1>Isabella Skořepová</1>",
   "Current version": "Current version",
   "Dark": "Dark",
   "Display name": "Display name",
@@ -76,8 +73,6 @@
   "Go to home screen": "Go to home screen",
   "I already have account, <1>log in</1>": "I already have account, <1>log in</1>",
   "I don't have account, <1>register</1>": "I don't have account, <1>register</1>",
-  "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>": "Icon for adding to collection <1></1> is taken from <4>Smashicons</4>",
-  "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>": "Icon for quick settings <1></1> is taken from <4>{{iconicApp}}</4>",
   "info": {
     "editor-unknown": "Unknown",
     "Inserted by: {{editor}}": "Inserted by: {{editor}}",
@@ -100,7 +95,6 @@
   "login-screen-title": "Log in",
   "My account": "My account",
   "Name has to be at least four characters long": "Name has to be at least four characters long",
-  "other-icons": "Some other icons are taken from other sources, but I unfortunately don't remember from where and neither do I remember which I made :-(",
   "Page not found": "Page not found",
   "Password": "Password",
   "Password has to be at least 6 characters long": "Password has to be at least 6 characters long",
@@ -116,6 +110,7 @@
     "Quick settings": "Quick settings"
   },
   "Register": "Register",
+  "Roadmap": "Roadmap",
   "search": {
     "author": "By author",
     "other": "Other related songs",
@@ -128,7 +123,6 @@
   "Song not found": "Song not found.",
   "Sort by interpret": "Sort by interpret",
   "Sort by name": "Sort by name",
-  "Roadmap": "Roadmap",
   "Type to search": "Type to search",
   "You have to be logged in to add a song": "You have to be logged in to add a song"
 }

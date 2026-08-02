@@ -1,3 +1,4 @@
+import { XIcon } from "lucide-react";
 import { useEffect, useOptimistic, useRef, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -75,10 +76,7 @@ function ClearButton({ onClick }: { onClick: () => void }) {
       className="absolute bottom-0 right-1 flex h-10 w-10 items-center justify-center"
       onClick={onClick}
     >
-      <svg viewBox="0 0 47.271 47.271" height="25" width="25">
-        <path fill="currentColor" d="M0 43.279L43.278 0l3.993 3.992L3.992 47.271z" />
-        <path fill="currentColor" d="M3.992 0l43.279 43.278-3.993 3.992L0 3.992z" />
-      </svg>
+      <XIcon size={25} />
     </button>
   );
 }

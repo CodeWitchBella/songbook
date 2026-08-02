@@ -16,8 +16,6 @@ export default function About() {
     <div className="mx-auto w-full max-w-lg px-1 pb-2">
       <PageHeader>{t("Settings and about")}</PageHeader>
 
-      <ListButton to="/credits">{t("Asset credits")}</ListButton>
-      <Gap />
       <ListButton to="/changelog">{t("Changelog")}</ListButton>
       <Gap />
       <ListButton to={wiki}>{t("Roadmap")}</ListButton>

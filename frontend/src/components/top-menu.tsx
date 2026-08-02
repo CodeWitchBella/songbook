@@ -1,8 +1,8 @@
+import { EllipsisVerticalIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { useReducer } from "react";
 
 import { OnPressOutside } from "./interactive/press-outside";
-import { Burger } from "./song-look/song-menu-icons";
 
 export default function TopMenu({ children }: PropsWithChildren<{}>) {
   const [{ isOpen, wasOpen }, setOpen] = useReducer(
@@ -19,7 +19,7 @@ export default function TopMenu({ children }: PropsWithChildren<{}>) {
         className="flex h-10 w-10 items-center justify-center border border-current"
         onClick={() => setOpen(null)}
       >
-        <Burger />
+        <EllipsisVerticalIcon size={32} />
       </button>
       {wasOpen && (
         <MenuContent onClose={() => setOpen(false)} visible={isOpen}>

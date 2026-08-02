@@ -1,9 +1,10 @@
-import { BackArrow, BackButton } from "#/components/back-button";
+import { BackButton } from "#/components/back-button";
 import { ChangelogEntry } from "#/components/changelog-entry";
 import { InlineLink } from "#/components/interactive/inline-link";
 import { useLanguage } from "#/components/localisation";
 import { LanguageSettings } from "#/components/settings/language-settings";
 import { TP, TText } from "#/components/themed";
+import { ArrowLeftIcon } from "lucide-react";
 import { createContext, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
@@ -96,7 +97,7 @@ function Head() {
   return (
     <div className="mb-1 mt-6 flex w-full flex-wrap items-center">
       <BackButton className="py-4 pr-2">
-        <BackArrow />
+        <ArrowLeftIcon size={24} />
       </BackButton>
       <div className="text-3xl font-bold">{t("Changelog")}</div>
       <div className="grow" />
