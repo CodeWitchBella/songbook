@@ -31,6 +31,7 @@
     "@lezer/common": "^1.2.3",
     "@lezer/highlight": "^1.2.3",
     "@lezer/lr": "^1.4.1",
+    "@react-spring/web": "^10.1.2",
     "@sentry/react": "^10.68.0",
     "@tombatossals/chords-db": "^0.5.1",
     "@tombatossals/react-chords": "^0.2.10",

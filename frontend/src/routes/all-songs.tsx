@@ -1,10 +1,9 @@
 import { BackButton } from "#/components/back-button";
-import { ListButton } from "#/components/interactive/list-button";
 import { DownloadPDF } from "#/components/pdf";
 import { SearchTextInput } from "#/components/search-text-input";
-import TopMenu from "#/components/top-menu";
+import TopMenu, { TopMenuItem } from "#/components/top-menu";
 import { useQueryParam, useQueryParamQ } from "#/components/use-router";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowDownAZIcon, ArrowLeftIcon, FileDownIcon, UserIcon } from "lucide-react";
 import { useCallback, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { LoaderFunctionArgs } from "react-router";
@@ -71,15 +70,17 @@ export function Component() {
             </BackButton>
             <SearchTextInput value={optimisticQ ?? ""} onChange={onChangeSearch} />
             <TopMenu>
-              <ListButton onPress={() => setSortByAuthor(sortByAuthor ? null : "yes")} style={{ textAlign: "left" }}>
+              <TopMenuItem
+                icon={sortByAuthor ? ArrowDownAZIcon : UserIcon}
+                onPress={() => setSortByAuthor(sortByAuthor ? null : "yes")}
+              >
                 {sortByAuthor ? t("Sort by name") : t("Sort by interpret")}
-              </ListButton>
-              <div className="h-2" />
+              </TopMenuItem>
               <DownloadPDF list={pdfList} slug={null} title="Zpěvník">
                 {(text, onClick) => (
-                  <ListButton onPress={onClick} style={{ textAlign: "left" }}>
+                  <TopMenuItem icon={FileDownIcon} onPress={onClick}>
                     {text}
-                  </ListButton>
+                  </TopMenuItem>
                 )}
               </DownloadPDF>
             </TopMenu>

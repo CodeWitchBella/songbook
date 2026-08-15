@@ -1,3 +1,4 @@
+import { animated, useTransition } from "@react-spring/web";
 import { CombineIcon, EllipsisVerticalIcon, PencilLineIcon, PlayIcon, SettingsIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -72,6 +73,13 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
   const close = () => setOpen(false);
   const [viewer] = useViewer();
 
+  const transitions = useTransition(open, {
+    from: { scale: 0.6, y: -8, opacity: 0 },
+    enter: { scale: 1, y: 0, opacity: 1 },
+    leave: { scale: 0.6, y: -8, opacity: 0 },
+    config: { tension: 340, friction: 24, mass: 1 },
+  });
+
   return (
     <div ref={rootRef} className="relative">
       <button
@@ -83,43 +91,48 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
       >
         <EllipsisVerticalIcon size={22} />
       </button>
-      {open ? (
-        <div className="absolute right-0 top-full z-10 mt-1 min-w-64 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-black/10 bg-white py-1 font-normal shadow-2xl dark:border-white/15 dark:bg-neutral-950">
-          {viewer ? (
-            <Link to={`/edit/${song.slug}`} state={{ canGoBack: true }} className={itemClass} onClick={close}>
-              <PencilLineIcon size={20} />
-              {t("info.Edit song")}
-            </Link>
-          ) : null}
-          {song.spotify ? (
-            <a href={song.spotify} target="_blank" rel="noopener noreferrer" className={itemClass} onClick={close}>
-              <PlayIcon size={20} />
-              {service ? t("info.Play on {{service}}", { service }) : t("info.Play")}
-            </a>
-          ) : null}
-          <Link
-            to={`/add-to-collection/${song.slug}`}
-            state={{ canGoBack: true }}
-            className={itemClass}
-            onClick={close}
+      {transitions((style, isOpen) =>
+        isOpen ? (
+          <animated.div
+            style={style}
+            className="absolute right-0 top-full z-10 mt-1 min-w-64 max-w-[calc(100vw-2rem)] origin-top-right will-change-[transform,opacity] overflow-hidden rounded-xl border border-black/10 bg-white py-1 font-normal shadow-2xl dark:border-white/15 dark:bg-neutral-950"
           >
-            <CombineIcon size={20} />
-            {t("collection.Add to collection")}
-          </Link>
-          <Link to="/quick-settings" state={{ canGoBack: true }} className={itemClass} onClick={close}>
-            <SettingsIcon size={20} />
-            {t("quick-settings.Quick settings")}
-          </Link>
-          <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-t border-black/10 px-4 py-3 text-sm dark:border-white/15">
-            <InfoRow label={t("info.Inserted by")} value={song.editor?.name || unknownEditor} />
-            <InfoRow
-              label={t("info.Inserted")}
-              value={song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate}
-            />
-            <InfoRow label={t("info.Last edit")} value={formatDate(lng, t, song.lastModified.toISO())} />
-          </dl>
-        </div>
-      ) : null}
+            {viewer ? (
+              <Link to={`/edit/${song.slug}`} state={{ canGoBack: true }} className={itemClass} onClick={close}>
+                <PencilLineIcon size={20} />
+                {t("info.Edit song")}
+              </Link>
+            ) : null}
+            {song.spotify ? (
+              <a href={song.spotify} target="_blank" rel="noopener noreferrer" className={itemClass} onClick={close}>
+                <PlayIcon size={20} />
+                {service ? t("info.Play on {{service}}", { service }) : t("info.Play")}
+              </a>
+            ) : null}
+            <Link
+              to={`/add-to-collection/${song.slug}`}
+              state={{ canGoBack: true }}
+              className={itemClass}
+              onClick={close}
+            >
+              <CombineIcon size={20} />
+              {t("collection.Add to collection")}
+            </Link>
+            <Link to="/quick-settings" state={{ canGoBack: true }} className={itemClass} onClick={close}>
+              <SettingsIcon size={20} />
+              {t("quick-settings.Quick settings")}
+            </Link>
+            <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-t border-black/10 px-4 py-3 text-sm dark:border-white/15">
+              <InfoRow label={t("info.Inserted by")} value={song.editor?.name || unknownEditor} />
+              <InfoRow
+                label={t("info.Inserted")}
+                value={song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate}
+              />
+              <InfoRow label={t("info.Last edit")} value={formatDate(lng, t, song.lastModified.toISO())} />
+            </dl>
+          </animated.div>
+        ) : null,
+      )}
     </div>
   );
 }

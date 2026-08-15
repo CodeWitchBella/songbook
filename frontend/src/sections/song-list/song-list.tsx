@@ -1,9 +1,8 @@
 import { BackButton } from "#/components/back-button";
-import { ListButton } from "#/components/interactive/list-button";
 import { SearchTextInput } from "#/components/search-text-input";
-import TopMenu from "#/components/top-menu";
+import TopMenu, { TopMenuItem } from "#/components/top-menu";
 import { useQueryParam } from "#/components/use-router";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowDownAZIcon, ArrowLeftIcon, FileDownIcon, UserIcon } from "lucide-react";
 import type { PropsWithChildren, ReactNode } from "react";
 import { useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -118,19 +117,18 @@ export default function SongList({
         }}
         topMenu={
           <TopMenu>
-            <ListButton
+            <TopMenuItem
+              icon={sortByAuthor ? ArrowDownAZIcon : UserIcon}
               onPress={() => {
                 setSortByAuthor(sortByAuthor ? null : "yes");
               }}
-              style={{ textAlign: "left" }}
             >
               {sortByAuthor ? t("Sort by name") : t("Sort by interpret")}
-            </ListButton>
-            <Gap />
+            </TopMenuItem>
             {slug !== null && (
-              <ListButton to={`/collection/${collectionSlugToPath(slug)}/pdf`} style={{ textAlign: "left" }}>
+              <TopMenuItem icon={FileDownIcon} to={`/collection/${collectionSlugToPath(slug)}/pdf`}>
                 {t("pdf-gen.Download PDF")}
-              </ListButton>
+              </TopMenuItem>
             )}
             {menu ?? null}
           </TopMenu>
@@ -143,8 +141,4 @@ export default function SongList({
       </div>
     </>
   );
-}
-
-function Gap() {
-  return <div className="h-2" />;
 }
