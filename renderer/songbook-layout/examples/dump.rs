@@ -1,7 +1,10 @@
 //! Dump the laid-out items of a song JSON for inspection.
-//! Usage: cargo run -p songbook-layout --example dump -- songs/foo.json
+//! Usage: cargo run -p songbook-layout --example dump -- songs/foo.json [--fit [percent]]
+//! `--fit` auto-fits the body font to the page instead of setting it at the
+//! fixed base em, optionally with the minimal size at `percent` of the ideal
+//! one (default 85).
 use songbook_grammar::Song;
-use songbook_layout::{CHORD_FONT_FAMILY, LYRIC_FONT_FAMILY, LayoutEngine};
+use songbook_layout::{CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY, LayoutEngine};
 
 const SONGS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../songs");
 
@@ -21,7 +24,20 @@ fn main() {
         engine.register_fonts(data, family);
     }
 
-    let layout = engine.run(&song, Some((363.53, 539.28)), true, false);
+    // `--fit N`: auto-fit with the minimal size at N% of the ideal one.
+    let mut args = std::env::args();
+    let minimal_ratio = args
+        .find(|arg| arg == "--fit")
+        .and(args.next())
+        .and_then(|arg| arg.parse::<f32>().ok());
+    let sizing = std::env::args()
+        .any(|arg| arg == "--fit")
+        .then(|| FontSizing {
+            minimal_font_size: 16.0 * minimal_ratio.unwrap_or(85.0) / 100.0,
+            ..FontSizing::default()
+        });
+    let layout = engine.run(&song, Some((363.53, 539.28)), true, false, sizing);
+    println!("font size: {}", layout.font_size);
     for item in &layout.items {
         println!(
             "{:>8.1},{:>7.1}  {:<12} {:?}",

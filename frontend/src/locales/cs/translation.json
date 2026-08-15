@@ -142,10 +142,11 @@
   },
   "font-size": {
     "Font size": "Velikost písma",
-    "description": "Text se zvětší tak, aby vyplnil stránku.",
-    "Overflow below": "Než by se text zmenšil pod tuto velikost, raději pokračovat na další stránce",
-    "Wrap long lines": "Zalamovat dlouhé řádky místo zmenšování",
-    "Wrap below": "Než by se text zmenšil pod tuto velikost, raději ho zalomit",
+    "description": "Písničky se sází co největším písmem, které se ještě vejde.",
+    "Ideal size": "Ideální velikost",
+    "ideal hint": "Vzhledem k základní velikosti písma. Když je místo, text se ještě zvětší.",
+    "Minimal size": "Nejmenší velikost",
+    "minimal hint": "Vzhledem k ideální velikosti. Když se píseň nevejde ani takto, zalomí se řádky a pokračuje na další stránce.",
     "sample": "Ta naše písnička česká",
     "Preview": "Náhled"
   }

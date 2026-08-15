@@ -439,7 +439,13 @@ fn layout_song(song: &Song, engine: &mut LayoutEngine, booklet: bool) -> Layout 
         PAGE_WIDTH - 2.0 * MARGIN
     } as f64;
     let content_height = (PAGE_HEIGHT - 2.0 * MARGIN) as f64;
-    engine.run(song, Some((content_width, content_height)), true, false)
+    engine.run(
+        song,
+        Some((content_width, content_height)),
+        true,
+        false,
+        None,
+    )
 }
 
 /// Render an already computed [`Layout`] into PDF bytes across A4 pages.

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { BackButton } from "#/components/back-button";
 import { SongHeaderMenu } from "#/components/song-look/song-header-menu";
 import { useContinuousModeSetting } from "#/components/continuous-mode";
+import { fontSizesOf, useFontSizeSettings, type FontSizeSettings } from "#/components/font-size-settings";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
 import atkinsonRegularUrl from "#/wasm/fonts/atkinson-hyperlegible-regular.woff2?url";
@@ -69,6 +70,17 @@ export function preloadWasmSongRenderer() {
   return getRenderer();
 }
 
+/**
+ * The user's font size settings, in the order `jsonify`/`htmlify` take them:
+ * the ideal and minimal body size in px, plus the gutter this component leaves
+ * between columns — the layout engine counts a song as fitting as long as its
+ * pages fit side by side as columns, so it needs to know how they're packed.
+ */
+function sizingArgs(settings: FontSizeSettings) {
+  const { ideal, minimal } = fontSizesOf(settings);
+  return [ideal, minimal, COLUMN_GAP_PX] as const;
+}
+
 function songToParsedJson(song: SongType, transposition: number): string {
   const frontmatter: Frontmatter = {
     slug: song.slug,
@@ -109,6 +121,7 @@ export function WasmSongLook({
   const onChordPressRef = useRef(onChordPress);
   onChordPressRef.current = onChordPress;
   const [continuousSetting] = useContinuousModeSetting();
+  const [fontSizeSettings] = useFontSizeSettings();
   const { t } = useTranslation();
   // Whether the layout spilled onto more than one row of pages — i.e. the
   // renderer actually wrapped, so there is a next row to scroll to.
@@ -148,7 +161,7 @@ export function WasmSongLook({
         // decide.
         let continuous = continuousSetting === "always";
         if (continuousSetting === "multipage") {
-          const layout = renderer.jsonify(json, width, height, false, false) as {
+          const layout = renderer.jsonify(json, width, height, false, false, ...sizingArgs(fontSizeSettings)) as {
             items: { pos: [number, number] }[];
           };
           const maxTop = layout.items.reduce((max, item) => Math.max(max, item.pos[1]), 0);
@@ -166,7 +179,7 @@ export function WasmSongLook({
         // ordinary React element above the container (see the JSX below)
         // rather than by the layout algorithm, so no space is reserved for
         // it here.
-        const html = renderer.htmlify(json, width, height, false, continuous);
+        const html = renderer.htmlify(json, width, height, false, continuous, ...sizingArgs(fontSizeSettings));
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
         if (wrapper) {
@@ -283,7 +296,7 @@ export function WasmSongLook({
       cancelled = true;
       cleanup();
     };
-  }, [song, transposition, continuousSetting, updateAtBottom]);
+  }, [song, transposition, continuousSetting, fontSizeSettings, updateAtBottom]);
 
   useEffect(() => {
     const el = containerRef.current;

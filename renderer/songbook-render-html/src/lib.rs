@@ -4,7 +4,7 @@ mod render_song_html;
 
 use anyhow::Context;
 use songbook_grammar::Song;
-use songbook_layout::LayoutEngine;
+use songbook_layout::{FontSizing, LayoutEngine};
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
 #[wasm_bindgen]
@@ -40,11 +40,22 @@ impl Renderer {
         height: f64,
         show_header: bool,
         continuous: bool,
+        ideal_font_size: f32,
+        minimal_font_size: f32,
+        column_gap: f32,
     ) -> JsValue {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout =
-            self.layout_engine
-                .run(&parsed, Some((width, height)), show_header, continuous);
+        let layout = self.layout_engine.run(
+            &parsed,
+            Some((width, height)),
+            show_header,
+            continuous,
+            Some(FontSizing {
+                ideal_font_size,
+                minimal_font_size,
+                column_gap,
+            }),
+        );
         serde_wasm_bindgen::to_value(&layout).unwrap()
     }
 
@@ -56,11 +67,22 @@ impl Renderer {
         height: f64,
         show_header: bool,
         continuous: bool,
+        ideal_font_size: f32,
+        minimal_font_size: f32,
+        column_gap: f32,
     ) -> String {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
-        let layout =
-            self.layout_engine
-                .run(&parsed, Some((width, height)), show_header, continuous);
+        let layout = self.layout_engine.run(
+            &parsed,
+            Some((width, height)),
+            show_header,
+            continuous,
+            Some(FontSizing {
+                ideal_font_size,
+                minimal_font_size,
+                column_gap,
+            }),
+        );
         let html = render_song_html::draw(&layout)
             .context("render_song_html::draw failed")
             .unwrap();

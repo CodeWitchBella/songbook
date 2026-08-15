@@ -11,8 +11,8 @@ const HEADER_EM: f32 = 1.2;
 /// Height of a line that carries chords, as a multiple of `fontSize` em.
 const CHORD_LINE_FACTOR: f32 = 2.2;
 /// Floor the chord-line height can be compressed to (as a multiple of
-/// `fontSize` em) during the anti-orphan search. On chord-heavy songs this is
-/// the highest-leverage lever, since almost every line pays this height.
+/// `fontSize` em). On chord-heavy songs this is the highest-leverage lever,
+/// since almost every line pays this height.
 const CHORD_LINE_FACTOR_FLOOR: f32 = 2.0;
 /// Small top margin above the header, in em.
 const HEADER_TOP_MARGIN: f32 = 0.75;
@@ -24,8 +24,7 @@ const HEADER_SPACE_CHORDS_EM: f32 = 0.5;
 /// Space below the header, in em, when the first rendered body line has no
 /// chords.
 const HEADER_SPACE_NO_CHORDS_EM: f32 = 1.0;
-/// Floor the header space can be compressed to (see `layout_song`'s
-/// anti-orphan search) when a song's last page is nearly empty.
+/// Floor the header space can be compressed to.
 const HEADER_SPACE_FLOOR_EM: f32 = 0.3;
 /// Gap inserted before a section, in em, when that section's first rendered
 /// line carries chords.
@@ -34,31 +33,65 @@ const SECTION_GAP_CHORDS_EM: f32 = 0.7;
 const SECTION_GAP_NO_CHORDS_EM: f32 = 1.0;
 /// Floor a section gap can be compressed to.
 const SECTION_GAP_FLOOR_EM: f32 = 0.4;
-/// Floor the body font can be scaled to (as a fraction of its natural size)
-/// during compression. The header font is never touched.
-const FONT_SCALE_FLOOR: f32 = 0.95;
-/// Number of discrete steps the anti-orphan compression search tries between
-/// the natural layout and the floors above, escalating header space, then
-/// section gaps, then chord-line height, then font size (see `layout_song`).
-const COMPRESSION_STEPS: u32 = 32;
+/// Number of discrete steps the compression search tries between the natural
+/// layout and the floors above, escalating header space, then section gaps,
+/// then chord-line height (see [`compression_at`]).
+const COMPRESSION_STEPS: u32 = 16;
+
+/// How far above the ideal size the body font may be grown, as a multiple of
+/// it.
+const MAX_GROWTH: f32 = 3.0;
+/// Granularity of the font size search, in px.
+const FONT_SEARCH_STEP_PX: f32 = 0.5;
+
+/// How the body font size is chosen. Without one (`None` in [`layout_song`])
+/// the song is set at the fixed base [`EM`] and long lines always wrap to the
+/// content width — the behaviour every renderer had before auto-fit.
+#[derive(Clone, Copy, Debug)]
+pub struct FontSizing {
+    /// The size the body is set at when the song fits at it, in px. It's only
+    /// grown beyond this when the song still fits with its spacing untouched
+    /// and no line wrapped, and only shrunk below it once compressing spacing
+    /// is no longer enough.
+    pub ideal_font_size: f32,
+    /// The smallest size the body is shrunk to, in px. At this size long lines
+    /// wrap and the song spills onto as many pages as it needs.
+    pub minimal_font_size: f32,
+    /// Gutter the caller leaves between columns, in px. Pages are packed side
+    /// by side into the viewport's width, so a song only counts as not fitting
+    /// once it needs more pages than fit as columns — laying it out in two
+    /// columns is preferred over shrinking the text.
+    pub column_gap: f32,
+}
+
+impl Default for FontSizing {
+    fn default() -> Self {
+        FontSizing {
+            ideal_font_size: EM,
+            minimal_font_size: EM * 0.85,
+            column_gap: 48.0,
+        }
+    }
+}
 
 fn lerp(a: f32, b: f32, t: f32) -> f32 {
     a + (b - a) * t
 }
 
-/// Page metrics of a layout built against a fixed viewport, mirroring the
-/// pagination `render_layout_into` performs in songbook-render-pdf (a page
-/// break happens whenever an item's y runs `content_height` past the current
-/// page's top). Used to compare compression candidates by page count.
-struct PageMetrics {
-    page_count: u32,
-    /// How full the last page is, in `[0, 1]` of `content_height`.
-    last_fill_fraction: f32,
-    /// How full the second-to-last page is, in `[0, 1]`. `1.0` when there is
-    /// only one page. This can be below `1.0` even though it isn't the last
-    /// page: a paragraph too tall for the room left gets bumped to the next
-    /// page, leaving a gap here.
-    prev_fill_fraction: f32,
+/// How hard the `k`-th compression step squeezes each of the levers, as
+/// `(header space, section gaps, chord-line height)` fractions of the way from
+/// the natural spacing to its floor. Each lever gets an equal third of the
+/// search's progress and later ones only start once earlier ones have maxed
+/// out, so step 0 is the natural layout and every step after it is strictly
+/// tighter. The font size is never a lever here — that's the outer search in
+/// [`pick_font_size`].
+fn compression_at(k: u32) -> (f32, f32, f32) {
+    let progress = k as f32 / COMPRESSION_STEPS as f32;
+    (
+        (progress / 0.34).clamp(0.0, 1.0),
+        ((progress - 0.33) / 0.34).clamp(0.0, 1.0),
+        ((progress - 0.66) / 0.34).clamp(0.0, 1.0),
+    )
 }
 /// Font family for lyrics, tags and the header. Renderers must register their
 /// regular/bold faces under this name.
@@ -69,7 +102,9 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 
 /// Lay out the song.
 ///
-/// The body is set at [`EM`]; the per-song `fontSize` frontmatter is ignored.
+/// With `sizing` given (and a viewport to fit into) the body font is chosen by
+/// [`pick_font_size`]. Without it the body is set at [`EM`]. The per-song
+/// `fontSize` frontmatter is ignored either way.
 /// The header sets the title on the left and the author on the right,
 /// both bold. Lines that carry chords reserve `fontSize * 2.2` em of height
 /// with the chords sitting one em above the lyric baseline. Header space and
@@ -82,25 +117,20 @@ pub const CHORD_FONT_FAMILY: &str = "Atkinson Hyperlegible";
 /// instead of the font size being shrunk. Pass `None` to leave the song as a
 /// single, unpaginated flow.
 ///
-/// When paginated with more than one page, and the last two pages' content
-/// would overflow a single page by less than 20% (counting the empty space
-/// already left on the second-to-last page), this also runs an anti-orphan
-/// search: it
-/// re-lays the song out with progressively tighter header/section spacing
-/// and, as a last resort, a slightly smaller body font, and keeps the first
-/// (lightest) variant that fits the song into one fewer page. If none of the
-/// tried steps manage that, the natural layout is kept as is.
+/// Once the size is settled, a paginated layout that still doesn't fit is run
+/// through the compression search: progressively tighter header/section
+/// spacing and chord-line height (see [`compression_at`]), keeping the first
+/// (lightest) variant that does fit. If none of the tried steps manage that,
+/// the natural layout is kept as is and the song simply spills over.
 pub fn layout_song(
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
     viewport: Option<(f64, f64)>,
     show_header: bool,
     continuous: bool,
+    sizing: Option<FontSizing>,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
-    // The per-song `fontSize` frontmatter is intentionally ignored; every song
-    // is laid out at the base em and only the anti-orphan search may shrink it.
-    let font_px_base = EM;
     // Chords are transposed by the song's `pretranspose`.
     let transpose = fm.map(|fm| fm.pretranspose.round() as i32).unwrap_or(0);
     let title = fm.map(|fm| fm.title.as_str()).unwrap_or("");
@@ -116,94 +146,237 @@ pub fn layout_song(
         vec![]
     };
 
-    // Text shaping (parley) only depends on the body font size, which only
-    // moves in the last quarter of the compression search below; every other
-    // step reuses the same shaped lines. Cache by font size so those steps
-    // skip re-shaping the whole song.
+    // Text shaping (parley) only depends on the body font size; compression
+    // never touches it, so every compression step of a given size reuses the
+    // same shaped lines. Cache by font size so those steps skip re-shaping the
+    // whole song.
     let mut measured_cache: Vec<(u32, Vec<MeasuredParagraph>)> = vec![];
 
     let content_width = viewport.map(|(width, _)| width as f32);
+    // Lines only ever wrap at the minimal size — above it a too-wide line is
+    // dealt with by shrinking the font instead. Without a sizing policy they
+    // always wrap to the content width (the behaviour every renderer had
+    // before auto-fit).
+    let wrap_width = |font_px: f32| -> Option<f32> {
+        match sizing {
+            None => content_width,
+            Some(sizing) if font_px <= sizing.minimal_font_size => content_width,
+            Some(_) => None,
+        }
+    };
 
-    let (natural_layout, natural_metrics) = {
-        let measured = get_measured(
+    // Fit the body to the viewport, unless the caller opted out of auto-fit or
+    // there's no page to fit into. `row_budget` is how many rows of columns the
+    // song is allowed to take — one, unless it can't be squeezed into one even
+    // at its smallest (see [`pick_font_size`]).
+    let (font_px, row_budget) = match (sizing, viewport) {
+        (Some(sizing), Some(_)) => pick_font_size(
+            sizing,
             &mut measured_cache,
             song,
             font_cx,
-            font_px_base,
-            transpose,
-            continuous,
-            content_width,
-        );
-        assemble(
-            measured,
             &header_items,
             viewport,
-            font_px_base,
-            0.0,
-            0.0,
-            0.0,
-        )
-    };
-
-    // Only paginated layouts are eligible for compression: with no viewport
-    // there's no page to save a paragraph from spilling onto.
-    let Some(metrics) = natural_metrics else {
-        return natural_layout;
-    };
-    // Trigger the search when the last two pages' combined content would
-    // overflow a single page by less than 10% — i.e. the empty space already
-    // sitting on the second-to-last page plus the sparse last page nearly add
-    // up to one free page. `(prev_fill + last_fill) - 1.0` is that overflow.
-    let combined_overflow = metrics.prev_fill_fraction + metrics.last_fill_fraction - 1.0;
-    if metrics.page_count <= 1 || combined_overflow >= 0.20 {
-        return natural_layout;
-    }
-
-    // The last page is nearly empty (an "orphan"): search for the lightest
-    // compression that removes one page. Escalate header space, then section
-    // gaps, then chord-line height, then body font size — each lever gets an
-    // equal quarter of the search's progress, and later levers only start once
-    // earlier ones have maxed out — and take the first step that works.
-    let target_pages = metrics.page_count - 1;
-    for k in 1..=COMPRESSION_STEPS {
-        let progress = k as f32 / COMPRESSION_STEPS as f32;
-        let t_header = (progress / 0.25).clamp(0.0, 1.0);
-        let t_section = ((progress - 0.25) / 0.25).clamp(0.0, 1.0);
-        let t_chord = ((progress - 0.50) / 0.25).clamp(0.0, 1.0);
-        let t_font = ((progress - 0.75) / 0.25).clamp(0.0, 1.0);
-        let font_px = font_px_base * lerp(1.0, FONT_SCALE_FLOOR, t_font);
-
-        let measured = get_measured(
-            &mut measured_cache,
-            song,
-            font_cx,
-            font_px,
             transpose,
             continuous,
-            content_width,
-        );
-        let (candidate, candidate_metrics) = assemble(
+            &wrap_width,
+        ),
+        _ => (EM, 1),
+    };
+
+    let measured = get_measured(
+        &mut measured_cache,
+        song,
+        font_cx,
+        font_px,
+        transpose,
+        continuous,
+        wrap_width(font_px),
+    );
+    best_layout_at(
+        measured,
+        &header_items,
+        viewport,
+        font_px,
+        sizing,
+        // Compressing spacing is what fitting at or below the ideal size is
+        // allowed to cost; a size grown past it has to fit as it is.
+        sizing.is_none_or(|sizing| font_px <= sizing.ideal_font_size),
+        row_budget,
+    )
+    .map(|(layout, _)| layout)
+    // A line wider than the viewport even at the minimal size (an unbreakable
+    // long word, say) leaves nothing that fits; lay it out naturally and let
+    // it overflow.
+    .unwrap_or_else(|| assemble(measured, &header_items, viewport, font_px, 0.0, 0.0, 0.0).0)
+}
+
+/// Lay the song out at `font_px`, escalating compression (when allowed) until
+/// it takes at most `row_budget` rows of columns, and return that layout with
+/// the rows it takes. When no step gets there, the fewest-rows layout is
+/// returned instead — and `None` when a line is wider than the viewport, which
+/// no amount of compression can fix and which only a smaller font can.
+fn best_layout_at(
+    measured: &[MeasuredParagraph],
+    header_items: &[Item],
+    viewport: Option<(f64, f64)>,
+    font_px: f32,
+    sizing: Option<FontSizing>,
+    allow_compression: bool,
+    row_budget: u32,
+) -> Option<(Layout, u32)> {
+    let steps = if allow_compression {
+        COMPRESSION_STEPS
+    } else {
+        0
+    };
+    let mut best: Option<(Layout, u32)> = None;
+    for k in 0..=steps {
+        let (t_header, t_section, t_chord) = compression_at(k);
+        let (layout, pages) = assemble(
             measured,
-            &header_items,
+            header_items,
             viewport,
             font_px,
             t_header,
             t_section,
             t_chord,
         );
-        // Viewport is `Some` here (checked above), so `assemble` always
-        // returns metrics in this branch.
-        let cm = candidate_metrics.unwrap();
-        if cm.page_count <= target_pages {
-            return candidate;
+        if let Some((width, _)) = viewport {
+            if content_right_extent(&layout) > width as f32 {
+                return None;
+            }
+        }
+        let rows = match pages {
+            // Unpaginated: there's nothing to overflow.
+            None => 1,
+            Some(pages) => pages.div_ceil(column_count(&layout, viewport, sizing)),
+        };
+        if rows <= row_budget {
+            return Some((layout, rows));
+        }
+        if best.as_ref().is_none_or(|(_, best_rows)| rows < *best_rows) {
+            best = Some((layout, rows));
         }
     }
+    best
+}
 
-    natural_layout
+/// How many pages the caller can place side by side as columns before the song
+/// wraps onto another row: the viewport's width divided by the widest line in
+/// `layout` (which is how wide a column has to be), plus the gutter between
+/// columns. Always at least one, and always one for callers that don't pack
+/// pages into columns at all (`sizing` of `None`).
+///
+/// This is deliberately conservative — the caller sizes each column to its own
+/// page's content, so pages narrower than the widest one may well leave room
+/// for a further column.
+fn column_count(layout: &Layout, viewport: Option<(f64, f64)>, sizing: Option<FontSizing>) -> u32 {
+    let (Some((width, _)), Some(sizing)) = (viewport, sizing) else {
+        return 1;
+    };
+    let column_width = content_right_extent(layout).max(1.0);
+    let gap = sizing.column_gap;
+    (((width as f32 + gap) / (column_width + gap)).floor() as i64).clamp(1, u32::MAX as i64) as u32
+}
+
+/// How far right the song's body reaches, in px. The header is excluded: it's
+/// set at a fixed size the body's fitting can't do anything about.
+fn content_right_extent(layout: &Layout) -> f32 {
+    layout
+        .items
+        .iter()
+        .filter(|item| item.item_type != ItemType::Header)
+        .map(|item| item.pos.0 + item.width)
+        .fold(0.0f32, f32::max)
+}
+
+/// Pick the body font size, on a half-pixel grid running from the user's
+/// minimal size up to [`MAX_GROWTH`] times their ideal one, along with the row
+/// budget it was chosen against.
+///
+/// A size fits when no line is wider than the viewport and the song's pages
+/// fit within the budgeted rows of columns (see [`column_count`]) — running a
+/// song into two columns beats shrinking it. Above the ideal size that has to
+/// hold with the song's natural spacing, since growing the text is only worth
+/// it when nothing is given up for it; at or below the ideal size compressed
+/// spacing counts as fitting too, so the font only shrinks once squeezing the
+/// gaps is no longer enough.
+///
+/// The budget is one row, unless the song can't be squeezed into one row even
+/// at its minimal size — then it's however many rows it needs down there, and
+/// the search grows the font back up to fill them as far as it can. So a song
+/// that has to spill onto a second screenful uses that screenful properly
+/// instead of being left tiny and half empty.
+///
+/// The tests only get harder as the font grows, so the predicate is monotone
+/// and a binary search finds the largest size that passes; the minimal size
+/// always passes by construction (it's what the budget was measured at) and is
+/// where long lines are finally allowed to wrap.
+#[allow(clippy::too_many_arguments)]
+fn pick_font_size(
+    sizing: FontSizing,
+    cache: &mut Vec<(u32, Vec<MeasuredParagraph>)>,
+    song: &songbook_grammar::Song,
+    font_cx: &mut parley::FontContext,
+    header_items: &[Item],
+    viewport: Option<(f64, f64)>,
+    transpose: i32,
+    continuous: bool,
+    wrap_width: &dyn Fn(f32) -> Option<f32>,
+) -> (f32, u32) {
+    // Rows the song takes at `font_px`, with the lightest compression that
+    // reaches `row_budget`; `None` when a line is too wide to fit at all.
+    let rows_at = |cache: &mut Vec<(u32, Vec<MeasuredParagraph>)>,
+                   font_cx: &mut parley::FontContext,
+                   font_px: f32,
+                   row_budget: u32| {
+        let measured = get_measured(
+            cache,
+            song,
+            font_cx,
+            font_px,
+            transpose,
+            continuous,
+            wrap_width(font_px),
+        );
+        best_layout_at(
+            measured,
+            header_items,
+            viewport,
+            font_px,
+            Some(sizing),
+            font_px <= sizing.ideal_font_size,
+            row_budget,
+        )
+        .map(|(_, rows)| rows)
+    };
+
+    let grid = |i: u32| (i as f32) * FONT_SEARCH_STEP_PX;
+    let index = |px: f32| (px / FONT_SEARCH_STEP_PX).round().max(1.0) as u32;
+    let mut lo = index(sizing.minimal_font_size);
+    let mut hi = index(sizing.ideal_font_size * MAX_GROWTH).max(lo);
+
+    // What the song needs at its smallest is the budget everything else is
+    // measured against: one row when it can be made to fit, more when even the
+    // minimal size can't manage that.
+    let row_budget = rows_at(cache, font_cx, grid(lo), 1).unwrap_or(1);
+
+    // `lo` fits by construction (it's what the budget was just measured at).
+    while lo < hi {
+        let mid = lo + (hi - lo).div_ceil(2);
+        let fits = rows_at(cache, font_cx, grid(mid), row_budget).is_some_and(|r| r <= row_budget);
+        if fits {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    (grid(lo), row_budget)
 }
 
 /// Shape the title/author once, at their fixed header size. Never touched by
-/// anti-orphan compression, so it's pulled out of the search loop entirely.
+/// compression or the size search, so it's pulled out of both entirely.
 fn measure_header(
     title: &str,
     author: &str,
@@ -254,8 +427,8 @@ struct MeasuredParagraph {
 }
 
 /// Fetch the song shaped at `font_px`, computing and caching it on first use.
-/// Most anti-orphan compression steps only touch spacing, not font size, so
-/// repeated calls at the same `font_px` are nearly always cache hits.
+/// Compression only touches spacing, not font size, so the repeated calls a
+/// single size makes are nearly always cache hits.
 fn get_measured<'a>(
     cache: &'a mut Vec<(u32, Vec<MeasuredParagraph>)>,
     song: &songbook_grammar::Song,
@@ -365,7 +538,8 @@ fn measure_song(
 /// Arrange already-shaped paragraphs into a page-flowed layout: header/section
 /// spacing, chord-line height and page breaks. Pure arithmetic over the
 /// [`MeasuredParagraph`]s produced by [`measure_song`] — no parley calls — so
-/// it's cheap to call once per anti-orphan compression step.
+/// it's cheap to call once per compression step. Returns the layout and, for a
+/// paginated one, how many pages it takes.
 fn assemble(
     measured_paragraphs: &[MeasuredParagraph],
     header_items: &[Item],
@@ -374,7 +548,7 @@ fn assemble(
     t_header: f32,
     t_section: f32,
     t_chord: f32,
-) -> (Layout, Option<PageMetrics>) {
+) -> (Layout, Option<u32>) {
     let chord_line_factor = lerp(CHORD_LINE_FACTOR, CHORD_LINE_FACTOR_FLOOR, t_chord);
     let header_px = HEADER_EM * EM;
 
@@ -493,39 +667,21 @@ fn assemble(
         layout.items.push(item);
     }
 
-    let metrics = content_height.map(|content_height| {
+    // How many pages this lands on, mirroring the pagination
+    // `render_layout_into` performs in songbook-render-pdf (a page break
+    // happens whenever an item's y runs `content_height` past the current
+    // page's top).
+    let page_count = content_height.map(|content_height| {
         let max_y = layout
             .items
             .iter()
             .filter(|item| !item.text.trim().is_empty())
             .map(|item| item.pos.1)
             .fold(0.0f32, f32::max);
-        let page_count = (max_y / content_height).floor() as u32 + 1;
-        let last_fill_fraction =
-            (max_y - (page_count - 1) as f32 * content_height) / content_height;
-        // Fill of the second-to-last page: the lowest baseline that still lands
-        // on page `page_count - 2`, measured from that page's top.
-        let prev_fill_fraction = if page_count < 2 {
-            1.0
-        } else {
-            let prev_top = (page_count - 2) as f32 * content_height;
-            let prev_max_y = layout
-                .items
-                .iter()
-                .filter(|item| !item.text.trim().is_empty())
-                .map(|item| item.pos.1)
-                .filter(|&y| y >= prev_top && y - prev_top <= content_height)
-                .fold(prev_top, f32::max);
-            (prev_max_y - prev_top) / content_height
-        };
-        PageMetrics {
-            page_count,
-            last_fill_fraction,
-            prev_fill_fraction,
-        }
+        (max_y / content_height).floor() as u32 + 1
     });
 
-    (layout, metrics)
+    (layout, page_count)
 }
 
 /// The concatenated lyric text of a line (chords/commands contribute no text).
@@ -651,7 +807,7 @@ struct MeasuredLine {
 
 /// Shape a line's text and chords at `font_px` — the only part of laying out
 /// a line that calls into parley. Vertical placement (which depends on the
-/// anti-orphan search's chord-line compression) is deferred to [`place_line`]
+/// the chord-line compression) is deferred to [`place_line`]
 /// so it can be redone cheaply without re-shaping.
 fn measure_line(
     line: &Line,
@@ -915,7 +1071,7 @@ fn measure_line(
 /// Turn a shaped line's baseline-relative item offsets into absolute
 /// positions for a given chord-line height factor, and report the line's
 /// total height. Pure arithmetic — no parley calls — so it's cheap to redo
-/// for every anti-orphan compression step even when the shaping is cached.
+/// for every compression step even when the shaping is cached.
 fn place_line(measured: &MeasuredLine, font_px: f32, chord_line_factor: f32) -> (Vec<Item>, f32) {
     let line_height = if measured.has_chord {
         font_px * chord_line_factor

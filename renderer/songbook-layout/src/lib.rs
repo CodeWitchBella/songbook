@@ -4,7 +4,7 @@ mod data;
 mod layout_song;
 
 pub use data::{Item, ItemType, Layout};
-pub use layout_song::{CHORD_FONT_FAMILY, LYRIC_FONT_FAMILY};
+pub use layout_song::{CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY};
 use std::io::Read;
 
 /// Decompress a font blob into raw TTF/OTF bytes, sniffing woff1/woff2 by their
@@ -46,6 +46,7 @@ impl LayoutEngine {
         viewport: Option<(f64, f64)>,
         show_header: bool,
         continuous: bool,
+        sizing: Option<FontSizing>,
     ) -> Layout {
         let layout = layout_song::layout_song(
             &parsed,
@@ -53,6 +54,7 @@ impl LayoutEngine {
             viewport,
             show_header,
             continuous,
+            sizing,
         );
         layout
     }

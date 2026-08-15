@@ -140,10 +140,11 @@
   },
   "font-size": {
     "Font size": "Font size",
-    "description": "Text is scaled to fill the page.",
-    "Overflow below": "Rather than making the text smaller than this, continue on the next page",
-    "Wrap long lines": "Wrap long lines instead of shrinking",
-    "Wrap below": "Rather than making the text smaller than this, wrap it",
+    "description": "Songs are set in the largest type that still fits.",
+    "Ideal size": "Ideal size",
+    "ideal hint": "Relative to the base font size. Text grows past it when there's room.",
+    "Minimal size": "Minimal size",
+    "minimal hint": "Relative to the ideal size. A song that doesn't fit even this small wraps its lines and continues on the next page.",
     "sample": "Swing low, sweet chariot",
     "Preview": "Preview"
   }

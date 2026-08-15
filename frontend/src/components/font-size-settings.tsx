@@ -3,33 +3,32 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 const key = "font-size-settings";
 
 export type FontSizeSettings = {
-  /** the font is grown as much as fits; below this size (px) the song spills onto another page instead */
-  minFontSize: number;
-  /** when false, the font is scaled down until even the longest line fits unwrapped */
-  allowLineWrap: boolean;
-  /** with wrapping on: below this size (px) long lines wrap instead of shrinking further */
-  wrapBelowFontSize: number;
+  /** the size songs are set at when they fit, as a ratio of the root font size */
+  idealRatio: number;
+  /** how far a song may be shrunk to fit, as a ratio of the ideal size */
+  minimalRatio: number;
 };
 
-export const FONT_SIZE_LIMITS = { min: 6, max: 40, step: 1 } as const;
+export const FONT_SIZE_LIMITS = {
+  ideal: { min: 0.5, max: 2, step: 0.05 },
+  minimal: { min: 0.3, max: 1, step: 0.05 },
+} as const;
 
 export const defaultFontSizeSettings: FontSizeSettings = {
-  minFontSize: 14,
-  allowLineWrap: false,
-  wrapBelowFontSize: 14,
+  idealRatio: 1,
+  minimalRatio: 0.85,
 };
 
-function clampSize(value: unknown, fallback: number) {
+function clampRatio(value: unknown, limits: { min: number; max: number }, fallback: number) {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
-  return Math.min(FONT_SIZE_LIMITS.max, Math.max(FONT_SIZE_LIMITS.min, value));
+  return Math.min(limits.max, Math.max(limits.min, value));
 }
 
 function normalize(parsed: any): FontSizeSettings {
   if (!parsed || typeof parsed !== "object") return defaultFontSizeSettings;
   return {
-    minFontSize: clampSize(parsed.minFontSize, defaultFontSizeSettings.minFontSize),
-    allowLineWrap: !!parsed.allowLineWrap,
-    wrapBelowFontSize: clampSize(parsed.wrapBelowFontSize, defaultFontSizeSettings.wrapBelowFontSize),
+    idealRatio: clampRatio(parsed.idealRatio, FONT_SIZE_LIMITS.ideal, defaultFontSizeSettings.idealRatio),
+    minimalRatio: clampRatio(parsed.minimalRatio, FONT_SIZE_LIMITS.minimal, defaultFontSizeSettings.minimalRatio),
   };
 }
 
@@ -42,12 +41,31 @@ function deserialize(val: string | null): FontSizeSettings {
   }
 }
 
+/** The root font size the ratios are relative to, in px. */
+export function rootFontSize() {
+  const size = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return Number.isFinite(size) && size > 0 ? size : 16;
+}
+
+/** The ideal and minimal body font size these settings ask for, in px. */
+export function fontSizesOf(settings: FontSizeSettings) {
+  const ideal = rootFontSize() * settings.idealRatio;
+  return { ideal, minimal: ideal * settings.minimalRatio };
+}
+
+// `storage` events only fire in *other* tabs, so hook instances in this tab
+// (the settings modal and the song being rendered behind it) are kept in sync
+// through this set instead.
+const subscribers = new Set<(settings: FontSizeSettings) => void>();
+
 export function useFontSizeSettings() {
   const [settings, setSettings] = useState(() => deserialize(localStorage.getItem(key)));
   useEffect(() => {
     window.addEventListener("storage", listener);
+    subscribers.add(setSettings);
     return () => {
       window.removeEventListener("storage", listener);
+      subscribers.delete(setSettings);
     };
     function listener(event: StorageEvent) {
       if (event.key === key) setSettings(deserialize(event.newValue));
@@ -55,11 +73,9 @@ export function useFontSizeSettings() {
   }, []);
 
   const change = useCallback((patch: Partial<FontSizeSettings>) => {
-    setSettings(prev => {
-      const next = normalize({ ...prev, ...patch });
-      localStorage.setItem(key, JSON.stringify(next));
-      return next;
-    });
+    const next = normalize({ ...deserialize(localStorage.getItem(key)), ...patch });
+    localStorage.setItem(key, JSON.stringify(next));
+    for (const subscriber of subscribers) subscriber(next);
   }, []);
 
   return useMemo(() => [settings, change] as const, [settings, change]);
