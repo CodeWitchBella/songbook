@@ -1,5 +1,6 @@
-import { ArrowLeftIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ArrowLeftIcon, ChevronsDownIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { BackButton } from "#/components/back-button";
 import { SongHeaderMenu } from "#/components/song-look/song-header-menu";
@@ -108,6 +109,14 @@ export function WasmSongLook({
   const onChordPressRef = useRef(onChordPress);
   onChordPressRef.current = onChordPress;
   const [continuousSetting] = useContinuousModeSetting();
+  const { t } = useTranslation();
+  const [hasMoreBelow, setHasMoreBelow] = useState(false);
+
+  const updateHasMoreBelow = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    setHasMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 2);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -249,6 +258,8 @@ export function WasmSongLook({
             el.appendChild(line);
           }
         }
+
+        updateHasMoreBelow();
       };
 
       render(el.clientWidth, el.clientHeight);
@@ -266,7 +277,19 @@ export function WasmSongLook({
       cancelled = true;
       cleanup();
     };
-  }, [song, transposition, continuousSetting]);
+  }, [song, transposition, continuousSetting, updateHasMoreBelow]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", updateHasMoreBelow, { passive: true });
+    return () => el.removeEventListener("scroll", updateHasMoreBelow);
+  }, [updateHasMoreBelow]);
+
+  const scrollDown = () => {
+    const el = containerRef.current;
+    el?.scrollBy({ top: el.clientHeight, behavior: "smooth" });
+  };
 
   return (
     <div className="mx-auto flex h-dvh w-full flex-col">
@@ -284,7 +307,27 @@ export function WasmSongLook({
           {showBack ? <SongHeaderMenu song={song} /> : null}
         </div>
       </div>
-      <div ref={containerRef} className="relative mx-auto w-full flex-1 snap-y snap-mandatory overflow-y-auto" />
+      <div className="relative flex min-h-0 w-full flex-1">
+        <div ref={containerRef} className="relative mx-auto h-full w-full snap-y snap-mandatory overflow-y-auto" />
+        <div
+          aria-hidden={!hasMoreBelow}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-white/80 pt-6 pb-1 transition-opacity duration-200 dark:from-neutral-950/80 ${
+            hasMoreBelow ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={scrollDown}
+            tabIndex={hasMoreBelow ? 0 : -1}
+            aria-label={t("Scroll for more")}
+            className={`rounded-full p-1 text-neutral-500 dark:text-neutral-400 ${
+              hasMoreBelow ? "pointer-events-auto" : ""
+            }`}
+          >
+            <ChevronsDownIcon size={20} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
