@@ -137,5 +137,14 @@
   "song-menu": {
     "Transpose up": "Transpose up",
     "Transpose down": "Transpose down"
+  },
+  "font-size": {
+    "Font size": "Font size",
+    "description": "Text is scaled to fill the page.",
+    "Overflow below": "Rather than making the text smaller than this, continue on the next page",
+    "Wrap long lines": "Wrap long lines instead of shrinking",
+    "Wrap below": "Rather than making the text smaller than this, wrap it",
+    "sample": "Swing low, sweet chariot",
+    "Preview": "Preview"
   }
 }

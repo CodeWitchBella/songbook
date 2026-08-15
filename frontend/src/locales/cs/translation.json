@@ -139,5 +139,14 @@
   "song-menu": {
     "Transpose up": "Transponovat nahoru",
     "Transpose down": "Transponovat dolů"
+  },
+  "font-size": {
+    "Font size": "Velikost písma",
+    "description": "Text se zvětší tak, aby vyplnil stránku.",
+    "Overflow below": "Než by se text zmenšil pod tuto velikost, raději pokračovat na další stránce",
+    "Wrap long lines": "Zalamovat dlouhé řádky místo zmenšování",
+    "Wrap below": "Než by se text zmenšil pod tuto velikost, raději ho zalomit",
+    "sample": "Ta naše písnička česká",
+    "Preview": "Náhled"
   }
 }
