@@ -4,8 +4,12 @@ import { useTranslation } from "react-i18next";
 
 import { BackButton } from "#/components/back-button";
 import { SongHeaderMenu } from "#/components/song-look/song-header-menu";
-import { useContinuousModeSetting } from "#/components/continuous-mode";
-import { fontSizesOf, useFontSizeSettings, type FontSizeSettings } from "#/components/font-size-settings";
+import {
+  fontSizesOf,
+  repeatedChordsArg,
+  useFontSizeSettings,
+  type FontSizeSettings,
+} from "#/components/font-size-settings";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
 import atkinsonRegularUrl from "#/wasm/fonts/atkinson-hyperlegible-regular.woff2?url";
@@ -72,13 +76,14 @@ export function preloadWasmSongRenderer() {
 
 /**
  * The user's font size settings, in the order `jsonify`/`htmlify` take them:
- * the ideal and minimal body size in px, plus the gutter this component leaves
+ * the ideal and minimal body size in px, the gutter this component leaves
  * between columns — the layout engine counts a song as fitting as long as its
- * pages fit side by side as columns, so it needs to know how they're packed.
+ * pages fit side by side as columns, so it needs to know how they're packed —
+ * and what to do with the chords over a repeated section.
  */
 function sizingArgs(settings: FontSizeSettings) {
   const { ideal, minimal } = fontSizesOf(settings);
-  return [ideal, minimal, COLUMN_GAP_PX] as const;
+  return [ideal, minimal, COLUMN_GAP_PX, repeatedChordsArg(settings.repeatedChords)] as const;
 }
 
 function songToParsedJson(song: SongType, transposition: number): string {
@@ -120,7 +125,6 @@ export function WasmSongLook({
   const containerRef = useRef<HTMLDivElement>(null);
   const onChordPressRef = useRef(onChordPress);
   onChordPressRef.current = onChordPress;
-  const [continuousSetting] = useContinuousModeSetting();
   const [fontSizeSettings] = useFontSizeSettings();
   const { t } = useTranslation();
   // Whether the layout spilled onto more than one row of pages — i.e. the
@@ -161,20 +165,6 @@ export function WasmSongLook({
         const width = Math.max(fullWidth - PAGE_PADDING_PX * 2, 1);
         const json = songToParsedJson(song, transposition);
 
-        // "multipage" only enables continuous chords when the song actually
-        // spans more than one page, which isn't known up front — lay it out
-        // once normally (cheap: no HTML string building) to count pages, then
-        // decide.
-        let continuous = continuousSetting === "always";
-        if (continuousSetting === "multipage") {
-          const layout = renderer.jsonify(json, width, height, false, false, ...sizingArgs(fontSizeSettings)) as {
-            items: { pos: [number, number] }[];
-          };
-          const maxTop = layout.items.reduce((max, item) => Math.max(max, item.pos[1]), 0);
-          const pageCount = Math.floor(maxTop / height) + 1;
-          continuous = pageCount > 1;
-        }
-
         // Render at the full container width first: since that's the most
         // any single column could ever be, lines don't wrap any tighter than
         // their natural extent (short lines stay their natural width; only a
@@ -185,7 +175,7 @@ export function WasmSongLook({
         // ordinary React element above the container (see the JSX below)
         // rather than by the layout algorithm, so no space is reserved for
         // it here.
-        const html = renderer.htmlify(json, width, height, false, continuous, ...sizingArgs(fontSizeSettings));
+        const html = renderer.htmlify(json, width, height, false, ...sizingArgs(fontSizeSettings));
         el.setHTMLUnsafe(html);
         const wrapper = el.firstElementChild as HTMLElement | null;
         if (wrapper) {
@@ -303,7 +293,7 @@ export function WasmSongLook({
       cancelled = true;
       cleanup();
     };
-  }, [song, transposition, continuousSetting, fontSizeSettings, updateAtBottom]);
+  }, [song, transposition, fontSizeSettings, updateAtBottom]);
 
   useEffect(() => {
     const el = containerRef.current;

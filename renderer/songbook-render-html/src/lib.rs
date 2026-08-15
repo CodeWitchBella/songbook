@@ -4,7 +4,7 @@ mod render_song_html;
 
 use anyhow::Context;
 use songbook_grammar::Song;
-use songbook_layout::{FontSizing, LayoutEngine};
+use songbook_layout::{FontSizing, LayoutEngine, RepeatedChords};
 use wasm_bindgen::{JsValue, prelude::wasm_bindgen};
 
 #[wasm_bindgen]
@@ -16,6 +16,17 @@ pub fn hook() {
 pub fn parse(song: &str) {
     let deserialized = Song::parse(&song);
     // console_log!("{deserialized:#?}");
+}
+
+/// How `jsonify`/`htmlify` callers ask for repeated sections' chords to be
+/// handled: 0 keeps them, 1 drops them when that's what it takes to fit, 2
+/// always drops them. Anything else keeps them.
+fn repeated_chords_from(value: u8) -> RepeatedChords {
+    match value {
+        1 => RepeatedChords::WhenNeeded,
+        2 => RepeatedChords::Always,
+        _ => RepeatedChords::Keep,
+    }
 }
 
 #[wasm_bindgen]
@@ -39,21 +50,21 @@ impl Renderer {
         width: f64,
         height: f64,
         show_header: bool,
-        continuous: bool,
         ideal_font_size: f32,
         minimal_font_size: f32,
         column_gap: f32,
+        repeated_chords: u8,
     ) -> JsValue {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
         let layout = self.layout_engine.run(
             &parsed,
             Some((width, height)),
             show_header,
-            continuous,
             Some(FontSizing {
                 ideal_font_size,
                 minimal_font_size,
                 column_gap,
+                repeated_chords: repeated_chords_from(repeated_chords),
             }),
         );
         serde_wasm_bindgen::to_value(&layout).unwrap()
@@ -66,21 +77,21 @@ impl Renderer {
         width: f64,
         height: f64,
         show_header: bool,
-        continuous: bool,
         ideal_font_size: f32,
         minimal_font_size: f32,
         column_gap: f32,
+        repeated_chords: u8,
     ) -> String {
         let parsed = Song::parse(&song).context("Song::parse failed").unwrap();
         let layout = self.layout_engine.run(
             &parsed,
             Some((width, height)),
             show_header,
-            continuous,
             Some(FontSizing {
                 ideal_font_size,
                 minimal_font_size,
                 column_gap,
+                repeated_chords: repeated_chords_from(repeated_chords),
             }),
         );
         let html = render_song_html::draw(&layout)

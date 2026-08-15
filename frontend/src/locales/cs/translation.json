@@ -17,13 +17,6 @@
     "Add to collection": "Přidat do kolekce"
   },
   "Collections": "Seznam kolekcí",
-  "continuous": {
-    "always": "Vždy",
-    "Continuous mode": "Plynulý mód",
-    "description": "V plynulém módu je vypnuté zalamování stran a akordy se zobrazují nad všemi slokami - nejen nad tou první. Zobrazování akordů všude je podporováno jen u některých písní.",
-    "multipage": "Pouze na více stránkách",
-    "never": "Nikdy"
-  },
   "count-pages-songs_page_one": "{{count}} strana",
   "count-pages-songs_page_few": "{{count}} strany",
   "count-pages-songs_page_other": "{{count}} stran",
@@ -148,6 +141,14 @@
     "Minimal size": "Nejmenší velikost",
     "minimal hint": "Vzhledem k ideální velikosti. Když se píseň nevejde ani takto, zalomí se řádky a pokračuje na další stránce.",
     "sample": "Ta naše písnička česká",
-    "Preview": "Náhled"
+    "Preview": "Náhled",
+    "Repeated chords": "Opakované akordy",
+    "repeated hint": "U sloky, která je stejná jako některá dřívější — a ta dřívější je vidět na téže obrazovce.",
+    "repeated.keep": "Vždy zobrazit",
+    "repeated.keep hint": "Akordy zůstanou všude; zmenší se radši písmo a mezery.",
+    "repeated.when-needed": "Skrýt, když je potřeba",
+    "repeated.when-needed hint": "Akordy se skryjí, jen když se píseň jinak nevejde (a získá se tím větší písmo).",
+    "repeated.always-hide": "Nikdy neopakovat",
+    "repeated.always-hide hint": "Akordy se u opakování neukazují, i když by se píseň vešla."
   }
 }

@@ -1,5 +1,10 @@
 import { DumbModal } from "#/components/dumb-modal";
-import { FONT_SIZE_LIMITS, fontSizesOf, useFontSizeSettings } from "#/components/font-size-settings";
+import {
+  FONT_SIZE_LIMITS,
+  fontSizesOf,
+  useFontSizeSettings,
+  type RepeatedChordsSetting,
+} from "#/components/font-size-settings";
 import { extractFrontmatter } from "#/wasm/grammar/song-parse";
 import type { SongType } from "#/store/store-song";
 import { useMemo } from "react";
@@ -38,8 +43,54 @@ export function FontSizeModal({ close, song }: { close: () => void; song: SongTy
           sample={sample}
           onChange={minimalRatio => change({ minimalRatio })}
         />
+
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium">{t("font-size.Repeated chords")}</span>
+          <span className="text-xs opacity-70">{t("font-size.repeated hint")}</span>
+          <div className="mt-1 flex flex-col gap-2">
+            {REPEATED_CHORDS_OPTIONS.map(option => (
+              <RepeatedChordsButton
+                key={option}
+                active={settings.repeatedChords === option}
+                onClick={() => change({ repeatedChords: option })}
+                label={t(`font-size.repeated.${option}`)}
+                hint={t(`font-size.repeated.${option} hint`)}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </DumbModal>
+  );
+}
+
+const REPEATED_CHORDS_OPTIONS: RepeatedChordsSetting[] = ["keep", "when-needed", "always-hide"];
+
+function RepeatedChordsButton({
+  active,
+  onClick,
+  label,
+  hint,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  hint: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`rounded-lg border px-3 py-2 text-left ${
+        active
+          ? "border-black bg-black text-white dark:border-white dark:bg-white dark:text-black"
+          : "border-neutral-300 dark:border-neutral-600"
+      }`}
+    >
+      <span className="block text-sm font-medium">{label}</span>
+      <span className="block text-xs opacity-70">{hint}</span>
+    </button>
   );
 }
 

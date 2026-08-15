@@ -4,7 +4,7 @@ mod data;
 mod layout_song;
 
 pub use data::{Item, ItemType, Layout};
-pub use layout_song::{CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY};
+pub use layout_song::{CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY, RepeatedChords};
 use std::io::Read;
 
 /// Decompress a font blob into raw TTF/OTF bytes, sniffing woff1/woff2 by their
@@ -38,24 +38,17 @@ impl LayoutEngine {
     /// page; pass `None` for renderers without a fixed page size. `show_header`
     /// controls whether space is reserved for a title/author header at all;
     /// pass `false` for renderers that draw their own header outside the
-    /// layout. `continuous` enables chords over every verse instead of
-    /// honouring `[> chords off]`.
+    /// layout. `sizing` turns on auto-fitting the body font to the viewport;
+    /// pass `None` to set the song at the fixed base em.
     pub fn run(
         self: &mut Self,
         parsed: &Song,
         viewport: Option<(f64, f64)>,
         show_header: bool,
-        continuous: bool,
         sizing: Option<FontSizing>,
     ) -> Layout {
-        let layout = layout_song::layout_song(
-            &parsed,
-            &mut self.font_cx,
-            viewport,
-            show_header,
-            continuous,
-            sizing,
-        );
+        let layout =
+            layout_song::layout_song(&parsed, &mut self.font_cx, viewport, show_header, sizing);
         layout
     }
 

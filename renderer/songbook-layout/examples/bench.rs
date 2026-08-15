@@ -52,7 +52,7 @@ fn main() {
         let start = std::time::Instant::now();
         for (name, song) in &songs {
             let one = std::time::Instant::now();
-            let layout = engine.run(song, Some(viewport), false, false, Some(sizing));
+            let layout = engine.run(song, Some(viewport), false, Some(sizing));
             slowest.push((
                 one.elapsed().as_micros(),
                 name.to_string_lossy().into_owned(),

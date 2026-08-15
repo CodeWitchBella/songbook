@@ -1,5 +1,3 @@
-import type { ContinuousModeSetting } from "#/components/continuous-mode";
-
 import type { Line, Paragraph } from "./song-parser";
 
 export function tokenizeLine(line_: string) {
@@ -159,8 +157,14 @@ function parsePage(song: string, pCounterInit: number): { page: Paragraph[]; pCo
   };
 }
 
+/**
+ * How the legacy parser handles `[>chords off]` / `[>variant …]`. The song
+ * renderer ignores both (every verse is set with its chords); this parser is
+ * only still used by the chord-summary page, which asks for each variant
+ * explicitly.
+ */
 export type ParserOpts = {
-  continuous: ContinuousModeSetting;
+  continuous: "always" | "never" | "multipage";
 };
 export function parseSongMyFormat(song: string, opts: ParserOpts): { pages: Paragraph[][]; continuous: boolean } {
   let pCounter = 0;

@@ -19,6 +19,11 @@ pub enum ItemType {
 }
 
 impl ItemType {
+    /// Whether this item is a chord (of either weight).
+    pub fn is_chord(&self) -> bool {
+        matches!(self, ItemType::Chord | ItemType::ChordNormal)
+    }
+
     /// Whether items of this kind are drawn in a bold weight.
     pub fn is_bold(&self) -> bool {
         matches!(

@@ -62,6 +62,48 @@ pub struct FontSizing {
     /// once it needs more pages than fit as columns — laying it out in two
     /// columns is preferred over shrinking the text.
     pub column_gap: f32,
+    /// What to do with the chords of a section that plays the same chords as
+    /// an earlier one.
+    pub repeated_chords: RepeatedChords,
+}
+
+/// What becomes of the chords over a section that plays the same chords as an
+/// earlier one (see [`chord_pattern`]). Dropping them saves the room the chord
+/// lines take, and costs the player nothing as long as that earlier section is
+/// on the same screen to read them off — which is a precondition in either
+/// mode that drops them (see [`hideable_repeats`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RepeatedChords {
+    /// Every section keeps its chords; only the font size and spacing give way.
+    Keep,
+    /// Repeats drop their chords when that's what it takes to fit — after
+    /// tightening the spacing has been tried, and gladly in exchange for a
+    /// bigger font.
+    WhenNeeded,
+    /// Repeats never show chords, whether or not the song would have fitted
+    /// with them.
+    Always,
+}
+
+impl RepeatedChords {
+    /// Whether to try laying the song out with the repeats' chords kept, then
+    /// dropped, or only one of the two.
+    ///
+    /// `concessions` says whether this size is one the song may give something
+    /// up for — false above the ideal size, where growing the text is only
+    /// worth it if nothing is sacrificed. Dropping chords to make a *larger*
+    /// font fit is exactly such a sacrifice, so [`RepeatedChords::WhenNeeded`]
+    /// keeps them there and settles for the smaller size that shows them.
+    /// [`RepeatedChords::Always`] isn't fitting the song at all — it's how the
+    /// reader wants repeats set — so it drops them at any size.
+    fn passes(self, concessions: bool) -> &'static [bool] {
+        match self {
+            RepeatedChords::Keep => &[false],
+            RepeatedChords::WhenNeeded if concessions => &[false, true],
+            RepeatedChords::WhenNeeded => &[false],
+            RepeatedChords::Always => &[true],
+        }
+    }
 }
 
 impl Default for FontSizing {
@@ -70,6 +112,7 @@ impl Default for FontSizing {
             ideal_font_size: EM,
             minimal_font_size: EM * 0.85,
             column_gap: 48.0,
+            repeated_chords: RepeatedChords::Keep,
         }
     }
 }
@@ -127,7 +170,6 @@ pub fn layout_song(
     font_cx: &mut parley::FontContext,
     viewport: Option<(f64, f64)>,
     show_header: bool,
-    continuous: bool,
     sizing: Option<FontSizing>,
 ) -> Layout {
     let fm = song.frontmatter.as_ref();
@@ -177,28 +219,21 @@ pub fn layout_song(
             &header_items,
             viewport,
             transpose,
-            continuous,
             &wrap_width,
         ),
         _ => (EM, 1),
     };
 
-    let measured = measured_cache.get(
-        song,
-        font_cx,
-        font_px,
-        transpose,
-        continuous,
-        wrap_width(font_px),
-    );
+    let measured = measured_cache.get(song, font_cx, font_px, transpose, wrap_width(font_px));
     best_layout_at(
         measured,
         &header_items,
         viewport,
         font_px,
         sizing,
-        // Compressing spacing is what fitting at or below the ideal size is
-        // allowed to cost; a size grown past it has to fit as it is.
+        // Tighter spacing, and dropped repeat chords, are what fitting at or
+        // below the ideal size may cost; a size grown past it has to fit as it
+        // is.
         sizing.is_none_or(|sizing| font_px <= sizing.ideal_font_size),
         row_budget,
     )
@@ -206,32 +241,152 @@ pub fn layout_song(
     // A line wider than the viewport even at the minimal size (an unbreakable
     // long word, say) leaves nothing that fits; lay it out naturally and let
     // it overflow.
-    .unwrap_or_else(|| assemble(measured, &header_items, viewport, font_px, 0.0, 0.0, 0.0).0)
+    .unwrap_or_else(|| {
+        assemble(
+            measured,
+            &header_items,
+            viewport,
+            font_px,
+            0.0,
+            0.0,
+            0.0,
+            &[],
+        )
+        .0
+    })
 }
 
-/// Lay the song out at `font_px`, escalating compression (when allowed) until
-/// it takes at most `row_budget` rows of columns, and return that layout with
-/// the rows it takes. When no step gets there, the fewest-rows layout is
-/// returned instead — and `None` when a line is wider than the viewport, which
-/// no amount of compression can fix and which only a smaller font can.
+/// Lay the song out at `font_px`, giving ground until it takes at most
+/// `row_budget` rows of columns, and return that layout with the rows it takes.
+///
+/// What it's willing to give up, in order: nothing, then spacing, and finally
+/// — under [`RepeatedChords::WhenNeeded`] — the chords of sections that repeat
+/// an earlier one. Chords go last, so a song only loses them when squeezing
+/// the spacing genuinely wasn't enough. Both are concessions to fitting, so
+/// both are off (`allow_concessions`) above the ideal size, where a bigger
+/// font is only worth having if it costs nothing. Under
+/// [`RepeatedChords::Always`] the chords are gone from the start at any size
+/// and the rest is fitted around that.
+///
+/// When nothing gets there the fewest-rows attempt is returned instead, and
+/// `None` when a line is wider than the viewport, which neither lever can fix
+/// and only a smaller font can.
 fn best_layout_at(
     measured: &[MeasuredParagraph],
     header_items: &[Item],
     viewport: Option<(f64, f64)>,
     font_px: f32,
     sizing: Option<FontSizing>,
-    allow_compression: bool,
+    allow_concessions: bool,
     row_budget: u32,
 ) -> Option<(Layout, u32)> {
-    let steps = if allow_compression {
+    let steps = if allow_concessions {
         COMPRESSION_STEPS
     } else {
         0
     };
     let mut best: Option<(Layout, u32)> = None;
-    for k in 0..=steps {
-        let (t_header, t_section, t_chord) = compression_at(k);
-        let (layout, pages) = assemble(
+    for &hide_repeats in repeated_chords(sizing).passes(allow_concessions) {
+        for k in 0..=steps {
+            let (t_header, t_section, t_chord) = compression_at(k);
+            let (layout, pages) = if hide_repeats {
+                assemble_hiding_repeats(
+                    measured,
+                    header_items,
+                    viewport,
+                    font_px,
+                    (t_header, t_section, t_chord),
+                    sizing,
+                )
+            } else {
+                let (layout, pages, _) = assemble(
+                    measured,
+                    header_items,
+                    viewport,
+                    font_px,
+                    t_header,
+                    t_section,
+                    t_chord,
+                    &[],
+                );
+                (layout, pages)
+            };
+            if let Some((width, _)) = viewport {
+                if content_right_extent(&layout) > width as f32 {
+                    return None;
+                }
+            }
+            let rows = match pages {
+                // Unpaginated: there's nothing to overflow.
+                None => 1,
+                Some(pages) => pages.div_ceil(column_count(&layout, viewport, sizing)),
+            };
+            if rows <= row_budget {
+                return Some((layout, rows));
+            }
+            if best.as_ref().is_none_or(|(_, best_rows)| rows < *best_rows) {
+                best = Some((layout, rows));
+            }
+        }
+    }
+    best
+}
+
+/// How this layout treats the chords over repeated sections. Callers without
+/// a sizing policy (the PDF and canvas renderers) keep every chord.
+fn repeated_chords(sizing: Option<FontSizing>) -> RepeatedChords {
+    sizing.map_or(RepeatedChords::Keep, |sizing| sizing.repeated_chords)
+}
+
+/// How many times the hidden-chord set is allowed to be revised before the
+/// layout is taken as it stands. Each round only ever gives chords back, so it
+/// settles quickly; the cap is just a guard.
+const HIDE_RESOLUTION_ROUNDS: usize = 8;
+
+/// Assemble with the chords of repeated sections dropped wherever that's
+/// allowed — that is, wherever the reader can still see them on an earlier
+/// copy of the same section on the same screen.
+///
+/// Which sections may lose their chords depends on where they land, and where
+/// they land depends on which ones lost their chords, so this settles the two
+/// against each other: hide every repeat, see where everything ended up, give
+/// the chords back to any repeat whose earlier copy turns out to be on another
+/// screen, and go round again until nothing changes.
+fn assemble_hiding_repeats(
+    measured: &[MeasuredParagraph],
+    header_items: &[Item],
+    viewport: Option<(f64, f64)>,
+    font_px: f32,
+    compression: (f32, f32, f32),
+    sizing: Option<FontSizing>,
+) -> (Layout, Option<u32>) {
+    let (t_header, t_section, t_chord) = compression;
+    let mut hidden: Vec<bool> = measured
+        .iter()
+        .map(|paragraph| paragraph.repeat_of.is_some() && paragraph.has_chord)
+        .collect();
+    let mut assembled = assemble(
+        measured,
+        header_items,
+        viewport,
+        font_px,
+        t_header,
+        t_section,
+        t_chord,
+        &hidden,
+    );
+    for _ in 0..HIDE_RESOLUTION_ROUNDS {
+        if !hideable_repeats(
+            measured,
+            &assembled.0,
+            &assembled.2,
+            viewport,
+            sizing,
+            &mut hidden,
+        ) {
+            break;
+        }
+        assembled = assemble(
             measured,
             header_items,
             viewport,
@@ -239,25 +394,50 @@ fn best_layout_at(
             t_header,
             t_section,
             t_chord,
+            &hidden,
         );
-        if let Some((width, _)) = viewport {
-            if content_right_extent(&layout) > width as f32 {
-                return None;
+    }
+    (assembled.0, assembled.1)
+}
+
+/// Narrow `hidden` down to the repeats that may really do without their chords:
+/// the ones whose chords are still on screen somewhere else. A screen is a row
+/// of columns, so a matching section one column to the left is fine and one on
+/// the next screenful is not.
+///
+/// The copy to read the chords off is the nearest earlier identical section
+/// that kept its own — following the chain back, since a repeat of a repeat
+/// can still fall back on the original. Returns whether anything changed.
+fn hideable_repeats(
+    measured: &[MeasuredParagraph],
+    layout: &Layout,
+    paragraph_pages: &[u32],
+    viewport: Option<(f64, f64)>,
+    sizing: Option<FontSizing>,
+    hidden: &mut [bool],
+) -> bool {
+    let columns = column_count(layout, viewport, sizing);
+    let row_of = |i: usize| paragraph_pages.get(i).copied().unwrap_or(0) / columns;
+    let mut changed = false;
+    for i in 0..hidden.len() {
+        if !hidden[i] {
+            continue;
+        }
+        // Walk back to the copy that still shows the chords.
+        let mut source = measured[i].repeat_of;
+        while let Some(j) = source {
+            if !hidden[j] {
+                break;
             }
+            source = measured[j].repeat_of;
         }
-        let rows = match pages {
-            // Unpaginated: there's nothing to overflow.
-            None => 1,
-            Some(pages) => pages.div_ceil(column_count(&layout, viewport, sizing)),
-        };
-        if rows <= row_budget {
-            return Some((layout, rows));
-        }
-        if best.as_ref().is_none_or(|(_, best_rows)| rows < *best_rows) {
-            best = Some((layout, rows));
+        let on_screen = source.is_some_and(|j| row_of(j) == row_of(i));
+        if !on_screen {
+            hidden[i] = false;
+            changed = true;
         }
     }
-    best
+    changed
 }
 
 /// How many pages the caller can place side by side as columns before the song
@@ -320,7 +500,6 @@ fn pick_font_size(
     header_items: &[Item],
     viewport: Option<(f64, f64)>,
     transpose: i32,
-    continuous: bool,
     wrap_width: &dyn Fn(f32) -> Option<f32>,
 ) -> (f32, u32) {
     // Rows the song takes at `font_px`, with the lightest compression that
@@ -329,14 +508,7 @@ fn pick_font_size(
                    font_cx: &mut parley::FontContext,
                    font_px: f32,
                    row_budget: u32| {
-        let measured = cache.get(
-            song,
-            font_cx,
-            font_px,
-            transpose,
-            continuous,
-            wrap_width(font_px),
-        );
+        let measured = cache.get(song, font_cx, font_px, transpose, wrap_width(font_px));
         best_layout_at(
             measured,
             header_items,
@@ -422,6 +594,10 @@ struct MeasuredParagraph {
     /// Whether the paragraph's first line carries chords, independent of the
     /// chord-line height compression that only affects placement.
     has_chord: bool,
+    /// Index of the nearest earlier paragraph of the same kind playing the
+    /// same chords, if any — the section a player can read this one's chords
+    /// off (see [`chord_pattern`]).
+    repeat_of: Option<usize>,
 }
 
 /// Size the unwrapped reference pass is shaped at. Nothing about it is
@@ -459,7 +635,6 @@ impl MeasureCache {
         font_cx: &mut parley::FontContext,
         font_px: f32,
         transpose: i32,
-        continuous: bool,
         wrap_width: Option<f32>,
     ) -> &[MeasuredParagraph] {
         let key = (font_px.to_bits(), wrap_width.map(f32::to_bits));
@@ -467,17 +642,10 @@ impl MeasureCache {
             return &self.by_size[pos].1;
         }
         let measured = match wrap_width {
-            Some(width) => measure_song(song, font_cx, font_px, transpose, continuous, Some(width)),
+            Some(width) => measure_song(song, font_cx, font_px, transpose, Some(width)),
             None => {
                 let reference = self.reference.get_or_insert_with(|| {
-                    measure_song(
-                        song,
-                        font_cx,
-                        REFERENCE_FONT_PX,
-                        transpose,
-                        continuous,
-                        None,
-                    )
+                    measure_song(song, font_cx, REFERENCE_FONT_PX, transpose, None)
                 });
                 scale_song(reference, font_px / REFERENCE_FONT_PX)
             }
@@ -494,6 +662,7 @@ fn scale_song(paragraphs: &[MeasuredParagraph], factor: f32) -> Vec<MeasuredPara
         .iter()
         .map(|paragraph| MeasuredParagraph {
             has_chord: paragraph.has_chord,
+            repeat_of: paragraph.repeat_of,
             lines: paragraph
                 .lines
                 .iter()
@@ -529,49 +698,36 @@ fn measure_song(
     font_cx: &mut parley::FontContext,
     font_px: f32,
     transpose: i32,
-    continuous: bool,
     content_width: Option<f32>,
 ) -> Vec<MeasuredParagraph> {
     // One shaper for the whole pass: its scratch buffers and per-face metrics
     // are the same for every line, so they're built once here.
     let mut shaper = Shaper::new(font_cx, font_px);
     let mut paragraphs: Vec<MeasuredParagraph> = vec![];
+    // Chord pattern of each rendered paragraph, so a later section playing the
+    // same thing can point back at it (see [`MeasuredParagraph::repeat_of`]).
+    let mut patterns: Vec<Option<String>> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
     let mut verse_counter = 0u32;
-    // Command state threaded across the song, mirroring `parseSongMyFormat`
-    // in the frontend. This renderer produces the paged (non-continuous) view,
-    // so chord on/off is honoured and the `paged` variant is the one shown.
-    let requested_variant = Variant::Paged;
-    let mut chords_off = false;
-    let mut variant = Variant::Both;
-
     for portion in &song.portions {
         let songbook_grammar::FilePortion::Section(lines) = portion;
 
-        // A paragraph made up entirely of `>`-commands sets state and is not
-        // itself rendered (and contributes no section gap).
-        if let Some(commands) = command_block(lines) {
-            for (cmd, args) in commands {
-                match cmd {
-                    // In continuous mode, chords are shown over every verse,
-                    // so `[> chords off]` is ignored.
-                    "chords" if !continuous => match args {
-                        "off" => chords_off = true,
-                        "on" => chords_off = false,
-                        _ => {}
-                    },
-                    "variant" => variant = Variant::parse(args),
-                    _ => {}
-                }
-            }
+        // A paragraph made up entirely of `>`-commands is control text, not
+        // song text: it isn't rendered and contributes no section gap. The
+        // commands themselves are ignored — every verse is set with its
+        // chords, whatever the song asks for.
+        if command_block(lines) {
             continue;
         }
 
-        // Variants other than `both` that don't match the requested one hide
-        // the whole paragraph (frontend blanks the parts, then drops the empty
-        // paragraph). The verse counter still advances so numbering matches.
-        let hidden = variant != Variant::Both && variant != requested_variant;
+        let pattern = chord_pattern(lines);
+        let repeat_of = pattern.as_ref().and_then(|pattern| {
+            patterns
+                .iter()
+                .rposition(|earlier| earlier.as_ref() == Some(pattern))
+        });
+        patterns.push(pattern);
 
         let mut measured_lines: Vec<MeasuredLine> = vec![];
         let mut first_line_has_chord: Option<bool> = None;
@@ -580,24 +736,17 @@ fn measure_song(
                 .label
                 .as_deref()
                 .and_then(|label| transform_tag(label, &mut verse_counter));
-            if hidden {
-                continue;
-            }
-            let measured =
-                measure_line(line, tag, transpose, chords_off, content_width, &mut shaper);
+            let measured = measure_line(line, tag, transpose, content_width, &mut shaper);
             if first_line_has_chord.is_none() {
                 first_line_has_chord = measured.first().map(|l| l.has_chord);
             }
             measured_lines.extend(measured);
         }
 
-        if hidden {
-            continue;
-        }
-
         paragraphs.push(MeasuredParagraph {
             lines: measured_lines,
             has_chord: first_line_has_chord.unwrap_or(false),
+            repeat_of,
         });
     }
 
@@ -617,7 +766,8 @@ fn assemble(
     t_header: f32,
     t_section: f32,
     t_chord: f32,
-) -> (Layout, Option<u32>) {
+    hidden_chords: &[bool],
+) -> (Layout, Option<u32>, Vec<u32>) {
     let chord_line_factor = lerp(CHORD_LINE_FACTOR, CHORD_LINE_FACTOR_FLOOR, t_chord);
     let header_px = HEADER_EM * EM;
 
@@ -632,11 +782,13 @@ fn assemble(
         has_chord: bool,
     }
     let mut paragraphs: Vec<Paragraph> = Vec::with_capacity(measured_paragraphs.len());
-    for mp in measured_paragraphs {
+    for (i, mp) in measured_paragraphs.iter().enumerate() {
+        let hide_chords = hidden_chords.get(i).copied().unwrap_or(false);
         let mut paragraph_items: Vec<Item> = vec![];
         let mut local_y = 0.0f32;
         for line in &mp.lines {
-            let (mut items, line_height) = place_line(line, font_px, chord_line_factor);
+            let (mut items, line_height) =
+                place_line(line, font_px, chord_line_factor, hide_chords);
             for item in &mut items {
                 item.pos.1 += local_y;
             }
@@ -646,7 +798,7 @@ fn assemble(
         paragraphs.push(Paragraph {
             items: paragraph_items,
             height: local_y,
-            has_chord: mp.has_chord,
+            has_chord: mp.has_chord && !hide_chords,
         });
     }
 
@@ -686,6 +838,9 @@ fn assemble(
     let header_height = header_height + paragraphs.first().map(top_overhang).unwrap_or(0.0);
 
     let mut body_items: Vec<Item> = vec![];
+    // Which page each paragraph starts on, for callers that care where a
+    // section ended up relative to another (see [`hideable_repeats`]).
+    let mut paragraph_pages: Vec<u32> = Vec::with_capacity(paragraphs.len());
     let mut y = 0.0f32;
     // Page flow bookkeeping, in body-y coordinates (i.e. before the global
     // `header_height` offset added at the end is folded back in). `page_end`
@@ -713,6 +868,10 @@ fn assemble(
             }
         }
 
+        paragraph_pages.push(match content_height {
+            Some(page_height) => ((y + header_height) / page_height).floor() as u32,
+            None => 0,
+        });
         for mut item in std::mem::take(&mut paragraphs[i].items) {
             item.pos.1 += y;
             body_items.push(item);
@@ -750,7 +909,7 @@ fn assemble(
         (max_y / content_height).floor() as u32 + 1
     });
 
-    (layout, page_count)
+    (layout, page_count, paragraph_pages)
 }
 
 fn prepare_builder<'a>(
@@ -934,7 +1093,6 @@ fn measure_line(
     line: &Line,
     tag: Option<String>,
     transpose: i32,
-    hide_chords: bool,
     content_width: Option<f32>,
     shaper: &mut Shaper,
 ) -> Vec<MeasuredLine> {
@@ -956,9 +1114,6 @@ fn measure_line(
                     let start = complete_text.len();
                     complete_text.push_str(&content[1..]);
                     bold_ranges.push(start..complete_text.len());
-                    continue;
-                }
-                if hide_chords {
                     continue;
                 }
                 // The grammar captures the `_` (spacer) and `^` (normal weight)
@@ -1191,14 +1346,22 @@ fn measure_line(
 /// positions for a given chord-line height factor, and report the line's
 /// total height. Pure arithmetic — no parley calls — so it's cheap to redo
 /// for every compression step even when the shaping is cached.
-fn place_line(measured: &MeasuredLine, font_px: f32, chord_line_factor: f32) -> (Vec<Item>, f32) {
-    let line_height = if measured.has_chord {
+fn place_line(
+    measured: &MeasuredLine,
+    font_px: f32,
+    chord_line_factor: f32,
+    hide_chords: bool,
+) -> (Vec<Item>, f32) {
+    // Dropping the chords also drops the tall chord line they sat on, which is
+    // the whole point: it's worth roughly a line of text per line of lyrics.
+    let has_chord = measured.has_chord && !hide_chords;
+    let line_height = if has_chord {
         font_px * chord_line_factor
     } else {
         (measured.baseline + measured.descent).max(font_px)
     };
     // Lyrics sit at the bottom of the (taller) chord line; chords one em above.
-    let text_baseline = if measured.has_chord {
+    let text_baseline = if has_chord {
         line_height - measured.descent
     } else {
         measured.baseline
@@ -1206,6 +1369,7 @@ fn place_line(measured: &MeasuredLine, font_px: f32, chord_line_factor: f32) -> 
     let items = measured
         .items
         .iter()
+        .filter(|item| !hide_chords || !item.item_type.is_chord())
         .cloned()
         .map(|mut item| {
             item.pos.1 += text_baseline;
@@ -1258,49 +1422,61 @@ fn transpose_chord_line(chords: &str, t: i32) -> String {
         .join(" ")
 }
 
-/// Which of a song's variants a paragraph belongs to. `paged`/`long` blocks are
-/// only shown in the matching render mode; `both` (the default) is always shown.
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Variant {
-    Both,
-    Paged,
-    Long,
-}
-
-impl Variant {
-    /// Parse a `>variant …` argument, defaulting to `both` for an empty or
-    /// unknown value, mirroring `handleCommand` in the frontend.
-    fn parse(arg: &str) -> Self {
-        match arg {
-            "paged" => Variant::Paged,
-            "long" => Variant::Long,
-            _ => Variant::Both,
-        }
-    }
-}
-
-/// If every line of a paragraph is a bare `>`-command (lead `>`, no lyric text,
-/// no tag), return the parsed `(command, args)` pairs; otherwise `None`. Matches
-/// `parseCommands` in the frontend: a single non-command line disqualifies the
-/// whole paragraph.
-fn command_block(lines: &[Line]) -> Option<Vec<(&str, &str)>> {
-    let mut commands = vec![];
+/// A section's chord pattern: what kind of section it is, plus the chords it
+/// carries, line by line. Two sections with the same pattern are playing the
+/// same thing, so the second one's chords tell the player nothing the first
+/// didn't — which is what makes them droppable, even where the words differ.
+///
+/// The kind is the letter part of the label (`S:` verses, `R:`/`R1:`
+/// choruses), so a chorus is never taken to repeat a verse. `None` means the
+/// section carries no chords at all: nothing to drop, and nothing another
+/// section could be read off.
+fn chord_pattern(lines: &[Line]) -> Option<String> {
+    let mut pattern = String::new();
+    let mut any_chord = false;
     for line in lines {
-        if line.label.is_some() || line.content.len() != 1 {
-            return None;
+        if let Some(label) = &line.label {
+            pattern.extend(label.chars().filter(|c| c.is_alphabetic()));
+            pattern.push('\u{1}');
         }
-        match &line.content[0] {
-            songbook_grammar::LineContent::Command {
-                lead: Some(lead),
-                content,
-            } if lead == ">" => {
-                let (cmd, args) = content.split_once(' ').unwrap_or((content, ""));
-                commands.push((cmd, args));
+        for item in &line.content {
+            let songbook_grammar::LineContent::Command { lead, content } = item else {
+                continue;
+            };
+            let lead = lead.as_deref().unwrap_or("");
+            // What counts is what's actually played: `[*…]` is bold lyric text,
+            // `[^…]` an annotation like `N.C.` rather than a chord, and an
+            // empty chord (a bare `[_ ]` spacer, say) draws nothing. The `_`
+            // spacer marker itself says where a chord sits, not what it is, so
+            // it's ignored and `[_Emi]` matches a plain `[Emi]`.
+            if (lead.is_empty() && content.starts_with('*'))
+                || lead.contains('^')
+                || content.trim().is_empty()
+            {
+                continue;
             }
-            _ => return None,
+            pattern.push('\u{2}');
+            pattern.push_str(content.trim());
+            any_chord = true;
         }
+        pattern.push('\n');
     }
-    Some(commands)
+    any_chord.then_some(pattern)
+}
+
+/// Whether every line of a paragraph is a bare `>`-command (lead `>`, no lyric
+/// text, no tag), which makes the paragraph control text rather than song text.
+/// Matches `parseCommands` in the frontend: a single non-command line
+/// disqualifies the whole paragraph.
+fn command_block(lines: &[Line]) -> bool {
+    lines.iter().all(|line| {
+        line.label.is_none()
+            && line.content.len() == 1
+            && matches!(
+                &line.content[0],
+                songbook_grammar::LineContent::Command { lead: Some(lead), .. } if lead == ">"
+            )
+    })
 }
 
 /// Rewrite a raw line label into its displayed tag: `S:` verses become the

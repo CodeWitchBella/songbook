@@ -1,11 +1,14 @@
 //! Dump the laid-out items of a song JSON for inspection.
 //! Usage: cargo run -p songbook-layout --example dump -- songs/foo.json [--fit [percent]]
-//! `--continuous` shows chords over every verse (ignoring `[> chords off]`).
 //! `--fit` auto-fits the body font to the page instead of setting it at the
 //! fixed base em, optionally with the minimal size at `percent` of the ideal
-//! one (default 85).
+//! one (default 85). `--prefer-fit` lets a section repeating an earlier one
+//! drop its chords when that's what it takes to fit, `--no-repeat-chords`
+//! drops them whether or not it was needed.
 use songbook_grammar::Song;
-use songbook_layout::{CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY, LayoutEngine};
+use songbook_layout::{
+    CHORD_FONT_FAMILY, FontSizing, LYRIC_FONT_FAMILY, LayoutEngine, RepeatedChords,
+};
 
 const SONGS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../songs");
 
@@ -35,10 +38,16 @@ fn main() {
         .any(|arg| arg == "--fit")
         .then(|| FontSizing {
             minimal_font_size: 16.0 * minimal_ratio.unwrap_or(85.0) / 100.0,
+            repeated_chords: if std::env::args().any(|arg| arg == "--no-repeat-chords") {
+                RepeatedChords::Always
+            } else if std::env::args().any(|arg| arg == "--prefer-fit") {
+                RepeatedChords::WhenNeeded
+            } else {
+                RepeatedChords::Keep
+            },
             ..FontSizing::default()
         });
-    let continuous = std::env::args().any(|arg| arg == "--continuous");
-    let layout = engine.run(&song, Some((363.53, 539.28)), true, continuous, sizing);
+    let layout = engine.run(&song, Some((363.53, 539.28)), true, sizing);
     println!("font size: {}", layout.font_size);
     for item in &layout.items {
         println!(

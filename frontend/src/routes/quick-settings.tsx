@@ -1,9 +1,8 @@
-import { useContinuousModeSetting } from "#/components/continuous-mode";
 import { useDarkModeSetting } from "#/components/dark-mode";
 import { InlineLink } from "#/components/interactive/inline-link";
 import { useLanguage } from "#/components/localisation";
 import { PageHeader } from "#/components/page-header";
-import { TH2, TText } from "#/components/themed";
+import { TH2 } from "#/components/themed";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,7 +10,6 @@ export default function QuickSettings() {
   const { t } = useTranslation();
   const darkMode = useDarkModeSetting();
   const [lng, setLng] = useLanguage();
-  const [continuous, setContinuous] = useContinuousModeSetting();
   return (
     <div className="mx-auto w-full max-w-lg px-1 pb-2">
       <PageHeader>{t("quick-settings.Quick settings")}</PageHeader>
@@ -26,17 +24,6 @@ export default function QuickSettings() {
           ["automatic", t("Automatic")],
         ]}
       />
-      <TitledSelect
-        title={t("continuous.Continuous mode")}
-        value={continuous}
-        onChange={setContinuous}
-        options={[
-          ["always", t("continuous.always")],
-          ["never", t("continuous.never")],
-          ["multipage", t("continuous.multipage")],
-        ]}
-      />
-      <TText>{t("continuous.description")}</TText>
       <TitledSelect
         title={t("Language")}
         value={lng}

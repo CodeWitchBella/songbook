@@ -17,13 +17,6 @@
     "Add to collection": "Add to collection"
   },
   "Collections": "Collections",
-  "continuous": {
-    "always": "Always",
-    "Continuous mode": "Continuous mode",
-    "description": "Continuous mode disables page breaks and enables chords over all verses, not only the first one. Displaying all chords over all verses is only available for some songs.",
-    "multipage": "Only on songs with multiple pages",
-    "never": "Never"
-  },
   "count-pages-songs_pages_one": "{{count}} page",
   "count-pages-songs_pages_other": "{{count}} pages",
   "count-pages-songs_songs_one": "{{count}} song",
@@ -146,6 +139,14 @@
     "Minimal size": "Minimal size",
     "minimal hint": "Relative to the ideal size. A song that doesn't fit even this small wraps its lines and continues on the next page.",
     "sample": "Swing low, sweet chariot",
-    "Preview": "Preview"
+    "Preview": "Preview",
+    "Repeated chords": "Repeated chords",
+    "repeated hint": "For a section identical to an earlier one, while that earlier copy is on the same screen.",
+    "repeated.keep": "Always show",
+    "repeated.keep hint": "Chords stay everywhere; the size and spacing give way instead.",
+    "repeated.when-needed": "Hide when needed",
+    "repeated.when-needed hint": "Chords go only when the song won't fit otherwise — and buy a bigger font.",
+    "repeated.always-hide": "Never repeat",
+    "repeated.always-hide hint": "Repeats never show chords, even when the song would have fitted with them."
   }
 }

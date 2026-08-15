@@ -2,11 +2,33 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 const key = "font-size-settings";
 
+export type RepeatedChordsSetting = "keep" | "when-needed" | "always-hide";
+
+const REPEATED_CHORDS: RepeatedChordsSetting[] = ["keep", "when-needed", "always-hide"];
+
+/**
+ * The same setting as the number `jsonify`/`htmlify` take — see
+ * `repeated_chords_from` in songbook-render-html. Kept as a plain number so
+ * this module doesn't have to pull in the wasm module, which the song view
+ * loads lazily.
+ */
+export function repeatedChordsArg(setting: RepeatedChordsSetting) {
+  return REPEATED_CHORDS.indexOf(setting);
+}
+
 export type FontSizeSettings = {
   /** the size songs are set at when they fit, as a ratio of the root font size */
   idealRatio: number;
   /** how far a song may be shrunk to fit, as a ratio of the ideal size */
   minimalRatio: number;
+  /**
+   * What becomes of the chords over a section that repeats an earlier one:
+   * `"keep"` shows them always and lets the size and spacing give way instead,
+   * `"when-needed"` drops them only when that's what it takes to fit, and
+   * `"always-hide"` never repeats them. Either dropping mode still requires
+   * the earlier copy to be on the same screen to read the chords off.
+   */
+  repeatedChords: RepeatedChordsSetting;
 };
 
 export const FONT_SIZE_LIMITS = {
@@ -17,6 +39,7 @@ export const FONT_SIZE_LIMITS = {
 export const defaultFontSizeSettings: FontSizeSettings = {
   idealRatio: 1,
   minimalRatio: 0.85,
+  repeatedChords: "keep",
 };
 
 function clampRatio(value: unknown, limits: { min: number; max: number }, fallback: number) {
@@ -29,6 +52,9 @@ function normalize(parsed: any): FontSizeSettings {
   return {
     idealRatio: clampRatio(parsed.idealRatio, FONT_SIZE_LIMITS.ideal, defaultFontSizeSettings.idealRatio),
     minimalRatio: clampRatio(parsed.minimalRatio, FONT_SIZE_LIMITS.minimal, defaultFontSizeSettings.minimalRatio),
+    repeatedChords: REPEATED_CHORDS.includes(parsed.repeatedChords)
+      ? parsed.repeatedChords
+      : defaultFontSizeSettings.repeatedChords,
   };
 }
 
