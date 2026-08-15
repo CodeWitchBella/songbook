@@ -110,13 +110,18 @@ export function WasmSongLook({
   onChordPressRef.current = onChordPress;
   const [continuousSetting] = useContinuousModeSetting();
   const { t } = useTranslation();
-  const [hasMoreBelow, setHasMoreBelow] = useState(false);
+  // Whether the layout spilled onto more than one row of pages — i.e. the
+  // renderer actually wrapped, so there is a next row to scroll to.
+  const [wrapped, setWrapped] = useState(false);
+  const [atBottom, setAtBottom] = useState(true);
 
-  const updateHasMoreBelow = useCallback(() => {
+  const updateAtBottom = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-    setHasMoreBelow(el.scrollTop + el.clientHeight < el.scrollHeight - 2);
+    setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 2);
   }, []);
+
+  const hasMoreBelow = wrapped && !atBottom;
 
   useEffect(() => {
     let cancelled = false;
@@ -259,7 +264,8 @@ export function WasmSongLook({
           }
         }
 
-        updateHasMoreBelow();
+        setWrapped(rows.length > 1);
+        updateAtBottom();
       };
 
       render(el.clientWidth, el.clientHeight);
@@ -277,14 +283,14 @@ export function WasmSongLook({
       cancelled = true;
       cleanup();
     };
-  }, [song, transposition, continuousSetting, updateHasMoreBelow]);
+  }, [song, transposition, continuousSetting, updateAtBottom]);
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    el.addEventListener("scroll", updateHasMoreBelow, { passive: true });
-    return () => el.removeEventListener("scroll", updateHasMoreBelow);
-  }, [updateHasMoreBelow]);
+    el.addEventListener("scroll", updateAtBottom, { passive: true });
+    return () => el.removeEventListener("scroll", updateAtBottom);
+  }, [updateAtBottom]);
 
   const scrollDown = () => {
     const el = containerRef.current;
@@ -311,7 +317,7 @@ export function WasmSongLook({
         <div ref={containerRef} className="relative mx-auto h-full w-full snap-y snap-mandatory overflow-y-auto" />
         <div
           aria-hidden={!hasMoreBelow}
-          className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center bg-gradient-to-t from-white/80 pt-6 pb-1 transition-opacity duration-200 dark:from-neutral-950/80 ${
+          className={`pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pt-6 pb-1 transition-opacity duration-200 ${
             hasMoreBelow ? "opacity-100" : "opacity-0"
           }`}
         >
