@@ -13,7 +13,8 @@
     "Create collection and add song to it": "Vytvořit kolekci a přidat do ní píseň",
     "Create new collection": "Vytvořit novou kolekci",
     "Remove song from collection": "Odebrat píseň z kolekce",
-    "Song is also in collections": "Píseň je také v kolekcích"
+    "Song is also in collections": "Píseň je také v kolekcích",
+    "Add to collection": "Přidat do kolekce"
   },
   "Collections": "Seznam kolekcí",
   "continuous": {
@@ -83,7 +84,10 @@
     "Last edit": "Poslední úprava",
     "Edit song": "Upravit píseň",
     "Play on {{service}}": "Přehrát na {{service}}",
-    "Play": "Přehrát"
+    "Play": "Přehrát",
+    "Song info": "O písni",
+    "Random song": "Náhodná píseň",
+    "More actions": "Další akce"
   },
   "Install as an app": "Nainstalovat jako appku",
   "Invalid date": "Neplatné datum",
@@ -129,5 +133,9 @@
   "Sort by interpret": "Řadit podle interpreta",
   "Sort by name": "Řadit podle názvu",
   "Type to search": "Vyhledávejte psaním",
-  "You have to be logged in to add a song": "Pro vytvoření písně musíš mít účet"
+  "You have to be logged in to add a song": "Pro vytvoření písně musíš mít účet",
+  "song-menu": {
+    "Transpose up": "Transponovat nahoru",
+    "Transpose down": "Transponovat dolů"
+  }
 }

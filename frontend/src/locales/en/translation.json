@@ -13,7 +13,8 @@
     "Create collection and add song to it": "Create collection and add song to it",
     "Create new collection": "Create new collection",
     "Remove song from collection": "Remove song from collection",
-    "Song is also in collections": "Song is also in collections"
+    "Song is also in collections": "Song is also in collections",
+    "Add to collection": "Add to collection"
   },
   "Collections": "Collections",
   "continuous": {
@@ -81,7 +82,10 @@
     "Last edit": "Last edit",
     "Edit song": "Edit song",
     "Play on {{service}}": "Play on {{service}}",
-    "Play": "Play"
+    "Play": "Play",
+    "Song info": "Song info",
+    "Random song": "Random song",
+    "More actions": "More actions"
   },
   "Install as an app": "Install as an app",
   "Invalid date": "Invalid date",
@@ -127,5 +131,9 @@
   "Sort by interpret": "Sort by interpret",
   "Sort by name": "Sort by name",
   "Type to search": "Type to search",
-  "You have to be logged in to add a song": "You have to be logged in to add a song"
+  "You have to be logged in to add a song": "You have to be logged in to add a song",
+  "song-menu": {
+    "Transpose up": "Transpose up",
+    "Transpose down": "Transpose down"
+  }
 }

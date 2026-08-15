@@ -1,40 +1,25 @@
 import { DumbModal } from "#/components/dumb-modal";
 import { useLanguage } from "#/components/localisation";
-import {
-  BadgeQuestionMarkIcon,
-  CombineIcon,
-  EllipsisVerticalIcon,
-  PencilLineIcon,
-  PlayIcon,
-  SettingsIcon,
-  ShuffleIcon,
-} from "lucide-react";
+import { EllipsisVerticalIcon, PencilLineIcon, PlayIcon, ShuffleIcon, XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { LinkProps } from "react-router";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useGetRandomSong } from "#/sections/song-list/worker-list";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
 
-function MenuButton(props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
+function MenuButton({
+  className = "",
+  ...props
+}: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) {
   return (
     <button
       type="button"
-      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
+      className={
+        "flex size-12 items-center justify-center rounded-full border border-black/10 bg-white text-xl font-medium shadow-lg transition-colors hover:bg-black/5 active:bg-black/10 dark:border-white/15 dark:bg-neutral-900 dark:hover:bg-white/10 dark:active:bg-white/15 " +
+        className
+      }
       {...props}
-    />
-  );
-}
-
-function MenuLink(props: LinkProps) {
-  const to = props.to;
-  return (
-    <Link
-      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
-      {...props}
-      to={to}
-      state={{ canGoBack: true }}
     />
   );
 }
@@ -52,7 +37,7 @@ const knownServices: readonly (readonly [RegExp, string])[] = [
   [/(^|\.)supraphonline\.cz$/, "Supraphonline"],
 ];
 
-function serviceName(url: string) {
+export function serviceName(url: string) {
   let host: string;
   try {
     host = new URL(url).hostname.replace(/^www\./, "");
@@ -72,7 +57,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Info({ close, song }: { close: () => void; song: SongType }) {
+export function SongInfoModal({ close, song }: { close: () => void; song: SongType }) {
   const { t } = useTranslation();
   const [lng] = useLanguage();
   const unknownEditor = t("info.editor-unknown");
@@ -128,66 +113,65 @@ export default function SongMenu({
   transposition: number;
   setTransposition: (v: number) => void;
 }) {
-  const { slug } = song;
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (transposition >= 12) setTransposition(transposition - 12);
     else if (transposition <= -12) setTransposition(transposition + 12);
   });
-  const [info, setInfo] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const getRandomSong = useGetRandomSong();
 
   return (
-    <div className="fixed bottom-0 right-0 flex">
-      <ul className="flex flex-col">
-        {open ? (
-          <>
+    <div className="fixed bottom-0 right-0 z-10 flex flex-col items-end gap-2 p-3">
+      {open ? (
+        <>
+          <div className="flex items-center gap-2">
             {transposition ? (
-              <span className="h-[50px] bg-transparent p-2  text-right text-2xl">
+              <span className="rounded-full bg-black/80 px-2.5 py-1 text-sm font-medium tabular-nums text-white dark:bg-white/85 dark:text-black">
                 {transposition > 0 ? "+" : ""}
                 {transposition}
               </span>
             ) : null}
-            <MenuButton onClick={() => setTransposition(transposition + 1)}>+1</MenuButton>
-            <MenuButton onClick={() => setTransposition(transposition - 1)}>-1</MenuButton>
-            <MenuButton onClick={() => setInfo(o => !o)}>
-              <BadgeQuestionMarkIcon size={32} />
+            <MenuButton aria-label={t("song-menu.Transpose up")} onClick={() => setTransposition(transposition + 1)}>
+              +1
             </MenuButton>
-            <MenuButton
-              onClick={() => {
-                getRandomSong(song.id).then(nextSong => {
-                  if (!nextSong) return;
-                  const canGoBackRaw = (location.state as any)?.canGoBack;
-                  let canGoBack = typeof canGoBackRaw === "number" ? canGoBackRaw : canGoBackRaw ? 1 : 0;
-                  if (!canGoBack) {
-                    navigate("/all-songs", { replace: true });
-                    navigate(location.pathname + location.search + location.hash, { state: location.state });
-                    canGoBack = 1;
-                  }
+          </div>
+          <MenuButton aria-label={t("song-menu.Transpose down")} onClick={() => setTransposition(transposition - 1)}>
+            -1
+          </MenuButton>
+          <MenuButton
+            aria-label={t("info.Random song")}
+            onClick={() => {
+              getRandomSong(song.id).then(nextSong => {
+                if (!nextSong) return;
+                const canGoBackRaw = (location.state as any)?.canGoBack;
+                let canGoBack = typeof canGoBackRaw === "number" ? canGoBackRaw : canGoBackRaw ? 1 : 0;
+                if (!canGoBack) {
+                  navigate("/all-songs", { replace: true });
+                  navigate(location.pathname + location.search + location.hash, { state: location.state });
+                  canGoBack = 1;
+                }
 
-                  navigate("/song/" + nextSong.slug, {
-                    state: { canGoBack: canGoBack + 1 },
-                  });
+                navigate("/song/" + nextSong.slug, {
+                  state: { canGoBack: canGoBack + 1 },
                 });
-              }}
-            >
-              <ShuffleIcon size={32} />
-            </MenuButton>
-            <MenuLink to={"/add-to-collection/" + slug}>
-              <CombineIcon size={32} />
-            </MenuLink>
-            <MenuLink to="/quick-settings">
-              <SettingsIcon size={32} />
-            </MenuLink>
-          </>
-        ) : null}
-        <MenuButton onClick={() => setOpen(o => !o)}>
-          <EllipsisVerticalIcon size={32} />
-        </MenuButton>
-      </ul>
-      {info && <Info song={song} close={() => setInfo(false)} />}
+              });
+            }}
+          >
+            <ShuffleIcon size={24} />
+          </MenuButton>
+        </>
+      ) : null}
+      <MenuButton
+        aria-label={t("info.More actions")}
+        aria-expanded={open}
+        className={open ? "bg-black/5 dark:bg-white/10" : ""}
+        onClick={() => setOpen(o => !o)}
+      >
+        {open ? <XIcon size={24} /> : <EllipsisVerticalIcon size={24} />}
+      </MenuButton>
     </div>
   );
 }

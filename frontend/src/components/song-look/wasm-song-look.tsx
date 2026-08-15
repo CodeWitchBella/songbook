@@ -2,6 +2,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import { BackButton } from "#/components/back-button";
+import { SongHeaderMenu } from "#/components/song-look/song-header-menu";
 import { useContinuousModeSetting } from "#/components/continuous-mode";
 import type { SongType } from "#/store/store-song";
 import atkinsonBoldUrl from "#/wasm/fonts/atkinson-hyperlegible-bold.woff2?url";
@@ -278,7 +279,10 @@ export function WasmSongLook({
           )}
           <span>{song.title}</span>
         </div>
-        <span>{song.author}</span>
+        <div className="flex items-center gap-2">
+          <span>{song.author}</span>
+          {showBack ? <SongHeaderMenu song={song} /> : null}
+        </div>
       </div>
       <div ref={containerRef} className="relative mx-auto w-full flex-1 snap-y snap-mandatory overflow-y-auto" />
     </div>
