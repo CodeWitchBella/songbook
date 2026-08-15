@@ -1,28 +1,56 @@
-import { CombineIcon, EllipsisVerticalIcon, InfoIcon, PencilLineIcon, PlayIcon, SettingsIcon } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { CombineIcon, EllipsisVerticalIcon, PencilLineIcon, PlayIcon, SettingsIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
+import { useLanguage } from "#/components/localisation";
 import type { SongType } from "#/store/store-song";
-import { serviceName, SongInfoModal } from "./song-menu";
+import { formatDate } from "#/utils/format-date";
+
+// the field is called "spotify" for historical reasons, but it can point anywhere
+const knownServices: readonly (readonly [RegExp, string])[] = [
+  [/(^|\.)spotify\.com$/, "Spotify"],
+  [/(^|\.)(youtube\.com|youtu\.be)$/, "YouTube"],
+  [/(^|\.)youtube-nocookie\.com$/, "YouTube"],
+  [/(^|\.)soundcloud\.com$/, "SoundCloud"],
+  [/(^|\.)bandcamp\.com$/, "Bandcamp"],
+  [/(^|\.)apple\.com$/, "Apple Music"],
+  [/(^|\.)deezer\.com$/, "Deezer"],
+  [/(^|\.)bandzone\.cz$/, "Bandzone"],
+  [/(^|\.)supraphonline\.cz$/, "Supraphonline"],
+];
+
+export function serviceName(url: string) {
+  let host: string;
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+  for (const [pattern, name] of knownServices) if (pattern.test(host)) return name;
+  return host || null;
+}
 
 const itemClass =
   "flex w-full items-center gap-3 px-4 py-2.5 text-left text-base font-normal hover:bg-black/5 dark:hover:bg-white/10";
 
-function MenuItem({ children, onClick }: { children: ReactNode; onClick: () => void }) {
+function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <button type="button" className={itemClass} onClick={onClick}>
-      {children}
-    </button>
+    <>
+      <dt className="text-black/60 dark:text-white/60">{label}</dt>
+      <dd className="text-right font-medium">{value}</dd>
+    </>
   );
 }
 
 export function SongHeaderMenu({ song }: { song: SongType }) {
   const { t } = useTranslation();
+  const [lng] = useLanguage();
   const [open, setOpen] = useState(false);
-  const [info, setInfo] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const service = song.spotify ? serviceName(song.spotify) : null;
+  const unknownEditor = t("info.editor-unknown");
+  const unknownDate = t("info.inserted-before-2019-05-20");
 
   useEffect(() => {
     if (!open) return undefined;
@@ -40,6 +68,8 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
     };
   }, [open]);
 
+  const close = () => setOpen(false);
+
   return (
     <div ref={rootRef} className="relative">
       <button
@@ -52,33 +82,13 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
         <EllipsisVerticalIcon size={22} />
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-10 mt-1 min-w-56 overflow-hidden rounded-xl border border-black/10 bg-white py-1 shadow-2xl dark:border-white/15 dark:bg-neutral-950">
-          <MenuItem
-            onClick={() => {
-              setOpen(false);
-              setInfo(true);
-            }}
-          >
-            <InfoIcon size={20} />
-            {t("info.Song info")}
-          </MenuItem>
-          <Link
-            to={`/edit/${song.slug}`}
-            state={{ canGoBack: true }}
-            className={itemClass}
-            onClick={() => setOpen(false)}
-          >
+        <div className="absolute right-0 top-full z-10 mt-1 min-w-64 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-black/10 bg-white py-1 font-normal shadow-2xl dark:border-white/15 dark:bg-neutral-950">
+          <Link to={`/edit/${song.slug}`} state={{ canGoBack: true }} className={itemClass} onClick={close}>
             <PencilLineIcon size={20} />
             {t("info.Edit song")}
           </Link>
           {song.spotify ? (
-            <a
-              href={song.spotify}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={itemClass}
-              onClick={() => setOpen(false)}
-            >
+            <a href={song.spotify} target="_blank" rel="noopener noreferrer" className={itemClass} onClick={close}>
               <PlayIcon size={20} />
               {service ? t("info.Play on {{service}}", { service }) : t("info.Play")}
             </a>
@@ -87,18 +97,25 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
             to={`/add-to-collection/${song.slug}`}
             state={{ canGoBack: true }}
             className={itemClass}
-            onClick={() => setOpen(false)}
+            onClick={close}
           >
             <CombineIcon size={20} />
             {t("collection.Add to collection")}
           </Link>
-          <Link to="/quick-settings" state={{ canGoBack: true }} className={itemClass} onClick={() => setOpen(false)}>
+          <Link to="/quick-settings" state={{ canGoBack: true }} className={itemClass} onClick={close}>
             <SettingsIcon size={20} />
             {t("quick-settings.Quick settings")}
           </Link>
+          <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-t border-black/10 px-4 py-3 text-sm dark:border-white/15">
+            <InfoRow label={t("info.Inserted by")} value={song.editor?.name || unknownEditor} />
+            <InfoRow
+              label={t("info.Inserted")}
+              value={song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate}
+            />
+            <InfoRow label={t("info.Last edit")} value={formatDate(lng, t, song.lastModified.toISO())} />
+          </dl>
         </div>
       ) : null}
-      {info ? <SongInfoModal song={song} close={() => setInfo(false)} /> : null}
     </div>
   );
 }
