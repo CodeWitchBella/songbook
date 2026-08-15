@@ -1,5 +1,6 @@
 //! Dump the laid-out items of a song JSON for inspection.
 //! Usage: cargo run -p songbook-layout --example dump -- songs/foo.json [--fit [percent]]
+//! `--continuous` shows chords over every verse (ignoring `[> chords off]`).
 //! `--fit` auto-fits the body font to the page instead of setting it at the
 //! fixed base em, optionally with the minimal size at `percent` of the ideal
 //! one (default 85).
@@ -36,7 +37,8 @@ fn main() {
             minimal_font_size: 16.0 * minimal_ratio.unwrap_or(85.0) / 100.0,
             ..FontSizing::default()
         });
-    let layout = engine.run(&song, Some((363.53, 539.28)), true, false, sizing);
+    let continuous = std::env::args().any(|arg| arg == "--continuous");
+    let layout = engine.run(&song, Some((363.53, 539.28)), true, continuous, sizing);
     println!("font size: {}", layout.font_size);
     for item in &layout.items {
         println!(
