@@ -127,11 +127,17 @@ export function WasmSongLook({
   // renderer actually wrapped, so there is a next row to scroll to.
   const [wrapped, setWrapped] = useState(false);
   const [atBottom, setAtBottom] = useState(true);
+  // Row geometry from the last layout pass. The scrollable content is a bit
+  // taller than `rows * rowHeight` (wrapper padding), so pixel-based bottom
+  // detection would keep the hint visible on the last row; compare against the
+  // last row's snap position instead.
+  const rowsRef = useRef({ count: 1, height: 1 });
 
   const updateAtBottom = useCallback(() => {
     const el = containerRef.current;
     if (!el) return;
-    setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 2);
+    const { count, height } = rowsRef.current;
+    setAtBottom(el.scrollTop >= (count - 1) * height - 2);
   }, []);
 
   const hasMoreBelow = wrapped && !atBottom;
@@ -277,6 +283,7 @@ export function WasmSongLook({
           }
         }
 
+        rowsRef.current = { count: rows.length, height };
         setWrapped(rows.length > 1);
         updateAtBottom();
       };
