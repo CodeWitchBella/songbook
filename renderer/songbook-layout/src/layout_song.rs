@@ -1461,6 +1461,10 @@ fn chord_pattern(lines: &[Line]) -> Option<String> {
         }
         pattern.push('\n');
     }
+    // Trailing empty lines say nothing about what's played: a section ending
+    // in a whitespace-only line (which the grammar keeps as a line rather than
+    // a separator) plays the same as one that doesn't.
+    pattern.truncate(pattern.trim_end().len());
     any_chord.then_some(pattern)
 }
 
