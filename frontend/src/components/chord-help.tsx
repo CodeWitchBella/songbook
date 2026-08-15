@@ -4,7 +4,6 @@ import Chord from "@tombatossals/react-chords/lib/Chord";
 import { useTranslation } from "react-i18next";
 
 import { DumbModal } from "./dumb-modal";
-import { TText } from "./themed";
 
 type ChordDef = {
   frets: number[];
@@ -87,16 +86,15 @@ export function ChordHelp({ close, chord }: { close: () => void; chord: string }
   if (!def) return null;
 
   return (
-    <DumbModal close={close}>
+    <DumbModal close={close} hint={t("Click on the backdrop to close this")} className="px-2 pb-6 pt-8">
       <div className="select-none">
         <div className="text-center text-3xl font-bold">
           {chord}
           {mapped !== chord ? ` (${mapped})` : null}
         </div>
-        <div className="w-80 bg-white dark:invert ">
+        <div className="w-80 max-w-full bg-white dark:invert ">
           <Chord chord={def} instrument={instrument} />
         </div>
-        <TText style={{ fontSize: 13, marginTop: 20 }}>{t("Click on the backdrop to close this")}</TText>
       </div>
     </DumbModal>
   );

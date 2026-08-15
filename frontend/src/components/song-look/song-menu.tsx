@@ -27,16 +27,6 @@ function MenuButton(props: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HT
   );
 }
 
-function MenuAnchor(props: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>) {
-  return (
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
-    <a
-      className="h-[50px] border border-solid border-black bg-white p-2 text-right  text-2xl dark:border-white dark:bg-neutral-950"
-      {...props}
-    />
-  );
-}
-
 function MenuLink(props: LinkProps) {
   const to = props.to;
   return (
@@ -49,30 +39,81 @@ function MenuLink(props: LinkProps) {
   );
 }
 
+// the field is called "spotify" for historical reasons, but it can point anywhere
+const knownServices: readonly (readonly [RegExp, string])[] = [
+  [/(^|\.)spotify\.com$/, "Spotify"],
+  [/(^|\.)(youtube\.com|youtu\.be)$/, "YouTube"],
+  [/(^|\.)youtube-nocookie\.com$/, "YouTube"],
+  [/(^|\.)soundcloud\.com$/, "SoundCloud"],
+  [/(^|\.)bandcamp\.com$/, "Bandcamp"],
+  [/(^|\.)apple\.com$/, "Apple Music"],
+  [/(^|\.)deezer\.com$/, "Deezer"],
+  [/(^|\.)bandzone\.cz$/, "Bandzone"],
+  [/(^|\.)supraphonline\.cz$/, "Supraphonline"],
+];
+
+function serviceName(url: string) {
+  let host: string;
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+  for (const [pattern, name] of knownServices) if (pattern.test(host)) return name;
+  return host || null;
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <>
+      <dt className="text-black/60 dark:text-white/60">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </>
+  );
+}
+
 function Info({ close, song }: { close: () => void; song: SongType }) {
   const { t } = useTranslation();
   const [lng] = useLanguage();
   const unknownEditor = t("info.editor-unknown");
   const unknownDate = t("info.inserted-before-2019-05-20");
+  const service = song.spotify ? serviceName(song.spotify) : null;
   return (
-    <DumbModal close={close}>
-      <div className="flex flex-col text-[22px] text-black dark:text-white">
-        <span>
-          {t("info.Inserted by: {{editor}}", {
-            editor: song.editor?.name || unknownEditor,
-          })}
-        </span>
-        <span>
-          {t("info.Inserted: {{date}}", {
-            date: song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate,
-          })}
-        </span>
-        <span>
-          {t("info.Last edit: {{date}}", {
-            date: formatDate(lng, t, song.lastModified.toISO()),
-          })}
-        </span>
-        <span className="mt-5 text-[13px]">{t("Click on the backdrop to close this")}</span>
+    <DumbModal close={close} hint={t("Click on the backdrop to close this")}>
+      <div className="max-w-[min(30rem,calc(100vw-3.5rem))] text-black dark:text-white">
+        <div className="mb-4 border-b border-black/10 pb-3 dark:border-white/15">
+          <div className="text-xl font-bold leading-tight">{song.title}</div>
+          {song.author ? <div className="text-base text-black/60 dark:text-white/60">{song.author}</div> : null}
+        </div>
+        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-base">
+          <InfoRow label={t("info.Inserted by")} value={song.editor?.name || unknownEditor} />
+          <InfoRow
+            label={t("info.Inserted")}
+            value={song.insertedAt ? formatDate(lng, t, song.insertedAt.toISO()) : unknownDate}
+          />
+          <InfoRow label={t("info.Last edit")} value={formatDate(lng, t, song.lastModified.toISO())} />
+        </dl>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link
+            to={`/edit/${song.slug}`}
+            state={{ canGoBack: true }}
+            className="flex min-w-max flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-black/15 px-3 py-2 text-base font-medium dark:border-white/20"
+          >
+            <PencilLineIcon size={20} />
+            {t("info.Edit song")}
+          </Link>
+          {song.spotify ? (
+            <a
+              href={song.spotify}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-w-max flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-black/15 px-3 py-2 text-base font-medium dark:border-white/20"
+            >
+              <PlayIcon size={20} />
+              {service ? t("info.Play on {{service}}", { service }) : t("info.Play")}
+            </a>
+          ) : null}
+        </div>
       </div>
     </DumbModal>
   );
@@ -111,17 +152,9 @@ export default function SongMenu({
             ) : null}
             <MenuButton onClick={() => setTransposition(transposition + 1)}>+1</MenuButton>
             <MenuButton onClick={() => setTransposition(transposition - 1)}>-1</MenuButton>
-            <MenuLink to={`/edit/${slug}`}>
-              <PencilLineIcon size={32} />
-            </MenuLink>
             <MenuButton onClick={() => setInfo(o => !o)}>
               <BadgeQuestionMarkIcon size={32} />
             </MenuButton>
-            {song.spotify ? (
-              <MenuAnchor href={song.spotify} target="_blank" rel="noopener noreferrer">
-                <PlayIcon size={32} />
-              </MenuAnchor>
-            ) : null}
             <MenuButton
               onClick={() => {
                 getRandomSong(song.id).then(nextSong => {

@@ -77,10 +77,13 @@
   "I don't have account, <1>register</1>": "Nemám účet, <1>vytvořit nový</1>",
   "info": {
     "editor-unknown": "Neznámo kdo",
-    "Inserted by: {{editor}}": "Vložil/a: {{editor}}",
     "inserted-before-2019-05-20": "před 20. 5. 2019",
-    "Inserted: {{date}}": "Vloženo: {{date}}",
-    "Last edit: {{date}}": "Poslední úprava: {{date}}"
+    "Inserted by": "Vložil/a",
+    "Inserted": "Vloženo",
+    "Last edit": "Poslední úprava",
+    "Edit song": "Upravit píseň",
+    "Play on {{service}}": "Přehrát na {{service}}",
+    "Play": "Přehrát"
   },
   "Install as an app": "Nainstalovat jako appku",
   "Invalid date": "Neplatné datum",

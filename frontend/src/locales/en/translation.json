@@ -75,10 +75,13 @@
   "I don't have account, <1>register</1>": "I don't have account, <1>register</1>",
   "info": {
     "editor-unknown": "Unknown",
-    "Inserted by: {{editor}}": "Inserted by: {{editor}}",
     "inserted-before-2019-05-20": "Before 20 May 2019",
-    "Inserted: {{date}}": "Inserted: {{date}}",
-    "Last edit: {{date}}": "Last edit: {{date}}"
+    "Inserted by": "Inserted by",
+    "Inserted": "Inserted",
+    "Last edit": "Last edit",
+    "Edit song": "Edit song",
+    "Play on {{service}}": "Play on {{service}}",
+    "Play": "Play"
   },
   "Install as an app": "Install as an app",
   "Invalid date": "Invalid date",
