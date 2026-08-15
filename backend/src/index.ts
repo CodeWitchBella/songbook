@@ -6,7 +6,7 @@ import { extname, join, resolve } from "node:path";
 import { setTimeout } from "node:timers/promises";
 
 import { api } from "#/app.ts";
-import { migrate } from "#/db/migrate.ts";
+import { migrate, migrateData } from "#/db/migrate.ts";
 
 async function readCommitFile(name: string): Promise<string> {
   try {
@@ -99,6 +99,7 @@ app.onError((err, c) => {
 });
 
 migrate();
+await migrateData();
 
 const port = process.env.PORT ? Number(process.env.PORT) : 5512;
 
