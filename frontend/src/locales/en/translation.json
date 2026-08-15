@@ -132,6 +132,7 @@
   "Sort by name": "Sort by name",
   "Type to search": "Type to search",
   "You have to be logged in to add a song": "You have to be logged in to add a song",
+  "You have to be logged in to edit a song": "You have to be logged in to edit a song",
   "song-menu": {
     "Transpose up": "Transpose up",
     "Transpose down": "Transpose down"

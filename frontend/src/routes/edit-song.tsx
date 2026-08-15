@@ -1,9 +1,12 @@
 import Checkbox from "#/components/checkbox";
 import { ChordHelp } from "#/components/chord-help";
+import { BackButton } from "#/components/back-button";
 import { NotFound } from "#/components/error-page";
+import { ArrowLeftIcon } from "lucide-react";
 import Input from "#/components/input";
 import { ListButton } from "#/components/interactive/list-button";
 import { PageHeader } from "#/components/page-header";
+import { useLogin } from "#/components/use-login";
 import { SongTextEditor } from "#/components/song-editor/song-text-editor";
 import { WasmSongLook } from "#/components/song-look/wasm-song-look";
 import { TH2, TH3, TP, TText } from "#/components/themed";
@@ -380,7 +383,24 @@ export default function EditSongRoute() {
   const { song } = useLoaderData() as LoaderData;
   const revalidator = useRevalidator();
   const refetch = useCallback(() => revalidator.revalidate(), [revalidator]);
+  const login = useLogin();
   useSongStoreChange(refetch);
+  if (!login.viewer) {
+    return (
+      <div className="mx-auto max-w-xl">
+        <div className="mt-8 flex items-center">
+          <BackButton className="px-2 py-4">
+            <ArrowLeftIcon size={24} />
+          </BackButton>
+          <span className="text-2xl text-black dark:text-white">{t("You have to be logged in to edit a song")}</span>
+        </div>
+        <div className="pt-4" />
+        <ListButton to="/login">{t("Log in")}</ListButton>
+        <div className="pt-2" />
+        <ListButton to="/register">{t("Register")}</ListButton>
+      </div>
+    );
+  }
   if (!slug) return <NotFound />;
   if (!song) return <div>{t("Song not found")}</div>;
 

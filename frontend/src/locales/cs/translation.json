@@ -134,6 +134,7 @@
   "Sort by name": "Řadit podle názvu",
   "Type to search": "Vyhledávejte psaním",
   "You have to be logged in to add a song": "Pro vytvoření písně musíš mít účet",
+  "You have to be logged in to edit a song": "Pro úpravu písně musíš mít účet",
   "song-menu": {
     "Transpose up": "Transponovat nahoru",
     "Transpose down": "Transponovat dolů"

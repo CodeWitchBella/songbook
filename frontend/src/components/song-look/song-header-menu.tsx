@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import { useLanguage } from "#/components/localisation";
+import { useViewer } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
 
@@ -69,6 +70,7 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
   }, [open]);
 
   const close = () => setOpen(false);
+  const [viewer] = useViewer();
 
   return (
     <div ref={rootRef} className="relative">
@@ -83,10 +85,12 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
       </button>
       {open ? (
         <div className="absolute right-0 top-full z-10 mt-1 min-w-64 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-black/10 bg-white py-1 font-normal shadow-2xl dark:border-white/15 dark:bg-neutral-950">
-          <Link to={`/edit/${song.slug}`} state={{ canGoBack: true }} className={itemClass} onClick={close}>
-            <PencilLineIcon size={20} />
-            {t("info.Edit song")}
-          </Link>
+          {viewer ? (
+            <Link to={`/edit/${song.slug}`} state={{ canGoBack: true }} className={itemClass} onClick={close}>
+              <PencilLineIcon size={20} />
+              {t("info.Edit song")}
+            </Link>
+          ) : null}
           {song.spotify ? (
             <a href={song.spotify} target="_blank" rel="noopener noreferrer" className={itemClass} onClick={close}>
               <PlayIcon size={20} />
