@@ -39,7 +39,7 @@ export const FONT_SIZE_LIMITS = {
 export const defaultFontSizeSettings: FontSizeSettings = {
   idealRatio: 1,
   minimalRatio: 0.85,
-  repeatedChords: "keep",
+  repeatedChords: "when-needed",
 };
 
 function clampRatio(value: unknown, limits: { min: number; max: number }, fallback: number) {
