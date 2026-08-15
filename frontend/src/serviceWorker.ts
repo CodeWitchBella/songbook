@@ -46,21 +46,22 @@ export function register(config: ServiceWorkerRegisterConfig = {}) {
         registerValidSW(swUrl, config);
       }
     });
-
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      // This fires when the service worker controlling this page
-      // changes, eg a new worker has skipped waiting and become
-      // the new active worker.
-      console.log("serviceWorker:controllerchange");
-      window.location.reload();
-    });
   }
 }
+
+// How often a tab that stays open re-checks for a new deployment. Without this
+// the only update check is the one on page load, so a long-lived tab (or the
+// installed PWA, which people leave open for days) never learns about a new
+// version.
+const UPDATE_CHECK_INTERVAL_MS = 30 * 60 * 1000;
 
 function registerValidSW(swUrl: string, config: ServiceWorkerRegisterConfig) {
   const wb = new Workbox(swUrl);
 
-  wb.addEventListener("controlling", () => {
+  wb.addEventListener("controlling", event => {
+    // On a first-ever install the page goes from uncontrolled to controlled,
+    // which is not an update and must not reload the page under the user.
+    if (!event.isUpdate) return;
     window.location.reload();
   });
 
@@ -80,6 +81,24 @@ function registerValidSW(swUrl: string, config: ServiceWorkerRegisterConfig) {
 
   wb.register();
   wb.update();
+
+  // Keep checking while the tab lives. `update()` is a conditional request
+  // against /service-worker.js, which the backend serves with
+  // `max-age=0, must-revalidate`, so a no-op check is a cheap 304.
+  const checkForUpdate = () => {
+    if (document.visibilityState !== "visible") return;
+    wb.update().catch(() => {
+      // Offline, or the server is unreachable. Nothing to do; the next check
+      // (or the next page load) will pick the update up.
+    });
+  };
+
+  setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
+  // Coming back to the tab, or back online, are the moments a user is most
+  // likely to be about to use the app -- and most likely to have missed a
+  // deployment while away.
+  document.addEventListener("visibilitychange", checkForUpdate);
+  window.addEventListener("online", checkForUpdate);
 }
 
 function checkValidServiceWorker(swUrl: string, config: ServiceWorkerRegisterConfig) {

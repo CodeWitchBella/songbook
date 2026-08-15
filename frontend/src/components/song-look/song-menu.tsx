@@ -1,11 +1,10 @@
 import { animated, useTransition } from "@react-spring/web";
-import { ALargeSmallIcon, EllipsisVerticalIcon, ShuffleIcon, XIcon } from "lucide-react";
+import { EllipsisVerticalIcon, ShuffleIcon, XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { useGetRandomSong } from "#/sections/song-list/worker-list";
 import type { SongType } from "#/store/store-song";
-import { FontSizeModal } from "./font-size-modal";
 
 const ROW_HEIGHT = 56;
 
@@ -36,7 +35,6 @@ export default function SongMenu({
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [fontSizeOpen, setFontSizeOpen] = useState(false);
   useEffect(() => {
     if (transposition >= 12) setTransposition(transposition - 12);
     else if (transposition <= -12) setTransposition(transposition + 12);
@@ -63,9 +61,6 @@ export default function SongMenu({
       onClick={() => setTransposition(transposition - 1)}
     >
       -1
-    </MenuButton>,
-    <MenuButton key="font-size" aria-label={t("font-size.Font size")} onClick={() => setFontSizeOpen(true)}>
-      <ALargeSmallIcon size={24} />
     </MenuButton>,
     <MenuButton
       key="shuffle"
@@ -120,7 +115,6 @@ export default function SongMenu({
       >
         {open ? <XIcon size={24} /> : <EllipsisVerticalIcon size={24} />}
       </MenuButton>
-      {fontSizeOpen ? <FontSizeModal song={song} close={() => setFontSizeOpen(false)} /> : null}
     </div>
   );
 }

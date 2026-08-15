@@ -19,12 +19,12 @@ export default function About() {
       <ListButton to="/changelog">{t("Changelog")}</ListButton>
       <Gap />
       <ListButton to={wiki}>{t("Roadmap")}</ListButton>
-      <TH2>{t("My account")}</TH2>
-      <User />
       <TH2>{t("Appearance")}</TH2>
       <DarkModeSettings />
       <TH2>{t("Language")}</TH2>
       <LanguageSettings />
+      <TH2>{t("My account")}</TH2>
+      <User />
       <TH2>{t("About the app")}</TH2>
       <div className="flex flex-col">
         <span className="h-[18px] text-black dark:text-white">

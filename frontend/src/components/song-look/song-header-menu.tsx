@@ -1,5 +1,12 @@
 import { animated, useTransition } from "@react-spring/web";
-import { CombineIcon, EllipsisVerticalIcon, PencilLineIcon, PlayIcon, SettingsIcon } from "lucide-react";
+import {
+  ALargeSmallIcon,
+  CombineIcon,
+  EllipsisVerticalIcon,
+  PencilLineIcon,
+  PlayIcon,
+  SettingsIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -8,6 +15,7 @@ import { useLanguage } from "#/components/localisation";
 import { useViewer } from "#/store/store";
 import type { SongType } from "#/store/store-song";
 import { formatDate } from "#/utils/format-date";
+import { FontSizeModal } from "./font-size-modal";
 
 // the field is called "spotify" for historical reasons, but it can point anywhere
 const knownServices: readonly (readonly [RegExp, string])[] = [
@@ -49,6 +57,7 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
   const { t } = useTranslation();
   const [lng] = useLanguage();
   const [open, setOpen] = useState(false);
+  const [fontSizeOpen, setFontSizeOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const service = song.spotify ? serviceName(song.spotify) : null;
   const unknownEditor = t("info.editor-unknown");
@@ -118,9 +127,20 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
               <CombineIcon size={20} />
               {t("collection.Add to collection")}
             </Link>
-            <Link to="/quick-settings" state={{ canGoBack: true }} className={itemClass} onClick={close}>
+            <button
+              type="button"
+              className={itemClass}
+              onClick={() => {
+                close();
+                setFontSizeOpen(true);
+              }}
+            >
+              <ALargeSmallIcon size={20} />
+              {t("font-size.Font size")}
+            </button>
+            <Link to="/about" state={{ canGoBack: true }} className={itemClass} onClick={close}>
               <SettingsIcon size={20} />
-              {t("quick-settings.Quick settings")}
+              {t("Settings and about")}
             </Link>
             <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-t border-black/10 px-4 py-3 text-sm dark:border-white/15">
               <InfoRow label={t("info.Inserted by")} value={song.editor?.name || unknownEditor} />
@@ -133,6 +153,7 @@ export function SongHeaderMenu({ song }: { song: SongType }) {
           </animated.div>
         ) : null,
       )}
+      {fontSizeOpen ? <FontSizeModal song={song} close={() => setFontSizeOpen(false)} /> : null}
     </div>
   );
 }
