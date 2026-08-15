@@ -46,10 +46,12 @@ export function useQueryParamQ(): [string | null, (value: string) => void] {
   const stateRef = useRef(location.state as any);
   const keyRef = useRef(location.key);
   const backPendingRef = useRef(false);
+  const backValueRef = useRef<string | null>(null);
   if (keyRef.current !== location.key) {
     keyRef.current = location.key;
     stateRef.current = location.state;
     backPendingRef.current = false;
+    backValueRef.current = null;
   }
 
   const onChangeSearch = useCallback(
@@ -61,9 +63,12 @@ export function useQueryParamQ(): [string | null, (value: string) => void] {
       if (!value && state?.clearOnBack) {
         backPendingRef.current = true;
         stateRef.current = undefined;
-        startTransition(async () => {
-          setOpt(null);
-          await navigate(-1);
+        // Deliberately not awaited as history.go(-1) is async but not awaitable
+        // Go back to awaiting once r-r uses Navigation API
+        backValueRef.current = "";
+        startTransition(() => {
+          setOpt("");
+          void navigate(-1);
         });
         return;
       }
@@ -91,5 +96,5 @@ export function useQueryParamQ(): [string | null, (value: string) => void] {
     [location.search, navigate, setOpt],
   );
 
-  return [opt, onChangeSearch];
+  return [backValueRef.current ?? opt, onChangeSearch];
 }
