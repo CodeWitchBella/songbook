@@ -1,20 +1,9 @@
 import { XIcon } from "lucide-react";
-import { useEffect, useOptimistic, useRef, useTransition } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 export function SearchTextInput({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const ref = useRef<HTMLInputElement>(null);
-  const [optimisticValue, setOptimisticValue] = useOptimistic(value);
-  const [, startTransition] = useTransition();
-
-  // Show the new value immediately; `value` itself only catches up once the
-  // (async, router-driven) onChange round-trips, which is too slow for fast typing.
-  function change(next: string) {
-    startTransition(() => {
-      setOptimisticValue(next);
-      onChange(next);
-    });
-  }
 
   useEffect(() => {
     const body = document.body;
@@ -35,25 +24,22 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
       // The input's own onChange already handles this keystroke when focused;
       // handling it here too would double the character.
       if (focused) return;
-      startTransition(() => {
-        setOptimisticValue(optimisticValue + event.key);
-        onChange(optimisticValue + event.key);
-      });
+      onChange(value + event.key);
       setTimeout(() => {
         ref.current?.focus();
       }, 0);
     }
-  }, [optimisticValue, onChange, setOptimisticValue, startTransition]);
+  }, [value, onChange]);
   const { t } = useTranslation();
   return (
     <div className="relative flex grow flex-col">
       <input
         ref={ref}
         type="search"
-        value={optimisticValue}
+        value={value}
         onChange={event => {
           event.stopPropagation();
-          change(event.target.value);
+          onChange(event.target.value);
         }}
         placeholder={t("Type to search")}
         onKeyDown={event => {
@@ -62,7 +48,7 @@ export function SearchTextInput({ value, onChange }: { value: string; onChange: 
         aria-label="Vyhledávání"
         className="h-10 w-[calc(100%-4px)] border border-solid border-black bg-white pl-2.5 text-black dark:border-white dark:bg-neutral-950 dark:text-white"
       />
-      <ClearButton onClick={() => change("")} />
+      <ClearButton onClick={() => onChange("")} />
     </div>
   );
 }
