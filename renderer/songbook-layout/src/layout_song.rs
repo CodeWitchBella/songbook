@@ -146,11 +146,10 @@ pub fn layout_song(
         vec![]
     };
 
-    // Text shaping (parley) only depends on the body font size; compression
-    // never touches it, so every compression step of a given size reuses the
-    // same shaped lines. Cache by font size so those steps skip re-shaping the
-    // whole song.
-    let mut measured_cache: Vec<(u32, Vec<MeasuredParagraph>)> = vec![];
+    // Shaped lines for the sizes the search tries. Compression never touches
+    // the font size, so every compression step at a size reuses one entry —
+    // see [`MeasureCache`] for how sizes share a single parley pass.
+    let mut measured_cache = MeasureCache::default();
 
     let content_width = viewport.map(|(width, _)| width as f32);
     // Lines only ever wrap at the minimal size — above it a too-wide line is
@@ -184,8 +183,7 @@ pub fn layout_song(
         _ => (EM, 1),
     };
 
-    let measured = get_measured(
-        &mut measured_cache,
+    let measured = measured_cache.get(
         song,
         font_cx,
         font_px,
@@ -316,7 +314,7 @@ fn content_right_extent(layout: &Layout) -> f32 {
 #[allow(clippy::too_many_arguments)]
 fn pick_font_size(
     sizing: FontSizing,
-    cache: &mut Vec<(u32, Vec<MeasuredParagraph>)>,
+    cache: &mut MeasureCache,
     song: &songbook_grammar::Song,
     font_cx: &mut parley::FontContext,
     header_items: &[Item],
@@ -327,12 +325,11 @@ fn pick_font_size(
 ) -> (f32, u32) {
     // Rows the song takes at `font_px`, with the lightest compression that
     // reaches `row_budget`; `None` when a line is too wide to fit at all.
-    let rows_at = |cache: &mut Vec<(u32, Vec<MeasuredParagraph>)>,
+    let rows_at = |cache: &mut MeasureCache,
                    font_cx: &mut parley::FontContext,
                    font_px: f32,
                    row_budget: u32| {
-        let measured = get_measured(
-            cache,
+        let measured = cache.get(
             song,
             font_cx,
             font_px,
@@ -385,15 +382,16 @@ fn measure_header(
 ) -> Vec<Item> {
     let content_width = viewport.map(|(width, _)| width);
     let header_px = HEADER_EM * EM;
-    let title_width = measure(title, header_px, true, font_cx);
-    let author_width = measure(author, header_px, true, font_cx);
+    let mut shaper = Shaper::new(font_cx, header_px);
+    let title_width = shaper.width(title, LYRIC_FONT_FAMILY, true);
+    let author_width = shaper.width(author, LYRIC_FONT_FAMILY, true);
     let author_x = match content_width {
         Some(content_width) => (content_width as f32 - author_width).max(0.0),
         None => title_width + header_px,
     };
     // Baseline sits below the top margin by roughly the ascent.
     let header_baseline = HEADER_TOP_MARGIN * EM + header_px;
-    let (header_ascent, header_descent) = font_metrics(header_px, true, LYRIC_FONT_FAMILY, font_cx);
+    let (header_ascent, header_descent) = shaper.face_metrics(LYRIC_FONT_FAMILY, true);
     vec![
         Item {
             text: title.to_owned(),
@@ -426,25 +424,100 @@ struct MeasuredParagraph {
     has_chord: bool,
 }
 
-/// Fetch the song shaped at `font_px`, computing and caching it on first use.
-/// Compression only touches spacing, not font size, so the repeated calls a
-/// single size makes are nearly always cache hits.
-fn get_measured<'a>(
-    cache: &'a mut Vec<(u32, Vec<MeasuredParagraph>)>,
-    song: &songbook_grammar::Song,
-    font_cx: &mut parley::FontContext,
-    font_px: f32,
-    transpose: i32,
-    continuous: bool,
-    content_width: Option<f32>,
-) -> &'a [MeasuredParagraph] {
-    let key = font_px.to_bits();
-    if let Some(pos) = cache.iter().position(|(k, _)| *k == key) {
-        return &cache[pos].1;
+/// Size the unwrapped reference pass is shaped at. Nothing about it is
+/// special — it's just where [`MeasureCache`] measures the song once.
+const REFERENCE_FONT_PX: f32 = EM;
+
+/// The song shaped at the sizes the search has asked for.
+///
+/// Shaping is by far the most expensive part of laying a song out, and the
+/// size search asks for a handful of sizes while every compression step at a
+/// size reuses one. Two things keep the parley calls down to (almost always)
+/// a single pass:
+///
+/// - Results are memoised per (size, wrap width).
+/// - Without wrapping, shaping at one size is shaping at every size: glyph
+///   advances and font metrics are defined in font units and scaled by the
+///   size, with no hinting or rounding in between, so a size's measurements
+///   are exactly the reference pass's times the ratio of the sizes. Only a
+///   wrapped size has to be shaped for real, because where its lines break
+///   depends on the size.
+#[derive(Default)]
+struct MeasureCache {
+    /// The unwrapped pass at [`REFERENCE_FONT_PX`], scaled to serve any other
+    /// unwrapped size.
+    reference: Option<Vec<MeasuredParagraph>>,
+    /// Ready-to-use results, keyed by the bit patterns of the font size and
+    /// the wrap width.
+    by_size: Vec<((u32, Option<u32>), Vec<MeasuredParagraph>)>,
+}
+
+impl MeasureCache {
+    fn get(
+        &mut self,
+        song: &songbook_grammar::Song,
+        font_cx: &mut parley::FontContext,
+        font_px: f32,
+        transpose: i32,
+        continuous: bool,
+        wrap_width: Option<f32>,
+    ) -> &[MeasuredParagraph] {
+        let key = (font_px.to_bits(), wrap_width.map(f32::to_bits));
+        if let Some(pos) = self.by_size.iter().position(|(k, _)| *k == key) {
+            return &self.by_size[pos].1;
+        }
+        let measured = match wrap_width {
+            Some(width) => measure_song(song, font_cx, font_px, transpose, continuous, Some(width)),
+            None => {
+                let reference = self.reference.get_or_insert_with(|| {
+                    measure_song(
+                        song,
+                        font_cx,
+                        REFERENCE_FONT_PX,
+                        transpose,
+                        continuous,
+                        None,
+                    )
+                });
+                scale_song(reference, font_px / REFERENCE_FONT_PX)
+            }
+        };
+        self.by_size.push((key, measured));
+        &self.by_size.last().unwrap().1
     }
-    let measured = measure_song(song, font_cx, font_px, transpose, continuous, content_width);
-    cache.push((key, measured));
-    &cache.last().unwrap().1
+}
+
+/// A shaped song at a different size: see [`MeasureCache`] for why simply
+/// scaling it is exact.
+fn scale_song(paragraphs: &[MeasuredParagraph], factor: f32) -> Vec<MeasuredParagraph> {
+    paragraphs
+        .iter()
+        .map(|paragraph| MeasuredParagraph {
+            has_chord: paragraph.has_chord,
+            lines: paragraph
+                .lines
+                .iter()
+                .map(|line| MeasuredLine {
+                    baseline: line.baseline * factor,
+                    descent: line.descent * factor,
+                    has_chord: line.has_chord,
+                    items: line
+                        .items
+                        .iter()
+                        .map(|item| Item {
+                            text: item.text.clone(),
+                            item_type: item.item_type.clone(),
+                            font_size: item.font_size * factor,
+                            width: item.width * factor,
+                            ascent: item.ascent * factor,
+                            descent: item.descent * factor,
+                            pos: (item.pos.0 * factor, item.pos.1 * factor),
+                        })
+                        .collect(),
+                })
+                .collect(),
+        })
+        .collect()
 }
 
 /// Shape every line of the song's body at `font_px`. This is the only part of
@@ -459,6 +532,9 @@ fn measure_song(
     continuous: bool,
     content_width: Option<f32>,
 ) -> Vec<MeasuredParagraph> {
+    // One shaper for the whole pass: its scratch buffers and per-face metrics
+    // are the same for every line, so they're built once here.
+    let mut shaper = Shaper::new(font_cx, font_px);
     let mut paragraphs: Vec<MeasuredParagraph> = vec![];
     // Running verse counter, threaded across the whole song so that `S:` tags
     // render as `1.`, `2.`, ….
@@ -507,15 +583,8 @@ fn measure_song(
             if hidden {
                 continue;
             }
-            let measured = measure_line(
-                line,
-                tag,
-                font_px,
-                transpose,
-                chords_off,
-                content_width,
-                font_cx,
-            );
+            let measured =
+                measure_line(line, tag, transpose, chords_off, content_width, &mut shaper);
             if first_line_has_chord.is_none() {
                 first_line_has_chord = measured.first().map(|l| l.has_chord);
             }
@@ -684,17 +753,6 @@ fn assemble(
     (layout, page_count)
 }
 
-/// The concatenated lyric text of a line (chords/commands contribute no text).
-fn collect_text(line: &Line) -> String {
-    let mut text = String::new();
-    for item in &line.content {
-        if let songbook_grammar::LineContent::Text(part) = item {
-            text.push_str(part);
-        }
-    }
-    text
-}
-
 fn prepare_builder<'a>(
     layout_cx: &'a mut LayoutContext<()>,
     font_cx: &'a mut parley::FontContext,
@@ -715,66 +773,129 @@ fn prepare_builder<'a>(
     builder
 }
 
-/// Measure the advance width of a bit of text set in the given font size and
-/// weight, using the lyric font family.
-pub fn measure(text: &str, font_px: f32, bold: bool, font_cx: &mut parley::FontContext) -> f32 {
-    measure_in(text, font_px, bold, LYRIC_FONT_FAMILY, font_cx)
+/// The four font faces a song is set in: the two families in both weights.
+const FACES: usize = 4;
+
+fn face_slot(family: &str, bold: bool) -> usize {
+    (if family == CHORD_FONT_FAMILY { 2 } else { 0 }) + usize::from(bold)
 }
 
-/// Measure the advance width of text set in the given font size, weight and
-/// font family.
-fn measure_in(
-    text: &str,
+/// Everything a [`measure_song`] pass needs to shape text at one font size,
+/// with the per-face constants it would otherwise re-derive for every line and
+/// every chord worked out once:
+///
+/// - parley's [`LayoutContext`], which owns the shaping scratch buffers, so
+///   they're allocated once for the whole song rather than per measurement.
+/// - each face's ascent/descent, a pure font metric that's identical for every
+///   item set in that face at this size but costs a shaping call to look up.
+/// - each face's sentinel width, the correction [`Shaper::width_with_space`]
+///   applies to keep whitespace that parley would trim.
+struct Shaper<'a> {
+    font_cx: &'a mut parley::FontContext,
+    layout_cx: LayoutContext<()>,
     font_px: f32,
-    bold: bool,
-    family: &str,
-    font_cx: &mut parley::FontContext,
-) -> f32 {
-    let mut layout_cx = parley::LayoutContext::new();
-    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, font_px, family, 1.0);
-    if bold {
-        builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(700.0)));
-    }
-    let mut layout: parley::Layout<()> = builder.build(text);
-    layout.break_all_lines(None);
-    layout.width()
+    metrics: [Option<(f32, f32)>; FACES],
+    sentinels: [Option<f32>; FACES],
+    /// Widths of the standalone strings measured through [`Shaper::width`] —
+    /// chords, above all, and a song repeats the same handful of them from
+    /// verse to verse.
+    widths: std::collections::HashMap<(usize, String), f32>,
 }
 
-/// Kept for callers that measure plain text at a size.
-pub fn measure_text_width(text: &str, font_size: f32, font_cx: &mut parley::FontContext) -> f32 {
-    measure(text, font_size, false, font_cx)
-}
+/// Sentinel character used to keep parley from trimming leading and trailing
+/// whitespace off a measurement (see [`Shaper::width_with_space`]).
+const SENTINEL: &str = ".";
 
-/// Advance width *including* trailing whitespace. parley's `width()` trims
-/// trailing whitespace, but the frontend flows tag/spacer whitespace as real
-/// space (an `&nbsp;` after the tag, invisible spacer chords). Measure with a
-/// sentinel appended and subtract it so that space survives.
-fn measure_trailing(
-    text: &str,
-    font_px: f32,
-    bold: bool,
-    family: &str,
-    font_cx: &mut parley::FontContext,
-) -> f32 {
-    if !text.starts_with(char::is_whitespace) && !text.ends_with(char::is_whitespace) {
-        return measure_in(text, font_px, bold, family, font_cx);
+impl<'a> Shaper<'a> {
+    fn new(font_cx: &'a mut parley::FontContext, font_px: f32) -> Self {
+        Shaper {
+            font_cx,
+            layout_cx: LayoutContext::new(),
+            font_px,
+            metrics: [None; FACES],
+            sentinels: [None; FACES],
+            widths: std::collections::HashMap::new(),
+        }
     }
-    // Sandwich the text between sentinels so parley trims neither the leading
-    // nor the trailing whitespace, then subtract the two sentinels' own width.
-    const SENTINEL: &str = ".";
-    measure_in(
-        &format!("{SENTINEL}{text}{SENTINEL}"),
-        font_px,
-        bold,
-        family,
-        font_cx,
-    ) - measure_in(
-        &format!("{SENTINEL}{SENTINEL}"),
-        font_px,
-        bold,
-        family,
-        font_cx,
-    )
+
+    /// Shape `text` on its own and hand the finished layout to `f`.
+    fn shape<T>(
+        &mut self,
+        text: &str,
+        family: &str,
+        bold: bool,
+        f: impl FnOnce(&parley::Layout<()>) -> T,
+    ) -> T {
+        let mut layout: parley::Layout<()> = {
+            let mut builder = prepare_builder(
+                &mut self.layout_cx,
+                self.font_cx,
+                text,
+                self.font_px,
+                family,
+                1.0,
+            );
+            if bold {
+                builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(700.0)));
+            }
+            builder.build(text)
+        };
+        layout.break_all_lines(None);
+        f(&layout)
+    }
+
+    /// Advance width of `text` set in the given face, memoised: songs repeat
+    /// the same chords over and over, and shaping one is far dearer than
+    /// looking it up.
+    fn width(&mut self, text: &str, family: &str, bold: bool) -> f32 {
+        let key = (face_slot(family, bold), text.to_owned());
+        if let Some(width) = self.widths.get(&key) {
+            return *width;
+        }
+        let width = self.shape(text, family, bold, |layout| layout.width());
+        self.widths.insert(key, width);
+        width
+    }
+
+    /// Advance width *including* leading and trailing whitespace. parley's
+    /// `width()` trims it, but the frontend flows tag/spacer whitespace as real
+    /// space (an `&nbsp;` after the tag, invisible spacer chords), so measure
+    /// the text sandwiched between sentinels and take their own width back off.
+    fn width_with_space(&mut self, text: &str, family: &str, bold: bool) -> f32 {
+        if !text.starts_with(char::is_whitespace) && !text.ends_with(char::is_whitespace) {
+            return self.width(text, family, bold);
+        }
+        let sandwiched = self.width(&format!("{SENTINEL}{text}{SENTINEL}"), family, bold);
+        sandwiched - self.sentinel_width(family, bold)
+    }
+
+    fn sentinel_width(&mut self, family: &str, bold: bool) -> f32 {
+        if let Some(width) = self.sentinels[face_slot(family, bold)] {
+            return width;
+        }
+        let width = self.width(&format!("{SENTINEL}{SENTINEL}"), family, bold);
+        self.sentinels[face_slot(family, bold)] = Some(width);
+        width
+    }
+
+    /// A face's own ascent and descent (distance from a glyph's baseline to its
+    /// natural top/bottom) at this pass's font size. Independent of the text
+    /// shaped in it, so it's looked up once per face. See [`Item::ascent`].
+    fn face_metrics(&mut self, family: &str, bold: bool) -> (f32, f32) {
+        if let Some(metrics) = self.metrics[face_slot(family, bold)] {
+            return metrics;
+        }
+        let font_px = self.font_px;
+        let metrics = self.shape(" ", family, bold, |layout| match layout.lines().next() {
+            Some(line) => {
+                let m = line.metrics();
+                (m.baseline, (m.line_height - m.baseline).max(0.0))
+            }
+            None => (font_px, font_px * 0.3),
+        });
+        self.metrics[face_slot(family, bold)] = Some(metrics);
+        metrics
+    }
 }
 
 /// A chord/command parsed from a line, with its prefix conventions resolved:
@@ -812,12 +933,12 @@ struct MeasuredLine {
 fn measure_line(
     line: &Line,
     tag: Option<String>,
-    font_px: f32,
     transpose: i32,
     hide_chords: bool,
     content_width: Option<f32>,
-    font_cx: &mut parley::FontContext,
+    shaper: &mut Shaper,
 ) -> Vec<MeasuredLine> {
+    let font_px = shaper.font_px;
     // Build the lyric flow text and collect chords in a single pass. `[*…]`
     // commands are bold inline lyric text (not chords), so they join the flow
     // and survive `chords off`; `_`/`^` leads mark spacers and normal-weight
@@ -850,9 +971,9 @@ fn measure_line(
                 } else if spacer {
                     // Spacers push following lyrics right by their (often
                     // all-whitespace) advance, so keep trailing space.
-                    measure_trailing(&text, font_px, !normal_weight, CHORD_FONT_FAMILY, font_cx)
+                    shaper.width_with_space(&text, CHORD_FONT_FAMILY, !normal_weight)
                 } else {
-                    measure_in(&text, font_px, !normal_weight, CHORD_FONT_FAMILY, font_cx)
+                    shaper.width(&text, CHORD_FONT_FAMILY, !normal_weight)
                 };
                 chords.push(Chord {
                     index: complete_text.len(),
@@ -871,13 +992,12 @@ fn measure_line(
     let tag_text = tag.as_deref().map(|t| format!("{t}\u{00a0}"));
     let tag_width = tag_text
         .as_deref()
-        .map(|t| measure_trailing(t, font_px, true, LYRIC_FONT_FAMILY, font_cx))
+        .map(|t| shaper.width_with_space(t, LYRIC_FONT_FAMILY, true))
         .unwrap_or(0.0);
 
     // Metrics of the plain lyric line, used to place every wrapped visual
     // line's baseline (constant across wraps: same font/size throughout).
-    let (baseline, natural_height) = line_metrics(&complete_text, font_px, font_cx);
-    let descent = (natural_height - baseline).max(0.0);
+    let (baseline, descent) = shaper.face_metrics(LYRIC_FONT_FAMILY, false);
     // Text/tag items are anchored at the text baseline (offset 0); chords
     // always sit exactly one em above it.
     let text_baseline_offset = 0.0f32;
@@ -885,10 +1005,9 @@ fn measure_line(
 
     // Lay out the lyric text, inserting zero-width (or spacer-width) inline
     // boxes so parley reports the x anchor of each chord.
-    let mut layout_cx = parley::LayoutContext::new();
     let mut builder = prepare_builder(
-        &mut layout_cx,
-        font_cx,
+        &mut shaper.layout_cx,
+        shaper.font_cx,
         &complete_text,
         font_px,
         LYRIC_FONT_FAMILY,
@@ -1015,7 +1134,7 @@ fn measure_line(
             continue;
         }
         let (chord_ascent, chord_descent) =
-            font_metrics(font_px, !chord.normal_weight, CHORD_FONT_FAMILY, font_cx);
+            shaper.face_metrics(CHORD_FONT_FAMILY, !chord.normal_weight);
         let li = chord_line[i];
         let x_offset = if li == 0 { tag_width } else { 0.0 };
         line_items[li].push(Item {
@@ -1208,55 +1327,5 @@ fn transform_tag(label: &str, verse_counter: &mut u32) -> Option<String> {
         Some(format!("R{inner}."))
     } else {
         Some(label.to_owned())
-    }
-}
-
-/// Baseline offset and natural line height of a plain text line, in the lyric
-/// font.
-fn line_metrics(text: &str, font_px: f32, font_cx: &mut parley::FontContext) -> (f32, f32) {
-    let mut layout_cx = parley::LayoutContext::new();
-    let measured = if text.is_empty() { " " } else { text };
-    let builder = prepare_builder(
-        &mut layout_cx,
-        font_cx,
-        measured,
-        font_px,
-        LYRIC_FONT_FAMILY,
-        1.0,
-    );
-    let mut layout: parley::Layout<()> = builder.build(measured);
-    layout.break_all_lines(None);
-    match layout.lines().next() {
-        Some(line) => {
-            let m = line.metrics();
-            (m.baseline, m.line_height)
-        }
-        None => (font_px, font_px * 1.3),
-    }
-}
-
-/// An item's own ascent/descent (distance from its baseline to its natural
-/// top/bottom) at a given font size, weight and family — a pure font metric,
-/// independent of the text content shaped in it. See [`Item::ascent`].
-fn font_metrics(
-    font_px: f32,
-    bold: bool,
-    family: &str,
-    font_cx: &mut parley::FontContext,
-) -> (f32, f32) {
-    let mut layout_cx = parley::LayoutContext::new();
-    let text = " ";
-    let mut builder = prepare_builder(&mut layout_cx, font_cx, text, font_px, family, 1.0);
-    if bold {
-        builder.push_default(StyleProperty::FontWeight(parley::FontWeight::new(700.0)));
-    }
-    let mut layout: parley::Layout<()> = builder.build(text);
-    layout.break_all_lines(None);
-    match layout.lines().next() {
-        Some(line) => {
-            let m = line.metrics();
-            (m.baseline, (m.line_height - m.baseline).max(0.0))
-        }
-        None => (font_px, font_px * 0.3),
     }
 }
